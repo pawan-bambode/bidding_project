@@ -1,0 +1,638 @@
+<%- include("../partials/head") %>
+    <%- include("../partials/leftSidebar") %>
+        <%- include("../partials/header") %>
+
+            <div class="main-content">
+                <div class="breadcrumbs-container">
+
+                    <ul class="breadcrumb">
+                        <% if(breadcrumbs){%>
+                            <% for (let crumbs of breadcrumbs){%>
+                                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+                                <%} }%>
+                    </ul>
+                </div>
+
+                <div class="px-3 errorHtml"></div>
+                <div class="card table-card">
+                    <div
+                        class="card-header table-card-header text-uppercase d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5>TimeTable Session</h5>
+                        </div>
+                        <div>
+                            <button class="btn add-btn ms-auto" data-bs-toggle="modal"
+                                data-bs-target="#open-timetablesession-modal"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body table-responsive">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <label>Show Entry</label>
+                                <select class="form-select" id="changeEntry">
+                                    <%for(let page of locals.page_filter){%>
+                                        <option value="<%-page%>"><%-page%></option>
+                                        <%}%>
+                                </select>
+                            </div>
+                            <div>
+                                <div class="table-searchbar-container"><button type="button"><i
+                                            class="fas fa-search"></i> </button><input type="search" id="searchkeyword"
+                                        placeholder="Enter keywords" class="table-searchbar"></div>
+                            </div>
+                        </div>
+
+                        <table class="table custom_row table-bordered" id="timetableSessionTable">
+                            <thead>
+                                <th>Sr.No.</th>
+                                <th>Timetable Name</th>
+                                <th>Academic Year</th>
+                                <th>Academic Session</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Action</th>
+                            </thead>
+
+
+                            <tbody>
+                                <% let counter=1;%>
+                                    <% for(let list of timetableSessionList) { %>
+                                        <tr>
+                                            <td><%- counter++ %></td>
+                                            <td><%- list.timetable_name%></td>
+                                            <td><%- list.acad_year%></td>
+                                            <td>
+                                                <% if(list.sessions) { %>
+                                                    <% for (let session of JSON.parse(list.sessions)) { %>
+                                                        <span class="badge bg-secondary mx-1"
+                                                            data-session-lid="<%- session.acad_session_lid%>"
+                                                            style="min-width: 250px; cursor: pointer;"><%-
+                                                                session.acad_session %> </span> <br>
+                                                        <% } %>
+                                                            <% } else { %>
+                                                                NA
+                                                                <% } %>
+                                            </td>
+                                            <td><%- list.start_date%></td>
+                                            <td><%- list.end_date%></td>
+                                            <td><button type="button" class="btn btn-danger edit-btn ms-auto"
+                                                    data-bs-toggle="modal" data-bs-target="#edit-timetablesession-modal"
+                                                    data-timetable-id="<%-list.id%>"
+                                                    data-timetable-name="<%-list.timetable_name%>"
+                                                    data-start-date="<%-list.start_date%>"
+                                                    data-end-date="<%-list.end_date%>"
+                                                    data-acad-session='<%- JSON.stringify(list.sessions) %>'
+                                                    data-acad-year="<%-list.acad_year%>">Edit</button>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+
+                            </tbody>
+
+                        </table>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p>Total entries: </p>
+                            </div>
+                            <div>
+                                <p id="pagination" class="pagination-search"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- IMPORT TIMETABLE SESSION MODAL -->
+
+            <div class="modal fade" id="open-timetablesession-modal" tabindex="-1"
+                aria-labelledby="open-timetablesession-modal" aria-hidden="true">
+                <div class="modal-dialog modal-fullscreen">
+                    <div class="modal-content modal-inputform">
+                        <div class="modal-header modal-inputform-header">
+                            <h3 class="modal-title" id="open-room-modal-title">Select TimeTable Session</h3>
+                            <button type="button" class="btn fs-4 text-white" data-bs-dismiss="modal"
+                                aria-label="Close"><i class="fas fa-times text-dark"></i></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-3 select-items">
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Enter TimeTable Session Name</label>
+                                            <input type="text" class="form-control" name="timetable-name"
+                                                id="timetable-name">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Academic Year</label>
+                                            <select class="form-select form-control" id="academic-year">
+                                                <option selected value="">Select Academic Year </option>
+                                                <option value="2022">2022</option>
+                                                <option value="2023">2023</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Session Start Date </label>
+                                            <input class="form-control" type="date" name="start-date" id="start-date">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label"> Session End Date </label>
+                                            <input class="form-control" type="date" name="end-date" id="end-date">
+                                        </div>
+
+                                        <div style="text-align: right; margin-top: 21px;">
+                                            <button class="btn btn-primary btn-sm" id="add-timetable">Add
+                                                Timetable</button>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="col-md-12 d-none add-session-container mt-1">
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Academic Session</label>
+                                            <select class="form-select form-control" id="academic-session">
+                                                <option selected value="">Select Acad Session </option>
+                                                <% for(sessions of acadSessionList) { %>
+                                                    <option value="<%- sessions.id %>"><%- sessions.acad_session%>
+                                                    </option>
+                                                    <% } %>
+                                            </select>
+                                        </div>
+                                        <button class="btn btn-primary add-session w-100">Add Session</button>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-9 selected-items">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="add-timetable-name-table">
+                                            <thead>
+                                                <th>Sr.No.</th>
+                                                <th>Timetable Name</th>
+                                                <th>Academic Session</th>
+                                                <th>Academic Year</th>
+                                                <th>Start Date</th>
+                                                <th>End Date</th>
+                                                <th>Action</th>
+                                            </thead>
+                                            <tbody>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="error-html"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn modal-inputform-btn" id="createTimetableSession">Create
+                                Timetable Session</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- EDIT TIMETABLE SESSION AND UPDATE -->
+
+            <div class="modal fade" id="edit-timetablesession-modal" tabindex="-1"
+                aria-labelledby="edit-timetablesession-modal" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="edit-timetablesession-modal">Edit Timetable Session</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="mb-3">
+                                <label for="exampleFormControlInput1" class="form-label">Timetable Name</label>
+                                <input type="text" class="form-control" name="timetable-name" id="timetable-name">
+                                <span class="text-danger d-none valid-timetable-name">Enter the timetable Name</span>
+                            </div>
+                            <div class="row">
+                                <div class="mb-3 col-md-6">
+                                    <label class="form-label">Start Date</label>
+                                    <input type="date" class="form-control" name="start-date" id="start-date">
+                                </div>
+                                <div class="mb-3 col-md-6">
+                                    <label for="exampleFormControlInput1" class="form-label">End Date</label>
+                                    <input type="date" class="form-control" name="end-date" id="end-date">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="selected-acad-session col-md-9">
+                                    <div
+                                        class='d-flex flex-column justify-content-between align-item-center session-list-container'>
+                                    </div>
+
+                                </div>
+                                <span class="text-danger d-none timetable-acad-session-label">Acad Session Already
+                                    added</span>
+                                <span class="text-danger d-none timetable-acad-session-select">Select Acad Session
+                                </span>
+
+                                <div
+                                    class="d-flex justify-content-end align-items-end add-acad-session_timetable col-md-3">
+                                    <span
+                                        class="d-flex justify-content-center align-items-center badge bg-primary mt-1 col-md-6"
+                                        style="height:35px;"><i class="fa-solid fa-circle-plus"
+                                            style="font-size: large;"></i></span>
+                                </div>
+                            </div>
+                            <div class="edit-timetable-acad-seession d-none d-flex">
+                                <div class="col-md-8">
+                                    <label class="form-label">Academic Session </label>
+                                    <select class="form-select form-control select2 timetable-acad-session-select2"
+                                        id="edit-academic-session_add">
+                                        <option selected value="">Select Acad Session </option>
+                                        <% for(sessions of acadSessionList){ %>
+                                            <option value="<%- sessions.id %>"> <%- sessions.acad_session%>
+                                            </option>
+                                            <% }%>
+                                    </select>
+                                </div>
+                                <div class="d-flex justify-content-end align-items-end col-md-4">
+                                    <button class="btn btn-success" id="add_acad_session_edit" style="height:40px">Add
+                                        AcadSession</button>
+                                </div>
+                            </div>
+                            <input type="hidden" name="timetable-acad-year" id="timetable-acad-year">
+                            <input type="hidden" name="timetable-lid" id="timetable-lid">
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary update-timetable-session">UPDATE</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <%- include("../partials/notification") %>
+                <%- include("../partials/footer") %>
+
+                    <!-- <script src="/js/leftsidebartoggle.js"></script> -->
+
+                    <script>
+
+                        $(document).ready(function () {
+                            $('.select2').select2();
+                            $('.timetable-acad-session-select2').select2({
+                                dropdownParent: $('#edit-timetablesession-modal')
+                            });
+
+                            let counter = 1;
+                            $(document).on('click', '#add-timetable', function () {
+                                let tableData = ``;
+                                let timetableName = $('#timetable-name').val();
+                                let acadSessionLid = $('#academic-session').val();
+                                let acadSessionName = $('#academic-session option:selected').text();
+                                let acadYear = $('#academic-year').val();
+                                let sessionStartDate = $('#start-date').val();
+                                let sessionEndDate = $('#end-date').val();
+
+                                if (!timetableName || !acadYear || !sessionStartDate || !sessionEndDate) {
+                                    alert('Please select all fields');
+                                } else {
+                                    tableData += `<tr data-timetable-name="${timetableName}" data-session-lid="${acadSessionLid}" data-acad-year="${acadYear}" data-start-date="${sessionStartDate}" data-end-date="${sessionEndDate}">
+                    <td>${counter++}</td>
+                    <td>${timetableName}</td>
+                    <td class="session-td">
+                                
+                        <div class='d-flex flex-column justify-content-between align-item-center session-list-container'>
+                            <span class="badge bg-danger mt-1 enable-add-session"><i class="fa-solid fa-circle-plus"></i></span>
+                        </div>  
+                    
+                    </td>
+                  
+                    <td>${acadYear}</td>
+                    <td>${sessionStartDate}</td>
+                    <td>${sessionEndDate}</td>
+                    <td>
+                        <i class="fas fa-trash-alt text-danger cursor-pointer remove-works-row"></i></td>
+                    </tr>`;
+                                    $('#add-timetable-name-table tbody').append(tableData);
+
+                                    //Remove active highlight
+                                    $('#open-timetablesession-modal #add-timetable-name-table .active-tr').removeClass('active-tr')
+                                    $('#open-timetablesession-modal .add-session-container').addClass('d-none');
+                                }
+                            })
+
+
+                            //Enable batch option => Add batch
+                            $('#open-timetablesession-modal #add-timetable-name-table').on('click', '.enable-add-session', function () {
+                                $('#open-timetablesession-modal .add-session-container').removeClass('d-none');
+                                $('#open-timetablesession-modal #add-timetable-name-table .active-tr').removeClass('active-tr')
+                                $(this).closest('tr').addClass('active-tr')
+                            })
+
+                            //For Add Sessions
+                            $('#open-timetablesession-modal').on('click', '.add-session', function () {
+                                if ($('#academic-session').val()) {
+                                    if (isSessionDuplicate($('#academic-session').val())) {
+                                        alert('Session already present')
+                                    } else {
+                                        if ($('#academic-session').val() > 0) {
+
+                                            $('#open-timetablesession-modal #add-timetable-name-table .active-tr .session-td .session-list-container').append(`<span class="badge bg-primary mt-1" data-sessionLid="${$('#academic-session').val()}">${$('#academic-session option:selected').text()}<i class="fa-solid fa-delete-left remove-session"></i></span>`)
+
+                                        } else {
+
+                                            let sessionSpanEle = ``;
+                                            $('#open-timetablesession-modal #academic-session option').each((index, ele) => {
+                                                if ($(ele).val() > 0) {
+                                                    sessionSpanEle += `<span class="badge bg-primary mt-1" data-sessionLidLid="${$(ele).val()}">${$(ele).text()}<i class="fa-solid fa-delete-left remove-session"></i></span>`
+                                                }
+                                            })
+
+
+                                            $('#open-timetablesession-modal #add-timetable-name-table .active-tr .session-td .session-list-container').append(sessionSpanEle)
+                                        }
+                                    }
+
+                                } else {
+                                    alert('Select Session First')
+                                }
+                            })
+
+
+                            // Remove Sessions
+                            $('#open-timetablesession-modal #add-timetable-name-table').on('click', '.remove-session', function () {
+                                $('#open-course-pref-modal #add-timetable-name-table .active-tr').removeClass('active-tr')
+                                $(this).closest('tr').addClass('active-tr')
+                                $(this).parent().remove();
+                            })
+
+                            // For Importing Timetable Session
+                            $('#createTimetableSession').on('click', function () {
+                                let timetableSessionNameArr = [];
+                                let timetableSessionTable = $('#add-timetable-name-table tbody tr');
+                                timetableSessionTable.each(function (index, element) {
+                                    let timetableSessionObj = {
+                                        timetableName: '',
+                                        sessions: '',
+                                        acadYear: '',
+                                        startDate: '',
+                                        endDate: ''
+                                    }
+
+                                    timetableSessionObj.timetableName = $(element).attr('data-timetable-name');
+                                    timetableSessionObj.acadYear = $(element).attr('data-acad-year');
+                                    timetableSessionObj.startDate = $(element).attr('data-start-date');
+                                    timetableSessionObj.endDate = $(element).attr('data-end-date');
+                                    timetableSessionObj.sessions = [];
+
+                                    $(element).find('.session-td span[data-sessionLid]').each((index, ele) => {
+                                        timetableSessionObj.sessions.push(parseInt($(ele).attr('data-sessionLid')))
+                                    })
+
+                                    timetableSessionNameArr.push(timetableSessionObj);
+                                })
+
+                                //console.log('====>>>check array----', timetableSessionNameArr);
+                                let ApiObj = {
+                                    type: 'POST',
+                                    url: '/admin/timetable-session/create',
+                                    data: {
+                                        inputJSON: JSON.stringify(timetableSessionNameArr)
+                                    },
+                                    dataType: 'JSON'
+                                }
+
+                                ajaxApi(ApiObj).then(result => {
+                                    showSuccess(result);
+
+                                }).catch(error => {
+                                    console.log(error.responseJSON)
+                                    // showError(error.responseJSON)
+                                })
+                            })
+
+
+                            //FOR EDIT MODAL
+
+                            $('#timetableSessionTable').on('click', '.edit-btn', function () {
+
+                                let timetableLid = $(this).attr('data-timetable-id');
+                                let timetableName = $(this).attr('data-timetable-name');
+                                let timetableStartDate = $(this).attr('data-start-date');
+                                let timetableEndDate = $(this).attr('data-end-date');
+                                let timetableAcadSession = JSON.parse(JSON.parse($(this).attr('data-acad-session')));
+                                let acadYear = $(this).attr('data-acad-year');
+
+                                $('#edit-timetablesession-modal #timetable-name').val(timetableName);
+                                $('#edit-timetablesession-modal #start-date').val(timetableStartDate);
+                                $('#edit-timetablesession-modal #end-date').val(timetableEndDate);
+                                $('#edit-timetablesession-modal #timetable-lid').val(timetableLid);
+                                $('#edit-timetablesession-modal .selected-acad-session').attr('data-acad-session', $(this).attr('data-acad-session'));
+                                $('#edit-timetablesession-modal #timetable-acad-year').val(acadYear);
+
+                                let acadSession = '';
+                                let acadSessionText = '';
+                                let acadSessionId = '';
+                                let timetableAcadSessionlenth = timetableAcadSession.length > 0 ? timetableAcadSession.length : 0
+                                for (let i = 0; i < timetableAcadSessionlenth; i++) {
+                                    acadSessionText = timetableAcadSession[i].acad_session;
+                                    acadSessionId = timetableAcadSession[i].acad_session_lid;
+                                    $('#edit-timetablesession-modal .selected-acad-session').empty();
+                                    acadSession += `<span class="badge bg-secondary m-1 p-2 enable-add-session" data-id=${acadSessionId} >${acadSessionText} <i class="fa-solid fa-xmark ms-auto ps-2 text-danger"></i> </span>`
+                                }
+                                acadSession += `<span class="text-danger d-none timetable-acad-session-select-empty">Atleast only acad session needed to update </span>`
+                                $('#edit-timetablesession-modal .selected-acad-session').append(acadSession);
+                            })
+                            $(document).on('click', '.enable-add-session i', function () {
+                                $(this).closest('span').remove();
+                            });
+                            $('.add-acad-session_timetable').on('click', function () {
+                                $(this).closest('div').addClass('d-none');
+                                $('#edit-timetablesession-modal .edit-timetable-acad-seession').removeClass('d-none');
+                            })
+
+                            //FOR UPDATE TIMETABLE SESSION
+
+                            $('.update-timetable-session').on('click', function () {
+                                let jsonArr = [];
+                                let selectedAcadSessionList = [];
+                                let timetableLid = $('#edit-timetablesession-modal #timetable-lid').val();
+                                let timetableName = $('#edit-timetablesession-modal #timetable-name').val();
+                                let timetableStartDate = $('#edit-timetablesession-modal #start-date').val();
+                                let timetableEndDate = $('#edit-timetablesession-modal #end-date').val();
+                                let timetableAcadSession = $('#edit-timetablesession-modal .selected-acad-session span');
+                                let timetableAcadYear = $('#edit-timetablesession-modal #timetable-acad-year').val();
+                                timetableAcadSession.each(function (element, value) {
+                                    if ($(value).attr('data-id') != undefined)
+                                        selectedAcadSessionList.push($(value).attr('data-id'));
+                                    
+                                })
+                                if(timetableName.length==0){
+                                    $('#edit-timetablesession-modal .valid-timetable-name').removeClass('d-none');
+                                    return;
+                                }
+                                else{
+                                    $('#edit-timetablesession-modal .valid-timetable-name').addClass('d-none');
+                                }
+                                if(selectedAcadSessionList.length == 0) {
+                                     $('#edit-timetablesession-modal .selected-acad-session .timetable-acad-session-select-empty').removeClass('d-none');
+                                     return
+                                }
+                            
+
+                                let obj = {
+                                    timetableLid: timetableLid,
+                                    timetableName: timetableName,
+                                    timetableStartDate: timetableStartDate,
+                                    timetableEndDate: timetableEndDate,
+                                    timetableAcadSession: selectedAcadSessionList,
+                                    acadYear: timetableAcadYear
+                                }
+
+                                jsonArr.push(obj);
+
+                                console.log('OBJE== ', jsonArr)
+
+                                let apiObj = {
+                                    type: 'POST',
+                                    url: '/admin/timetable-session/update',
+                                    data: { inputJSON: JSON.stringify(jsonArr) },
+                                    dataType: 'JSON'
+                                }
+
+                                ajaxApi(apiObj).then(result => {
+                                    console.log('Check result=>', result)
+                                    showSuccess(result);
+                                }).catch(error => {
+                                    console.log('Check err=>', error)
+                                    showError(error)
+                                })
+                            })
+
+                            $('#add_acad_session_edit').on('click', function () {
+                                let selectedAcadSession = $('#edit-academic-session_add option:selected').text();
+                                let selectedAcadSessionId = $('#edit-academic-session_add option:selected').val();
+                                let alreadySelectedAcadSessionList = [];
+                                let alreadySelectedAcadSessionId = $('#edit-timetablesession-modal .selected-acad-session span');
+
+                                if (selectedAcadSessionId == '') {
+                                    $('#edit-timetablesession-modal .timetable-acad-session-select').removeClass('d-none');
+                                } else {
+                                    $('#edit-timetablesession-modal .timetable-acad-session-select').addClass('d-none');
+                                    if (checkSessionWhileEdit(selectedAcadSessionId) == true) {
+                                        $('#edit-timetablesession-modal .timetable-acad-session-label').removeClass('d-none');
+                                    }
+                                    else {
+                                        $('#edit-timetablesession-modal .timetable-acad-session-label').addClass('d-none');
+                                        let parentElement = $('.selected-acad-session');
+                                        let childElement = `<span class='badge bg-secondary m-1 p-2 enable-add-session' data-id=${selectedAcadSessionId}>${selectedAcadSession}<i class="fa-solid fa-xmark ms-auto ps-2 text-danger"></i></span>`;
+                                        parentElement.append(childElement);
+                                        $('#edit-timetablesession-modal .selected-acad-session .timetable-acad-session-select-empty').addClass('d-none');
+                                    }
+                                }
+                            })
+
+
+                            function checkSessionWhileEdit(sessionVal) {
+                                let returnValue = false;
+                                if (sessionVal != 0) {
+                                    if ($(`#edit-timetablesession-modal .selected-acad-session span[data-id="${sessionVal}"]`).length > 0) {
+                                        returnValue = true
+                                    }
+                                }
+                                else {
+                                    $(`#edit-timetablesession-modal .selected-acad-session span[data-id]`).each((index1, ele1) => {
+                                        return $(`#edit-timetablesession-modal .selected-acad-session option`).each((index2, ele2) => {
+                                            if ($(ele1).attr('data-id') == $(ele2).val()) {
+                                                return returnValue = true
+                                            }
+                                        })
+                                    })
+                                }
+                                return returnValue
+                            }
+
+
+
+                            function isSessionDuplicate(sessionVal) {
+                                let returnValue = false;
+                                if (sessionVal != 0) {
+
+                                    if ($(`#open-timetablesession-modal #add-timetable-name-table .active-tr .session-td .session-list-container span[data-sessionLid="${sessionVal}"]`).length > 0) {
+                                        returnValue = true
+                                    }
+
+                                }
+                                else {
+                                    $(`#open-timetablesession-modal #add-timetable-name-table .active-tr .session-td .session-list-container span[data-sessionLid]`).each((index1, ele1) => {
+                                        return $(`#open-timetablesession-modal #academic-session option`).each((index2, ele2) => {
+                                            if ($(ele1).attr('data-sessionLid') == $(ele2).val()) {
+                                                return returnValue = true
+                                            }
+                                        })
+                                    })
+                                }
+
+                                return returnValue
+                            }
+
+                            function showSuccess(errors) {
+                                console.log(errors);
+                                let simpleAlert = new SimpleAlert();
+                                let obj = {
+                                    title: errors.description,
+                                    message: "",
+                                    type: 'alert-success',
+                                    buttons: {
+                                        positive: {
+                                            text: "Okay",
+                                            action: function () {
+                                                document.querySelector('.simple-alert').remove();
+                                            }
+                                        },
+                                        negative: {
+                                            text: "Cancel",
+                                            action: function () {
+                                                alert('Negative')
+                                            }
+                                        }
+                                    }
+                                }
+                                simpleAlert.alert(obj);
+                            }
+
+                            function showError(errors) {
+                                console.log(errors);
+                                let simpleAlert = new SimpleAlert();
+                                let obj = {
+                                    title : errors.responseJSON.description,
+                                    message: "",
+                                    type: 'alert-danger',
+                                    buttons: {
+                                        positive:{
+                                            text: "Okay",
+                                            action: function(){
+                                                document.querySelector('.simple-alert').remove();
+                                            }
+                                        },
+                                        negative: {
+                                            text: "Cancel",
+                                            action: function () {
+                                            alert('Negative')
+                                            }
+                                        }
+                                    }
+                                }
+                                simpleAlert.alert(obj);
+                            }
+                        })
+
+                    </script>
+                    <%- include("../partials/footerEnd") %>

@@ -1,0 +1,82 @@
+<%- include('../partials/head') %>
+
+
+<!-- PAGE LEVEL CSSS START -->
+<% if (currentFormStep) { %>
+<style>
+    .stage:nth-child(-n + <%- currentFormStep-1 %>) {
+        background: #3cc58c;
+        color: #fff;
+
+    }
+
+    .stage:nth-child(-n + <%- currentFormStep-1 %>)::before {
+        border-left: 25px solid #3cc58c;
+    }
+
+    .stage:nth-child(<%- currentFormStep %>) {
+        background: #ffc800;
+        color: #000;
+
+    }
+
+    .stage:nth-child(<%- currentFormStep %>)::before {
+        border-left: 25px solid #ffc800;
+    }
+ 
+    .main, .top-navbar{
+            left: 0 !important;
+        }
+
+    @media (min-width:1200px) {
+        .navbar-logo{
+        display: block !important;
+    }
+
+        .navbar-logo a img {
+        width: 180px;
+    
+    }
+    }
+    
+
+    .left-sidebar-toggle{
+        display: none;
+    }
+
+    .top-navbar {
+        padding: 1vh;
+    }
+</style>
+<% } %>
+<!-- PAGE LEVEL CSSS END -->
+<% if (!currentFormStep) { %> 
+    <%- include ('../partials/leftSidebar') %>
+<% } %>
+
+<%- include ('../partials/header') %>
+
+
+<!-- MAIN-CONTENT -->
+<div class="main-content">
+
+    <!-- <% if (currentFormStep) { %> 
+    <%- include('./stepform.ejs') %>
+    <% } else { %> -->
+    <%- include('./dashboard.ejs') %>
+    <!-- <% } %> -->
+  
+</div>
+</main>
+
+<%- include('../partials/footer') %>
+ 
+
+<!-- PAGE LEVEL JS START -->
+
+<!-- <script src="/js/adminDashboardscript.js"></script> -->
+
+<script></script>
+
+<!-- PAGE LEVEL JS END -->
+<%- include('../partials/footerEnd') %>
