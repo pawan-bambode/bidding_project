@@ -6,7 +6,7 @@
 :root {
 
     --primary-red: #E16071;
-    --primary-bg: #f5f5f5;
+   --primary-bg: #e8eef9;   /* #e8eef9 or f5f5f5*/
 
     --primary-table-bg: #DCEFFC;
     --primary-white: #fff;
@@ -45,13 +45,14 @@ body {
 }
 
 .left-sidebar {
-    width: 300px;
+    width: 260px;
     height: 100vh;
     background: var(--primary-white);
     position: fixed;
     left: 0;
     top: 0;
-    border-right: 2px solid rgb(184, 184, 184);
+    /* comment for left side border beside to main content */
+    /* border-right: 2px solid rgb(184, 184, 184); */
     transition: all 0.5s ease-in-out;
 }
 
@@ -76,6 +77,7 @@ body {
 
 }
 
+
 .offset-list {
     list-style: none;
     padding: 10px 0px;
@@ -86,7 +88,8 @@ body {
 
 .offset-list li {
     padding: 15px;
-    box-shadow: rgb(0 0 0 / 10%) 0px 1.95px 0px;
+    /*comment remove for li border */
+    /* box-shadow: rgb(0 0 0 / 10%) 0px 1.95px 0px; */
 
 }
 
@@ -118,11 +121,11 @@ body {
     border-bottom: transparent !important;
 }
 
-.accordion-button:focus {
+/* .accordion-button:focus {
 
     border-color: none !important;
     box-shadow: none !important;
-}
+} */
 
 .custom-accordian-button {
     box-shadow: none !important;
@@ -218,7 +221,7 @@ body {
 .main {
     position: absolute;
     max-width: 100%;
-    left: 300px;
+    left: 260px;
     right: 0;
     transition: all 0.5s ease-in-out;
 
@@ -249,7 +252,7 @@ body {
     position: fixed;
     top: 0;
     right: 0;
-    left: 300px;
+    left: 260px;
     padding: 2vh;
     background: var(--primary-white);
     z-index: 1000;
@@ -331,6 +334,8 @@ body {
     height: 100%;
     transition: transform 300ms ease-in-out;
     border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .row1-data-card:hover {
@@ -583,21 +588,9 @@ tr>td {
     color: var(--primary-white);
 }
 
-.table {
-    border-collapse: collapse;
-    background-color: var(--primary-table-bg);
-    border-radius: 10px !important;
-    margin-top: 1rem;
-}
 
 
-table tr:nth-child(even) {
-    background-color: var(--primary-white);
-}
 
-table tr:nth-child(even):hover {
-    background-color: var(--primary-table-bg);
-}
 
 
 .step-form {
@@ -723,22 +716,13 @@ table tr:nth-child(even):hover {
     text-underline-offset: 3px;
 }
 
-tbody,
-td,
-tfoot,
-th,
-thead,
-tr {
-    border-color: #d4d4d4;
-}
+
 
 .left-sidebar-toggle-turn {
     transform: rotate(180deg);
 }
 
-table tbody tr td i {
-    cursor: pointer;
-}
+
 
 input[type="checkbox"] {
     cursor: pointer;
@@ -965,9 +949,7 @@ input:checked+.switch-slider:before {
     border-radius: 50%;
 }
 
-table tbody tr td a {
-    color: #fd0d0d;
-}
+
 
 .modal-loader {
     display: flex;
@@ -1583,3 +1565,89 @@ option:hover,
         flex-direction: column;
     }
 }
+
+/* STYLE FOR SIDEBAR HIDE */
+
+.accordion-button.active::after {
+    width: 0px;
+}
+
+.close-menu.test::after {
+    display: none;
+}
+
+.left-sidebar-logo-side {
+    display: none;
+}
+
+.close-menu-side {
+    display: none;
+}
+
+.left-sidebar-side {
+    width: 75px;
+}
+
+.top-navbar-side {
+    left: 75px;
+}
+
+.main-side{
+    left: 75px;
+}
+
+/* END OF SIDEBAR HIDE STYLE */
+
+
+.course-card {
+    background: #fff;
+    min-height: 50px;
+    position: relative;
+    margin-bottom: 24px;
+    border: 1px solid #f2f4f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #b7c0ce33;
+    -webkit-box-shadow: 0 0 10px 0 rgba(183,192,206,.2);
+}
+
+.course-card .header {
+    position: relative;
+    display: flex;
+    width: 100%;
+    color: #555;
+    padding: 10px 15px;
+    line-height: 30px;
+}
+
+.course-table thead tr th {
+    padding: 0 10px;
+    height: 50px;
+    vertical-align: middle;
+    background-color: #dee2e6;
+    color: #666;
+    font-weight: 500;
+    border: none;
+}
+
+.left-sidebar-mini-logo {
+    display: none;
+}
+
+.left-sidebar-mini-logo-hide {
+    padding: 12px 0 0 7px;
+    display: block;
+}
+
+.dt-button {
+    border-radius: 6px;
+    border: 1px solid lightblue;
+    background: mintcream;
+}
+
+
+table.dataTable thead th, table.dataTable thead td, table.dataTable tfoot th, table.dataTable tfoot td {
+    text-align: center !important;
+}
+
+
+

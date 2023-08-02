@@ -130,73 +130,17 @@ app.use(device.capture());
 
 setRouter(app)
 
-
 const sql = require('mssql')
 const {
     poolConnection
 } = require('./config/db');
 require('dotenv').config();
 
-
-
-// app.use(function (req, res) {
-//     res.status(404).redirect('/user/login')
-// })
-
-
-// app.use((err, req, res, next) => {
-//     console.log('=========================>>>>ERROR MIDDLEWARE<<<<==============================')
-//     let logDir = process.env.LOG_DIR_PATH
-//     let logFile = process.env.LOG_FILE_PATH
-//     let fsErr = '';
-//     let errMsg = err.stack;
-//     let msg = `Opps! Something went wrong.`
-
-//     console.log('Error midleware: ', errMsg)
-
-//     try {
-
-//       if (!existsSync(logDir) && !accessSync(logDir, constants.R_OK | constants.W_OK)) {
-//         mkdirSync(logDir);
-//       }
-//       let currentDate = new Date();
-//       let errStr = `${currentDate}: \n Request URL - ${req.hostname + req.url} \n ${errMsg} \n -------------- \n`
-
-//       appendFile(logFile, errStr, err => {
-//         if (err) throw err;
-//       })
-
-//     } catch (e) {
-//       fsErr += e;
-//       console.log("catched error====>>> ", e)
-//     }
-
-//     console.log('File err===>>> ', fsErr)
-//     console.log("Request type ===============================>>>>>", req.xhr)
-
-//     if (req.xhr) {
-
-//       res.status(500).json({
-//         msg: msg + fsErr
-//       })
-//     } else {
-//       res.status(500).render('message/error', {
-//         msg: msg + fsErr
-//       })
-//     }
-//   })
-
-
-
-
 if (process.env.APP_ENV === 'PRODUCTION' || process.env.APP_ENV === 'DEV') {
     const server = https.createServer(sslOptions, app).listen(process.env.APP_PORT);
-    //socket initialization
-  
 }
 
 else {
     const server = http.createServer(app).listen(process.env.APP_PORT);
-    //socket initialization
  
 }

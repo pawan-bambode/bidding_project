@@ -1,0 +1,95 @@
+<%- include('../partials/head') %>
+<%- include('../partials/leftSidebar.ejs') %>
+<%- include('../partials/header.ejs') %>
+
+<div class="main-content">
+    <div class="col-12">
+        <div class="breadcrumb" style="margin: 10px 0;">
+            <a style="text-decoration: none; color: #007bff; font-weight: bold;" href="javascript:void(0)">Student</a>
+            <i class="fa fa-home" aria-hidden="true" style="margin: 0 5px;"></i>
+            <a href="javascript:void(0)" style="text-decoration: none;">Student</a>
+        </div>
+    </div>
+
+    <div class="card course-card">
+        <div class="header">
+            <h2 style="font-size: 17px !important;">Students Data</h2>
+            <form action="/admin/get_excel_upload_data" method="post" enctype="multipart/form-data" style="position: absolute; right: 5px;">
+                <input type="file" name="excel-file"> 
+                <button type="submit">Upload</button>
+            </form>
+            <!-- <form enctype="multipart/form-data" id="upload-form">
+                <div class="form-group">
+                    <label for="excel-upload" class="btn btn-success" style="position: absolute; right: 5px;"><i class="fa-solid fa-file-excel"></i> Upload</label>
+                    <input type="file" id="excel-upload" style="display:none" accept=".xlsx, .xls, .csv">
+                    <button type="submit" id="submit-btn" style="display: none;"></button>
+                    
+                </div>
+            </form> -->
+            <!-- <a class="btn btn-success" href="javascript:void(0)" style="position: absolute; right: 5px;"> Upload </a>  -->
+        </div>
+        <div class="table-responsive">
+            <table class="table course-table" id="student-info" style="border-collapse: inherit !important;">
+                <thead>
+                  <tr>
+                    <th>Sr No</th>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>City</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                </tbody>
+              </table>
+        </div>
+    </div>
+   
+</div>
+
+<%- include('../partials/footer.ejs') %>
+
+<!-- Script -->
+
+<script>
+    $(document).ready(function() {
+     
+        // Fetch dynamic data from the server
+        $.get('/admin/get_student_data', function(response) {
+           let data = response.aaData;
+            console.log('===>> ', response.aaData)
+            // Populate the DataTable with the fetched data
+            $('#student-info').DataTable({
+            data: data,
+            columns: [
+                { data: 'sr_no' },
+                { data: 'first_name' },
+                { data: 'last_name' },
+                { data: 'email' },
+                { data: 'phone' },
+                { data: 'city' },
+            ],
+            pageLength: 10,
+            dom: 'Bfrtip',
+            buttons: ['csv', 'pdf', 'excel']
+            });
+        });
+
+      
+    
+    })
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../partials/footerEnd.ejs') %>

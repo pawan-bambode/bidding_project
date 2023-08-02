@@ -1,25 +1,22 @@
 // const res = require("express/lib/response");
 
 //LEFT-SIDEBAR-TOGGLE
+
+$('.custom-element').on('click', function(){
+   $(this).toggleClass('active')
+})
+
+
 $('.left-sidebar-toggle').click(function () {
-    console.log('leftsidebar pressed')
-    // let leftbar = $('.left-sidebar');
-    // leftbar.toggleClass('left-300');
-
-    $('.left-sidebar-logo').css('display', 'none');
-    $('.close-menu').css('display', 'none');
-    // $('.accordion-button::after').css('width', '100px');
-    // $('.main').css('width', '100px');
-    // $('.top-navbar').css('width', '100px');
-
+    console.log('check on click')
     
-
-
-    // let main = $('.main')
-    // main.toggleClass('left-0');
-
-    // let nav = $('.top-navbar');
-    // nav.toggleClass('left-0');
+    $('.accordion-button').toggleClass('active')
+    $('.left-sidebar-logo').toggleClass('left-sidebar-logo-side')
+    $('.close-menu').toggleClass('close-menu-side')
+    $('.left-sidebar').toggleClass('left-sidebar-side')
+    $('.top-navbar').toggleClass('top-navbar-side')
+    $('.main').toggleClass('main-side')
+    $('.left-sidebar-mini-logo').toggleClass('left-sidebar-mini-logo-hide')
 
     let btn = $('.left-sidebar-toggle');
     btn.toggleClass('left-sidebar-toggle-turn')
@@ -113,6 +110,20 @@ $('#update_status').on('click', function(){
     }).catch(error => {
         console.log('Error', error)
     })
+})
+
+$('body').on('mouseover', '.left-sidebar-side', function(){
+    $('.accordion-button').toggleClass('active')
+    $('.left-sidebar-logo').toggleClass('left-sidebar-logo-side')
+    $('.close-menu').toggleClass('close-menu-side')
+    $('.left-sidebar').toggleClass('left-sidebar-side')
+    $('.top-navbar').toggleClass('top-navbar-side')
+    $('.main').toggleClass('main-side')
+    $('.left-sidebar-mini-logo').toggleClass('left-sidebar-mini-logo-hide')
+})
+
+$('body').on('mouseout', '.left-sidebar', function(){
+   console.log('when mouse out')
 })
 
 function showSuccess(errors) {

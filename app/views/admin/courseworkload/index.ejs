@@ -1,0 +1,55 @@
+<%- include('../partials/head') %>
+<%- include('../partials/leftSidebar.ejs') %>
+<%- include('../partials/header.ejs') %>
+
+<div class="main-content">
+    <div class="col-12">
+        <div class="breadcrumb" style="margin: 10px 0;">
+            <a style="text-decoration: none; color: #007bff; font-weight: bold;" href="javascript:void(0)">Courseworkload</a>
+            <i class="fa fa-home" aria-hidden="true" style="margin: 0 5px;"></i>
+            <a href="javascript:void(0)" style="text-decoration: none;">Courseworkload</a>
+        </div>
+    </div>
+
+    <div class="card course-card">
+        <div class="header">
+            <h2 style="font-size: 17px !important;">Course Data</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="table course-table" style="border-collapse: inherit !important;">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>First</th>
+                    <th>Last</th>
+                    <th>Handle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Larry</td>
+                    <td>the Bird</td>
+                    <td>@twitter</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+    </div>
+   
+</div>
+
+<%- include('../partials/footer.ejs') %>
+<%- include('../partials/footerEnd.ejs') %>
