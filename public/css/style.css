@@ -248,7 +248,6 @@ body {
 }
 
 .top-navbar {
-
     position: fixed;
     top: 0;
     right: 0;
@@ -1198,74 +1197,6 @@ option:hover,
     color: #fff;
 }
 
-/* .timetable-container{
-    overflow-y: auto;
-  
-} */
-
-.event-info {
-    background-color: #ffdaba !important;
-}
-
-.timetable-simulation tbody tr td:first-child {
-    /* background: #3d1d1e; */
-    background: #006faa;
-    color: #fff;
-}
-
-.timetable-simulation thead {
-    /* background: #3d1d1e; */
-    background: #006faa;
-    color: #fff;
-}
-
-.timetable-simulation {
-    border-collapse: collapse;
-    background-color: #fff;
-    border-radius: 10px !important;
-    margin-top: 1rem;
-}
-
-.timetable-simulation tr:hover {
-
-    background-color: unset !important;
-
-}
-
-.timetable-simulation tr td[data-program-name] {
-    /* background-color:  #f1f1f1; */
-    background-color: #f0efef;
-}
-
-.timetable-simulation tbody tr td:nth-child(1) {
-    pointer-events: none;
-}
-
-.occupied-td {
-    cursor: not-allowed;
-    pointer-events: none;
-    background: repeating-linear-gradient(45deg, var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec), var(--occupied-grad-pri), var(--occupied-grad-sec));
-    color: rgb(255, 255, 255)
-}
-
-.timetable-filter-container {
-    position: sticky;
-    z-index: 1000;
-    top: 76px;
-    left: 0px;
-    right: 0px;
-    border-radius: 0;
-}
-
-.time-sheet-modal .timetable-filter-container {
-    position: sticky;
-    z-index: 1000;
-    top: -1rem;
-    left: 0px;
-    right: 0px;
-    border-radius: 0;
-}
-
 #courseWorkloadTable {
     width: 3000px;
 }
@@ -1617,6 +1548,8 @@ option:hover,
     color: #555;
     padding: 10px 15px;
     line-height: 30px;
+    background: #0B3461;
+    color: #ffffff;
 }
 
 .course-table thead tr th {
@@ -1638,9 +1571,13 @@ option:hover,
     display: block;
 }
 
+.dt-buttons {
+    float: right;
+}
+
 .dt-button {
     border-radius: 6px;
-    border: 1px solid lightblue;
+    border: none;
     background: mintcream;
 }
 
@@ -1649,5 +1586,40 @@ table.dataTable thead th, table.dataTable thead td, table.dataTable tfoot th, ta
     text-align: center !important;
 }
 
+.pdf-btn {
+    border-radius: 5px;
+    /* background: #C3103E; */
+    border: none;
+    color: #ffffff;
+}
+
+.dataTables_filter {
+    text-align: center !important;
+    margin-top: -33px !important;
+    width: 150%;
+}
+
+.dataTables_filter input {
+    width: 150% !important;
+}
+
+.error-container{
+    position:absolute;
+    bottom:0;
+    right:20px;
+}
+
+.modal-close-btn {
+    color: #ffffff;
+    background: #a8b5c3;
+    box-shadow: none;
+    border: none;
+    border-radius: 2px;
+}
+
+.modal-header {
+    background: #0B3461;
+    color: #ffffff;
+}
 
 

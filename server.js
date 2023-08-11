@@ -26,10 +26,6 @@ const {
 } = require('fs');
 
 
-let sslOptions = {
-    pfx: readFileSync(__dirname + `/cert/server.pfx`),
-    passphrase: '1234'
-};
 
 
 //redis

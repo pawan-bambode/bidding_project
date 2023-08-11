@@ -10,26 +10,58 @@
             <a href="javascript:void(0)" style="text-decoration: none;">Student</a>
         </div>
     </div>
-
+    
+    
     <div class="card course-card">
         <div class="header">
             <h2 style="font-size: 17px !important;">Students Data</h2>
-            <form action="/admin/get_excel_upload_data" method="post" enctype="multipart/form-data" style="position: absolute; right: 5px;">
+            <form action="/admin/get_excel_upload_data" id="excel-upload-form" method="post" enctype="multipart/form-data" style="position: absolute; right: 5px;">
                 <input type="file" name="excel-file"> 
-                <button type="submit">Upload</button>
+                <input type="submit" value="Upload"/>
             </form>
-            <!-- <form enctype="multipart/form-data" id="upload-form">
+            <!-- <form action="/admin/get_excel_upload_data" method="post" enctype="multipart/form-data" id="upload-form">
                 <div class="form-group">
                     <label for="excel-upload" class="btn btn-success" style="position: absolute; right: 5px;"><i class="fa-solid fa-file-excel"></i> Upload</label>
-                    <input type="file" id="excel-upload" style="display:none" accept=".xlsx, .xls, .csv">
+                    <input type="file" name="excel-file" id="excel-upload" style="display:none" accept=".xlsx, .xls, .csv">
                     <button type="submit" id="submit-btn" style="display: none;"></button>
                     
                 </div>
             </form> -->
             <!-- <a class="btn btn-success" href="javascript:void(0)" style="position: absolute; right: 5px;"> Upload </a>  -->
         </div>
-        <div class="table-responsive">
-            <table class="table course-table" id="student-info" style="border-collapse: inherit !important;">
+        <div class="table-responsive" style="padding: 14px 7px;">
+
+            <!-- <div class="form-group col-md-3" id="search1">
+                <label for="inputEmail4">Firstname</label>
+            </div>
+            <div class="form-group col-md-3" id="search2">
+                <label for="inputPassword4">Lastname</label>
+            </div> -->
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="">Firstname</label>
+                    <select class="form-control" name="firstname" id="firstname">
+                        <option>Select</option>
+                        <option value="Pritam">Pritam</option>
+                        <option value="Nutan">Nutan</option>
+                        <option value="Pranay">Pranay</option>
+                        <option value="Prashik">Prashik</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="">Lastname</label>
+                    <select class="form-control" name="lastname" id="lastname">
+                        <option>Select</option>
+                        <option value="Bankar">Bankar</option>
+                        <option value="Sharma">Sharma</option>
+                        <option value="Verma">Verma</option>
+                        <option value="Raut">Raut</option>
+                    </select>
+                </div>
+               
+            </div>
+            
+            <table class="table course-table" id="student-info" style="width: 100%;">
                 <thead>
                   <tr>
                     <th>Sr No</th>
@@ -38,6 +70,8 @@
                     <th>Email</th>
                     <th>Phone</th>
                     <th>City</th>
+                    <th></th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -46,8 +80,61 @@
               </table>
         </div>
     </div>
-   
 </div>
+
+<!-- Modal Popup -->
+<div class="modal bd-example-modal-lg" id="edit-student-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Student Details</h5>
+                <button type="button" class="close modal-close-btn" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label for="recipient-name" class="col-form-label">Firstname:</label>
+                            <input type="text" class="form-control" id="first-name">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="recipient-name" class="col-form-label">Lastname:</label>
+                            <input type="text" class="form-control" id="last-name">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label for="recipient-name" class="col-form-label">Email:</label>
+                            <input type="text" class="form-control" id="student-email">
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label for="recipient-name" class="col-form-label">Phone:</label>
+                            <input type="text" class="form-control" id="student-phone">
+                        </div>
+                    </div>
+                    <input type="hidden" name="" id="student-id">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="student-details-update">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal Popup -->
+
+<!-- ERROR ALERT -->
+<div class="error-container">
+    <div class="alert alert-danger alert-dismissible fade test-p" role="alert">
+        Update chages done.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+<!-- END ERROR ALERT -->
 
 <%- include('../partials/footer.ejs') %>
 
@@ -58,29 +145,209 @@
      
         // Fetch dynamic data from the server
         $.get('/admin/get_student_data', function(response) {
-           let data = response.aaData;
-            console.log('===>> ', response.aaData)
+            let data = response.aaData.recordset
+            console.log('===>> ', response.aaData.recordset)
             // Populate the DataTable with the fetched data
             $('#student-info').DataTable({
             data: data,
             columns: [
-                { data: 'sr_no' },
+                { data: 'id' },
                 { data: 'first_name' },
                 { data: 'last_name' },
                 { data: 'email' },
                 { data: 'phone' },
                 { data: 'city' },
+                {
+                    data: null,
+                    className: `dt-center editor-edit`,
+                    defaultContent: '<i class="fa-solid fa-pen-to-square"></i>',
+                    orderable: false
+                },
+                {
+                    data: null,
+                    className: 'dt-center editor-delete',
+                    defaultContent: '<i class="fa-solid fa-trash"></i>',
+                    orderable: false
+                }
             ],
             pageLength: 10,
-            dom: 'Bfrtip',
-            buttons: ['csv', 'pdf', 'excel']
+            dom: 'B<"clear">lfrtip',
+            buttons: [
+                {
+                    extend: 'pdf',
+                    text: "<button class='btn btn-danger btn-sm pdf-btn'><i class='fa-solid fa-file-pdf'></i> Pdf</button>",
+                    exportOptions: {
+                        modifier: {
+                            page: 'all'
+                        }
+                    }
+                },
+                {
+                    extend: 'excel',
+                    text: "<button class='btn btn-success btn-sm pdf-btn'><i class='fa-solid fa-file-excel'></i> Excel</button>",
+                    exportOptions: {
+                        modifier: {
+                            page: 'all'
+                        }
+                    },
+                    filename: function(){
+                        let d = new Date();
+                        let n = d.getTime();
+                        return 'studentInfo' + n;
+                    }
+                },
+
+                {
+                    extend: 'csv',
+                    text: "<button class='btn btn-success btn-sm pdf-btn'><i class='fa-solid fa-file-csv'></i> Csv</button>",
+                    exportOptions: {
+                        modifier: {
+                            page: 'all'
+                        }
+                    }
+                }
+            ],
+            createdRow: function (row, data, indice) {
+                $(row).attr('data-id', data.id)
+                $(row).find("td:eq(6)").attr('data-id', data.id);
+                $(row).find("td:eq(6)").attr('name-id', data.first_name);
+                $(row).find("td:eq(7)").attr('data-delete-id', data.id);
+            },
+            // initComplete: function () {
+            //     var counter = 0;
+            //     this.api().columns( [1,2] ).every( function () {
+            //         var column = this;
+            //         counter++;
+            //         var select = $('<select><option value=""></option></select>')
+            //             .appendTo( $('#search' + counter) )
+            //             .on( 'change', function () {
+            //                 var val = $.fn.dataTable.util.escapeRegex(
+            //                     $(this).val()
+            //                 );
+    
+            //                 column
+            //                     .search( val ? '^'+val+'$' : '', true, false )
+            //                     .draw();
+            //             } );
+    
+            //         column.data().unique().sort().each( function ( d, j ) {
+            //             select.append( '<option value="'+d+'">'+d+'</option>' );
+            //         } );
+            //     } );
+            // }
             });
         });
 
-      
+        $('body').on('click', 'td.editor-edit', function(e) {
+            e.preventDefault();
+            let studentId = $(this).data('id');
+            $.ajax({
+                method:'POST',
+                url: '/admin/student_details_by_id',
+                data: {studentId:studentId},
+                dataType: 'JSON',
+                success: function(response){
+                    let resultData = response.data;
+                    for (let data of resultData) {
+                        $('#first-name').val(data.first_name)
+                        $('#last-name').val(data.last_name)
+                        $('#student-email').val(data.email)
+                        $('#student-phone').val(data.phone)
+                        $('#student-id').val(data.id)
+                    }
+                    $('#edit-student-modal').modal('show');
+
+                }
+            })
+           
+        })
+
+        $('body').on('click', '#student-details-update', function(e) {
+            e.preventDefault();
+            let firstName = $('#first-name').val();
+            let lastName = $('#last-name').val();
+            let studentEmail = $('#student-email').val();
+            let studentPhone = $('#student-phone').val();
+            let studentId = $('#student-id').val();
+            //console.log('9999', studentId)
+            $.ajax({
+                method:'POST',
+                url: '/admin/update_student_details_by_id',
+                data: {
+                    firstName: firstName, 
+                    lastName: lastName,
+                    studentEmail: studentEmail,
+                    studentPhone: studentPhone,
+                    studentId: studentId
+                },
+                dataType: 'JSON',
+                success: function(response){
+                    console.log('=======111', studentId);
+
+                    let tableTr = $('#student-info tbody tr');
+                    tableTr.each(function (index, element) {
+                        console.log('check tr ==>', $(element).data('id'));///data id
+                        if($(element).data('id') == studentId){
+                            //console.log('in if id==>', $(element).data('id'));///data id
+                            $(element).children('td:nth-child(2)').html(`${firstName}`)
+                            $(element).children('td:nth-child(3)').html(`${lastName}`)
+                            $(element).children('td:nth-child(4)').html(`${studentEmail}`)
+                            $(element).children('td:nth-child(5)').html(`${studentPhone}`)
+                        }
+                        
+                        $('#edit-student-modal').modal('hide')
+                        $('.test-p').addClass('show')
+
+                        setTimeout(() => {
+                            $('.test-p').removeClass('show')
+                        }, 2000);
+                    })
+                }
+            })
+           
+        })
+
+        $('body').on('click', 'td.editor-delete', function(e) {
+            e.preventDefault();
+            let dataId = $(this).data('delete-id');
+
+            if(confirm('Are you want to delete data..!') == true){
+                $('#student-info tbody tr').each(function(err, elem) {
+                    console.log('Check when delete', elem);
+                    let trId = $(elem).data('id');
+                
+                    if($(elem).data('id') == dataId){
+                        $(elem).remove()
+                    }
+                })
+            }
+        });
+
+
+        $('body').on('change', '#firstname', function(e) {
+            e.preventDefault();
+
+            let firstName = $(this).val();
+            console.log('FirstName ==', firstName);
+
+            $.ajax({
+                type: 'POST',
+                url: '/admin/student_info_by_firstname',
+                data: {firstName: firstName},
+                dataType: 'JSON',
+                success: function(response) {
+                    console.log('check response ==', response)
+                }
+            })
+        })
+
     
     })
 </script>
+
+
+
+
 
 
 
