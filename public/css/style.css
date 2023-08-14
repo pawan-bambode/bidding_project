@@ -1622,4 +1622,26 @@ table.dataTable thead th, table.dataTable thead td, table.dataTable tfoot th, ta
     color: #ffffff;
 }
 
+/* Added by suraj  */
+.font-size-25{
+    font-size: 15px;
+}
+.custom_list:hover{
+background-color: #f0f3fb;
+border-radius: 15px;
+width: 98%;
+margin: auto;
+}
+.sub-menu{
+ padding: 1px !important;
+}
+.sub-menu li{
+    padding: 3px  !important;
+    background-color: #f8f9fa !important;
+
+}
+.sub-menu li:hover{
+    box-shadow: 2px 2px white;
+}
+
 
