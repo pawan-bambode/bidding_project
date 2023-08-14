@@ -5,7 +5,13 @@ const Students = require('../../../models/Students');
 
 module.exports = {
     getStudentPage: (req, res) => {
-        res.render('admin/students/index.ejs')
+        Promise.all([Students.getStudentName()]).then(result => {
+            //console.log('checking ==', result[0].recordset)
+            res.render('admin/students/index.ejs', {
+                studentNameList: result[0].recordset
+            })
+        })
+        
     },
 
     readExcelFile : (req, res) => {
@@ -28,9 +34,7 @@ module.exports = {
     },
 
     getStudentDetails: (req, res) => {
-        let student_arr = [];
         Students.fetchAllStudentDetails().then(data => {
-            //console.log('check data == ', JSON.stringify(data));
             var output = {
                 'draw' : 1,
                 'iTotalRecords' : 3363,
@@ -75,10 +79,14 @@ module.exports = {
     getStudentInfoByFirstname : (req, res) => {
 
         Students.getDetailsByFirstname(req.body.firstName).then(data => {
-            res.status(200).json({
-                data: data.recordset,
-                message:'success'
-            })
+            var output = {
+                'draw' : 1,
+                'iTotalRecords' : 10,
+                'iTotalDisplayRecords' : 10,
+                'aaData' : data
+            };
+    
+            res.status(200).json(output);
         })
 
     }

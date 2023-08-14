@@ -6,6 +6,12 @@ const pool = require('mssql');
 
 module.exports = class Students {
 
+    static getStudentName() {
+        return poolConnection.then(pool => {
+            return pool.request().query('SELECT DISTINCT first_name FROM [dbo].student_details')
+        })
+    }
+
     static saveStudentDetails(inputJson){
         return poolConnection.then(pool => {
             const request = pool.request();

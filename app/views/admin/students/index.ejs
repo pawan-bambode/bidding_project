@@ -31,24 +31,17 @@
         </div>
         <div class="table-responsive" style="padding: 14px 7px;">
 
-            <!-- <div class="form-group col-md-3" id="search1">
-                <label for="inputEmail4">Firstname</label>
-            </div>
-            <div class="form-group col-md-3" id="search2">
-                <label for="inputPassword4">Lastname</label>
-            </div> -->
             <div class="row">
                 <div class="col-md-3">
                     <label for="">Firstname</label>
                     <select class="form-control" name="firstname" id="firstname">
                         <option>Select</option>
-                        <option value="Pritam">Pritam</option>
-                        <option value="Nutan">Nutan</option>
-                        <option value="Pranay">Pranay</option>
-                        <option value="Prashik">Prashik</option>
+                        <% for(let data of studentNameList) { %>
+                            <option value="<%- data.first_name%>"><%- data.first_name%></option>
+                        <% } %>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3" style="margin-left: 161px; width: 373px;">
                     <label for="">Lastname</label>
                     <select class="form-control" name="lastname" id="lastname">
                         <option>Select</option>
@@ -58,7 +51,14 @@
                         <option value="Raut">Raut</option>
                     </select>
                 </div>
-               
+
+                <div class="col-md-3" style="margin-left: 143px;">
+                    <label for="">Email</label>
+                    <select class="form-control" name="email" id="email">
+                        <option>Select</option>
+                        
+                    </select>
+                </div>
             </div>
             
             <table class="table course-table" id="student-info" style="width: 100%;">
@@ -145,98 +145,26 @@
      
         // Fetch dynamic data from the server
         $.get('/admin/get_student_data', function(response) {
-            let data = response.aaData.recordset
-            console.log('===>> ', response.aaData.recordset)
-            // Populate the DataTable with the fetched data
-            $('#student-info').DataTable({
-            data: data,
-            columns: [
-                { data: 'id' },
-                { data: 'first_name' },
-                { data: 'last_name' },
-                { data: 'email' },
-                { data: 'phone' },
-                { data: 'city' },
-                {
-                    data: null,
-                    className: `dt-center editor-edit`,
-                    defaultContent: '<i class="fa-solid fa-pen-to-square"></i>',
-                    orderable: false
-                },
-                {
-                    data: null,
-                    className: 'dt-center editor-delete',
-                    defaultContent: '<i class="fa-solid fa-trash"></i>',
-                    orderable: false
-                }
-            ],
-            pageLength: 10,
-            dom: 'B<"clear">lfrtip',
-            buttons: [
-                {
-                    extend: 'pdf',
-                    text: "<button class='btn btn-danger btn-sm pdf-btn'><i class='fa-solid fa-file-pdf'></i> Pdf</button>",
-                    exportOptions: {
-                        modifier: {
-                            page: 'all'
-                        }
-                    }
-                },
-                {
-                    extend: 'excel',
-                    text: "<button class='btn btn-success btn-sm pdf-btn'><i class='fa-solid fa-file-excel'></i> Excel</button>",
-                    exportOptions: {
-                        modifier: {
-                            page: 'all'
-                        }
-                    },
-                    filename: function(){
-                        let d = new Date();
-                        let n = d.getTime();
-                        return 'studentInfo' + n;
-                    }
-                },
-
-                {
-                    extend: 'csv',
-                    text: "<button class='btn btn-success btn-sm pdf-btn'><i class='fa-solid fa-file-csv'></i> Csv</button>",
-                    exportOptions: {
-                        modifier: {
-                            page: 'all'
-                        }
-                    }
-                }
-            ],
-            createdRow: function (row, data, indice) {
-                $(row).attr('data-id', data.id)
-                $(row).find("td:eq(6)").attr('data-id', data.id);
-                $(row).find("td:eq(6)").attr('name-id', data.first_name);
-                $(row).find("td:eq(7)").attr('data-delete-id', data.id);
-            },
-            // initComplete: function () {
-            //     var counter = 0;
-            //     this.api().columns( [1,2] ).every( function () {
-            //         var column = this;
-            //         counter++;
-            //         var select = $('<select><option value=""></option></select>')
-            //             .appendTo( $('#search' + counter) )
-            //             .on( 'change', function () {
-            //                 var val = $.fn.dataTable.util.escapeRegex(
-            //                     $(this).val()
-            //                 );
-    
-            //                 column
-            //                     .search( val ? '^'+val+'$' : '', true, false )
-            //                     .draw();
-            //             } );
-    
-            //         column.data().unique().sort().each( function ( d, j ) {
-            //             select.append( '<option value="'+d+'">'+d+'</option>' );
-            //         } );
-            //     } );
-            // }
-            });
+            getDataTable(response)
         });
+
+
+        $('body').on('change', '#firstname', function() {
+            let firstName = $(this).val();
+
+            $.ajax ({
+                method: "POST",
+                url: "/admin/student_info_by_firstname",
+                data: {firstName : firstName},
+                dataType: "JSON",
+                success: function (response) {
+                     $('#student-info').dataTable().fnDestroy();
+                    getDataTable(response)
+                }
+            })
+        })
+
+
 
         $('body').on('click', 'td.editor-edit', function(e) {
             e.preventDefault();
@@ -324,22 +252,80 @@
         });
 
 
-        $('body').on('change', '#firstname', function(e) {
-            e.preventDefault();
+       
 
-            let firstName = $(this).val();
-            console.log('FirstName ==', firstName);
 
-            $.ajax({
-                type: 'POST',
-                url: '/admin/student_info_by_firstname',
-                data: {firstName: firstName},
-                dataType: 'JSON',
-                success: function(response) {
-                    console.log('check response ==', response)
+        function getDataTable(response) {
+            let data = response.aaData.recordset
+            console.log('===>> ', response.aaData.recordset)
+            // Populate the DataTable with the fetched data
+            $('#student-info').DataTable({
+                data: data,
+                columns: [
+                    { data: 'id' },
+                    { data: 'first_name' },
+                    { data: 'last_name' },
+                    { data: 'email' },
+                    { data: 'phone' },
+                    { data: 'city' },
+                    {
+                        data: null,
+                        className: `dt-center editor-edit`,
+                        defaultContent: '<i class="fa-solid fa-pen-to-square"></i>',
+                        orderable: false
+                    },
+                    {
+                        data: null,
+                        className: 'dt-center editor-delete',
+                        defaultContent: '<i class="fa-solid fa-trash"></i>',
+                        orderable: false
+                    }
+                ],
+                pageLength: 10,
+                dom: 'B<"clear">lfrtip',
+                buttons: [
+                    {
+                        extend: 'pdf',
+                        text: "<button class='btn btn-danger btn-sm pdf-btn'><i class='fa-solid fa-file-pdf'></i> Pdf</button>",
+                        exportOptions: {
+                            modifier: {
+                                page: 'all'
+                            }
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        text: "<button class='btn btn-success btn-sm pdf-btn'><i class='fa-solid fa-file-excel'></i> Excel</button>",
+                        exportOptions: {
+                            modifier: {
+                                page: 'all'
+                            }
+                        },
+                        filename: function(){
+                            let d = new Date();
+                            let n = d.getTime();
+                            return 'studentInfo' + n;
+                        }
+                    },
+
+                    {
+                        extend: 'csv',
+                        text: "<button class='btn btn-success btn-sm pdf-btn'><i class='fa-solid fa-file-csv'></i> Csv</button>",
+                        exportOptions: {
+                            modifier: {
+                                page: 'all'
+                            }
+                        }
+                    }
+                ],
+                createdRow: function (row, data, indice) {
+                    $(row).attr('data-id', data.id)
+                    $(row).find("td:eq(6)").attr('data-id', data.id);
+                    $(row).find("td:eq(6)").attr('name-id', data.first_name);
+                    $(row).find("td:eq(7)").attr('data-delete-id', data.id);
                 }
-            })
-        })
+            });
+        }
 
     
     })

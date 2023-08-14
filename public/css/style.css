@@ -178,6 +178,7 @@ body {
         z-index: 10000;
         transition: all 500ms ease-in-out;
     }
+    
 
 }
 
@@ -361,6 +362,10 @@ body {
         color: #fff !important;
     }
 
+    .table-responsive {
+        overflow-x: hidden;
+    }
+
 }
 
 .row2-data-card {
@@ -503,6 +508,9 @@ tr>td {
         padding-top: 6em;
     }
 
+    .table-responsive {
+        overflow-x: auto;
+    }
 
 }
 
@@ -1621,5 +1629,10 @@ table.dataTable thead th, table.dataTable thead td, table.dataTable tfoot th, ta
     background: #0B3461;
     color: #ffffff;
 }
+
+#student-info_wrapper {
+    padding-top: 24px;
+}
+
 
 
