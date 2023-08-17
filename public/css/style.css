@@ -1655,5 +1655,41 @@ margin: auto;
     box-shadow: 2px 2px white;
 }
 
+.student {
+    background-color: orange;
+    color: white;
+}
 
+.label {
+    margin-top: -15px;
+    background-color: white;
+    margin-left: 15px;
+}
+#show_password{
+    font-size: 24px;
+}
+
+.outline-remove:focus{
+    outline: none;
+}
+#remember_check_me{
+    width: 25px;
+    height: 25px;
+}
+#remember_check_me{
+    accent-color: white;
+    color:green;
+}
+#need_a_account{
+    opacity: 0.7;
+}
+
+.img-logo{
+    max-width: 100%;
+    max-width: 100% !important
+}
+.student_image{
+    width: 30px;
+    height: 30px;
+}
 
