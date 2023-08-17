@@ -48,7 +48,7 @@ module.exports = class Students {
 
     static getStudentsData() {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT first_name, last_name, email, phone, city, CONVERT(varchar, date_of_birth, 23) dob, active FROM student_details WHERE active = 0 AND isPasswordGenerate = 0`)
+            return pool.request().query(`SELECT first_name, last_name, email, phone, city, REPLACE(CONVERT(VARCHAR, date_of_birth, 103), '/', '') dob, active FROM student_details WHERE active = 0 AND isPasswordGenerate = 0`)
         })
     }
 

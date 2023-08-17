@@ -150,3 +150,25 @@ function showSuccess(errors) {
     }
     simpleAlert.alert(obj);
 }
+
+
+$(document).ready(function(){
+    $('.toggle-plus-minus').on('click',function(){
+       let parent = $(this).closest('.plus-button');
+        $(this).find('i').toggleClass('fa-plus fa-minus');
+
+        if($(this).find('i').hasClass('fa-minus')){
+            parent.find('.sub-menu').removeClass('d-none');
+        }
+        else{
+            parent.find('.sub-menu').addClass('d-none');
+        }
+       });
+
+     $('.sub-menu-list').on('click',function(){
+        $('.sub-menu').find('.right-arrow').addClass('d-none');
+        $(this).find('.right-arrow').removeClass('d-none');
+        
+     })  
+  })
+  
