@@ -5,10 +5,14 @@
 <div class="main-content">
     <div class="col-12">
         <div class="breadcrumb" style="margin: 10px 0;">
-            <a style="text-decoration: none; color: #007bff; font-weight: bold;" href="javascript:void(0)">Student</a>
+            <!-- <a style="text-decoration: none; color: #007bff; font-weight: bold;" href="javascript:void(0)">Student</a>
             <i class="fa fa-home" aria-hidden="true" style="margin: 0 5px;"></i>
-            <a href="javascript:void(0)" style="text-decoration: none;">Student</a>
+            <a href="javascript:void(0)" style="text-decoration: none;">Student</a> -->
+
+            <button class="btn btn-success" id="genrate-cred">Generate Credentials</button>
         </div>
+
+        
     </div>
     
     
@@ -158,7 +162,7 @@
                 data: {firstName : firstName},
                 dataType: "JSON",
                 success: function (response) {
-                     $('#student-info').dataTable().fnDestroy();
+                    $('#student-info').dataTable().fnDestroy();
                     getDataTable(response)
                 }
             })
@@ -252,7 +256,20 @@
         });
 
 
-       
+        $(document).on('click', '#genrate-cred', function () {
+
+            $.ajax({
+                method: 'POST',
+                url: '/admin/generate-student-credentials',
+                dataType: 'JSON',
+                success:function(data){
+                    console.log('====> ', data.status)
+                    if(data.status === 1){
+                        alert('Student credentials generated successfully.')
+                    }
+                }
+            })
+        })
 
 
         function getDataTable(response) {

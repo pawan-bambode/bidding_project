@@ -9,6 +9,7 @@ router.get('/get_student_data', studentController.getStudentDetails);
 router.post('/student_details_by_id', studentController.getStudentDetailsById)
 router.post('/update_student_details_by_id', studentController.updateStudentDetailsById)
 router.post('/student_info_by_firstname', studentController.getStudentInfoByFirstname)
+router.post('/generate-student-credentials', studentController.generateStudentCredentials)
 
 
 module.exports = router;

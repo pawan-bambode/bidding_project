@@ -46,4 +46,21 @@ module.exports = class Students {
         })
     }
 
+    static getStudentsData() {
+        return poolConnection.then(pool => {
+            return pool.request().query(`SELECT first_name, last_name, email, phone, city, CONVERT(varchar, date_of_birth, 23) dob, active FROM student_details WHERE active = 0 AND isPasswordGenerate = 0`)
+        })
+    }
+
+
+    static createStudentCredentials(inputJson){
+        
+        return poolConnection.then(pool => {
+            const request = pool.request();
+            return request.input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
+                          .output('output_json', sql.NVarChar(sql.MAX))
+                          .execute(`[dbo].[sp_generate_student_credentials]`)
+        })
+    }
+
 }

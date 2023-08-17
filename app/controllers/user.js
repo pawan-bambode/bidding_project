@@ -28,6 +28,8 @@ const {
 } = require('express-validator');
 const hash = require('../utils/hash');
 
+const User = require('../models/User')
+
 let store = new RedisStore({
     client: redisClient,
     ttl: 260
@@ -49,6 +51,10 @@ module.exports = {
 
         try {
 
+            let userData = await User.getUserDetails('pritam@gmail.com');
+
+            console.log('===>>>', userData.recordset[0].username)
+
             if (req.body.username == '') {
                 //return res.status(200).send('Invalid username or password..!');
                 return res.render('login', {
@@ -61,6 +67,9 @@ module.exports = {
                     message: "Invalid username or password"
                 })
             }
+
+            let isVerified = await hash.verifyPassword(req.body.password, userData.recordset[0].password)
+            console.log('check pass verify ', isVerified)
 
            
             req.session.userId = 10;

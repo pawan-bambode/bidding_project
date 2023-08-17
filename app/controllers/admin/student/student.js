@@ -1,6 +1,8 @@
 const fs = require('fs');
 const xlsx = require('xlsx');
 const Students = require('../../../models/Students');
+const hash = require('../../../utils/hash');
+const crypto = require('../../../utils/crypto');
 
 
 module.exports = {
@@ -20,7 +22,7 @@ module.exports = {
         const workbook = xlsx.readFile(filePath);
         const sheetName = workbook.SheetNames[0];
         const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-        //console.log('check excel data--',sheetData);
+        console.log('check excel data --',sheetData);
         let jsonArr = JSON.stringify(sheetData);
         //console.log('Check jsonArr==>', jsonArr);
 
@@ -88,7 +90,27 @@ module.exports = {
     
             res.status(200).json(output);
         })
+    },
 
+    generateStudentCredentials : async (req, res) => {
+       
+        let studentData = await Students.getStudentsData();
+        let jsonArr = [];
+        
+        for(let data of studentData.recordset){
+            jsonArr.push({
+                firstName: data.first_name,
+                lastName: data.last_name,
+                username: data.email,
+                password: await hash.hashPassword(data.dob)
+            })
+        }
+
+        Students.createStudentCredentials(jsonArr).then(data => {
+            res.status(200).json({
+                status: JSON.parse(data.output.output_json).status
+            })
+        })
     }
 
 
