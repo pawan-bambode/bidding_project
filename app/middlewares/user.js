@@ -23,6 +23,7 @@ module.exports = {
                 } else {
                     res.locals.userId = result.userId
                     res.locals.firstName = result.firstName
+                    res.locals.username = result.username
                     next();
                 }
             })

@@ -1,5 +1,7 @@
 // const res = require("express/lib/response");
 
+
+
 //LEFT-SIDEBAR-TOGGLE
 
 $('.custom-element').on('click', function(){
@@ -125,6 +127,78 @@ $('body').on('mouseover', '.left-sidebar-side', function(){
 $('body').on('mouseout', '.left-sidebar', function(){
    console.log('when mouse out')
 })
+
+
+$('body').on('click', '.update-password', function(e) {
+    e.preventDefault();
+
+    console.log('when click ==modal')
+    $('#update-password-modal').modal('show')
+});
+
+
+$('body').on('click', '#check-password-btn', function() {
+
+    let oldPass = $('#student-old-password').val();
+    let userName = $('#student-user-id').val();
+    
+    //if(oldPass.length >= 8) {
+        let apiObj = {
+            type: 'POST',
+            url: '/admin/check-old-password',
+            data: {
+                oldPass: oldPass,
+                userName: userName
+            },
+            dataType: 'JSON'
+        }
+
+        ajaxApi(apiObj).then(result => {
+            if (result.verifiedStatus == true) {
+                $('.confirm-pass').css('display', 'block');
+                $('.new-pass').css('display', 'block');
+                $('#check-password-btn').css('display', 'none');
+                $('#update-password-btn').css('display', 'block');
+
+            }
+        })
+    //}
+})
+
+
+$('body').on('click', '#update-password-btn', function() {
+
+    let userName = $('#student-user-id').val();
+    let newPassword = $('#student-new-password').val();
+    let confirmPassword = $('#student-confirm-password').val();
+
+    if(newPassword === confirmPassword ) {
+        let apiObj = {
+            type: 'POST',
+            url: '/admin/update-student-password',
+            data: {
+                userName: userName,
+                newPassword : newPassword
+            },
+            dataType: 'JSON'
+        }
+    
+        ajaxApi(apiObj).then(result => {
+            if (result.status == 'S'){
+                alert('Password updated successfully ..!');
+                $('#update-password-modal').modal('hide')
+            } else {
+                alert('Something went wrong ..')
+            }
+        })
+    } else {
+        alert('New password and confirm password not matched..');
+        $('#student-new-password').val('');
+        $('#student-confirm-password').val('');
+    }
+
+})
+
 
 function showSuccess(errors) {
     console.log(errors);

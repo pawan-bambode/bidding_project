@@ -10,6 +10,8 @@ router.post('/student_details_by_id', studentController.getStudentDetailsById)
 router.post('/update_student_details_by_id', studentController.updateStudentDetailsById)
 router.post('/student_info_by_firstname', studentController.getStudentInfoByFirstname)
 router.post('/generate-student-credentials', studentController.generateStudentCredentials)
+router.post('/check-old-password', studentController.checkOldPassword)
+router.post('/update-student-password', studentController.updatePassword)
 
 
 module.exports = router;
