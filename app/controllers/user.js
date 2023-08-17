@@ -51,7 +51,7 @@ module.exports = {
 
         try {
 
-            let userData = await User.getUserDetails('rahulb@gmail.com');
+            let userData = await User.getUserDetails(req.body.username);
 
             console.log('===>>>', userData.recordset[0].username)
 
@@ -72,11 +72,11 @@ module.exports = {
             console.log('check pass verify ', isVerified)
 
            
-            req.session.userId = 10;
-            req.session.username = '32200039';
-            req.session.firstName = 'Testing';
-            req.session.lastName = 'Test';
-            req.session.email = 'testing@gmail.com';
+            req.session.userId = userData.recordset[0].id;
+            req.session.username = userData.recordset[0].username;
+            req.session.firstName = userData.recordset[0].firstname;
+            req.session.lastName = userData.recordset[0].lastname;
+            req.session.email = userData.recordset[0].email;
             req.session.subDomain = 'asmsoc-mum';
            
             req.session.permissions = 'admin';
@@ -93,7 +93,7 @@ module.exports = {
                    
             }
 
-            if (req.body.username == 'admin' && req.body.password == '123') {
+            if (req.body.username === userData.recordset[0].username && isVerified == true) {
                 res.redirect('/admin/dashboard');
             } else {
                 res.send('This user has no permissions.');

@@ -22,6 +22,7 @@
                     <ul class="dropdown-menu userprofile-dropdown-menu" aria-labelledby="defaultDropdown">
                         <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog"></i> Settings</a></li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle"></i> Manage account</a></li>
+                        <li class="update-password"><a class="dropdown-item"><i class="fa fa-unlock-alt"></i> Update Password</a></li>
                         <li><a class="dropdown-item" href="/user/logout"><i class="fas fa-sign-out-alt"></i></i> Signout</a></li>
                     </ul>
                 </div>
@@ -80,6 +81,44 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-success" id="update_status">Update Status</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Modal for update password -->
+        <div class="modal fade" id="update-password-modal" tabindex="-1" aria-labelledby="timetable-session-popup-modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Update Password</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="">
+                            <div class="form-group">
+                                <label for="" class="col-form-label">Old Password</label>
+                                <input class="form-control" type="password" name="student-old-password" id="student-old-password">
+                            </div>
+                            
+                            <input type="hidden" name="student-user-id" id="student-user-id" value="<%- locals.username %>">
+
+                            <div class="form-group new-pass" style="display: none;">
+                                <label for="" class="col-form-label">New Password</label>
+                                <input class="form-control" type="password" name="student-new-password" id="student-new-password">
+                            </div>
+
+                            <div class="form-group confirm-pass" style="display: none;">
+                                <label for="" class="col-form-label">Confirm New Password</label>
+                                <input class="form-control" type="password" name="student-confirm-password" id="student-confirm-password">
+                            </div>
+                        </form>
+                       
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" id="check-password-btn">Check</button>
+                        <button type="button" class="btn btn-success" id="update-password-btn" style="display: none;">Update</button>
                     </div>
                 </div>
             </div>

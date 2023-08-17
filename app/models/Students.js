@@ -63,4 +63,10 @@ module.exports = class Students {
         })
     }
 
+    static updatePassword(userName, newPassword) {
+        return poolConnection.then(pool => {
+            return pool.request().query(`UPDATE users SET password = '${newPassword}' WHERE username = '${userName}'`)
+        })
+    }
+
 }
