@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../../public/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+    <div class="container" style="height: 100vh;">
+        <div class="row" style="height: 100vh;">
+            <div class="col-md-6 d-flex justify-content-between align-items-center">
+              <img src="../../image/logo2.png" class="img-logo" style="width: 100%;" height="100%"> 
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex justify-content-between align-items-center" style="height: 100vh;">
+                    <div class="col-md-12 col-sm-12 m-auto p-5">
+                        <div class="d-flex flex-column">
+                            <div class="text-dark">
+                                <h1> Welcome to Smart </h1>
+                            </div>
+                            <div class="text-secondary mb-5">
+                                <h3><span id="need_a_account"> Need an Account ? </span> <span class='text-info'>Sign Up</span></h3>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <button class="btn btn-primary user_type">Admin</button>
+                                </div>
+                                <div>
+                                    <button class="btn student user_type">Student</button>
+                                </div>
+                            </div>
+                            <div class="text-dark">
+                                <h1> Sign in</h1>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <div class="d-flex justify-content-between border rounded mb-3 mt-4 position-relative p-3">
+                                    <label class="label position-absolute top-0"> &nbsp; Username* &nbsp;</label>
+                                    <input type="text" name="username" placeholder="admin@school.org"
+                                        class="border-0 username-input outline-remove" id="username">
+                                    <img src="../../image/student.jpg" class="align-self-center student_image"  alt="user">
+                                </div>
+                                <div
+                                    class="d-flex justify-content-between align-items-center border rounded position-relative p-3 ">
+                                    <label class="label position-absolute top-0">&nbsp;Password* &nbsp;</label>
+                                    <input type="password" name="password" placeholder="enter password"
+                                        class="border-0 username-input outline-remove" id="password" value="">
+                                    <i class="fa fa-eye-slash" id="show_password"></i>
+                                </div>
+                            </div>
+            
+                            <div class="d-flex justify-content-between mt-3">
+                                <div class="d-flex">
+                                    <input type="checkbox" name="remember" id="remember_check_me">
+                                    <h5 class="px-2">Remember me</h5>
+                                </div>
+                                <div>
+                                    <a href="#" class="text-decoration-none">
+                                        <h5>Forgot Password?</h5>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="mt-5">
+                                <button class="btn btn-primary w-100 p-3">Login</button>
+                            </div>
+            
+                        </div>
+                    </div>
+                </div> 
+                
+            </div>
+        </div>
+    </div>
+   
+    <script src="../../public/js/newLogin/newLogin.js"></script>
+</body>
+
+</html>
