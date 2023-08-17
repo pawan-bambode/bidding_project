@@ -51,7 +51,7 @@ module.exports = {
 
         try {
 
-            let userData = await User.getUserDetails('pritam@gmail.com');
+            let userData = await User.getUserDetails('rahulb@gmail.com');
 
             console.log('===>>>', userData.recordset[0].username)
 
