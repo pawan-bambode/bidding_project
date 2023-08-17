@@ -7,7 +7,7 @@ const path = require('path');
 const soap = require('soap');
 
 const setRouter = require("./router")
-
+//test
 const {
     verifySubdomain
 } = require('./app/middlewares/domain')
