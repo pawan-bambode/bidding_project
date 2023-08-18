@@ -131,8 +131,6 @@ $('body').on('mouseout', '.left-sidebar', function(){
 
 $('body').on('click', '.update-password', function(e) {
     e.preventDefault();
-
-    console.log('when click ==modal')
     $('#update-password-modal').modal('show')
 });
 
@@ -159,8 +157,8 @@ $('body').on('click', '#check-password-btn', function() {
                 $('.new-pass').css('display', 'block');
                 $('#check-password-btn').css('display', 'none');
                 $('#update-password-btn').css('display', 'block');
-
-            }
+                //$('.old-pass').css('display', 'none')
+            } 
         })
     //}
 })
@@ -172,7 +170,7 @@ $('body').on('click', '#update-password-btn', function() {
     let newPassword = $('#student-new-password').val();
     let confirmPassword = $('#student-confirm-password').val();
 
-    if(newPassword === confirmPassword ) {
+    if(newPassword === confirmPassword && newPassword != '' && confirmPassword != '') {
         let apiObj = {
             type: 'POST',
             url: '/admin/update-student-password',
@@ -184,9 +182,12 @@ $('body').on('click', '#update-password-btn', function() {
         }
     
         ajaxApi(apiObj).then(result => {
-            if (result.status == 'S'){
+            if (result.status == 'S') {
                 alert('Password updated successfully ..!');
                 $('#update-password-modal').modal('hide')
+                $('#student-new-password').val('');
+                $('#student-confirm-password').val('');
+                //$('.old-pass').css('display', 'none')
             } else {
                 alert('Something went wrong ..')
             }

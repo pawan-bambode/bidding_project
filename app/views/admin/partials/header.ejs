@@ -22,7 +22,7 @@
                     <ul class="dropdown-menu userprofile-dropdown-menu" aria-labelledby="defaultDropdown">
                         <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog"></i> Settings</a></li>
                         <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle"></i> Manage account</a></li>
-                        <li class="update-password"><a class="dropdown-item"><i class="fa fa-unlock-alt"></i> Update Password</a></li>
+                        <li class="update-password"><a href="javascript:void(0)" class="dropdown-item"><i class="fa fa-unlock-alt"></i> Update Password</a></li>
                         <li><a class="dropdown-item" href="/user/logout"><i class="fas fa-sign-out-alt"></i></i> Signout</a></li>
                     </ul>
                 </div>
@@ -88,7 +88,7 @@
 
 
         <!-- Modal for update password -->
-        <div class="modal fade" id="update-password-modal" tabindex="-1" aria-labelledby="timetable-session-popup-modal" aria-hidden="true">
+        <div class="modal fade" id="update-password-modal" tabindex="-1" aria-labelledby="timetable-session-popup-modal" aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -97,7 +97,7 @@
                     </div>
                     <div class="modal-body">
                         <form action="">
-                            <div class="form-group">
+                            <div class="form-group old-pass">
                                 <label for="" class="col-form-label">Old Password</label>
                                 <input class="form-control" type="password" name="student-old-password" id="student-old-password">
                             </div>
