@@ -10,6 +10,8 @@ function AdminRoute(app) {
     const studentInfo = require('../../routers/admin/student');
     const acadsessionInfo = require('../../routers/admin/acad_session')
     const academicYearInfo = require('../../routers/admin/academicYear')
+    
+    
    
     app.use('/admin/', isLoggedIn, checkPermission, adminDashboard);
     app.use('/admin/', courseWorkload);
