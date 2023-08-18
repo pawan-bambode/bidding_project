@@ -1,0 +1,135 @@
+<%- include('../partials/head') %>
+<%- include('../partials/leftSidebar.ejs') %>
+<%- include('../partials/header.ejs') %>
+
+<div class="main-content">
+    <div class="col-12">
+        <div class="breadcrumb" style="margin: 10px 0;">
+            <a style="text-decoration: none; color: #007bff; font-weight: bold;" href="javascript:void(0)">Courseworkload</a>
+            <i class="fa fa-home" aria-hidden="true" style="margin: 0 5px;"></i>
+            <a href="javascript:void(0)" style="text-decoration: none;">Academic Year</a>
+        </div>
+    </div>
+
+    <div class="card course-card">
+        <div class="header d-flex justify-content-between align-items-center">
+            <h2 style="font-size: 17px !important;">Academic Year</h2>
+             <div>
+              <a class="btn btn-primary" data-bs-toggle="modal" href="#set_cycle_modal" role="button" title="Add Trimester">
+                <i class="fas fa-plus"></i>
+              </a>
+             </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table course-table" style="border-collapse: inherit !important;">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>First</th>
+                    <th>Last</th>
+                    <th>Handle</th>
+                    <th>Test1</th>
+                    <th>Test1</th>
+                    <th>Test1</th>
+                    <th>Test1</th>
+                    <th>Test1</th>
+                    <th>Test1</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Larry</td>
+                    <td>the Bird</td>
+                    <td>@twitter</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                    <td>Testing</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+    </div>
+   
+</div>
+
+<%- include('../partials/footer.ejs') %>
+<%- include('../partials/footerEnd.ejs') %>
+
+   <!-- Modal For Set Cycle Information -->
+   <div class="modal" data-bs-backdrop="static" data-bs-keyboard="false" id="set_cycle_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title">Set Cycle Information</h5>
+                <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="my-3">
+                    <label for="product" class="form-label">Product :</label>
+                    <input type="text" class="form-control" id="product" name="product" value="CBS" disabled>
+                </div>
+                <div class="my-3">
+                    <label for="customer" class="form-label">Cusomer :</label>
+                    <input type="text" class="form-control" id="customer" name="customer" value="NMIMS" disabled>
+                </div>
+                <div class="my-3">
+                    <label for="academic_year" class="form-label">Academic Year :</label>
+                    <select class="form-select">
+                        <option value="" selected disabled>--Select Academic Year--</option>
+                        <option value="2021-2022">2021-2022</option>
+                        <opiton value="2022-2023">2022-2023</opiton>
+                        <option value="2023-2024">2023-2024</option>
+                    </select>
+                </div>
+                <div class="my-3">
+                    <label for="bidding_cycle" class="form-label">Bidding Cycle :</label>
+                    <select class="form-select">
+                        <option value="" selected disabled>--Select Bidding Cycle--</option>
+                        <option value="term-3">Term-3</option>
+                        <option value="term-4">Term-4</option>
+                        <option value="term-5">Term-5</option>
+                        <option value="term-6">Term-6</option>
+                        <option value="spring">Spring</option>
+                        <option value="combined">Combined</option>
+                    </select>
+                </div>
+                <div class="my-3">
+                    <label for="ftp_folder_name" class="form-label">FTP Folder Name :</label>
+                    <input type="text" class="form-control" id="ftp_folder_name" name="ftp_folder_name" value="NA">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-white border border-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-success">Save</button>
+            </div>
+        </div>
+    </div>
+  </div>
