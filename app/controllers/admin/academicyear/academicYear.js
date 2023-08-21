@@ -2,7 +2,7 @@ const academicYear = require('../../../models/academicyear');
 module.exports = {
   getAcademicYear: (req, res) => {
     Promise.all([academicYear.getAllAcademicYear()]).then(result =>{
-    res.render('admin/academicYear/index.ejs',{
+     res.render('admin/academicYear/index.ejs',{
       academicYearList:result[0].recordset
     })
   })
