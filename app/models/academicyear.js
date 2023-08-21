@@ -16,4 +16,11 @@ module.exports = class academicYear{
             return request.query(`insert into [dbo].academic_year(product_name,customer_name,academic_year,bidding_cycle,ftp_folder_name) values(@product_name,@customer_name,@academic_year,@bidding_cycle,@ftp_folder_name)`)
         })
     }
+    static getAllAcademicYear(){
+        return poolConnection.then(pool =>{
+            let request = pool.request()
+            let stmt = `SELECT * FROM [dbo].academic_year`;
+            return request.query(stmt);
+        })
+    }
 }

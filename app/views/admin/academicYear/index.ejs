@@ -24,7 +24,7 @@
             <table class="table course-table" style="border-collapse: inherit !important;">
                 <thead>
                   <tr>
-                    <th></th>
+                    <th>#</th>
                     <th>Product Name</th>
                     <th>Customer Name</th>
                     <th>Academic Year</th>
@@ -34,10 +34,16 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                   
-                  </tr>
-                  
+                 <% for(let academicYear of academicYearList ) { %>
+                    <tr>
+                    <td><%-academicYear.id %></td>
+                    <td><%-academicYear.product_name %></td>
+                    <td><%-academicYear.customer_name%></td>
+                    <td><%-academicYear.academic_year %></td>
+                    <td><%-academicYear.bidding_cycle %></td>
+                    <td><%-academicYear.ftp_folder_name %></td>
+                    </tr>
+                    <% } %> 
                 </tbody>
               </table>
         </div>
@@ -65,9 +71,9 @@
                     <label for="academic_year_for_modal" class="form-label">Academic Year :</label>
                     <select id="academic_year_for_modal" class="form-select" >
                         <option value="" selected disabled >--Select Academic Year--</option>
-                        <option value="2021">2021-2022</option>
-                        <option value="2022">2022-2023</opiton>
-                        <option value="2023">2023-2024</option>
+                        <option value="2021-2022">2021-2022</option>
+                        <option value="2022-2023">2022-2023</opiton>
+                        <option value="2023-2024">2023-2024</option>
                     </select>
                 </div>
                 <div class="my-3">
