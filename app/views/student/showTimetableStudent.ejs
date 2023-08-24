@@ -1,0 +1,78 @@
+<%- include('partials/head') %>
+<%- include('partials/leftSidebar.ejs') %>
+<%- include('partials/header.ejs') %>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <style>
+     .timetable-container {
+       width: var(--timetableWidth);
+       background: #e6e6e6;
+       /* border: 2px solid;    */
+       -webkit-touch-callout: none;
+       -webkit-user-select: none;
+       -khtml-user-select: none;
+       -moz-user-select: none;
+       -ms-user-select: none;
+       user-select: none;
+
+       
+   }
+   .room{
+    border: 1px solid black;
+    min-height: 220px;
+    max-height: 220px;
+   }
+   .room-slots{
+    width: var(--roomSlotWidth);
+    min-height: 215px;
+    position: relative;
+    background-size: var(--breakIntervalWidth);
+    background-image: linear-gradient(to right, grey 1px, transparent 1px);
+   }
+   .room-no{   
+    min-width: var(--roomNoWidth);
+    max-width: var(--roomNoWidth);
+    background: #006faa;
+    color: #fff;
+    border-bottom: 1px solid;
+    text-align: center;
+    padding: 99px 0px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+     user-select: none;
+   }
+  </style>
+    <div class="main-content">
+      <div class="table-responsive timetable-container">
+      </div>
+    </div>
+
+   <script>
+    $(document).ready(function(){
+      let minMaxSlotId = JSON.parse(`<%-minMaxSlotId %>`); 
+      let roomslot = '';
+      let roomList = JSON.parse(`<%- roomList %>`);
+      for(let room of roomList){
+       roomslot += `<div class ="d-flex room" data-room-lid = ${room.room_lid} data-room-no = ${room.room_no}>
+                      <div class ="room-no" data-room-lid = ${room.room_lid} data-room-type-lid = ${room.room_lid}> 
+                         ${room.room_lid}
+                      </div>
+                      <div class = "room-slots">
+                      </div>
+                    </div>`               
+      }
+        let timetable_width = (Number(minMaxSlotId[0].end_time_lid) - Number(minMaxSlotId[0].start_time_lid) + 1) *12 ;
+        $('.timetable-container').html(roomslot);
+        $(':root').css('--roomSlotWidth', timetable_width+'px');
+        $(':root').css('--timetableWidth',timetable_width+56+'px');
+    })
+      
+   </script>
+   
+<%- include('partials/footer.ejs') %>
+<%- include('partials/footerEnd.ejs') %>
+
+   
+  <script src="/js/academicyear/academicyear.js"></script>

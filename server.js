@@ -5,6 +5,9 @@ const http = require('http');
 const https = require("https");
 const path = require('path');
 const soap = require('soap');
+const axios = require('axios');
+
+const timetablesocket = require("../17JulyInfra_Project/infra_v2/app/controllers/admin/timeTableSimulation/timetablesocket");
 
 const setRouter = require("./router")
 //test
@@ -137,6 +140,15 @@ if (process.env.APP_ENV === 'PRODUCTION' || process.env.APP_ENV === 'DEV') {
 }
 
 else {
-    const server = http.createServer(app).listen(process.env.APP_PORT);
- 
+      const server = http.createServer(app).listen(process.env.APP_PORT);
+//       const io = require('socket.io-client');
+//       const socket = io('http://asmsoc-mum.localhost:3000');
+     
+//       socket.on('connection', socket => {
+//       console.log('Client connected');
+//       socket.emit('InfraProjectSocket', 'Hello from Project A');
+//       socket.on('disconnect', () => {
+//       console.log('Client disconnected');
+//   });
+// });
 }

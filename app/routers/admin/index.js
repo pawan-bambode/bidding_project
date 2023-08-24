@@ -10,6 +10,7 @@ function AdminRoute(app) {
     const studentInfo = require('../../routers/admin/student');
     const acadsessionInfo = require('../../routers/admin/acad_session')
     const academicYearInfo = require('../../routers/admin/academicYear')
+    const timetableShowToStudent = require('../../routers/student/index')
     
     
    
@@ -18,6 +19,7 @@ function AdminRoute(app) {
     app.use('/admin/', studentInfo);
     app.use('/admin/',acadsessionInfo)
     app.use('/admin/',academicYearInfo)
+    app.use('/student/',timetableShowToStudent)
     
   
 }

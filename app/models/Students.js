@@ -69,4 +69,14 @@ module.exports = class Students {
         })
     }
 
+    static getSlotForShowTimetable(){
+        return poolConnection.then(pool => {
+          return pool.request().query(`SELECT MIN(slot_lid) AS start_time_lid, MAX(slot_lid) AS end_time_lid FROM [dbo].event_bookings`)
+        })
+    }
+    static getDistintRoomList(){
+        return poolConnection.then(pool =>{
+            return pool.request().query(`SELECT DISTINCT room_lid FROM [dbo].event_bookings`)
+        })
+    }
 }
