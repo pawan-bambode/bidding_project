@@ -76,7 +76,12 @@ module.exports = class Students {
     }
     static getDistintRoomList(){
         return poolConnection.then(pool =>{
-            return pool.request().query(`SELECT DISTINCT room_lid FROM [dbo].event_bookings`)
+            return pool.request().query(`SELECT DISTINCT eb.room_lid,r.room_number FROM [dbo].event_bookings eb INNER JOIN [dbo].rooms r ON eb.room_lid = r.room_lid`)
+        })
+    }
+    static getTimeslot(){
+        return poolConnection.then(pool =>{
+            return pool.request().query(`SELECT CONVERT(NVARCHAR,start_time, 0) as start_time,CONVERT(NVARCHAR,end_time, 0)end_time FROM [Infra_bidding_latest].[dbo].slot_interval_timings`)
         })
     }
 }
