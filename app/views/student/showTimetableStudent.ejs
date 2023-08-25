@@ -71,7 +71,57 @@
     </div>
 
    <script>
-  let staticData =   [{
+  let staticData =   [
+    {
+        "acad_session" : "Semester III",
+        "acad_session_lid" : 18,
+        "batch" : 1,
+        "batch_lid" : 130,
+        "break_id" : "null",
+        "course_lid" : 19,
+        "day_lid" : 1,
+        "division" : "A",
+        "division_lid" : "115",
+        "end_slot" : 115,
+        "event_lid" : 5463,
+        "event_type" : "TH",
+        "event_type_lid" : "1",
+        "faculty_count": 1,
+        "faculty_list" : "[{\"faculty_lid\":387,\"faculty_name\":\"Mona Bhalla\",\"abbr\":\"P\"}]",
+        "is_break" : 0,
+        "module_name" : "Indian Economy in Global Scenario",
+        "program_code": "7402",
+        "program_id" : 50783565,
+        "program_lid" : 1,
+        "program_name": "BACHELOR OF BUSINESS ADMINISTRATION-7402",
+        "room_lid": 172,
+        "start_slot" : 104},
+
+        {
+        "acad_session" : "Semester III",
+        "acad_session_lid" : 18,
+        "batch" : 1,
+        "batch_lid" : 30,
+        "break_id" : "null",
+        "course_lid" : 23,
+        "day_lid" : 1,
+        "division" : "A",
+        "division_lid" : "151",
+        "end_slot" : 102,
+        "event_lid" : 5608,
+        "event_type" : "TH",
+        "event_type_lid" : "1",
+        "faculty_count": 1,
+        "faculty_list" : "[{\"faculty_lid\":395,\"faculty_name\":\"Anupamaa Chavan\",\"abbr\":\"P\"}]",
+        "is_break" : 0,
+        "module_name" : "Retail Management",
+        "program_code": "7402",
+        "program_id" : 50783565,
+        "program_lid" : 1,
+        "program_name": "BACHELOR OF BUSINESS ADMINISTRATION-7402",
+        "room_lid": 172,
+        "start_slot" : 91},
+    {
     "room_lid": 194,
     "day_lid": 1,
     "is_break": 0,
@@ -475,7 +525,7 @@
     "room_lid": 172,
     "day_lid": 1,
     "is_break": 0,
-    " break_id": null,
+    "break_id": null,
     "event_lid": 5500,
     "start_slot": 122,
     "end_slot": 133,
@@ -495,6 +545,31 @@
     "event_type": 'TH',
     "faculty_count": 1,
     "faculty_list": '[{"faculty_lid":383,"faculty_name":"Surbhi Gandhi","abbr":"P"}]'
+  },
+  {
+    "room_lid": 172,
+    "day_lid": 1,
+    "is_break": 0,
+    "break_id": null,
+    "event_lid": 5571,
+    "start_slot": 135,
+    "end_slot": 146,
+    "program_lid": 1,
+    "acad_session_lid": 18,
+    "course_lid": 22,
+    "division_lid": 142,
+    "division": 'A',
+    "batch_lid": 27,
+    "batch": 1,
+    "event_type_lid": 1,
+    "program_name": 'BACHELOR OF BUSINESS ADMINISTRATION-7402',
+    "program_id": 50783565,
+    "program_code": '7402',
+    "acad_session": 'Semester III',
+    "module_name": '"Financial Statement Analysis"',
+    "event_type": 'TH',
+    "faculty_count": 1,
+    "faculty_list": '[{\"faculty_lid\":385,\"faculty_name\":\"Hardik Pathak\",\"abbr\":\"P\"}]'
   },
   {
     "room_lid": 198,
@@ -1045,7 +1120,54 @@
     "event_type": 'TH',
     "faculty_count": 1,
     "faculty_list": '[{"faculty_lid":378,"faculty_name":"Simarjeet Makkar","abbr":"P"}]'
-  }
+  },{
+        "acad_session" : "Semester III",
+        "acad_session_lid" : 18,
+        "batch" : 1,
+        "batch_lid" : 60,
+        "break_id" : "null",
+        "course_lid" : 27,
+        "day_lid" : 1,
+        "division" : "A",
+        "division_lid" : "175",
+        "end_slot" : 102,
+        "event_lid" : 964,
+        "event_type" : "TH",
+        "event_type_lid" : "1",
+        "faculty_count": 1,
+        "faculty_list" : '[{"faculty_lid":400,"faculty_name":"Kushagra Goel","abbr":"P"}]',
+        "is_break" : 0,
+        "module_name" : "Financial Statement Analysis and Business Valuation",
+        "program_code": "7405",
+        "program_id" : 50783566,
+        "program_lid" : 2,
+        "program_name": "B.Sc.Finance-7405",
+        "room_lid": 173,
+        "start_slot" : 91},
+        {
+        "acad_session" : "Semester III",
+        "acad_session_lid" : 18,
+        "batch" : 1,
+        "batch_lid" : 69,
+        "break_id" : "null",
+        "course_lid" : 30,
+        "day_lid" : 1,
+        "division" : "A",
+        "division_lid" : "184",
+        "end_slot" : 146,
+        "event_lid" : 1002,
+        "event_type" : "TH",
+        "event_type_lid" : "1",
+        "faculty_count": 1,
+        "faculty_list" : "[{\"faculty_lid\":402,\"faculty_name\":\"Richa Saxena\",\"abbr\":\"P\"}]",
+        "is_break" : 0,
+        "module_name" : "Operations Research",
+        "program_code": "7405",
+        "program_id" : 50783566,
+        "program_lid" : 2,
+        "program_name": "B.Sc.Finance-7405",
+        "room_lid": 173,
+        "start_slot" : 135},
 ]
     $(document).ready(function(){
         
@@ -1076,26 +1198,54 @@
         $(':root').css('--timetableWidth',timetable_width+56+'px');
        
         staticData.forEach(function(indivualdata,index){
-
            let room_slot = document.querySelector(`.room[data-room-lid = "${indivualdata.room_lid}"] .room-slots`);
            const widthl = (indivualdata.end_slot- indivualdata.start_slot + 1) *  timetableProp.pxPerSlot;
            const leftsidemargin = ((indivualdata.start_slot) - Number(minMaxSlotId[0].start_time_lid)) * timetableProp.pxPerSlot;
-           let event = `<div class = "room-slot-item">
-            </div>`
             let roomSlotItem = document.createElement('div');
+            let facultyList = '';
+                    let iLoop = 1;
+                    for(let faculty of JSON.parse(indivualdata.faculty_list)){
+                      
+                        if(iLoop == JSON.parse(indivualdata.faculty_list).length){
+                            facultyList += `${faculty.faculty_name} - (${faculty.abbr})`
+                            roomSlotItem.setAttribute("data-faculty-lid", `${faculty.faculty_lid ? faculty.faculty_lid : ''}`)
+                            roomSlotItem.setAttribute("data-faculty-name", `${faculty.faculty_name ? faculty.faculty_name : ''}`)
+                            roomSlotItem.setAttribute("data-faculty-type", `${faculty.abbr}`)
+                        }
+                        else{
+                            facultyList += `${faculty.faculty_name} || `  
+                        }
+                        iLoop += 1
+                    }
+                  
                         roomSlotItem.setAttribute("class", "room-slot-item")
-                        roomSlotItem.setAttribute("style",
-                            `position:absolute;left: ${leftsidemargin}px ;top: 0; text-align:center; width:${widthl}px;height:100%;background-color:#ffffff;font-size:14px;padding:5px 2px 0px 2px`)
+                        roomSlotItem.setAttribute("style",`position:absolute;left: ${leftsidemargin}px ;top: 0; text-align:center; width:${widthl}px;height:100%;background-color:#ffffff;font-size:14px;padding:5px 2px 0px 2px;border-left:1px solid black;`)
                             roomSlotItem.innerHTML =
                         `${indivualdata.program_name} - ${indivualdata.acad_session} <hr> ${indivualdata.module_name} <hr> (${indivualdata.event_type})<hr> 
-                        <span class="badge bg-info start-time d-flex justify-content-center align-items-center">${timeJson[indivualdata.start_slot].start_time}</span>  
+                          ${facultyList}<hr>
+                        <span class="badge bg-info start-time d-flex justify-content-center align-items-center">${timeJson[indivualdata.start_slot-1].start_time}</span>  
                 <i class="fa-solid fa-arrows-left-right" style="right:${(widthl/2)-7}px;position:absolute;bottom:0;"></i><span class="badge bg-info end-time d-flex justify-content-center align-items-center">
-                    ${timeJson[indivualdata.end_slot].end_time} </span>`;               
+                    ${timeJson[indivualdata.end_slot-1].end_time} </span>`;               
         room_slot.append(roomSlotItem);
         })
-    })
-      
-
+      $('.room-slot-item').click(function(){
+      console.log('click the room_slot-item');
+      let offsetOfLeft1 = $(this).offset().left;
+      let top = $(this).style.left;
+      let bottom = $(this).offset.right;
+      let sameTimeSlotDiv = $(this).parents('.timetable-container').find('.room-slot-item').each(function(index,element){
+        console.log('values of elemenent.style.left',element.style.left);
+        console.log('values of offsetofLeft',offsetOfLeft1);
+       if(element.style.left == offsetOfLeft1-83){
+        console.log('values of elemenent.style.left',element.style.left);
+        console.log('values of offsetofLeft',offsetOfLeft1);
+        element.style.attr('disabled','disabled');
+       }
+      }); 
+      console.log('values of sametimeslotDiv',sameTimeSlotDiv);
+    }) 
+    })  
+    
    </script>
    
 <%- include('partials/footer.ejs') %>
