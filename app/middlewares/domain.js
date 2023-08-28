@@ -23,10 +23,10 @@ module.exports = {
             }
         }
 
-        //console.log("req.url =========>", req.url);
-        if (isUrl) {
+  
+        if (1) {
             let subDomain = req.headers.host.split(".")[0];
-            console.log("subdomain 00=========>", subDomain);
+          
             if (subDomain === 'timetable')
              
                 return next()
