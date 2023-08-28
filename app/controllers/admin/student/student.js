@@ -18,21 +18,43 @@ module.exports = {
     },
 
     readExcelFile : (req, res) => {
-        console.log('While Upload== ', req.file)
-        let filePath = `${req.file.destination}${req.file.filename}`;
-        const workbook = xlsx.readFile(filePath);
-        const sheetName = workbook.SheetNames[0];
-        const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
-        console.log('check excel data --',sheetData);
-        let jsonArr = JSON.stringify(sheetData);
-        //console.log('Check jsonArr==>', jsonArr);
+        console.log('While Upload== ', req.file.buffer)
 
+        const excelFileBuffer = req.file.buffer;
+
+        // Parse the uploaded Excel file
+        const workbook = xlsx.read(excelFileBuffer);
+
+        // Assuming the first sheet is the one you want to read
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+
+        // Convert the sheet data to JSON
+        const jsonData = xlsx.utils.sheet_to_json(sheet);
+        
+        let jsonArr = JSON.stringify(jsonData);
+       
         Students.saveStudentDetails(jsonArr).then(data => {
             // console.log('check response == ', data.output.output_json)
             
             res.redirect('/admin/student')
             
         })
+
+        // let filePath = `${req.file.destination}${req.file.filename}`;
+        // const workbook = xlsx.readFile(filePath);
+        // const sheetName = workbook.SheetNames[0];
+        // const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+        // console.log('check excel data --',sheetData);
+        // let jsonArr = JSON.stringify(sheetData);
+        // //console.log('Check jsonArr==>', jsonArr);
+
+        // Students.saveStudentDetails(jsonArr).then(data => {
+        //     // console.log('check response == ', data.output.output_json)
+            
+        //     res.redirect('/admin/student')
+            
+        // })
        
     },
 

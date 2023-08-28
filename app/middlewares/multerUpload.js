@@ -11,15 +11,20 @@ const excelFilter = (req, file, cb) => {
     }
 };
 
-let storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "uploads/");
-    },
-    filename: (req, file, cb) => {
-        console.log(file.originalname);
-        cb(null, `${Date.now()}-students-${file.originalname}`);
-    },
-});
 
-var uploadFile = multer({ storage: storage, fileFilter: excelFilter });
+// Start -->  If want to store in folder structure then this code will use otherwise comment
+
+// let storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, "uploads/");
+//     },
+//     filename: (req, file, cb) => {
+//         console.log(file.originalname);
+//         cb(null, `${Date.now()}-students-${file.originalname}`);
+//     },
+// });
+
+// End 
+
+var uploadFile = multer({ storage: multer.memoryStorage(), fileFilter: excelFilter });
 module.exports = uploadFile;
