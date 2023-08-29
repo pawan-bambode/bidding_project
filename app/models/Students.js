@@ -84,4 +84,13 @@ module.exports = class Students {
             return pool.request().query(`SELECT CONVERT(NVARCHAR,start_time, 0) as start_time,CONVERT(NVARCHAR,end_time, 0)end_time FROM [Infra_bidding_latest].[dbo].slot_interval_timings`)
         })
     }
+    static subjectAdded(inputJson){
+        return poolConnection.then(pool =>{
+            return pool.request() 
+            .input('input_json', sql.NVarChar(sql.MAX), inputJson)
+            .input('last_modified_by', sql.Int, 15038)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .execute(`[dbo].add_student_subjects`);
+        })
+    }
 }
