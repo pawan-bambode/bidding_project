@@ -1846,7 +1846,7 @@ margin: auto;
   }
 
   .card-header-custom {
-    background-color: #5ca4ea;
+    background-color: #5ca4ea !important;
     border-top-left-radius: 15px !important;
     border-top-right-radius: 15px !important;
     color: #fff;
@@ -1855,8 +1855,12 @@ margin: auto;
   .card-custom {
     border-top-left-radius: 15px !important;
     border-top-right-radius: 15px !important;
+    
   }
-
+  .modal-content{
+    border-top-left-radius: 15px !important;
+    border-top-right-radius: 15px !important;
+  }
   hr {
     margin: 0 !important;
   }

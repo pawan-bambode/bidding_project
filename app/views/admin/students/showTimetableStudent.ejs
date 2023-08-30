@@ -1240,6 +1240,7 @@
               }
            }
          });
+  
          const room_slot_items_for_submit = document.querySelectorAll('.room_slot_selected');
          const update_button_present = document.querySelector('#student_update_button').classList.contains('d-none');
           if(room_slot_items_for_submit.length == 4 && update_button_present){
@@ -1283,14 +1284,17 @@
        const selectedCourse = $('.selected_course');
        subjects.forEach(function(course,index){
        let courseItem = document.createElement('div');
-       courseItem.setAttribute('class','container  mb-3 bg-secondary p-3 text-white');
-       courseItem.innerHTML =  `<div class="d-flex"><div>Faculty Name - &nbsp; ${course.faculty_name}<div><div> Module Name- &nbsp; ${course.module_name}</div>
-       <div> Program Name - ${course.program_name}</div>
+       courseItem.setAttribute('class','container  mb-3 bg-secondary p-3 text-white selected_subejcted_for_sub');
+       courseItem.innerHTML =  `<div class="d-flex justify-content-between">
+        <div>
+        <div>Faculty Name - &nbsp; ${course.faculty_name}</div>
+        <div> Module Name- &nbsp; ${course.module_name}</div>
+        <div> Program Name - ${course.program_name}</div>
+        </div>
+        <div class='d-flex align-items-center'><a class="delete_selected_subject"><i class="fa-solid fa-trash" style='font-size:24px;color:red;'></i></a></div>
        </div>`
        selectedCourse.append(courseItem);
-     
    })
- 
   });
      $('#modal_for_stud_sel_course').on('click','.btn-close',function(){
         $('.selected_course').empty();
@@ -1298,6 +1302,9 @@
      $('#modal_for_stud_sel_course').on('click','#okconfirm',function(){
         $('.selected_course').empty();
      })
+     $('#modal_for_stud_sel_course').on('click','.delete_selected_subject',function(){
+        $(this).parents('.selected_subejcted_for_sub').remove();
+     });
    
   });
 
