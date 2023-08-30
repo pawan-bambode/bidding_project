@@ -90,12 +90,10 @@
                 </h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
               </div>
-              <div class="modal-body d-flex flex-column justify-content-between align-items-center selected_course">
-               
-                <% for(let courseSelected of courseSelectedByStud) { %>
-                 
-                  <div>courseSelected.faculty_name</div>
-                  <% } %>
+              <div class="modal-body d-flex flex-column justify-content-between">
+                <div class='selected_course'>
+
+                </div>
               </div>
               <div class="modal-footer">
                 <button class="btn btn-success" data-bs-dismiss="modal">OK</button>
@@ -1214,7 +1212,7 @@
     let roomslot = '';
     let roomList = JSON.parse(`<%- roomList %>`);
     let timeJson = JSON.parse(`<%- timeSlotList%>`);
-
+    let courseSelected = JSON.parse(`<%- courseSelectedByStud%>`);
 
     let timetableProp = {
       totalSlots: minMaxSlotId[0].end_time_lid - minMaxSlotId[0].start_time_lid + 1,
@@ -1293,7 +1291,16 @@
           }
       });
     });
+   const selectedCourse = $('.selected_course');
+   let div = '';
+   courseSelected.forEach(function(course,index){
+    let courseItem = document.createElement('div');
+     courseItem.setAttribute('class','container  mb-3 bg-secondary p-3');
+     courseItem.innerHTML = `${course.faculty_name}`
+     selectedCourse.append(courseItem);
 });
+   })
+   
 
       </script>
       <%- include('../partials/footerEnd.ejs') %>

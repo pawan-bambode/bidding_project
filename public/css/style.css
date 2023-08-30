@@ -1798,3 +1798,7 @@ margin: auto;
     border-top-left-radius: 15px !important;
     border-top-right-radius: 15px !important;
 }
+.selected_course_student_modal{
+ 
+    background-color: #f8f9fa;
+}
