@@ -88,9 +88,25 @@ module.exports = class Students {
         return poolConnection.then(pool =>{
             return pool.request() 
             .input('input_json', sql.NVarChar(sql.MAX), inputJson)
-            .input('last_modified_by', sql.Int, 15038)
+            .input('last_modified_by', sql.Int, 15048)
             .output('output_json', sql.NVarChar(sql.MAX))
             .execute(`[dbo].add_student_subjects`);
         })
+    }
+    static updateSubject(inputJson){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('input_json', sql.NVarChar(sql.MAX), inputJson)
+            .input('last_modified_by', sql.Int, 15048)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .execute(`[dbo].update_student_subjects`);
+        })
+    }
+    static fetchAllCourseSelByStudent(student_lid){
+        return poolConnection.then(pool =>{
+                return pool.request()
+                .input('student_lid',sql.NVarChar,student_lid)
+                .query(`SELECT * FROM [dbo].subject_selected_by_stud WHERE student_lid = @student_lid AND active = 1`);
+            })
     }
 }

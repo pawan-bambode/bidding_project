@@ -1718,3 +1718,83 @@ margin: auto;
     border-top-right-radius: 15px;
     box-sizing: border-box !important;
 }
+.creatCustom {
+    background: rgb(18, 120, 209);
+    text-align: center;
+    border-radius: 15px;
+    padding: 15px;
+    color: white;
+    border: none;
+}
+
+.dialog {
+    position: fixed;
+    width: 600px;
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000000000;
+    bottom:30px;
+    right: 30px;
+}
+
+.dialogBox {
+    background-color: rgb(18, 120, 209);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    justify-content: space-evenly;
+    padding: 1em;
+    box-shadow: 0 0 5px 5px;
+}
+
+.dialogMessage {
+    color: white;
+    text-align: center;
+
+}
+
+.dialogHeading {
+    color: white;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.okButton {
+    background-color: #00ff00;
+    width: 40%;
+    height: 100%;
+    text-align: center;
+    color: black;
+    border-radius: 15px;
+    padding: 10px;
+    color: white;
+    border: none;
+}
+
+.cancelButton {
+    background-color: #ff0000;
+    width: 40%;
+    height: 100%;
+    color: black;
+    text-align: center;
+    border-radius: 15px;
+    color: white;
+    padding: 10px;
+    border: none;
+}
+
+.modal-header{
+    background-color: #5ca4ea;
+    border-top-left-radius: 15px !important;
+    border-top-right-radius: 15px !important;
+}

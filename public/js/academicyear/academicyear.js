@@ -69,7 +69,6 @@ function createAcademicYearSuccessModal() {
       document.querySelector('body').append(customAlert);
 
       document.querySelector('.okButton').addEventListener('click', function () {
-      console.log('values of button ');
       document.querySelector('.custom-alert').remove();
          success(true);
       })
