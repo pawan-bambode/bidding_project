@@ -200,6 +200,7 @@
         if(confirmValue){
             $('#student_submit_button').addClass('d-none');
             $('#student_update_button').removeClass('d-none');
+            $('#modal_for_stud_sel_course').modal('hide');
         }
     }
      

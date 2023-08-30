@@ -4,75 +4,14 @@
     <link rel="stylesheet" href="/css/simpleAlert.css">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-      <style>
-        .timetable-container {
-          width: var(--timetableWidth);
-          background: #e6e6e6;
-          /* border: 2px solid;    */
-          -webkit-touch-callout: none;
-          -webkit-user-select: none;
-          -khtml-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-
-
-        }
-
-        .room {
-          border: 1px solid black;
-          min-height: 220px;
-          max-height: 220px;
-        }
-
-        .room-slots {
-          width: var(--roomSlotWidth);
-          min-height: 215px;
-          position: relative;
-          background-size: var(--breakIntervalWidth);
-          background-image: linear-gradient(to right, grey 1px, transparent 1px);
-        }
-
-        .room-no {
-          min-width: var(--roomNoWidth);
-          max-width: var(--roomNoWidth);
-          background: #006faa;
-          color: #fff;
-          border-bottom: 1px solid;
-          text-align: center;
-          padding: 99px 0px;
-          -webkit-touch-callout: none;
-          -webkit-user-select: none;
-          -khtml-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
-
-        .card-header-custom {
-          background-color: #5ca4ea;
-          border-top-left-radius: 15px !important;
-          border-top-right-radius: 15px !important;
-          color: #fff;
-        }
-
-        .card-custom {
-          border-top-left-radius: 15px !important;
-          border-top-right-radius: 15px !important;
-        }
-
-        hr {
-          margin: 0 !important;
-        }
-      </style>
-
+      
       <div class="main-content">
         <div class="card card-custom">
           <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
             <h5>TIME TABLE</h5>
             <div>
-              <button class="btn btn-success d-none" id="student_submit_button">Submit</button>
-              <button class="btn btn-secondary d-none" id="student_update_button">Update</button>
+               <button class="btn btn-secondary d-none" id="student_update_button">Update</button>
+               <button class="btn btn-success d-none" id="show_student_readOnly" data-bs-toggle="modal" data-bs-target="#show_student_course_readOnly"  type="button">Previous Entry</button> 
                <button class="btn btn-success" id="show_student_sel_event" data-bs-toggle="modal" data-bs-target="#modal_for_stud_sel_course"  type="button">Show Course Selected</button> 
             </div>  
           </div>
@@ -91,13 +30,30 @@
                 <button class="btn-close" data-bs-dismiss="modal"></button>
               </div>
               <div class="modal-body d-flex flex-column justify-content-between">
-                <div class='selected_course'>
-
-                </div>
+                <div class='selected_course'></div>
               </div>
               <div class="modal-footer">
-                <button class="btn btn-success" data-bs-dismiss="modal">OK</button>
-                <button class="btn btn-info" id="student_update_button">Update</button>
+                <button class="btn btn-success" data-bs-dismiss="modal" id="okconfirm" >OK</button>
+                <button class="btn btn-info" id="student_submit_button">Submit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal" data-bs-backdrop="static" data-bs-keyboard="false" id="show_student_course_readOnly">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">
+                  Selected Coures
+                </h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body d-flex flex-column justify-content-between">
+                <div class='selected_cour_readonly'></div>
+              </div>
+              <div class="modal-footer">
+              <button class="btn btn-success" data-bs-dismiss="modal" >Cancel</button>
               </div>
             </div>
           </div>
@@ -1209,11 +1165,11 @@
   ]
   $(document).ready(function () {
     let minMaxSlotId = JSON.parse(`<%-minMaxSlotId %>`);
-    let roomslot = '';
     let roomList = JSON.parse(`<%- roomList %>`);
     let timeJson = JSON.parse(`<%- timeSlotList%>`);
     let courseSelected = JSON.parse(`<%- courseSelectedByStud%>`);
-
+    let roomslot = '';
+    
     let timetableProp = {
       totalSlots: minMaxSlotId[0].end_time_lid - minMaxSlotId[0].start_time_lid + 1,
       pxPerSlot: 13,
@@ -1291,15 +1247,60 @@
           }
       });
     });
-   const selectedCourse = $('.selected_course');
+   const selectedCourse = $('.selected_cour_readonly');
    let div = '';
+   if(courseSelected.length >0){
+    $('#show_student_readOnly').removeClass('d-none');
+   }
    courseSelected.forEach(function(course,index){
     let courseItem = document.createElement('div');
      courseItem.setAttribute('class','container  mb-3 bg-secondary p-3');
-     courseItem.innerHTML = `${course.faculty_name}`
+     courseItem.innerHTML = `<div class="d-flex text-white rounded"><div>Faculty Name - &nbsp; ${course.faculty_name}<div><div> Module Name- &nbsp; ${course.module_name}</div>
+       <div> Program Name - ${course.program_name}</div>
+       </div>`
      selectedCourse.append(courseItem);
 });
+
+   
+   $('#modal_for_stud_sel_course').on('show.bs.modal', function(event) {
+    let subjects = [];
+    let dataStudentSelected = document.querySelectorAll('.room_slot_selected');
+       dataStudentSelected.forEach(function(eachSubject,index){
+        let faculty_name = eachSubject.getAttribute('data-faculty-name');
+        let module_name  = eachSubject.getAttribute('data-module-name');
+        let program_name = eachSubject.getAttribute('data-program-name');
+        let acad_session = eachSubject.getAttribute('data-acad-session');
+        let lec_type     = eachSubject.getAttribute('data-lec-type');
+         subject = {
+          faculty_name:faculty_name,
+          module_name:module_name,
+          program_name:program_name,
+          acad_session:acad_session,
+          lec_type:lec_type
+        }
+        subjects.push(subject);
+       });
+       const selectedCourse = $('.selected_course');
+       subjects.forEach(function(course,index){
+       let courseItem = document.createElement('div');
+       courseItem.setAttribute('class','container  mb-3 bg-secondary p-3 text-white');
+       courseItem.innerHTML =  `<div class="d-flex"><div>Faculty Name - &nbsp; ${course.faculty_name}<div><div> Module Name- &nbsp; ${course.module_name}</div>
+       <div> Program Name - ${course.program_name}</div>
+       </div>`
+       selectedCourse.append(courseItem);
+     
    })
+ 
+  });
+     $('#modal_for_stud_sel_course').on('click','.btn-close',function(){
+        $('.selected_course').empty();
+     })
+     $('#modal_for_stud_sel_course').on('click','#okconfirm',function(){
+        $('.selected_course').empty();
+     })
+   
+  });
+
    
 
       </script>

@@ -1799,6 +1799,64 @@ margin: auto;
     border-top-right-radius: 15px !important;
 }
 .selected_course_student_modal{
- 
     background-color: #f8f9fa;
 }
+.timetable-container {
+    width: var(--timetableWidth);
+    background: #e6e6e6;
+    /* border: 2px solid;    */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+
+  }
+
+  .room {
+    border: 1px solid black;
+    min-height: 220px;
+    max-height: 220px;
+  }
+
+  .room-slots {
+    width: var(--roomSlotWidth);
+    min-height: 215px;
+    position: relative;
+    background-size: var(--breakIntervalWidth);
+    background-image: linear-gradient(to right, grey 1px, transparent 1px);
+  }
+
+  .room-no {
+    min-width: var(--roomNoWidth);
+    max-width: var(--roomNoWidth);
+    background: #006faa;
+    color: #fff;
+    border-bottom: 1px solid;
+    text-align: center;
+    padding: 99px 0px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .card-header-custom {
+    background-color: #5ca4ea;
+    border-top-left-radius: 15px !important;
+    border-top-right-radius: 15px !important;
+    color: #fff;
+  }
+
+  .card-custom {
+    border-top-left-radius: 15px !important;
+    border-top-right-radius: 15px !important;
+  }
+
+  hr {
+    margin: 0 !important;
+  }

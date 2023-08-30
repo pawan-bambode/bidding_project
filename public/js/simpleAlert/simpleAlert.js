@@ -14,7 +14,7 @@ class SimpleAlert {
         this.removeAlert();
 
         let alertElem = document.createElement('div');
-        alertElem.setAttribute('class', `simple-alert alert ${obj.type}`);
+        alertElem.setAttribute('class', `simple-alert  ${obj.type}`);
         let list = ``;
       
         if(obj.message.length > 0){
