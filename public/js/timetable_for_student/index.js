@@ -105,8 +105,7 @@
             dataType: obj.dataType
         });
     }
-
-     
+ 
     function ConfirmationCustom(message) {
     
         return new Promise((success, failed) => {

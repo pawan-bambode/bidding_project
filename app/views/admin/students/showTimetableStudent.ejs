@@ -1199,164 +1199,163 @@
     },
   ]
   $(document).ready(function () {
-    let minMaxSlotId = JSON.parse(`<%-minMaxSlotId %>`);
-    let roomList = JSON.parse(`<%- roomList %>`);
-    let timeJson = JSON.parse(`<%- timeSlotList%>`);
-    let courseSelected = JSON.parse(`<%- courseSelectedByStud%>`);
-    let roomslot = '';
+      let minMaxSlotId = JSON.parse(`<%-minMaxSlotId %>`);
+      let roomList = JSON.parse(`<%- roomList %>`);
+      let timeJson = JSON.parse(`<%- timeSlotList%>`);
+      let courseSelected = JSON.parse(`<%- courseSelectedByStud%>`);
+      let roomslot = '';
     
-    let timetableProp = {
-      totalSlots: minMaxSlotId[0].end_time_lid - minMaxSlotId[0].start_time_lid + 1,
-      pxPerSlot: 13,
-      roomNoWidth: 50,
-    }
-
-    for (let room of roomList) {
-      roomslot += `<div class ="d-flex room" data-room-lid = "${room.room_lid}" data-room-no ="${room.room_number}" >
-                <div class ="room-no" data-room-lid = "${room.room_lid}" data-room-type-lid = "${room.room_lid}"> 
-                   ${room.room_number}
-                </div>
-                <div class = "room-slots">
-                </div>
-              </div>`
-    }
-    let timetable_width = (Number(minMaxSlotId[0].end_time_lid) - Number(minMaxSlotId[0].start_time_lid) + 1) * timetableProp.pxPerSlot;
-    $('.timetable-container').html(roomslot);
-    $(':root').css('--roomSlotWidth', timetable_width + 'px');
-    $(':root').css('--timetableWidth', timetable_width + 56 + 'px');
-
-    staticData.forEach(function (indivualdata, index) {
-      let room_slot = document.querySelector(`.room[data-room-lid = "${indivualdata.room_lid}"] .room-slots`);
-      const widthl = (indivualdata.end_slot - indivualdata.start_slot + 1) * timetableProp.pxPerSlot;
-      const leftsidemargin = ((indivualdata.start_slot) - Number(minMaxSlotId[0].start_time_lid)) * timetableProp.pxPerSlot;
-      let roomSlotItem = document.createElement('div');
-      let facultyList = '';
-      let iLoop = 1;
-      for (let faculty of JSON.parse(indivualdata.faculty_list)) {
-
-        if (iLoop == JSON.parse(indivualdata.faculty_list).length) {
-          facultyList += `${faculty.faculty_name} - (${faculty.abbr})`
-          roomSlotItem.setAttribute("data-faculty-lid",  `${faculty.faculty_lid ? faculty.faculty_lid : ''}`)
-          roomSlotItem.setAttribute("data-faculty-name", `${faculty.faculty_name ? faculty.faculty_name : ''}`)
-          roomSlotItem.setAttribute("data-faculty-type", `${faculty.abbr}`)
-        }
-        else {
-          facultyList += `${faculty.faculty_name} || `
-        }
-        iLoop += 1
+      let timetableProp = {
+        totalSlots: minMaxSlotId[0].end_time_lid - minMaxSlotId[0].start_time_lid + 1,
+        pxPerSlot: 13,
+        roomNoWidth: 50,
       }
 
-      roomSlotItem.setAttribute("class", "room-slot-item")
-      roomSlotItem.setAttribute("data-faculty-name",`${facultyList}`)
-      roomSlotItem.setAttribute("data-left", `${leftsidemargin}`);
-      roomSlotItem.setAttribute("data-program-name",`${indivualdata.program_name}`)
-      roomSlotItem.setAttribute("data-acad-session",`${indivualdata.acad_session}`)
-      roomSlotItem.setAttribute("data-module-name",`${indivualdata.module_name}`)
-      roomSlotItem.setAttribute("data-lec-type",`${indivualdata.event_type}`)
-      roomSlotItem.setAttribute("data-division",`${indivualdata.division}`)
-      roomSlotItem.setAttribute("data-day",`${indivualdata.day_lid}`)
-      roomSlotItem.setAttribute('data-start-time',`${timeJson[indivualdata.start_slot-1].start_time}`);
-      roomSlotItem.setAttribute('data-end-time',`${timeJson[indivualdata.end_slot-1].end_time}`);
-    
-      roomSlotItem.setAttribute("style", `position:absolute;left: ${leftsidemargin}px ;top: 0; text-align:center; width:${widthl}px;height:100%;background-color:#ffffff;font-size:14px;padding:5px 2px 0px 2px;border-left:1px solid black;`)
-      roomSlotItem.innerHTML =
-        `${indivualdata.program_name} - ${indivualdata.acad_session} <hr> ${indivualdata.module_name} <hr>${indivualdata.division}-${indivualdata.batch} (${indivualdata.event_type})<hr> 
-                    ${facultyList}<hr>
-                  <span class="badge bg-info start-time d-flex justify-content-center align-items-center">${timeJson[indivualdata.start_slot - 1].start_time}</span>  
-          <i class="fa-solid fa-arrows-left-right" style="right:${(widthl / 2) - 7}px;position:absolute;bottom:0;"></i><span class="badge bg-info end-time d-flex justify-content-center align-items-center">
-              ${timeJson[indivualdata.end_slot - 1].end_time} </span>`;
-      room_slot.append(roomSlotItem);
-    })
-   
-    const room_slot_items = document.querySelectorAll('.room-slot-item');
-     room_slot_items.forEach(room_slot_click => {
-      room_slot_click.addEventListener('click', function () {
-        $(this).attr('class','room_slot_selected');
-        room_slot_items.forEach(room_not_click => {
-          if (room_not_click !== room_slot_click && room_not_click.getAttribute('data-left') == Number(room_slot_click.getAttribute('data-left'))) {
-              room_not_click.classList.add('custom_disabled');
-              if(room_not_click.classList.contains('room_slot_selected')){
-                 room_not_click.classList.remove('room_slot_selected');
-              }
-           }
-         });
-  
-         const room_slot_items_for_submit = document.querySelectorAll('.room_slot_selected');
-         const update_button_present = document.querySelector('#student_update_button').classList.contains('d-none');
-          if(room_slot_items_for_submit.length == 4 && update_button_present){
-            $('#student_submit_button').removeClass('d-none');
+      for (let room of roomList) { 
+           roomslot += `<div class ="d-flex room" data-room-lid = "${room.room_lid}" data-room-no ="${room.room_number}">
+                          <div class ="room-no" data-room-lid = "${room.room_lid}" data-room-type-lid = "${room.room_lid}"> 
+                                ${room.room_number}
+                          </div>
+                          <div class = "room-slots">
+                          </div>
+                        </div>`
+        }
+      let timetable_width = (Number(minMaxSlotId[0].end_time_lid) - Number(minMaxSlotId[0].start_time_lid) + 1) * timetableProp.pxPerSlot;
+      $('.timetable-container').html(roomslot);
+      $(':root').css('--roomSlotWidth', timetable_width + 'px');
+      $(':root').css('--timetableWidth', timetable_width + 56 + 'px');
+
+      staticData.forEach(function (indivualdata, index) {
+        let room_slot = document.querySelector(`.room[data-room-lid = "${indivualdata.room_lid}"] .room-slots`);
+        const widthl = (indivualdata.end_slot - indivualdata.start_slot + 1) * timetableProp.pxPerSlot;
+        const leftsidemargin = ((indivualdata.start_slot) - Number(minMaxSlotId[0].start_time_lid)) * timetableProp.pxPerSlot;
+        let roomSlotItem = document.createElement('div');
+        let facultyList = '';
+        let iLoop = 1;
+        for (let faculty of JSON.parse(indivualdata.faculty_list)) {
+
+          if (iLoop == JSON.parse(indivualdata.faculty_list).length) {
+            facultyList += `${faculty.faculty_name} - (${faculty.abbr})`
+            roomSlotItem.setAttribute("data-faculty-lid",  `${faculty.faculty_lid ? faculty.faculty_lid : ''}`)
+            roomSlotItem.setAttribute("data-faculty-name", `${faculty.faculty_name ? faculty.faculty_name : ''}`)
+            roomSlotItem.setAttribute("data-faculty-type", `${faculty.abbr}`)
           }
+          else {
+            facultyList += `${faculty.faculty_name} || `
+          }
+          iLoop += 1
+        }
+
+        roomSlotItem.setAttribute("class", "room-slot-item")
+        roomSlotItem.setAttribute("data-faculty-name",`${facultyList}`)
+        roomSlotItem.setAttribute("data-left", `${leftsidemargin}`);
+        roomSlotItem.setAttribute("data-program-name",`${indivualdata.program_name}`)
+        roomSlotItem.setAttribute("data-acad-session",`${indivualdata.acad_session}`)
+        roomSlotItem.setAttribute("data-module-name",`${indivualdata.module_name}`)
+        roomSlotItem.setAttribute("data-lec-type",`${indivualdata.event_type}`)
+        roomSlotItem.setAttribute("data-division",`${indivualdata.division}`)
+        roomSlotItem.setAttribute("data-day",`${indivualdata.day_lid}`)
+        roomSlotItem.setAttribute('data-start-time',`${timeJson[indivualdata.start_slot-1].start_time}`);
+        roomSlotItem.setAttribute('data-end-time',`${timeJson[indivualdata.end_slot-1].end_time}`);
+      
+        roomSlotItem.setAttribute("style", `position:absolute;left: ${leftsidemargin}px ;top: 0; text-align:center; width:${widthl}px;height:100%;background-color:#ffffff;font-size:14px;padding:5px 2px 0px 2px;border-left:1px solid black;`)
+        roomSlotItem.innerHTML =
+          `${indivualdata.program_name} - ${indivualdata.acad_session} <hr> ${indivualdata.module_name} <hr>${indivualdata.division}-${indivualdata.batch} (${indivualdata.event_type})<hr> 
+                      ${facultyList}<hr>
+                    <span class="badge bg-info start-time d-flex justify-content-center align-items-center">${timeJson[indivualdata.start_slot - 1].start_time}</span>  
+            <i class="fa-solid fa-arrows-left-right" style="right:${(widthl / 2) - 7}px;position:absolute;bottom:0;"></i><span class="badge bg-info end-time d-flex justify-content-center align-items-center">
+                ${timeJson[indivualdata.end_slot - 1].end_time} </span>`;
+        room_slot.append(roomSlotItem);
+     })
+   
+      const room_slot_items = document.querySelectorAll('.room-slot-item');
+      room_slot_items.forEach(room_slot_click => {
+        room_slot_click.addEventListener('click', function () {
+          $(this).attr('class','room_slot_selected');
+          room_slot_items.forEach(room_not_click => {
+            if (room_not_click !== room_slot_click && room_not_click.getAttribute('data-left') == Number(room_slot_click.getAttribute('data-left'))) {
+                room_not_click.classList.add('custom_disabled');
+                if(room_not_click.classList.contains('room_slot_selected')){
+                  room_not_click.classList.remove('room_slot_selected');
+                }
+            }
+          });
+    
+          const room_slot_items_for_submit = document.querySelectorAll('.room_slot_selected');
+          const update_button_present = document.querySelector('#student_update_button').classList.contains('d-none');
+            if(room_slot_items_for_submit.length == 4 && update_button_present){
+              $('#student_submit_button').removeClass('d-none');
+            }
+        });
       });
-    });
-   const selectedCourse = $('.selected_cour_readonly .table tbody');
-   let div = '';
-   if(courseSelected.length >0){
-    $('#show_student_readOnly').removeClass('d-none');
-   }
-   courseSelected.forEach(function(course,index){
-    let student_subject_al_recods = `<tr>
-       <td>${index+1}</td>
-       <td>${course.programName}</td>
-       <td>${course.moduleName}</td>
-       <td>${course.room}</td>
-       <td>${course.division}</td>
-       <td>${course.facultyName}</td>
-       <td>${course.dayNameSelected}</td>
-       <td>${course.startTime}</td>
-       <td>${course.endTime}</td>
-      </tr>`;
-     selectedCourse.append(student_subject_al_recods);
-});
+      const selectedCourse = $('.selected_cour_readonly .table tbody');
+      if(courseSelected.length >0){
+        $('#show_student_readOnly').removeClass('d-none');
+    }
+      courseSelected.forEach(function(course,index){
+        let student_subject_al_recods = `<tr>
+          <td>${index+1}</td>
+          <td>${course.programName}</td>
+          <td>${course.moduleName}</td>
+          <td>${course.room}</td>
+          <td>${course.division}</td>
+          <td>${course.facultyName}</td>
+          <td>${course.dayNameSelected}</td>
+          <td>${course.startTime}</td>
+          <td>${course.endTime}</td>
+          </tr>`;
+        selectedCourse.append(student_subject_al_recods);
+     });
 
    
-   $('#modal_for_stud_sel_course').on('show.bs.modal', function(event) {
-     let subjects = [];
-     let dataStudentSelected = document.querySelectorAll('.room_slot_selected');
-     let days = ['Monday','Tuesday','Wednesday','Thirsday','Friday','Saturday','Sunday'];
-       dataStudentSelected.forEach(function(eachSubject,index){
-        let faculty_name = eachSubject.getAttribute('data-faculty-name');
-        let module_name  = eachSubject.getAttribute('data-module-name');
-        let program_name = eachSubject.getAttribute('data-program-name');
-        let acad_session = eachSubject.getAttribute('data-acad-session');
-        let lec_type     = eachSubject.getAttribute('data-lec-type');
-        let division     = eachSubject.getAttribute('data-division');
-        let day_lid      = eachSubject.getAttribute('data-day');
-        let room_no      = eachSubject.closest('.room').getAttribute('data-room-no')    
-        let start_time   = eachSubject.getAttribute('data-start-time');   
-        let end_time     = eachSubject.getAttribute('data-end-time');
-         subject = {
-          faculty_name:faculty_name,
-          module_name:module_name,
-          program_name:program_name,
-          acad_session:acad_session,
-          lec_type:lec_type,
-          division:division,
-          day:days[day_lid-1],
-          room:room_no,
-          start:start_time,
-          end:end_time
-        }
-        subjects.push(subject);
-       });
-     
-       const selectedCourse = $('.selected_course #selected_course_table_data tbody');
-       subjects.forEach(function(course,index){
-       let courseSelectedRecord = 
-         `<tr data-program-name = "${course.program_name}" data-module-name = "${course.module_name}" data-room-no = "${course.room}" data-division ="${course.division}" data-faculty-name = "${course.faculty_name}" data-day_id = "${course.day}" data-start-id = "${course.start}" data-end-id="${course.end}" data-acad-session = "${course.acad_session}" data-lec-type = "${course.lec_type}">
-           <td>${index+1}</td>
-           <td>${course.program_name}</td>
-           <td>${course.module_name}</td>
-           <td>${course.room}</td>
-           <td>${course.division}</td>
-           <td>${course.faculty_name}</td>
-           <td>${course.day}</td>
-           <td>${course.start}</td>
-           <td>${course.end}</td>
-           <td><i class = 'fa-solid fa-trash delete_selected_subject'></td> 
-         </tr>`;
-         selectedCourse.append(courseSelectedRecord);
-   })
-  });
+      $('#modal_for_stud_sel_course').on('show.bs.modal', function(event) {
+        let subjects = [];
+        let dataStudentSelected = document.querySelectorAll('.room_slot_selected');
+        let days = ['Monday','Tuesday','Wednesday','Thirsday','Friday','Saturday','Sunday'];
+          dataStudentSelected.forEach(function(eachSubject,index){
+            let faculty_name = eachSubject.getAttribute('data-faculty-name');
+            let module_name  = eachSubject.getAttribute('data-module-name');
+            let program_name = eachSubject.getAttribute('data-program-name');
+            let acad_session = eachSubject.getAttribute('data-acad-session');
+            let lec_type     = eachSubject.getAttribute('data-lec-type');
+            let division     = eachSubject.getAttribute('data-division');
+            let day_lid      = eachSubject.getAttribute('data-day');
+            let room_no      = eachSubject.closest('.room').getAttribute('data-room-no')    
+            let start_time   = eachSubject.getAttribute('data-start-time');   
+            let end_time     = eachSubject.getAttribute('data-end-time');
+            subject = {
+              faculty_name:faculty_name,
+              module_name:module_name,
+              program_name:program_name,
+              acad_session:acad_session,
+              lec_type:lec_type,
+              division:division,
+              day:days[day_lid-1],
+              room:room_no,
+              start:start_time,
+              end:end_time
+            }
+            subjects.push(subject);
+          });
+        
+          const selectedCourse = $('.selected_course #selected_course_table_data tbody');
+          subjects.forEach(function(course,index){
+          let courseSelectedRecord = 
+            `<tr data-program-name = "${course.program_name}" data-module-name = "${course.module_name}" data-room-no = "${course.room}" data-division ="${course.division}" data-faculty-name = "${course.faculty_name}" data-day = "${course.day}" data-start-id = "${course.start}" data-end-id="${course.end}" data-acad-session = "${course.acad_session}" data-lec-type = "${course.lec_type}">
+              <td>${index+1}</td>
+              <td>${course.program_name}</td>
+              <td>${course.module_name}</td>
+              <td>${course.room}</td>
+              <td>${course.division}</td>
+              <td>${course.faculty_name}</td>
+              <td>${course.day}</td>
+              <td>${course.start}</td>
+              <td>${course.end}</td>
+              <td><i class = 'fa-solid fa-trash delete_selected_subject'></td> 
+            </tr>`;
+            selectedCourse.append(courseSelectedRecord);
+            })
+      });
      $('#modal_for_stud_sel_course').on('click','.btn-close',function(){
         $('.selected_course .table tbody').empty();
      })
@@ -1367,9 +1366,7 @@
         $(this).parents('tr').remove();
      });
    
-  });
-
-   
+});
 
       </script>
       <%- include('../partials/footerEnd.ejs') %>
