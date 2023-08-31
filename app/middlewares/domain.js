@@ -24,7 +24,7 @@ module.exports = {
         }
 
   
-        if (1) {
+        if (isUrl) {
             let subDomain = req.headers.host.split(".")[0];
           
             if (subDomain === 'timetable')

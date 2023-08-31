@@ -10,7 +10,6 @@
           <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
             <h5>TIME TABLE</h5>
             <div>
-               <button class="btn btn-secondary d-none" id="student_update_button">Update</button>
                <button class="btn btn-success d-none" id="show_student_readOnly" data-bs-toggle="modal" data-bs-target="#show_student_course_readOnly"  type="button">Previous Entry</button> 
                <button class="btn btn-success" id="show_student_sel_event" data-bs-toggle="modal" data-bs-target="#modal_for_stud_sel_course"  type="button">Show Course Selected</button> 
             </div>  
@@ -21,7 +20,7 @@
           </div>
         </div>
         <div class="modal" data-bs-backdrop="static" data-bs-keyboard="false" id="modal_for_stud_sel_course">
-          <div class="modal-dialog">
+          <div class="modal-dialog modal-xl">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title">
@@ -30,18 +29,37 @@
                 <button class="btn-close" data-bs-dismiss="modal"></button>
               </div>
               <div class="modal-body d-flex flex-column justify-content-between">
-                <div class='selected_course'></div>
+                <div class='selected_course table-responsive'>
+                   <table class="table table-bordered custom_table table-hover" id="selected_course_table_data">
+                    <thead>
+                      <tr>
+                          <th>#</th>
+                          <th>Program</th>
+                          <th>Module</th>
+                          <th>Room</th>
+                          <th>Division</th>
+                          <th>Faculty</th>
+                          <th>Day</th>
+                          <th>Start Time</th>
+                          <th>End Time</th>
+                          <th>Action</th>
+                      </tr> 
+                    </thead>  
+                    <tbody></tbody>
+                   </table>
+                </div>
               </div>
               <div class="modal-footer">
                 <button class="btn btn-success" data-bs-dismiss="modal" id="okconfirm" >OK</button>
                 <button class="btn btn-info" id="student_submit_button">Submit</button>
+                <button class="btn btn-secondary d-none" id="student_update_button">Update</button>
               </div>
             </div>
           </div>
         </div>
         
         <div class="modal" data-bs-backdrop="static" data-bs-keyboard="false" id="show_student_course_readOnly">
-          <div class="modal-dialog">
+          <div class="modal-dialog modal-xl">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title">
@@ -50,7 +68,24 @@
                 <button class="btn-close" data-bs-dismiss="modal"></button>
               </div>
               <div class="modal-body d-flex flex-column justify-content-between">
-                <div class='selected_cour_readonly'></div>
+                <div class='selected_cour_readonly table-responsive'>
+                  <table class="table table-bordered custom_table table-hover" id="selected_course_table_data">
+                    <thead>
+                      <tr>
+                          <th>#</th>
+                          <th>Program</th>
+                          <th>Module</th>
+                          <th>Room</th>
+                          <th>Division</th>
+                          <th>Faculty</th>
+                          <th>Day</th>
+                          <th>Start Time</th>
+                          <th>End Time</th>
+                      </tr> 
+                    </thead>  
+                    <tbody></tbody>
+                   </table>
+                </div>
               </div>
               <div class="modal-footer">
               <button class="btn btn-success" data-bs-dismiss="modal" >Cancel</button>
@@ -558,7 +593,7 @@
       "program_id": 50783565,
       "program_code": '7402',
       "acad_session": 'Semester III',
-      "module_name": '"Financial Statement Analysis"',
+      "module_name": 'Financial Statement Analysis',
       "event_type": 'TH',
       "faculty_count": 1,
       "faculty_list": '[{\"faculty_lid\":385,\"faculty_name\":\"Hardik Pathak\",\"abbr\":\"P\"}]'
@@ -1177,8 +1212,8 @@
     }
 
     for (let room of roomList) {
-      roomslot += `<div class ="d-flex room" data-room-lid = ${room.room_lid} data-room-no = ${room.room_no}>
-                <div class ="room-no" data-room-lid = ${room.room_lid} data-room-type-lid = ${room.room_lid}> 
+      roomslot += `<div class ="d-flex room" data-room-lid = "${room.room_lid}" data-room-no ="${room.room_number}" >
+                <div class ="room-no" data-room-lid = "${room.room_lid}" data-room-type-lid = "${room.room_lid}"> 
                    ${room.room_number}
                 </div>
                 <div class = "room-slots">
@@ -1201,7 +1236,7 @@
 
         if (iLoop == JSON.parse(indivualdata.faculty_list).length) {
           facultyList += `${faculty.faculty_name} - (${faculty.abbr})`
-          roomSlotItem.setAttribute("data-faculty-lid", `${faculty.faculty_lid ? faculty.faculty_lid : ''}`)
+          roomSlotItem.setAttribute("data-faculty-lid",  `${faculty.faculty_lid ? faculty.faculty_lid : ''}`)
           roomSlotItem.setAttribute("data-faculty-name", `${faculty.faculty_name ? faculty.faculty_name : ''}`)
           roomSlotItem.setAttribute("data-faculty-type", `${faculty.abbr}`)
         }
@@ -1218,9 +1253,14 @@
       roomSlotItem.setAttribute("data-acad-session",`${indivualdata.acad_session}`)
       roomSlotItem.setAttribute("data-module-name",`${indivualdata.module_name}`)
       roomSlotItem.setAttribute("data-lec-type",`${indivualdata.event_type}`)
+      roomSlotItem.setAttribute("data-division",`${indivualdata.division}`)
+      roomSlotItem.setAttribute("data-day",`${indivualdata.day_lid}`)
+      roomSlotItem.setAttribute('data-start-time',`${timeJson[indivualdata.start_slot-1].start_time}`);
+      roomSlotItem.setAttribute('data-end-time',`${timeJson[indivualdata.end_slot-1].end_time}`);
+    
       roomSlotItem.setAttribute("style", `position:absolute;left: ${leftsidemargin}px ;top: 0; text-align:center; width:${widthl}px;height:100%;background-color:#ffffff;font-size:14px;padding:5px 2px 0px 2px;border-left:1px solid black;`)
       roomSlotItem.innerHTML =
-        `${indivualdata.program_name} - ${indivualdata.acad_session} <hr> ${indivualdata.module_name} <hr> (${indivualdata.event_type})<hr> 
+        `${indivualdata.program_name} - ${indivualdata.acad_session} <hr> ${indivualdata.module_name} <hr>${indivualdata.division}-${indivualdata.batch} (${indivualdata.event_type})<hr> 
                     ${facultyList}<hr>
                   <span class="badge bg-info start-time d-flex justify-content-center align-items-center">${timeJson[indivualdata.start_slot - 1].start_time}</span>  
           <i class="fa-solid fa-arrows-left-right" style="right:${(widthl / 2) - 7}px;position:absolute;bottom:0;"></i><span class="badge bg-info end-time d-flex justify-content-center align-items-center">
@@ -1248,62 +1288,83 @@
           }
       });
     });
-   const selectedCourse = $('.selected_cour_readonly');
+   const selectedCourse = $('.selected_cour_readonly .table tbody');
    let div = '';
    if(courseSelected.length >0){
     $('#show_student_readOnly').removeClass('d-none');
    }
    courseSelected.forEach(function(course,index){
-    let courseItem = document.createElement('div');
-     courseItem.setAttribute('class','container  mb-3 bg-secondary p-3');
-     courseItem.innerHTML = `<div class="d-flex text-white rounded"><div>Faculty Name - &nbsp; ${course.faculty_name}<div><div> Module Name- &nbsp; ${course.module_name}</div>
-       <div> Program Name - ${course.program_name}</div>
-       </div>`
-     selectedCourse.append(courseItem);
+    let student_subject_al_recods = `<tr>
+       <td>${index+1}</td>
+       <td>${course.programName}</td>
+       <td>${course.moduleName}</td>
+       <td>${course.room}</td>
+       <td>${course.division}</td>
+       <td>${course.facultyName}</td>
+       <td>${course.dayNameSelected}</td>
+       <td>${course.startTime}</td>
+       <td>${course.endTime}</td>
+      </tr>`;
+     selectedCourse.append(student_subject_al_recods);
 });
 
    
    $('#modal_for_stud_sel_course').on('show.bs.modal', function(event) {
-    let subjects = [];
-    let dataStudentSelected = document.querySelectorAll('.room_slot_selected');
+     let subjects = [];
+     let dataStudentSelected = document.querySelectorAll('.room_slot_selected');
+     let days = ['Monday','Tuesday','Wednesday','Thirsday','Friday','Saturday','Sunday'];
        dataStudentSelected.forEach(function(eachSubject,index){
         let faculty_name = eachSubject.getAttribute('data-faculty-name');
         let module_name  = eachSubject.getAttribute('data-module-name');
         let program_name = eachSubject.getAttribute('data-program-name');
         let acad_session = eachSubject.getAttribute('data-acad-session');
         let lec_type     = eachSubject.getAttribute('data-lec-type');
+        let division     = eachSubject.getAttribute('data-division');
+        let day_lid      = eachSubject.getAttribute('data-day');
+        let room_no      = eachSubject.closest('.room').getAttribute('data-room-no')    
+        let start_time   = eachSubject.getAttribute('data-start-time');   
+        let end_time     = eachSubject.getAttribute('data-end-time');
          subject = {
           faculty_name:faculty_name,
           module_name:module_name,
           program_name:program_name,
           acad_session:acad_session,
-          lec_type:lec_type
+          lec_type:lec_type,
+          division:division,
+          day:days[day_lid-1],
+          room:room_no,
+          start:start_time,
+          end:end_time
         }
         subjects.push(subject);
        });
-       const selectedCourse = $('.selected_course');
+     
+       const selectedCourse = $('.selected_course #selected_course_table_data tbody');
        subjects.forEach(function(course,index){
-       let courseItem = document.createElement('div');
-       courseItem.setAttribute('class','container  mb-3 bg-secondary p-3 text-white selected_subejcted_for_sub');
-       courseItem.innerHTML =  `<div class="d-flex justify-content-between">
-        <div>
-        <div>Faculty Name - &nbsp; ${course.faculty_name}</div>
-        <div> Module Name- &nbsp; ${course.module_name}</div>
-        <div> Program Name - ${course.program_name}</div>
-        </div>
-        <div class='d-flex align-items-center'><a class="delete_selected_subject"><i class="fa-solid fa-trash" style='font-size:24px;color:red;'></i></a></div>
-       </div>`
-       selectedCourse.append(courseItem);
+       let courseSelectedRecord = 
+         `<tr data-program-name = "${course.program_name}" data-module-name = "${course.module_name}" data-room-no = "${course.room}" data-division ="${course.division}" data-faculty-name = "${course.faculty_name}" data-day_id = "${course.day}" data-start-id = "${course.start}" data-end-id="${course.end}" data-acad-session = "${course.acad_session}" data-lec-type = "${course.lec_type}">
+           <td>${index+1}</td>
+           <td>${course.program_name}</td>
+           <td>${course.module_name}</td>
+           <td>${course.room}</td>
+           <td>${course.division}</td>
+           <td>${course.faculty_name}</td>
+           <td>${course.day}</td>
+           <td>${course.start}</td>
+           <td>${course.end}</td>
+           <td><i class = 'fa-solid fa-trash delete_selected_subject'></td> 
+         </tr>`;
+         selectedCourse.append(courseSelectedRecord);
    })
   });
      $('#modal_for_stud_sel_course').on('click','.btn-close',function(){
-        $('.selected_course').empty();
+        $('.selected_course .table tbody').empty();
      })
      $('#modal_for_stud_sel_course').on('click','#okconfirm',function(){
-        $('.selected_course').empty();
+        $('.selected_course .table tbody').empty();
      })
      $('#modal_for_stud_sel_course').on('click','.delete_selected_subject',function(){
-        $(this).parents('.selected_subejcted_for_sub').remove();
+        $(this).parents('tr').remove();
      });
    
   });

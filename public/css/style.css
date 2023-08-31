@@ -1864,3 +1864,10 @@ margin: auto;
   hr {
     margin: 0 !important;
   }
+  .custom_table tr:nth-child(odd){
+    background-color:var(--primary-table-bg);
+  }
+  .table thead tr{
+    vertical-align: middle;
+  }
+  

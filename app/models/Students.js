@@ -105,8 +105,8 @@ module.exports = class Students {
     static fetchAllCourseSelByStudent(student_lid){
         return poolConnection.then(pool =>{
                 return pool.request()
-                .input('student_lid',sql.NVarChar,student_lid)
-                .query(`SELECT * FROM [dbo].subject_selected_by_stud WHERE student_lid = @student_lid AND active = 1`);
+                .input('student_id',sql.NVarChar,student_lid)
+                .query(`SELECT * FROM [dbo].subject_selected_by_stud WHERE student_id = @student_id AND active = 1`);
             })
     }
 }
