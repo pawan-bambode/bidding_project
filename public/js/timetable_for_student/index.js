@@ -17,7 +17,7 @@
     })
 
     $('#student_update_button').on('click',function(){
-       let subjects = updateOrSaveStudentSubject('#modal_for_stud_sel_course .modal-body .selected_course tbody tr')
+       let subjects = updateOrSaveStudentSubject('#modal_for_stud_sel_course .modal-body .selected_course tbody')
            let ApiObj = {
             url: '/student/updateSubject',
             type: 'POST',
@@ -182,7 +182,7 @@
           let room         = eachSubject.getAttribute('data-room-no');
           let division     = eachSubject.getAttribute('data-division');
           let faculty_name = eachSubject.getAttribute('data-faculty-name');
-          let day          = eachSubject.getAttribute('data-day_id');
+          let day          = eachSubject.getAttribute('data-day');
           let start_time   = eachSubject.getAttribute('data-start-id');
           let end_time     = eachSubject.getAttribute('data-end-id');  
           let acad_session = eachSubject.getAttribute('data-acad-session');

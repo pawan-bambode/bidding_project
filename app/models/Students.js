@@ -109,4 +109,11 @@ module.exports = class Students {
                 .query(`SELECT * FROM [dbo].subject_selected_by_stud WHERE student_id = @student_id AND active = 1`);
             })
     }
+    static getTimetableByDayId(day_lid){
+        return poolConnection.then(pool =>{
+            return pool.request().
+            input('day_lid',sql.Int,day_lid)
+            .query(`SELECT * FROM [dbo].timetableSubject_testing where day_lid = @day_lid`);     
+        })
+    }
 }

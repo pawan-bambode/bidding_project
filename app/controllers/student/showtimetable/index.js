@@ -1,3 +1,4 @@
+const { Result } = require('express-validator');
 const student = require('../../../models/Students');
 const studentUtil = require('../../../utils/timetableforstudent');
 
@@ -10,6 +11,19 @@ module.exports = {
         timeSlotList: JSON.stringify(result[2].recordset),
         courseSelectedByStud :JSON.stringify(result[3].recordset)
       })
+    })
+  },
+  getByDay: (req, res) => {
+    Promise.all([student.getTimetableByDayId(req.body.daylid)]).then(result => {
+        console.log('req.body:::::::::::::',result)
+      res.json({
+        status: "200",
+        message: "Sucessfull",
+        timetablelist: result[0].recordset,
+      })
+    }).catch(error => {
+      console.log(error)
+      res.status(500).json(error.originalError.info.message)
     })
   },
   subjectAdded: (req,res) =>{
@@ -27,6 +41,7 @@ module.exports = {
    });
   }
 }
+
 
 
 
