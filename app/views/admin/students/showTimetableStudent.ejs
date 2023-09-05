@@ -124,6 +124,7 @@
           let roomslot = '';
           var globalJsonVariable = '';
           var dataObj = {};
+          
 
           let timetableProp = {
             totalSlots: minMaxSlotId[0].end_time_lid - minMaxSlotId[0].start_time_lid + 1,
@@ -187,11 +188,9 @@
                             
                   
                     if(element == indivualdata.batch_lid){
-                      console.log('values of element----inside element == indial.batch-lid------>',element, indivualdata.batch_lid);
-                      
                       roomSlotItem.removeAttribute('class')
                       roomSlotItem.setAttribute("class", "room_slot_selected")
-                    }
+                    }  
                   })
                 }
                
@@ -215,6 +214,7 @@
                     <span class="badge bg-info start-time d-flex justify-content-center align-items-center">${timeJson[indivualdata.start_slot - 1].start_time}</span>  
             <i class="fa-solid fa-arrows-left-right" style="right:${(widthl / 2) - 7}px;position:absolute;bottom:0;"></i><span class="badge bg-info end-time d-flex justify-content-center align-items-center">
                 ${timeJson[indivualdata.end_slot - 1].end_time} </span>`;
+                
                 room_slot.append(roomSlotItem);
 
                 globalJsonVariable = getJson();
@@ -252,6 +252,7 @@
 
 
           $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
+            let subjects = [];
             let dataStudentSelected = document.querySelectorAll('.room_slot_selected');
             let days = ['Monday', 'Tuesday', 'Wednesday', 'Thirsday', 'Friday', 'Saturday', 'Sunday'];
             dataStudentSelected.forEach(function (eachSubject, index) {
@@ -320,7 +321,6 @@
             room_slot_items.forEach(room_slot_click => {
               room_slot_click.addEventListener('click', function (event) {
                 index++;
-                console.log('values of event',event.target.getAttribute('data-batch-lid'));
                 batch.push(event.target.getAttribute('data-batch-lid'));
                
                 $(this).attr('class', 'room_slot_selected');
