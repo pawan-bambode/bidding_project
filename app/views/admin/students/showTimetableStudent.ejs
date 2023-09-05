@@ -125,6 +125,7 @@
           var globalJsonVariable = '';
           var dataObj = {};
           
+          let subjects = [];
 
           let timetableProp = {
             totalSlots: minMaxSlotId[0].end_time_lid - minMaxSlotId[0].start_time_lid + 1,
@@ -180,21 +181,27 @@
                   iLoop += 1
                 }
               
-                 roomSlotItem.setAttribute("class", "room-slot-item")
-                  
+                 
+                 roomSlotItem.setAttribute("class", "room-slot-item") 
               
                 if(Array.isArray(globalJsonVariable.batch)){
                   globalJsonVariable.batch.forEach(function(element){
                             
-                  
+                    
                     if(element == indivualdata.batch_lid){
-                      roomSlotItem.removeAttribute('class')
-                      roomSlotItem.setAttribute("class", "room_slot_selected")
+                      
+                      roomSlotItem.classList.add("room_slot_selected")
+                     
+                     
+                   //   roomSlotItem.firstElementChild.find('.btn_close_custom').removeClass('d-none');
+                        
+                      
                     }  
+                   
                   })
                 }
+                
                
-              
                 roomSlotItem.setAttribute("data-faculty-name", `${facultyList}`)
                 roomSlotItem.setAttribute("data-left", `${leftsidemargin}`);
                 roomSlotItem.setAttribute("data-program-name", `${indivualdata.program_name}`)
@@ -208,12 +215,16 @@
                 roomSlotItem.setAttribute('data-batch-lid', `${indivualdata.batch_lid}`);
               
                 roomSlotItem.setAttribute("style", `position:absolute;left: ${leftsidemargin}px ;top: 0; text-align:center; width:${widthl}px;height:100%;background-color:#ffffff;font-size:14px;padding:5px 2px 0px 2px;border-left:1px solid black;`)
-                roomSlotItem.innerHTML =
-                  `${indivualdata.program_name} - ${indivualdata.acad_session} <hr> ${indivualdata.module_name} <hr>${indivualdata.division_lid}-${indivualdata.batch} (${indivualdata.event_type})<hr> 
+               
+                  roomSlotItem.innerHTML =  
+                  ` <button type="button" class="close btn_close_custom d-none" aria-label="Close">
+                </button>${indivualdata.program_name} - ${indivualdata.acad_session} <hr> ${indivualdata.module_name} <hr>${indivualdata.division_lid}-${indivualdata.batch} (${indivualdata.event_type})<hr> 
                       ${facultyList}<hr>
                     <span class="badge bg-info start-time d-flex justify-content-center align-items-center">${timeJson[indivualdata.start_slot - 1].start_time}</span>  
             <i class="fa-solid fa-arrows-left-right" style="right:${(widthl / 2) - 7}px;position:absolute;bottom:0;"></i><span class="badge bg-info end-time d-flex justify-content-center align-items-center">
                 ${timeJson[indivualdata.end_slot - 1].end_time} </span>`;
+                
+                
                 
                 room_slot.append(roomSlotItem);
 
@@ -252,7 +263,7 @@
 
 
           $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
-            let subjects = [];
+            
             let dataStudentSelected = document.querySelectorAll('.room_slot_selected');
             let days = ['Monday', 'Tuesday', 'Wednesday', 'Thirsday', 'Friday', 'Saturday', 'Sunday'];
             dataStudentSelected.forEach(function (eachSubject, index) {
@@ -324,16 +335,19 @@
                 batch.push(event.target.getAttribute('data-batch-lid'));
                
                 $(this).attr('class', 'room_slot_selected');
+                
+                
                 room_slot_items.forEach(room_not_click => {
                   if (room_not_click !== room_slot_click && room_not_click.getAttribute('data-left') == Number(room_slot_click.getAttribute('data-left'))) {
                     
                     room_not_click.classList.add('custom_disabled');
                     if (room_not_click.classList.contains('room_slot_selected')) {
                       room_not_click.classList.remove('room_slot_selected');
+                      room_not_click.firstElementChild.classList.add('d-none');
                     }
                    
                     if(room_slot_click.classList.contains('room_slot_selected')){
-                      
+                      room_slot_click.firstElementChild.classList.remove('d-none');
                     dataObj = {
                                batch
                         };
@@ -345,6 +359,11 @@
             }) 
             return dataObj;
           }
+          $('.btn_close_custom').on('click',function(){
+            console.log('values of btn heating',);
+            $(this).parents('.room_slot_selected').removeClass('room_slot_selected');
+            
+          })
         });
 
 
