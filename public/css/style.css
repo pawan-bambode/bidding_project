@@ -1870,4 +1870,16 @@ margin: auto;
   .table thead tr{
     vertical-align: middle;
   }
+  .btn_close_custom{
+    position: absolute !important;
+    top:0 !important;
+    right: 0 !important;
+    color: black;
+    background: transparent;
+    border: none;
+    font-size: large;
+  }
+  .room_slot_selected {
+    position: relative;
+  }
   

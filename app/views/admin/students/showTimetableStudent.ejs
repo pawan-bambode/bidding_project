@@ -123,6 +123,7 @@
           let courseSelected = JSON.parse(`<%- courseSelectedByStud%>`);
           let roomslot = '';
           var globalJsonVariable = '';
+          var dataObj = {};
 
           let timetableProp = {
             totalSlots: minMaxSlotId[0].end_time_lid - minMaxSlotId[0].start_time_lid + 1,
@@ -177,12 +178,25 @@
                   }
                   iLoop += 1
                 }
-
-                if (indivualdata.batch_lid == globalJsonVariable.batch_lid) {
-                  roomSlotItem.setAttribute("class", "room_slot_selected")
-                } else {
-                  roomSlotItem.setAttribute("class", "room-slot-item")
+              
+                 roomSlotItem.setAttribute("class", "room-slot-item")
+                  
+              
+                if(Array.isArray(globalJsonVariable.batch)){
+                  globalJsonVariable.batch.forEach(function(element){
+                            
+                  
+                    if(element == indivualdata.batch_lid){
+                      console.log('values of element----inside element == indial.batch-lid------>',element, indivualdata.batch_lid);
+                      roomSlotItem.setAttribute("class", "room_slot_selected")
+                    }
+                    else{
+                      roomSlotItem.setAttribute("class", "room-slot-item")
+                    }
+                  })
                 }
+               
+              
                 roomSlotItem.setAttribute("data-faculty-name", `${facultyList}`)
                 roomSlotItem.setAttribute("data-left", `${leftsidemargin}`);
                 roomSlotItem.setAttribute("data-program-name", `${indivualdata.program_name}`)
@@ -206,7 +220,7 @@
 
                 globalJsonVariable = getJson();
 
-
+               
 
 
                 const room_slot_items_for_submit = document.querySelectorAll('.room_slot_selected');
@@ -299,26 +313,38 @@
 
 
           function getJson() {
-            let room_slot_array = [];
+            const room_slot_array = {};
+            let values = ''
+            let index = -1;
+            let batch = [];
             const room_slot_items = document.querySelectorAll('.room-slot-item');
             room_slot_items.forEach(room_slot_click => {
-              room_slot_click.addEventListener('click', function () {
+              room_slot_click.addEventListener('click', function (event) {
+                index++;
+                console.log('values of event',event.target.getAttribute('data-batch-lid'));
+                batch.push(event.target.getAttribute('data-batch-lid'));
+               
                 $(this).attr('class', 'room_slot_selected');
                 room_slot_items.forEach(room_not_click => {
                   if (room_not_click !== room_slot_click && room_not_click.getAttribute('data-left') == Number(room_slot_click.getAttribute('data-left'))) {
-                    globalJsonVariable = {
-                      batch_lid: room_slot_click.getAttribute('data-batch-lid'),
-                      leftsidemargin:room_slot_click.getAttribute('data-left')
-                    };
+                    
                     room_not_click.classList.add('custom_disabled');
                     if (room_not_click.classList.contains('room_slot_selected')) {
                       room_not_click.classList.remove('room_slot_selected');
                     }
+                   
+                    if(room_slot_click.classList.contains('room_slot_selected')){
+                      
+                    dataObj = {
+                               batch
+                        };
+                      }
                   }
                 });
+                
               })
-            })
-            return globalJsonVariable;
+            }) 
+            return dataObj;
           }
         });
 
