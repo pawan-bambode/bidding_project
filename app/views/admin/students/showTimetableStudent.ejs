@@ -188,10 +188,9 @@
                   
                     if(element == indivualdata.batch_lid){
                       console.log('values of element----inside element == indial.batch-lid------>',element, indivualdata.batch_lid);
+                      
+                      roomSlotItem.removeAttribute('class')
                       roomSlotItem.setAttribute("class", "room_slot_selected")
-                    }
-                    else{
-                      roomSlotItem.setAttribute("class", "room-slot-item")
                     }
                   })
                 }
