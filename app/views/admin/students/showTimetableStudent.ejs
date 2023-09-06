@@ -124,7 +124,8 @@
           let roomslot = '';
           var globalJsonVariable = '';
           var dataObj = {};
-          
+          let start_time_slot = '';
+          let end_time_slot = '';
           let subjects = [];
 
           let timetableProp = {
@@ -186,12 +187,10 @@
               
                 if(Array.isArray(globalJsonVariable.batch)){
                   globalJsonVariable.batch.forEach(function(element){
-                            
-                    
                     if(element == indivualdata.batch_lid){
                       
                       roomSlotItem.classList.add("room_slot_selected")
-                     
+                      
                      
                    //   roomSlotItem.firstElementChild.find('.btn_close_custom').removeClass('d-none');
                         
@@ -231,9 +230,17 @@
                 globalJsonVariable = getJson();
 
                
-
-
+                const room_slot_items = document.querySelectorAll('.room-slot-item');
                 const room_slot_items_for_submit = document.querySelectorAll('.room_slot_selected');
+                room_slot_items.forEach(ele =>{
+                  room_slot_items_for_submit.forEach(eleSel =>{
+                    if ((eleSel.getAttribute('data-start-time') == ele.getAttribute('data-start-time') && ele != eleSel) ||eleSel.getAttribute('data-start-time') == ele.getAttribute('data-start-time' && ele != eleSel)){
+                      ele.classList.add('custom_disabled');
+                    }
+                  })
+
+                })
+
                 const update_button_present = document.querySelector('#student_update_button').classList.contains('d-none');
                 if (room_slot_items_for_submit.length == 4 && update_button_present) {
                   $('#student_submit_button').removeClass('d-none');
