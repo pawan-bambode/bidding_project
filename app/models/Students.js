@@ -116,4 +116,11 @@ module.exports = class Students {
             .query(`SELECT * FROM [dbo].timetableSubject_testing where day_lid = @day_lid`);     
         })
     }
+    static getSlotDayId(day_lid){
+        return poolConnection.then(pool =>{
+            return pool.request().
+            input('day_lid',sql.Int,day_lid)
+            .query(`SELECT DISTINCT end_slot,CONCAT(start_slot, '-',end_slot) as slot_value,start_slot FROM [dbo].timetableSubject_testing where day_lid = @day_lid order by end_slot`);     
+        })
+    }
 }
