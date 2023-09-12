@@ -284,8 +284,19 @@
       }
 
       function closeButton(event){
+        console.log('values of selected_event',selected_event);
+        console.log()
         let event_val = event.target;
         let columnValue = event_val.parentElement.getAttribute('data-column');
+        let data_batch  = event_val.parentElement.getAttribute('data-batch-lid');
+        selected_event.forEach(function(ele,index){
+          console.log('element',ele);
+          console.log('element values ',data_batch)
+          if(data_batch == ele.batch){
+            console.log('inside the if block');
+            selected_event.pop(ele);
+          }
+        })
         
         document.querySelectorAll(`.room-slot-item[data-column="${columnValue}"]`).forEach((ele, ind)=> {
           ele.classList.remove('custom_disabled');  
@@ -388,7 +399,7 @@
             }
 
             roomSlotItem.setAttribute("class", "room-slot-item") 
-
+            console.log('values of eventSlotVal',selected_event);
             eventSlotVal.forEach(function(selectEventSlot,index){
               
               if(selectEventSlot.start_slot == indivualdata.start_slot && selectEventSlot.end_slot == indivualdata.end_slot){
