@@ -30,6 +30,8 @@
           data-bs-target="#show_student_course_readOnly" type="button">Previous Entry</button>
         <button class="btn btn-success" id="show_student_sel_event" data-bs-toggle="modal"
           data-bs-target="#modal_for_stud_sel_course" type="button">Show Course Selected</button>
+        <button class="btn btn-success d-none" id="event_count" >Number of Course select: <%- numberOfCourse %></button>
+        
       </div>
     </div>
     <div class="card-body table-responsive">
@@ -116,20 +118,15 @@
 <script>
   $(document).ready(function () {
 
-      var students_values = [];
       let minMaxSlotId = JSON.parse(`<%-minMaxSlotId %>`);
       let roomList = JSON.parse(`<%- roomList %>`);
       let timeJson = JSON.parse(`<%- timeSlotList%>`);
       let courseSelected = JSON.parse(`<%- courseSelectedByStud%>`);
       let roomslot = '';
-      var globalJsonVariable = '';
       var dataObj = {};
-      let start_time_slot = '';
-      let end_time_slot = '';
       let subjects = [];
-      let overlap  = {}; 
       let day_li = ''; 
-      let start_time_slot1 = new Set();
+  
       let days = [
             JSON.parse(`<%- slot_lid_monday %>`),
             JSON.parse(`<%- slot_lid_tuesday %>`),
@@ -284,19 +281,16 @@
       }
 
       function closeButton(event){
-        console.log('values of selected_event',selected_event);
-        console.log()
         let event_val = event.target;
         let columnValue = event_val.parentElement.getAttribute('data-column');
         let data_batch  = event_val.parentElement.getAttribute('data-batch-lid');
-        selected_event.forEach(function(ele,index){
-          console.log('element',ele);
-          console.log('element values ',data_batch)
-          if(data_batch == ele.batch){
-            console.log('inside the if block');
-            selected_event.pop(ele);
-          }
-        })
+       
+         selected_event.forEach(function(ele,index){
+           if(data_batch == ele.batch){
+           selected_event = removeIdentifyItem(selected_event,data_batch);
+           updateEventCount(false);
+           }
+       })
         
         document.querySelectorAll(`.room-slot-item[data-column="${columnValue}"]`).forEach((ele, ind)=> {
           ele.classList.remove('custom_disabled');  
@@ -314,6 +308,7 @@
         let elementEndLid = event_val.getAttribute('data-end-lid');
         let batch = [event_val.getAttribute('data-batch-lid')];
         let room_slot_list = $('.room-slot-item');
+      
 
         room_slot_list.each(function(index, element) {
           let targetStartLid = Number($(element).data('start-lid'));
@@ -328,6 +323,7 @@
             if (element.classList.contains('room_slot_selected')) {
               element.classList.remove('room_slot_selected');
               element.querySelector('.btn_close_custom').classList.add('d-none');
+              updateEventCount(false);
             }
 
             element.setAttribute('data-column', dataColumnValue);
@@ -347,10 +343,10 @@
           selected_event = selected_event.filter(item =>
             item.start_lid !== elementStartLid || item.end_lid !== elementEndLid
           );
-
           selected_event.push(dataObj);
         });
-
+      
+        updateEventCount(true);
         dataColumnValue++;
       }
 
@@ -365,6 +361,9 @@
         $('.room .room-slots').empty();
         let day_select_val = $(this).val();
         let eventSlotVal = eventSlot(day_select_val);  
+        if ($('#event_count').hasClass('d-none')) {
+          $('#event_count').removeClass('d-none')
+         }
       
         ApiObj = {
           url: '/student/timetable/byDayLid',
@@ -398,8 +397,7 @@
               iLoop += 1
             }
 
-            roomSlotItem.setAttribute("class", "room-slot-item") 
-            console.log('values of eventSlotVal',selected_event);
+            roomSlotItem.setAttribute("class", "room-slot-item") ;
             eventSlotVal.forEach(function(selectEventSlot,index){
               
               if(selectEventSlot.start_slot == indivualdata.start_slot && selectEventSlot.end_slot == indivualdata.end_slot){
@@ -466,6 +464,16 @@
           });
         });
       });
+
+      function removeIdentifyItem(selectedArray,elementToRemove){
+        return selectedArray.filter(item => item.batch[0] !== elementToRemove);
+      }
+      function updateEventCount(isAdd) {
+        if (!$('#event_count').hasClass('d-none')) {
+            let event_count =  isAdd == true?parseInt($('#event_count').text().match(/\d+/)) -1:parseInt($('#event_count').text().match(/\d+/)) + 1; 
+            $('#event_count').html(`Number of Course select: ${event_count}`);
+        }
+      }
 
 });
 </script>

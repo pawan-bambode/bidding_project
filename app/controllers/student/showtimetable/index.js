@@ -16,6 +16,7 @@ module.exports = {
         slot_lid_thirdsday:JSON.stringify(result[7].recordset),
         slot_lid_friday:JSON.stringify(result[8].recordset),
         slot_lid_satuday:JSON.stringify(result[9].recordset),
+        numberOfCourse:7,
       })
     })
   },
