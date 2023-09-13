@@ -1893,3 +1893,6 @@ margin: auto;
     right: 0;
     cursor: pointer;
 }
+.disbaled_whole_div{
+    pointer-events: none;
+}

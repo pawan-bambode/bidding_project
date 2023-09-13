@@ -308,8 +308,12 @@
         let elementEndLid = event_val.getAttribute('data-end-lid');
         let batch = [event_val.getAttribute('data-batch-lid')];
         let room_slot_list = $('.room-slot-item');
-      
-
+        let event_count = parseInt($('#event_count').text().match(/\d+/));
+        
+        if(event_count == 0){
+          $('.timetable-container').addClass('disbaled_whole_div');
+          return;
+        }
         room_slot_list.each(function(index, element) {
           let targetStartLid = Number($(element).data('start-lid'));
           let targetEndLid = Number($(element).data('end-lid'));
