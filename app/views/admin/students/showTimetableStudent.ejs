@@ -62,7 +62,6 @@
                   <th>Day</th>
                   <th>Start Time</th>
                   <th>End Time</th>
-                  <th>Action</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -126,6 +125,8 @@
       var dataObj = {};
       let subjects = [];
       let day_li = ''; 
+      let selected_event = [];
+      let dataColumnValue = 1;
   
       let days = [
             JSON.parse(`<%- slot_lid_monday %>`),
@@ -183,7 +184,6 @@
       $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
         let dataStudentSelected = document.querySelectorAll('.room_slot_selected');
         let days = ['Monday', 'Tuesday', 'Wednesday', 'Thirsday', 'Friday', 'Saturday', 'Sunday'];
-
         dataStudentSelected.forEach(function (eachSubject, index) {
           let faculty_name = eachSubject.getAttribute('data-faculty-name');
           let module_name = eachSubject.getAttribute('data-module-name');
@@ -210,9 +210,7 @@
           }
 
           subjects.push(subject);
-          value_selected_subject = subjects;
         });
-
         const selectedCourse = $('.selected_course #selected_course_table_data tbody');
 
         subjects.forEach(function (course, index) {
@@ -227,10 +225,10 @@
           <td>${course.day}</td>
           <td>${course.start}</td>
           <td>${course.end}</td>
-          <td><i class='fa-solid fa-trash delete_selected_subject'></td>
         </tr>`;
 
           selectedCourse.append(courseSelectedRecord);
+          subjects = [];
         });
       });
 
@@ -300,8 +298,7 @@
         event_val.classList.add('d-none');
       }
 
-      let selected_event = [];
-      let dataColumnValue = 1;
+
       function addEvent(event) {
         let event_val = event.target;
         let elementStartLid = event_val.getAttribute('data-start-lid');
