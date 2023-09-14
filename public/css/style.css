@@ -1896,3 +1896,11 @@ margin: auto;
 .disbaled_whole_div{
     pointer-events: none;
 }
+.selected_course{
+    max-height: 400px;
+    min-height: 100px;
+}
+.selected_cour_readonly {
+    max-height: 400px;
+    min-height: 100px;
+}

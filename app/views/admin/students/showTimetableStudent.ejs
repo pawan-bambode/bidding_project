@@ -49,7 +49,7 @@
           <button class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body d-flex flex-column justify-content-between">
-          <div class='selected_course table-responsive'>
+          <div class='selected_course table-responsive py-1'>
             <table class="table table-bordered custom_table table-hover" id="selected_course_table_data">
               <thead>
                 <tr>
@@ -87,7 +87,7 @@
         </div>
         <div class="modal-body d-flex flex-column justify-content-between">
           <div class='selected_cour_readonly table-responsive'>
-            <table class="table table-bordered custom_table table-hover" id="selected_course_table_data">
+            <table class="table table-bordered custom_table table-hover py-1" id="selected_course_table_data">
               <thead>
                 <tr>
                   <th>#</th>
@@ -125,9 +125,7 @@
       var dataObj = {};
       let subjects = [];
       let day_li = ''; 
-      let selected_event = [];
-      let dataColumnValue = 1;
-  
+   
       let days = [
             JSON.parse(`<%- slot_lid_monday %>`),
             JSON.parse(`<%- slot_lid_tuesday %>`),
@@ -164,7 +162,8 @@
       if (courseSelected.length > 0) {
         $('#show_student_readOnly').removeClass('d-none');
       }
-
+     
+  
       courseSelected.forEach(function (course, index) {
         let student_subject_al_recods = `<tr>
           <td>${index + 1}</td>
@@ -183,7 +182,10 @@
 
       $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
         let dataStudentSelected = document.querySelectorAll('.room_slot_selected');
-        let days = ['Monday', 'Tuesday', 'Wednesday', 'Thirsday', 'Friday', 'Saturday', 'Sunday'];
+        let days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        let index = $('.selected_course #selected_course_table_data tbody').find(':last-child');
+        console.log('values of index last children',index);
         dataStudentSelected.forEach(function (eachSubject, index) {
           let faculty_name = eachSubject.getAttribute('data-faculty-name');
           let module_name = eachSubject.getAttribute('data-module-name');
@@ -195,6 +197,7 @@
           let room_no = eachSubject.closest('.room').getAttribute('data-room-no')
           let start_time = eachSubject.getAttribute('data-start-time');
           let end_time = eachSubject.getAttribute('data-end-time');
+          let batch = eachSubject.getAttribute('data-batch-lid');
 
           subject = {
             faculty_name: faculty_name,
@@ -206,16 +209,24 @@
             day: days[day_lid - 1],
             room: room_no,
             start: start_time,
-            end: end_time
+            end: end_time,
+            batch:batch,
+            day_lid:day_lid,
           }
-
+      
           subjects.push(subject);
         });
+        
         const selectedCourse = $('.selected_course #selected_course_table_data tbody');
-
+        
         subjects.forEach(function (course, index) {
+         let eleTr  =  $(`.selected_course #selected_course_table_data tbody tr[data-batch-lid = "${course.batch}"][data-day-lid = "${course.day_lid}"]`)
+         let eleSameslot = $(`.selected_course #selected_course_table_data tbody tr[data-start-id = "${course.start}"][data-end-id = "${course.end}"]`)
+         console.log('values of eleTr',eleTr);
+         console.log('values of eleSameSlot',eleSameslot);
+         if(eleTr.length == 0){
           let courseSelectedRecord =
-            `<tr data-program-name="${course.program_name}" data-module-name="${course.module_name}" data-room-no="${course.room}" data-division="${course.division}" data-faculty-name="${course.faculty_name}" data-day="${course.day}" data-start-id="${course.start}" data-end-id="${course.end}" data-acad-session="${course.acad_session}" data-lec-type="${course.lec_type}">
+            `<tr data-program-name="${course.program_name}" data-module-name="${course.module_name}" data-room-no="${course.room}" data-division="${course.division}" data-faculty-name="${course.faculty_name}" data-day="${course.day}" data-start-id="${course.start}" data-end-id="${course.end}" data-acad-session="${course.acad_session}" data-lec-type="${course.lec_type}" data-batch-lid ="${course.batch}" data-day-lid = "${course.day_lid}">
           <td>${index + 1}</td>
           <td>${course.program_name}</td>
           <td>${course.module_name}</td>
@@ -226,10 +237,10 @@
           <td>${course.start}</td>
           <td>${course.end}</td>
         </tr>`;
-
           selectedCourse.append(courseSelectedRecord);
-          subjects = [];
+      }
         });
+       
       });
 
       $('#modal_for_stud_sel_course').on('click', '.btn-close', function () {
@@ -298,7 +309,8 @@
         event_val.classList.add('d-none');
       }
 
-
+      let selected_event = [];
+      let dataColumnValue = 1;
       function addEvent(event) {
         let event_val = event.target;
         let elementStartLid = event_val.getAttribute('data-start-lid');
@@ -365,7 +377,7 @@
         if ($('#event_count').hasClass('d-none')) {
           $('#event_count').removeClass('d-none')
          }
-      
+       
         ApiObj = {
           url: '/student/timetable/byDayLid',
           type: 'POST',
@@ -475,7 +487,7 @@
             $('#event_count').html(`Number of Course select: ${event_count}`);
         }
       }
-
+            
 });
 </script>
 
