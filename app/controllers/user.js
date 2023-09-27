@@ -10,7 +10,7 @@ const {
 } = require('../utils/hash')
 
 
-// const res = require('express/lib/response');
+
 const {
     encrypt,
     decrypt
@@ -50,35 +50,14 @@ module.exports = {
     authenticate: async (req, res, next) => {
 
         try {
-
-            //console.log('====>> ', req.ip);
             const sess = req.session;
-
             console.log('check user id ', sess.username)
-
-            //try and error test
-            // let checkId = '6eb1c551-7be0-41dd-8729-fe18a6ebcfc2';
-
-            // redisClient.exists("key", checkId, (err, data) => {
-
-            //     console.log('IF ERROR ==> ', err);
-            //     console.log('IF NOT  ==> ', data)
-            // })
-
-            // if (sess.username === req.body.username) {
-
-            //     // check also same IP or not 
-            //     // check also same device or different device
-            //     console.log('User already logged in -->> give msg like already your session going want to continue or Re-login again.');
-
-
-            // } else {
+           
                 let userData = await User.getUserDetails(req.body.username);
 
-                console.log('===>>>', userData.recordset[0].username)
+                console.log('===>>>', userData)
 
                 if (req.body.username == '') {
-                    //return res.status(200).send('Invalid username or password..!');
                     return res.render('login', {
                         message: "Invalid username or password"
                     })
@@ -104,7 +83,6 @@ module.exports = {
                 req.session.permissions = 'admin';
                 req.session.modules = 'admin';
 
-                // IF CHECKED WITH DEVICE TRUSTED
                 if (req.body.is_trusted == "on") {
                     req.session.usersecretkey = encrypt(uuidv4())
                     
