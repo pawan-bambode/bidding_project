@@ -7,7 +7,7 @@ const path = require('path');
 const soap = require('soap');
 const axios = require('axios');
 
-const timetablesocket = require("../17JulyInfra_Project/infra_v2/app/controllers/admin/timeTableSimulation/timetablesocket");
+//const timetablesocket = require("../17JulyInfra_Project/infra_v2/app/controllers/admin/timeTableSimulation/timetablesocket");
 
 const setRouter = require("./router")
 //test
