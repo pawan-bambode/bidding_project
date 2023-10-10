@@ -52,7 +52,7 @@ module.exports = {
         try {
             const sess = req.session;
             console.log('check user id ', sess.username)
-           
+             console.log('values of re ')
                 let userData = await User.getUserDetails(req.body.username);
 
                 console.log('===>>>', userData)

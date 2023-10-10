@@ -1626,10 +1626,10 @@ table.dataTable thead th, table.dataTable thead td, table.dataTable tfoot th, ta
     border-radius: 2px;
 }
 
-.modal-header {
+/* .modal-header {
     background: #0B3461;
     color: #ffffff;
-}
+} */
 
 #student-info_wrapper {
     padding-top: 24px;
@@ -1792,11 +1792,11 @@ margin: auto;
     border: none;
 }
 
-.modal-header{
+/* .modal-header{
     background-color: #5ca4ea;
     border-top-left-radius: 15px !important;
     border-top-right-radius: 15px !important;
-}
+} */
 .selected_course_student_modal{
     background-color: #f8f9fa;
 }
@@ -1856,10 +1856,10 @@ margin: auto;
     border-top-right-radius: 15px !important;
     
   }
-  .modal-content{
+  /* .modal-content{
     border-top-left-radius: 15px !important;
     border-top-right-radius: 15px !important;
-  }
+  } */
   hr {
     margin: 0 !important;
   }
@@ -1902,4 +1902,27 @@ margin: auto;
 .selected_cour_readonly {
     max-height: 400px;
     min-height: 100px;
+}
+.add-btn-program{
+    background-color: whitesmoke !important;
+    border-radius: 50% !important;   
+}
+
+#programTable thead th{
+    background-color:var(--primary-table-bg);
+}
+#programTable tbody tr:nth-child(odd){
+    background-color:var(--primary-table-bg);   
+}
+.custum-imp-program{
+    padding: 0 !important;
+}
+.custm-padd{
+    padding: 1em;
+}
+.import-program-table thead th{
+    background-color: var(--primary-table-bg)
+}
+#importProgram .row {
+    --bs-gutter-x:0 !important;
 }

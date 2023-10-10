@@ -26,13 +26,13 @@ module.exports = {
   
         if (isUrl) {
             let subDomain = req.headers.host.split(".")[0];
-          
+             
             if (subDomain === 'timetable')
              
                 return next()
                 // console.log('subDomain1', subDomain)
  
-                res.locals.slug = 'asmsoc-mum'
+                res.locals.slug = subDomain;
                 res.locals.organizationId = 24
                 res.locals.campusId = 10
                 res.locals.campusIdSap = '50070078'

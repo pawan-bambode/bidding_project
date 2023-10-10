@@ -1,11 +1,328 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>This is the testing of programs only</h1>
-</body>
-</html>
+<%- include('../partials/head') %>
+<%- include('../partials/leftSidebar.ejs') %>
+<%- include('../partials/header.ejs') %>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<div class="main-content">
+  <div class="card card-custom">
+    <div class="card-header-custom d-flex justify-content-between p-1">
+        <h3 class="ms-2">Program List</h3>
+        <button type="button" class="btn add-btn-program me-2" data-bs-target="#importProgram" data-bs-toggle="modal">
+            <i class="fas fa-plus"></i>
+        </button>  
+    </div>
+    <div class="card-body table-responsive">
+        <div class="d-flex justify-content-between">
+            <div>
+                <label>Show Entries</label>
+                <select class="form-select" id="changeEntry">
+                    <%for(let page of locals.page_filter){%>
+                       <option value="<%-page%>"><%-page%></option>
+                    <%}%>
+                </select>
+            </div>
+            <div>
+                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+            </div>
+        </div>
+
+        <table class="table custom_row table-bordered mt-4" id="programTable">
+            <thead>
+                <th>#</th>
+                <th>Program Code</th>
+                <th>Program Name</th>
+                <th>Abbr</th>
+                <th>Action</th>
+            </thead>
+            <tbody>
+                <% let count = 1 %>
+                <%for(let program of programList) {%>
+                    <tr>
+                        <td><%- count++ %></td>
+                        <td><%-program.program_code %></td>
+                        <td><%-program.program_name %></td>
+                        <td><%-program.abbr %></td>
+                        <td><a class="edit-program" data-bs-target="#edit_program" data-bs-toggle="modal" data-id="<%-program.id %>" data-program-name="<%-program.program_name %>" data-program-abbr="<%- program.abbr %>"><i class="fa fa-edit"></i></a>
+                            <a class="delete-program" data-id="<%-program.id %>"><i class="fa-solid fa-trash text-danger"></i></a>
+                        </td>
+                    </tr>
+                <%}%>
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-between">
+            <div>
+                <p>Total entries:
+                </p>
+            </div>
+            <div>
+                <p id="pagination" class="pagination-search"></p>
+            </div>
+        </div>
+    </div>
+  </div>  
+</div>
+
+<div class="modal" id="importProgram">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+              <h3>Select Program</h3>
+              <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body row custum-imp-program">
+               
+              <div class="col-md-3 border-end custm-padd-for-imp-program custm-padd pe-2 ps-2" >
+                <label class="mb-2" for="select-program" >Select Program :</label>
+                    <input type="search" class="form-control p3 mb-3 searchItemProgramCustom" placeholder="Search Program" id="search-program">
+                    <% for(let program of programListFromDbo) { %> 
+                    <div class="border p-3 mb-3 rounded program-div" data-program-name="<%- program.program_name%>"  data-program-abbr="<%- program.abbr %>" data-program-id="<%-program.program_id %>" data-program-code ="<%-program.program_name.split('-')[1] %>" ><%-program.program_name %></div>
+                    <% }%>
+              
+              </div>
+              <div class="col-md-9 custm_padd p-2 ps-2">
+                <table class="table-responsive table-bordered table import-program-table">
+                    <thead>
+                        <th>Program Name</th>
+                        <th>Program Code</th>
+                        <th>Program Abbr</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" id="import-program" >Import Program</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="edit_program">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Update Program</h3>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <label class="mb-2" for="program_name">Program Name:</label>
+              <input type="hidden" id="program_id">
+              <input class="form-control" type="text" id="program_name">
+              <div class="row">
+                <div class="col-md-6">
+                    <label class="mb-2" for="program_abbr">Program Abbr:</label>
+                    <input class="form-control" type="text" id="program_abbr">  
+                </div>
+              </div>   
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary" id="updateProgram">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('../partials/footer.ejs') %>
+<script>
+    $(document).ready(function() {
+
+        $(document).on('click','.program-div', function(event) {
+
+            let programCode = $(this).data('program-code');
+            let programName = $(this).data('program-name');
+            let programAbbr = $(this).data('program-abbr');
+            let programId   = $(this).data('program-id');
+
+            let importRow = `
+            <tr data-program-name="${programName}" data-program-id="${programId}" data-program-abbr="${programAbbr}" data-program-code="${programCode}">
+                <td>${programName}</td>
+                <td>${programCode}</td>
+                <td>${programAbbr}</td>
+                <td><i class="fa fa-trash text-danger delete-import-program"></i></td>
+            </tr>`;
+
+            let importProgramTbody = $('.import-program-table tbody');
+            importProgramTbody.append(importRow);
+
+            $(this).remove();
+        });
+
+        $(document).on('click', '.delete-import-program', function(event) {
+            let parent = $(this).closest('tr');
+            
+            let programName = parent.data('program-name');
+            let programCode = parent.data('program-code');
+            let programAbbr = parent.data('program-abbr');
+            let programId = parent.data('program-id');
+
+            let programDiv = $('<div>').addClass('program-div border mb-3 rounded p-3');
+                programDiv.html(programName)
+                programDiv.attr('data-program-name', programName);
+                programDiv.attr('data-program-code', programCode);
+                programDiv.attr('data-program-abbr', programAbbr);
+                programDiv.attr('data-program-id', programId);
+
+             parent.remove();
+            
+            let importProgramTableFlag = $(`.import-program-table tbody tr[data-program-id = "${programId}"]`).length == 0;
+            let importProgramSelDropFlag = $(`#importProgram .custm-padd-for-imp-program .program-div[data-program-id=${programId}]`).length == 0;
+
+            if(importProgramTableFlag && importProgramSelDropFlag){
+                $('#importProgram .custm-padd-for-imp-program').append(programDiv);
+            }
+           
+        });
+         
+        $(document).on('click','#import-program',function(){
+            let importProgramArray = [];
+          $('.import-program-table tbody tr').each((index,element) => {
+            
+            let importProgram = {};
+            let programName = $(element).data('program-name');
+            let id = $(element).data('program-id');
+            let programAbbr = $(element).data('program-abbr');
+            let programCode = $(element).data('program-code');
+            
+            importProgram.program_name = programName;
+            importProgram.program_id = id;
+            importProgram.program_abbr = programAbbr;
+            importProgram.program_code = programCode;
+            importProgramArray.push(importProgram);
+          });
+          
+          const programIdArray = importProgramArray.map(item => item.program_id );
+          const duplicateProgramInsert = programIdArray.filter((value,index) => programIdArray.indexOf(value) !== index);
+          
+          if(duplicateProgramInsert.length >0){
+            alert('Duplicate data found in input');
+          }
+          else{
+           let ApiObj = {
+                type: 'POST',
+                url: '/admin/programs/create',
+                data: {
+                    inputJSON: JSON.stringify(importProgramArray),
+                },
+                dataType: 'JSON' 
+            }
+            ajaxApi(ApiObj).then(result => {
+                console.log('response::::::::::',result)
+                showSuccess(result)              
+            }).catch(error => {
+                console.log('ERROR::::::::::',error)
+                console.log('valus of error',error);
+                showError(error.responseJSON)
+            })
+        }
+        })
+        
+        $('.searchItemProgramCustom').on('input', function () {
+            selectItems = $('.program-div')
+
+            var text = $('.searchItemProgramCustom').val().toLowerCase();
+
+            for (let item of selectItems) {
+                if (item.textContent.toLowerCase().indexOf(text) > -1) {
+                    $(item).removeClass("d-none");
+                } else {
+                    $(item).addClass("d-none");
+                }
+            };
+        })
+
+        $('#programTable').on('click','.edit-program',function(){
+            let program_name = $(this).data('program-name');
+            let program_code = $(this).data('program-code');
+            let program_abbr = $(this).data('program-abbr');
+            let program_id   = $(this).data('id');
+            
+            $('#program_name').val(program_name);
+            $('#program_code').val(program_code);
+            $('#program_abbr').val(program_abbr);
+            $('#program_id').val(program_id);
+       
+        });
+
+        $('#edit_program').on('click','#updateProgram',function(){
+            let edit_program  = {};
+            let program_name = $('#program_name').val();
+            let program_code = $('#program_code').val();
+            let program_abbr = $('#program_abbr').val();
+            let program_id   = $('#program_id').val();
+
+            edit_program.program_name = program_name;
+            edit_program.id = program_id;
+            edit_program.program_code = program_code;
+            edit_program.program_abbr = program_abbr;
+            edit_program.bidding_session_lid = 3;
+            console.log('values',edit_program);
+            let ApiObj = {
+                type:'POST',
+                url:'/admin/program/update',
+                data: edit_program,
+                dataType: 'JSON' 
+                }
+                ajaxApi(ApiObj).then(result => {
+                    console.log('response::::::::::',result)
+                    showSuccess(result)
+                }).catch(error => {
+                    console.log('ERROR::::::::::',error.responseJSON)
+                    console.log('error',error);
+                    showError(error.responseJSON)
+                })
+        });
+        $(document).on('click','.delete-program',function(){
+            let deleteProgramRow = $(this).data('id');
+            
+            let ApiObj = {
+                url:'/admin/program/delete',
+                type:'POST',
+                data:{
+                    program_id:deleteProgramRow
+                },
+                dataType:'JSON'
+            }
+            ajaxApi(ApiObj).then(result =>{
+                console.log('response:::::::',result);
+                showSuccess(result)
+            }).catch(error =>{
+                console.log('error:::::',error.responseJSON);
+                showError(error.responseJSON)
+            })
+
+        })
+});
+
+function showError(errors) {
+            console.log(errors);
+            console.log('values of description',errors)
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: "",
+                type: 'alert-danger',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+            }
+</script>
+  
+<%- include('../partials/footerEnd.ejs') %>
