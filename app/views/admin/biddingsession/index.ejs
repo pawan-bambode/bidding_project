@@ -1,0 +1,463 @@
+<%- include('../partials/head') %>
+<%- include('../partials/leftSidebar.ejs') %>
+<%- include('../partials/header.ejs') %>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+<div class="main-content">
+    <div class="card card-custom">
+       <div class="card-header-custom d-flex justify-content-between p-1">
+          <h3 class="ms-2">Bidding Sessions</h3>
+          <button type="button" class="btn add-bidding-session-button me-2" data-bs-target="#add-bidding-session" data-bs-toggle="modal">
+             <i class="fas fa-plus"></i>
+          </button>
+       </div>
+       <div class="card-body table-responsive">
+         <table id="bidding-sesssion-table" class="table custom_row table-bordered mt-4">
+          <thead>
+            <th>#</th>
+            <th>Bidding Session Name</th>
+            <th>Acad Session</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Action</th>
+          </thead>
+          <tbody>
+            <% let count = 1 %>
+             <% for (let biddingSession of biddingSessionList) { 
+                let acadSessionList =  (biddingSession.acad_sessions_and_ids).split(',');
+                %> 
+                  
+                <tr  data-bidding-name="<%- biddingSession.biddingName %>" data-bidding-start-date="<%- biddingSession.start_date %>" data-bidding-end-date="<%- biddingSession.end_date %>" data-bidding-acad-session = "<%- acadSessionList %>" data-id="<%- biddingSession.id %>">
+                    <td><%- count++ %></td>
+                    <td><%- biddingSession.biddingName %></td>
+                    <td class="d-flex flex-column align-item-center justify-content-between">
+                        <% acadSessionList.map(sessionInfo => {
+                            const [session, sessionId] = sessionInfo.split(':');
+                        %>
+                            <span class="badge bg-secondary mt-2" style="min-width: 50px;" data-acad-session-id="<%- sessionId %>"><%- session %></span>
+                        <% }); %>
+                    </td>
+                    
+                    <td><%- biddingSession.start_date %></td>
+                    <td><%- biddingSession.end_date %></td>
+                    <td>
+                       <a href="#" class="edit-bidding-session"><i class="fa fa-edit text-primary" id="edit-bidding-session"></i></a>
+                       <a href="#"> <i class="fas fa-trash text-danger"  id="delete-bidding-session"  data-id ="<%- biddingSession.id %>"></i> </a></td>
+                </tr>
+                <% } %>
+          </tbody>
+         </table>
+       </div>
+    </div> 
+ </div>
+ 
+ <div class="modal" id="add-bidding-session">
+    <div class="modal-dialog modal-fullscreen" tabindex="-1" aria-hidden="true" aria-labelledby="exampleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Bidding Session</h3>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body row custum-imp-program">
+                
+                    <div class="col-md-3 border-end custm-padd-for-imp-program custm-pad">
+                        <div class="mt-4 ms-1" >
+                        <label class="form-label" for="bidding-name">Enter Bidding Name:</label>
+                        <input class="form-control" id="bidding-name" type="text">
+                        <label class="form-label" for="start-date">Session Start Date</label>
+                        <input class="form-control" type="date" name="start-date" id="start-date">
+                        <label class="form-label" for="end-date">Session End Date</label>
+                        <input class="form-control" type="date" name="end-date" id="end-date">
+                        
+                        <div class="d-flex justify-content-end align-items mt-4">
+                            <button class="btn btn-primary" id="add-bidding-details">Add Bidding Details </button>
+                        </div>
+                        <div class="mt-5 d-none" id="add-acad-session">
+                            <div class="d-flex flex-column">
+                            <select class="form-select select2" id="selected-acad-session">
+                                <option selected disabled>--Select Acad Session-- </option>
+                                <option value="16">Trimester IV</option>
+                                <option value="17">Trimester V</option>
+                                <option value="18">Trimester VI</option>
+                            </select>
+                            <button class="btn btn-primary w-50 mt-5 align-self-end" id="add-acad-session-in-bidding-details">Add AcadSession</button>
+                            </div>
+                        </div>
+                      </div>  
+                    </div>
+                    <div class="col-md-9 custm-padd">
+                          <table class="custom_row table table-bordered mt-4" id="temp-bidding-session-details">
+                            <thead>
+                                <th>Id</th>
+                                <th>Bidding Session Name</th>
+                                <th>Acad Sessions</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                          </table>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success disabled" id="add-bidding-sessions">Add Bidding Session</button>
+            </div>
+        </div>
+    </div>
+ </div>
+ <div class="modal fade" id="edit-bidding-session-modal" tabindex="-1"
+ aria-labelledby="edit-bidding-session-modal" data-bs-backdrop="static" aria-hidden="true">
+ <div class="modal-dialog modal-lg" >
+     <div class="modal-content">
+         <div class="modal-header">
+             <h5 class="modal-title" id="edit-bidding-session-modal">Edit Bidding Session</h5>
+             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+
+             <div class="mb-3">
+                 <label for="exampleFormControlInput1" class="form-label">Bidding Name</label>
+                 <input type="hidden" name="bidding-id" id="bidding-id">
+                 <input type="text" class="form-control" name="bidding-session-name" id="bidding-name">
+                 <span class="text-danger d-none valid-bidding-session-name">Enter the Bidding Name</span>
+             </div>
+             <div class="row">
+                 <div class="mb-3 col-md-6">
+                     <label class="form-label">Start Date</label>
+                     <input type="date" class="form-control" name="start-date" id="start-date">
+                 </div>
+                 <div class="mb-3 col-md-6">
+                     <label for="exampleFormControlInput1" class="form-label">End Date</label>
+                     <input type="date" class="form-control" name="end-date" id="end-date">
+                 </div>
+             </div>
+             <div class="row">
+                 <div class="selected-acad-session col-md-9">
+                     <div
+                         class='d-flex flex-column justify-content-between align-item-center session-list-container'>
+                     </div>
+
+                 </div>
+                 <span class="text-danger d-none bidding-acad-session-label">Acad Session Already
+                     added</span>
+                 <span class="text-danger d-none timetable-acad-session-select">Select Acad Session
+                 </span>
+                 <div class="d-flex col-md-9 add-bidding-session-val">
+
+                 </div>
+                 <div
+                     class="d-flex justify-content-end align-items-end add-acad-session-bidding-session col-md-3">
+                     <span
+                         class="d-flex justify-content-center align-items-center badge bg-primary mt-1 col-md-6"
+                         style="height:35px;"><i class="fa-solid fa-circle-plus"
+                             style="font-size: large;"></i></span>
+                 </div>
+             </div>
+             <div class="edit-bidding-session-acad-seession d-none d-flex">
+                 <div class="col-md-8">
+                     <label class="form-label">Academic Session </label>
+                     <select class="form-select form-control select2 timetable-acad-session-select2"
+                         id="edit-academic-session-add">
+                         <option class="disabled" selected >Select Acad Session </option>
+                        <option value="21"> Semester I </option>
+                        <option value="22"> Semester II </option>
+                        <option value="23">Semester III</option>
+                     </select>
+                 </div>
+                 <div class="d-flex justify-content-end align-items-end col-md-4">
+                     <button class="btn btn-success" id="add-acad-session-edit-bidding" style="height:40px">Add
+                         AcadSession</button>
+                 </div>
+             </div>
+           
+         </div>
+         <div class="modal-footer">
+             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+             <button type="button" class="btn btn-primary update-bidding-session" id="update-bidding-session">UPDATE</button>
+         </div>
+     </div>
+ </div>
+</div>
+
+<script>
+        $(document).ready(function() {
+            formatDate(new Date(),false,6)
+
+          $('#add-bidding-session').on('change','#start-date',function(){
+                formatDate(new Date($(this).val()),true,15);
+            })
+          $('#bidding-sesssion').on('click','#delete-bidding-session',function(){
+                let id = $(this).attr('data-id');
+                console.log('delete button is press now',id);
+                let ApiObj = {
+                    type:'POST',
+                    url:'/admin/bidding-session/delete',
+                    data:{
+                        id:id
+                    },
+                    dataType:'JSON'
+                }
+                ajaxApi(ApiObj).then(result =>{
+                  console.log('values of result',result);
+                  showSuccess(result);
+                }).catch(error =>{
+                    console.log('values of error',error);
+                    showError(error.inputJSON);
+                })
+            });
+          $('#add-bidding-details').on('click',function(){
+                
+                let countRow = 1;
+                let tempBiddingTable = $('#add-bidding-session #temp-bidding-session-details tbody');
+                
+                if(tempBiddingTable.children().length == 0){
+                let biddingName  = $('#add-bidding-session #bidding-name').val();
+                let startDate    = $('#add-bidding-session #start-date').val();
+                let endDate      = $('#add-bidding-session #end-date').val();
+
+                let biddingSessionDetailRow = `<tr data-bidding-name = "${biddingName}" data-start-date = "${startDate}" data-end-date = ${endDate}><td>${countRow++}</td><td>${biddingName}</td><td class="session-td"><div id = "add-acad-session-in-bidding" class="d-flex flex-column justify-content-between align-item-center    add-acad-session-in-bidding"><span class="badge bg-danger"><i class="fa-solid fa-circle-plus"><i></span></div></td>
+                    <td>${startDate}</td><td>${endDate}</td><td id="delete-bidding-session"><i class="fa fa-trash text-danger"></i></td>
+                    </tr>`
+                tempBiddingTable.append(biddingSessionDetailRow);
+                }
+                else{
+                    alert('Only Bidding Session add At a time');
+                }
+           })
+
+          $(document).on('click','#add-acad-session-in-bidding i',function(){
+             $(this).closest('span').remove();
+          })
+
+          $('#add-bidding-session').on('click','#add-acad-session-in-bidding',function(event){
+                $('#add-bidding-session #add-acad-session').removeClass('d-none');
+                
+                if ($(event.target).is('span.badge.bg-danger')){
+                    $(this).find('span').remove();
+                } 
+            })
+            
+          $('#add-bidding-session').on('click','#delete-bidding-session',function(){
+                    $(this).closest('tr').remove();
+                    let addBiddingSessionTableIsEmpty = $('#add-bidding-session #temp-bidding-session-details tbody').children().length;
+                    if(addBiddingSessionTableIsEmpty == 0){
+                        $('#add-bidding-session #add-acad-session').addClass('d-none');
+                        $('#add-bidding-session #bidding-name').val('');
+                        $('#add-bidding-session #start-date').val('');
+                        $('#add-bidding-session #end-date').val('');
+                        $('#add-bidding-session #add-bidding-sessions').addClass('disabled');       
+                    } 
+                })
+
+          $('#add-bidding-session').on('click', '#add-acad-session-in-bidding-details', function() {
+
+                if ($('#selected-acad-session').val()) {
+                    if (isSessionDuplicate($('#selected-acad-session').val())) {
+                        alert('Session already present');
+                    } else {
+                 
+                        if ($('#selected-acad-session').val() > 0) {
+                            $('#add-bidding-session #temp-bidding-session-details  .session-td .add-acad-session-in-bidding').append(
+                                `<span class="badge bg-primary mt-1" data-sessionLid="${$('#selected-acad-session').val()}">${$('#selected-acad-session option:selected').text()}<i class="fa-solid fa-delete-left remove-session"></i></span>`
+                            );
+                        } else {
+                            let sessionSpanEle = ``;
+                            $('#add-bidding-session #selected-acad-session option').each((index, ele) => {
+                                if ($(ele).val() > 0) {
+                                    sessionSpanEle += `<span class="badge bg-primary mt-1" data-sessionLidLid="${$(ele).val()}">${$(ele).text()}<i class="fa-solid fa-delete-left remove-session"></i></span>`;
+                                }
+                            });
+                            $('#add-bidding-session #temp-bidding-session-details  .session-td .add-acad-session-in-bidding').append(sessionSpanEle);
+                        }
+                        let acadSessionSelectedLen =  $('#add-bidding-session #temp-bidding-session-details .session-td .add-acad-session-in-bidding span.badge.bg-primary').length;
+                       if(acadSessionSelectedLen > 0){
+                        $('#add-bidding-session #add-bidding-sessions').removeClass('disabled');
+                       }
+                    }
+                } else {
+                    alert('Select Session First');
+                }
+            });
+
+          $('#add-bidding-session').on('click','#add-bidding-sessions',function(){
+ 
+            let biddingSessionDetails = {} ;  
+              $('#add-bidding-session #temp-bidding-session-details tbody tr').each(function(index, biddingSessionElement) {
+              
+              let biddingAcadSessionArray  = [];
+
+              $(biddingSessionElement).find('.add-acad-session-in-bidding').children().each(function(indexOfBidding,biddingAcadSessionElement){
+                        let value = $(biddingAcadSessionElement).data('sessionlid');
+                        biddingAcadSessionArray.push(value);
+              });
+              biddingSessionDetails.acad_session_lid = biddingAcadSessionArray;
+              biddingSessionDetails.bidding_name = $(biddingSessionElement).attr('data-bidding-name');
+              biddingSessionDetails.start_date = $(biddingSessionElement).attr('data-start-date');
+              biddingSessionDetails.end_date = $(biddingSessionElement).attr('data-end-date');
+              biddingSessionDetails.year = (new Date().getFullYear())
+            });
+             let ApiObj = {
+                url:'/admin/bidding-session/create',
+                type:'POST',
+                data:{
+                  inputJSON:JSON.stringify(biddingSessionDetails)
+                },
+                dataType:'JSON'
+              }
+              ajaxApi(ApiObj).then(result =>{
+                console.log('values of result',result);
+                showSuccess(result);
+              }).catch(error =>{
+                console.log('values of error',error);
+                showError(error.responseJSON);
+              })
+
+           }); 
+
+           $('#bidding-sesssion-table').on('click','#edit-bidding-session',function(){
+              let biddingRow = $(event.target).closest('tr');
+              $('#edit-bidding-session-modal .add-bidding-session-val').children().remove();
+              let biddingName = biddingRow.attr('data-bidding-name');
+              let startDate = biddingRow.attr('data-bidding-start-date');
+              let endDate = biddingRow.attr('data-bidding-end-date');
+              let id = biddingRow.attr('data-id');
+              let biddingAcadSession = biddingRow.attr('data-bidding-acad-session').split(',');
+              
+              let biddingSessionList = '';
+              biddingAcadSession.forEach(function(biddingElem, index){
+                let biddingSessionId = biddingElem.split(':');
+                biddingSessionList += `<span  class="d-flex justify-content-center align-items-center badge bg-secondary ms-2 bidding-acad-session-cancle" data-bidding-session-id="${biddingSessionId[1]}">${biddingSessionId[0]}
+                    <i class="fa-solid fa-xmark ms-auto ps-2 text-danger"></i>
+                    </span>`
+              });
+
+              $('#edit-bidding-session-modal .add-bidding-session-val').append(biddingSessionList);
+              $('#edit-bidding-session-modal #bidding-name').val(biddingName);
+              $('#edit-bidding-session-modal #start-date').val(startDate);
+              $('#edit-bidding-session-modal #end-date').val(endDate);
+              $('#edit-bidding-session-modal #bidding-id').val(id);
+              $('#edit-bidding-session-modal').modal('show');
+
+           })
+           $('#edit-bidding-session-modal').on('click','.bidding-acad-session-cancle',function(){
+                 $(this).closest('span').remove();
+           })
+
+           $('#edit-bidding-session-modal').on('click','.add-acad-session-bidding-session',function(){
+              $('#edit-bidding-session-modal .edit-bidding-session-acad-seession').removeClass('d-none');
+           })
+           $('#edit-bidding-session-modal').on('click','#add-acad-session-edit-bidding',function(){
+               let flagToAdd = true;
+               let selBissingAcadSessionVal = $('#edit-academic-session-add option:selected');
+               let selBiddingAcad = $('#edit-bidding-session-modal .add-bidding-session-val').find('span');
+                selBiddingAcad.each(function(index,prevBiddingSessionAcad){
+
+                    if($(prevBiddingSessionAcad).attr('data-bidding-session-id') == selBissingAcadSessionVal.val()){
+                         $('#edit-bidding-session-modal .bidding-acad-session-label').removeClass('d-none');
+                         flagToAdd = false;
+                    }
+                    else{
+                        $('#edit-bidding-session-modal .bidding-acad-session-label').addClass('d-none');
+                    }
+                })
+                if(flagToAdd){
+               let selectedSpan = `<span class="d-flex justify-content-center align-items-center badge bg-secondary ms-2 bidding-acad-session-cancle" data-bidding-session-id="${selBissingAcadSessionVal.val()}">${selBissingAcadSessionVal.text()}
+                <i class="fa-solid fa-xmark ms-auto ps-2 text-danger"></i>
+                </span>`
+               $('#edit-bidding-session-modal .add-bidding-session-val').append(selectedSpan);
+            }
+           })
+           $('#edit-bidding-session-modal').on('click','#update-bidding-session',function(){
+            let biddingId = $('#edit-bidding-session-modal #bidding-id').val();
+            let biddingName = $('#edit-bidding-session-modal #bidding-name').val();
+            let startDate = $('#edit-bidding-session-modal #start-date').val();
+            let endDate = $('#edit-bidding-session-modal #end-date').val();
+            let biddingSessionAcadId = [];
+           
+            let acadSession = $('#edit-bidding-session-modal .add-bidding-session-val').find('span');
+        
+            acadSession.each(function(index,acadSessionElement){
+                biddingSessionAcadId.push(Number($(acadSessionElement).attr('data-bidding-session-id')));
+            })
+             if(biddingSessionAcadId.length == 0){
+                alert('Select Atleast one Acad Session');
+             } else{
+           let updateBiddingSession = {
+            id: biddingId,
+            bidding_name:biddingName,
+            start_date:startDate,
+            end_date:endDate,
+            year:new Date().getFullYear()+'',
+            acad_session_lid:biddingSessionAcadId
+           }
+           
+           let ApiObj = {
+            url:'/admin/bidding-session/update',
+            type:'POST',
+            data:{
+                updateBiddingSession:JSON.stringify(updateBiddingSession),
+                id:biddingId
+            },
+            dataType:'JSON'
+           }
+           ajaxApi(ApiObj).then(result =>{
+            console.log('values of result',result);
+            showSuccess(result);
+           }).catch(error =>{
+            console.log('values of error',error);
+            showError(error.responseJSON);
+           })
+        } 
+           }) 
+    });
+    function formatDate(todayDateVal,flag,noOfMonthBeforeActivity){
+            
+        let fullYear = todayDateVal.getFullYear();
+        let date = todayDateVal.getDate();
+        let month = todayDateVal.getMonth() + 1;
+        let formatMonth = month < 10 ? '0' + month : month;
+        let formatDate = date < 10 ? '0' + date : date;
+        let minDate = fullYear + '-' + formatMonth + '-' + formatDate;
+
+        let maxDateYearInc = Math.floor((month + noOfMonthBeforeActivity) / 12);
+        let maxDateMonthInc = (month + noOfMonthBeforeActivity) % 12;
+        fullYear = fullYear + maxDateYearInc;
+        let formatMonthMax = maxDateMonthInc >= 10 ? maxDateMonthInc : '0' + maxDateMonthInc;
+
+        let maxDate = fullYear + '-' + formatMonthMax + '-' + formatDate;
+        if(flag){
+            $('#add-bidding-session #end-date').attr('min', minDate);
+            $('#add-bidding-session #end-date').attr('max', maxDate);
+        }else{
+            $('#add-bidding-session #start-date').attr('min', minDate);
+            $('#add-bidding-session #start-date').attr('max', maxDate);
+        }
+    }
+
+    function isSessionDuplicate(sessionVal) {
+        let returnValue = false;
+            if (sessionVal != 0) {
+
+                if ($(`#add-bidding-session #temp-bidding-session-details .session-td .add-acad-session-in-bidding span[data-sessionLid="${sessionVal}"]`).length > 0) {
+                 returnValue = true
+                }
+            }
+            else {
+                  $(`#add-bidding-session #temp-bidding-session-details .session-td .add-acad-session-in-bidding span[data-sessionLid]`).each((index1, ele1) => {
+                     return $(`#add-bidding-session #academic-session option`).each((index2, ele2) => {
+                    if ($(ele1).attr('data-sessionLid') == $(ele2).val()) {
+                         return returnValue = true
+                         }
+                     })
+                 })
+                }
+                return returnValue
+            }
+         
+      
+</script>
+<%- include('../partials/footer.ejs') %>
+
+<%- include('../partials/footerEnd.ejs') %>

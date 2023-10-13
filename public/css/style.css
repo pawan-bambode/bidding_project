@@ -1926,3 +1926,22 @@ margin: auto;
 #importProgram .row {
     --bs-gutter-x:0 !important;
 }
+.add-bidding-session-button {
+    background-color: whitesmoke !important;
+    border-radius:  50% !important;
+}
+#bidding-sesssion-table thead th{
+    background-color: var(--primary-table-bg);
+}
+#bidding-sesssion tbody tr:nth-child(odd){
+ background-color: var(--primary-table-bg);
+}
+#add-bidding-session .modal-body .table th{
+    background-color: var(--primary-table-bg);
+}
+
+.custom-width {
+    width: 80%;
+}
+
+

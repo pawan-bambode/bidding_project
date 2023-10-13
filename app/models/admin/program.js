@@ -6,7 +6,7 @@ module.exports =  class Program {
  static getAllProgram(req,res){
     return poolConnection.then(pool =>{
         return pool.request()
-        .query(`SELECT id, RTRIM(LTRIM(program_name)) AS program_name, RTRIM(LTRIM(abbr))AS abbr, RTRIM(LTRIM(ISNULL(program_code,'NA'))) program_code  FROM [sbm_mum].programs WHERE active = 1`);
+        .query(`SELECT id, RTRIM(LTRIM(program_name)) AS program_name, RTRIM(LTRIM(abbr)) AS abbr, RTRIM(LTRIM(ISNULL(program_code,'NA'))) program_code  FROM [sbm_mum].programs WHERE active = 1`);
     })
  }
  static getAllProgramFromDbo(req,res,slug){

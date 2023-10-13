@@ -51,12 +51,14 @@ module.exports = {
             });
     },
     delete: (req, res) => {
+
+        req.body.program_id == 'undefined'?NULL:req.body.program_id;
         program.delete(req.body.program_id, 'sbm_mum', res.locals.userId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
             .catch(error => {
-                if (isJsonString(isJsonString(error.originalError.info.message))) {
+                if ((isJsonString.isJsonString(error.originalError.info.message))) {
                     res.status(500).json(JSON.parse(error.originalError.info.message));
                 } else {
                     res.status(500).json({

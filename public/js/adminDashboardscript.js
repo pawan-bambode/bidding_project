@@ -181,3 +181,9 @@ $('#add-more-facultyPreference-table').on('click', '.remove-facultypreference', 
         alert('Cannot delete this room.')
     }
 })
+
+$('#biddingSession').click(function(event){
+console.log('bidding session button is click now');
+ event.preventDefault();
+ $('#createBiddingSession').modal('show');
+});

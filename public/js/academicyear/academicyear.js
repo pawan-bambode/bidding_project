@@ -19,7 +19,6 @@ $(document).ready(function () {
          },
       }
       ajaxApi(ApiObj).then(result => {
-         console.log('values of result is-------------->',result);
          if (result.status == 200) {
             createAcademicYearModal();
             $('#set_cycle_modal').modal('hide');

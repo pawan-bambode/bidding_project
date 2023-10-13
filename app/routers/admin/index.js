@@ -11,7 +11,8 @@ function AdminRoute(app) {
     const acadsessionInfo = require('../../routers/admin/acad_session')
     const academicYearInfo = require('../../routers/admin/academicYear')
     const timetableShowToStudent = require('../../routers/student/index')
-    const program = require('../../routers/admin/programs/programs');
+    const program = require('../../routers/admin/programs/programs')
+    const biddingSession = require('../../routers/admin/biddingsession/biddingsession')
 
     app.use('/admin/', isLoggedIn, checkPermission, adminDashboard);
     app.use('/admin/', courseWorkload);
@@ -19,7 +20,8 @@ function AdminRoute(app) {
     app.use('/admin/',acadsessionInfo)
     app.use('/admin/',academicYearInfo)
     app.use('/student/',timetableShowToStudent)
-    app.use('/admin/',program);   
+    app.use('/admin/',program); 
+    app.use('/admin/',biddingSession);  
   
 }
 
