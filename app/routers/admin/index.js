@@ -21,7 +21,8 @@ function AdminRoute(app) {
     app.use('/admin/',academicYearInfo)
     app.use('/student/',timetableShowToStudent)
     app.use('/admin/',program); 
-    app.use('/admin/',biddingSession);  
+    app.use('/admin/',biddingSession);
+
   
 }
 

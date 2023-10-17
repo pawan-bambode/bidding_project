@@ -11,63 +11,25 @@
         </div>
     </div>
 
-    <div class="card course-card">
-        <div class="header">
-            <h2 style="font-size: 17px !important;">Course Data</h2>
+    <div class="card card-custom" >
+        <div class="card-header-custom d-flex justify-content-between p-2">
+            <h4 class="ms-2">Course Data</h4>
+            <button class="btn btn-success me-2" id="uploadCoures">Upload Courses</button>
         </div>
-        <div class="table-responsive">
-            <table class="table course-table" style="border-collapse: inherit !important;">
+        <div class="card-body table-responsive" id="course-table">
+            <table class="table custom_row table-bordered mt-4">
                 <thead>
                   <tr>
-                    <th></th>
-                    <th>First</th>
-                    <th>Last</th>
-                    <th>Handle</th>
-                    <th>Test1</th>
-                    <th>Test1</th>
-                    <th>Test1</th>
-                    <th>Test1</th>
-                    <th>Test1</th>
-                    <th>Test1</th>
+                    <th>id</th>
+                    <th>Course Name</th>
+                    <th>Credit</th>
+                    <th>Program Id</th>
+                    <th>Acad Session</th>
+                    <th>Area</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                    <td>Testing</td>
-                  </tr>
+                  
                 </tbody>
               </table>
         </div>

@@ -189,6 +189,7 @@
                 formatDate(new Date($(this).val()),true,15);
             })
           $('#bidding-sesssion').on('click','#delete-bidding-session',function(){
+            console.log('bidding-session-delete click');
                 let id = $(this).attr('data-id');
                 console.log('delete button is press now',id);
                 let ApiObj = {
@@ -239,7 +240,8 @@
                 } 
             })
             
-          $('#add-bidding-session').on('click','#delete-bidding-session',function(){
+          $('#bidding-sesssion-table').on('click','#delete-bidding-session',function(){
+            console.log('inside the button click now');
                     $(this).closest('tr').remove();
                     let addBiddingSessionTableIsEmpty = $('#add-bidding-session #temp-bidding-session-details tbody').children().length;
                     if(addBiddingSessionTableIsEmpty == 0){
@@ -249,6 +251,23 @@
                         $('#add-bidding-session #end-date').val('');
                         $('#add-bidding-session #add-bidding-sessions').addClass('disabled');       
                     } 
+                    let id = $(this).attr('data-id');
+                console.log('delete button is press now',id);
+                let ApiObj = {
+                    type:'POST',
+                    url:'/admin/bidding-session/delete',
+                    data:{
+                        id:id
+                    },
+                    dataType:'JSON'
+                }
+                ajaxApi(ApiObj).then(result =>{
+                  console.log('values of result',result);
+                  showSuccess(result);
+                }).catch(error =>{
+                    console.log('values of error',error);
+                    showError(error.inputJSON);
+                })
                 })
 
           $('#add-bidding-session').on('click', '#add-acad-session-in-bidding-details', function() {

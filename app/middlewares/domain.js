@@ -23,15 +23,12 @@ module.exports = {
             }
         }
 
-  
         if (isUrl) {
             let subDomain = req.headers.host.split(".")[0];
-             
-            if (subDomain === 'timetable')
-             
+
+            if (subDomain === 'timetable') 
                 return next()
-                // console.log('subDomain1', subDomain)
- 
+            
                 res.locals.slug = subDomain;
                 res.locals.organizationId = 24
                 res.locals.campusId = 10
@@ -39,10 +36,29 @@ module.exports = {
                 res.locals.organizationIdSap = '00004533'
                 res.locals.acadmicYear = 2023
                 res.locals.page_filter = JSON.parse(process.env.PAGE_FILTER)
-                //console.log('LOCALS:::::::', res.locals)
-
+            
+                poolConnection.then(async pool => {
+                    const recordCount = await pool.request()
+                    .query(`SELECT COUNT(*) AS count FROM [sbm_mum].bidding_session WHERE status = 1`);
                 
-                next();
+                if (recordCount.recordset[0].count > 0) {
+                    return pool.request()
+                        .query(`SELECT bidding_name, id, status FROM [sbm_mum].bidding_session WHERE active = 1 AND status = 1`);
+                } else {
+                    return pool.request()
+                        .query(`SELECT bidding_name, id, status FROM [sbm_mum].bidding_session WHERE active = 1`);
+                }
+                }).then(result => {
+                     res.locals.biddingId = result.recordset[0].id
+                     res.locals.biddingName = result.recordset[0].bidding_name
+                     res.locals.status = result.recordset[0].status
+
+                     next();
+                }).catch(error =>{
+                    console.log('error');
+                    next();
+                })
+                
               
         } else {
             console.log('in else condition')

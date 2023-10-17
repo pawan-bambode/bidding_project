@@ -1943,5 +1943,12 @@ margin: auto;
 .custom-width {
     width: 80%;
 }
+.course-card{
+    background-color: var(--primary-table-bg);
+    border-radius: 25px;
+}
+#course-table th{
+    background-color: var(--primary-table-bg);
+}
 
 

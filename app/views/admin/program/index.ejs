@@ -77,6 +77,7 @@
             <div class="modal-body row custum-imp-program">
                
               <div class="col-md-3 border-end custm-padd-for-imp-program custm-padd pe-2 ps-2" >
+             
                 <label class="mb-2" for="select-program" >Select Program :</label>
                     <input type="search" class="form-control p3 mb-3 searchItemProgramCustom" placeholder="Search Program" id="search-program">
                     <% for(let program of programListFromDbo) { %> 
@@ -278,7 +279,7 @@
         });
         $(document).on('click','.delete-program',function(){
             let deleteProgramRow = $(this).data('id');
-            
+            console.log('values of deleteProgramRow',deleteProgramRow);
             let ApiObj = {
                 url:'/admin/program/delete',
                 type:'POST',

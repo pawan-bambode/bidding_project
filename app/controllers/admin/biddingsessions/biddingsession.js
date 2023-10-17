@@ -3,7 +3,9 @@ const isJsonString = require('../../../utils/util');
 
 module.exports = {
     getBiddingSessionPage :(req , res) => {
-        Promise.all([biddingSession.getAllBiddingSession(res.locals.slug)]).then(result =>{
+        console.log('values of res',res.locals.status);
+        
+        Promise.all([biddingSession.getAllBiddingSession(res.locals.slug,res.locals.status)]).then(result =>{
             res.render('admin/biddingsession/index.ejs',{
               biddingSessionList: result[0].recordset
             });
@@ -59,5 +61,41 @@ module.exports = {
                 });
             }
         })
+    },
+    getBiddingSessionList: (req, res) => {
+        slug = 'sbm-mum';
+        biddingSession.getBiddingSessionList(slug)
+            .then(result => {
+                res.json({
+                    status: 200,
+                    data: result.recordset
+                });
+            })
+            .catch(error => {
+                res.status(500).json({
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
+                });
+            });
+    },
+    updateBiddingSession: (req, res) => {
+        slug = 'sbm-mum';
+        biddingSession.updateBiddingSession('sbm_mum', JSON.stringify(req.body))
+            .then(result => {
+                res.status(200).json(JSON.parse(result.output.output_json));
+            })
+            .catch(error => {
+                if (isJsonString.isJsonString(error.originalError.info.message)) {
+                    res.status(500).json(JSON.parse(error.originalError.info.message));
+                } else {
+                    res.status(500).json({
+                        status: 500,
+                        description: error.originalError.info.message,
+                        data: []
+                    });
+                }
+            });
     }
+    
 }

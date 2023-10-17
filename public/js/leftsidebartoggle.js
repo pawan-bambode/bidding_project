@@ -1,8 +1,3 @@
-// const res = require("express/lib/response");
-
-
-
-//LEFT-SIDEBAR-TOGGLE
 
 $('.custom-element').on('click', function(){
    $(this).toggleClass('active')
@@ -39,37 +34,25 @@ $(".notification-close").on('click', function () {
     location.reload();
 })
 
-// //ALERT-MODAL
-// var alertCancel = $('.alert-cancel');
 
-// function alertMsg() {
-//     $('#alertModal').css('display', 'block')
-// }
-
-// $('.alert-cancel').on('click', function () {
-//     $('#alertModal').css('display', 'none');
-// })
-
-
-//TIMETABLE SESSION
 
 $('.session-name').on('click', function(){
 
     let ulList = ``;
     let apiObj = {
         type: 'POST',
-        url: '/admin/timetable-session/get-timetable-session-list',
+        url: '/admin/bidding-session/get-bidding-session-list',
         dataType: 'JSON'
     }
 
     ajaxApi(apiObj).then(result => {
-        
         if(result.data.length > 0){
             for(let list of result.data){
-                ulList += ` ${list.status == 1 ? `<li class="list-group-item active" data-timetable-session-id=${list.id} data-timetable-session-name=${list.timetable_name}>${list.timetable_name}</li>` : `<li class="list-group-item" data-timetable-session-id=${list.id} data-timetable-session-name=${list.timetable_name}>${list.timetable_name}</li>`}` 
+                ulList += ` ${list.status == 1 ?
+                     `<li class="list-group-item active" data-bidding-session-id=${list.id} data-bidding-session-name=${list.bidding_name}  >${list.bidding_name}</li>` : `<li class="list-group-item" data-bidding-session-id=${list.id} data-bidding-session-name=${list.bidding_name}>${list.bidding_name}</li>`}` 
             }
-            $('#timetable-session-popup-modal .list-group').html(ulList)
-            $('#timetable-session-popup-modal').modal('show')
+            $('#bidding-session-popup-modal .list-group').html(ulList)
+            $('#bidding-session-popup-modal').modal('show')
         }
     }).catch(error => {
         console.log('Error', error)
@@ -77,37 +60,31 @@ $('.session-name').on('click', function(){
 
 })
 
-$('#timetable-session-popup-modal .list-group').on('click', '.list-group-item', function(){
-    let dataId = $(this).attr('data-timetable-session-id');
-    console.log('==', dataId)
+$('#bidding-session-popup-modal .list-group').on('click', '.list-group-item', function(){
+    let dataId = $(this).attr('data-bidding-session-id');
+
     $(".list-group-item").removeClass('active');
-    $(`.list-group-item[data-timetable-session-id = ${dataId}]`).addClass('active');
+    $(`.list-group-item[data-bidding-session-id = ${dataId}]`).addClass('active');
 
 })
 
 $('#update_status').on('click', function(){
     let jsonArr = [];
-    let timetableLid = $('#timetable-session-popup-modal .list-group').find('li.active').attr('data-timetable-session-id');
-    let timetableName = $('#timetable-session-popup-modal .list-group').find('li.active').attr('data-timetable-session-name');
-
-    let obj = {
-        timetableLid : timetableLid,
-        timetableName : timetableName
-    }
-
-    jsonArr.push(obj);
+    let biddingSessionLid = $('#bidding-session-popup-modal .list-group').find('li.active').attr('data-bidding-session-id');
+    let biddingName = $('#bidding-session-popup-modal .list-group').find('li.active').attr('data-bidding-session-name');
+    
 
     let apiObj = {
         type: 'POST',
-        url: '/admin/timetable-session/update-timetable-session-status',
+        url: '/admin/bidding-session/update-bidding-session-status',
         data: {
-            inputJSON : JSON.stringify(jsonArr)
+            id:biddingSessionLid,
+            bidding_name:biddingName
         },
         dataType: 'JSON'
     }
 
     ajaxApi(apiObj).then(result => {
-        console.log('==', result)
         showSuccess(result)
     }).catch(error => {
         console.log('Error', error)
