@@ -595,11 +595,6 @@ tr>td {
     color: var(--primary-white);
 }
 
-
-
-
-
-
 .step-form {
 
     margin: auto;
@@ -1950,5 +1945,8 @@ margin: auto;
 #course-table th{
     background-color: var(--primary-table-bg);
 }
-
+#upload-course-modal .modal-content{
+ border-top-left-radius: 15px !important;
+ border-top-right-radius: 15px !important;   
+}
 

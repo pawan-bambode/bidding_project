@@ -181,6 +181,7 @@
          
         $(document).on('click','#import-program',function(){
             let importProgramArray = [];
+          let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
           $('.import-program-table tbody tr').each((index,element) => {
             
             let importProgram = {};
@@ -208,9 +209,11 @@
                 url: '/admin/programs/create',
                 data: {
                     inputJSON: JSON.stringify(importProgramArray),
+                    biddingSessionId:biddingSessionId
                 },
                 dataType: 'JSON' 
             }
+            
             ajaxApi(ApiObj).then(result => {
                 console.log('response::::::::::',result)
                 showSuccess(result)              
@@ -250,6 +253,7 @@
         });
 
         $('#edit_program').on('click','#updateProgram',function(){
+            let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
             let edit_program  = {};
             let program_name = $('#program_name').val();
             let program_code = $('#program_code').val();
@@ -260,8 +264,8 @@
             edit_program.id = program_id;
             edit_program.program_code = program_code;
             edit_program.program_abbr = program_abbr;
-            edit_program.bidding_session_lid = 3;
-            console.log('values',edit_program);
+            edit_program.bidding_session_lid = biddingSessionId;
+        
             let ApiObj = {
                 type:'POST',
                 url:'/admin/program/update',
@@ -279,12 +283,14 @@
         });
         $(document).on('click','.delete-program',function(){
             let deleteProgramRow = $(this).data('id');
-            console.log('values of deleteProgramRow',deleteProgramRow);
+            let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
+            
             let ApiObj = {
                 url:'/admin/program/delete',
                 type:'POST',
                 data:{
-                   program_id:deleteProgramRow
+                   program_id:deleteProgramRow,
+                   biddingSessionId:biddingSessionId
                 },
                 dataType:'JSON'
             }

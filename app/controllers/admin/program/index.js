@@ -15,8 +15,7 @@ module.exports = {
         let object = {
             import_programs: JSON.parse(req.body.inputJSON)
         };
-        
-        program.save(object, 'sbm_mum', res.locals.userId,biddingSessionId)
+        program.save(object, 'sbm_mum', res.locals.userId,req.body.biddingSessionId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
@@ -34,7 +33,7 @@ module.exports = {
             });
     },
     update: (req, res) => {
-        program.update(req.body, 'sbm_mum', res.locals.userId)
+        program.update(req.body, 'sbm_mum', res.locals.userId,req.body.bidding_session_lid)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
@@ -53,7 +52,7 @@ module.exports = {
     delete: (req, res) => {
 
         req.body.program_id == 'undefined'?NULL:req.body.program_id;
-        program.delete(req.body.program_id, 'sbm_mum', res.locals.userId)
+        program.delete(req.body.program_id, 'sbm_mum', res.locals.userId,req.body.biddingSessionId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
