@@ -1,11 +1,11 @@
-const program = require('../../../models/admin/program');
-const isJsonString = require('../../../utils/util');
+const program = require('../../../../models/admin/programs/program');
+const isJsonString = require('../../../../utils/util')
 
 module.exports = {
     getPage: (req, res) => {
         Promise.all([program.getAllProgram(req, res), program.getAllProgramFromDbo(req, res, res.locals.slug)])
             .then(result => {
-                res.render('admin/program/index.ejs', {
+                res.render('admin/programs/program/index.ejs', {
                     programList: result[0].recordset,
                     programListFromDbo: result[1].recordset
                 });

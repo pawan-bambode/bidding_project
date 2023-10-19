@@ -1,5 +1,5 @@
 const { json } = require('express');
-const {sql,poolConnection} = require('../../../config/db');
+const {sql,poolConnection} = require('../../../../config/db');
 const pool = require('mssql');
 
 module.exports =  class Program {

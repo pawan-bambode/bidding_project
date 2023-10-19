@@ -1957,3 +1957,9 @@ margin: auto;
 .select2-container--open {
     z-index: 1500; 
 }
+#program-sessions-table tbody tr:nth-child(odd){
+    background-color: var(--primary-table-bg);
+}
+#program-sessions-table thead th{
+    background-color: var(--primary-table-bg);
+}

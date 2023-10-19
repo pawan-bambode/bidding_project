@@ -16,7 +16,7 @@ return poolConnection.then(pool=>{
 static getCourseList(slug){
       return poolConnection.then(pool=>{
         return pool.request().query(`SELECT  c.id , course_name,credits,program_id , ad.acad_session,area_name, min_demand_criteria , year_of_introduction FROM [${slug}].courses c
-        INNER JOIN [dbo].acad_sessions ad ON ad.id = c.sap_acad_session_id WHERE c.active = 1`)
+        INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id WHERE c.active = 1`)
       })
 }
 static delete(courseId,slug,biddingId,userid){
