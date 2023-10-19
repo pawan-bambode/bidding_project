@@ -3,6 +3,10 @@
 <%- include('../partials/leftSidebar.ejs') %>
 <%- include('../partials/header.ejs') %>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+
 <div class="main-content">
     <div class="col-12">
         <div class="breadcrumb" style="margin: 10px 0;">
@@ -27,10 +31,32 @@
                     <th>Program Id</th>
                     <th>Acad Session</th>
                     <th>Area</th>
+                    <th>Year Of Introduction</th>
+                    <th>Min Demand Criteria</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  
+                  <% let count = 1 %>
+                  <% for(let course of courseList) { %>
+                    <tr>
+                      <td><%- count++ %></td>
+                      <td><%- course.course_name %></td>
+                      <td><%- course.credits %></td>
+                      <td><%- course.program_id %></td>
+                      <td><%- course.acad_session %></td>
+                      <td><%- course.area_name %></td>
+                      <td><%- course.year_of_introduction %></td>
+                      <td><%- course.min_demand_criteria %></td>
+                      <td>
+                      <a class="edit-course" data-bs-target="#edit-course-modal" data-bs-toggle="modal" data-id="<%- course.id %>"
+                        data-course-name="<%- course.course_name%>"  data-credits="<%- course.credits %>" data-year-of-introduction ="<%- course.year_of_introduction %>" data-min-demand-criteria="<%- course.min_demand_criteria %>"
+                        ><i class="fa fa-edit"></i></a>
+                      <a data-id="<%- course.id %>" class="delete-course" ><i class="fas fa-trash text-danger"></i></a>
+                      </td>
+                    </tr>
+                    
+                  <%}%>
                 </tbody>
               </table>
         </div>
@@ -47,9 +73,8 @@
             <div class="modal-body">
                     <div class="d-flex">
                     <label class="form-label me-3">Import Courses :</label>
-                    <form enctype="multipart/form-data" action="/admin/upload-course" method="post">
-                    <input type="file" name="excel-file" id="import-course" accept=".xlsx">
-                
+                    <form enctype="multipart/form-data" action="/admin/upload-course" method="post" id="upload-course-form">
+                    <input type="file" name="import-course" id="import-course" accept=".xlsx">
                     </div>
                     <div class="d-flex justify-content-between align-item-center mt-5">
                     <input type="submit" class="btn btn-success mt-2 d-none" id="upload-course-button" value="Upload Courses"></input> 
@@ -67,35 +92,212 @@
           </div>
         </div>
       </div>
+
+      <div class="modal" id="edit-course-modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Update Course</h3>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                  <div class="col-md-6">
+                  <label class="mb-2 form-label" for="course-name">Course Name:</label>
+                  <input type="hidden" id="course-id">
+                  <input class="form-control" type="text" id="course-name">
+                  <span class="text-danger d-none" id="error-course-name">You Enter Invalid Course Name</span>
+                  </div>
+                    <div class="col-md-6">
+                        <label class="mb-2 form-label" for="course-credits">Credits :</label>
+                        <input class="form-control" type="text" id="course-credits">
+                        <span id="error-credits" class="text-danger d-none">Credits Allow Only Numbers</span>
+                    </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-md-6">
+                      <label class="mb-2 form-label" for="year-of-introduction">Year Of Introduce :</label>
+                      <select class="form-control form-select select2 custom-select" id="year-of-introduction">
+                        <% let currentYear = new Date().getFullYear(); %>
+                        <% for(let year=2000;year<=currentYear;year++) { %>
+                          <option value="<%- year %>"><%- year %></option>
+                          <% }%>
+                      </select>
+                      <span id="error-year-of-intro" class="text-danger d-none">Invalid Year of introduction</span>
+                    </div>
+                  
+                    <div class="col-md-6">
+                      <label class="form-label mb-2" for="min-demand-criteria">Min Demand Criteria :</label>
+                      <input class="form-control" type="text" id="min-demand-criteria">
+                      <span id="error-min-demand-criteria" class="text-danger d-none">Min Demand Creteria Allow Only Numbers</span>
+                    </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" id="update-course">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
       
 <script>
    $(document).ready(function(){
+    
+    $('#edit-course-modal').on('shown.bs.modal',function(){
+      $('.select2').select2();
+    })
+
      $('#import-course').on('change', function(){
         let importCourse = $(this).val();
         if(importCourse != ''){
             $('#upload-course-button').removeClass('d-none');
         }
       });
+      $(document).ready(function() {
+      $('#upload-course-form').on('submit', function(event) {
+        event.preventDefault(); 
+        var formData = new FormData(this); 
 
-     $('#upload-course-button').on('click',function(){
-      let importCourseFileName = $('#import-course').val();
-         let ApiObj = {
-             type:'POST',
-             url:'/admin/upload-course',
-             data:{
-              fileName:importCourseFileName
-             },
-             dataType:'JSON'
-             }
-             ajaxApi(ApiObj).then(result =>{
-             console.log('values of result',result);
-             showSuccess(result);
-             }).catch(error =>{
-             console.log('values of error',error);
-             showError(error.responseJson);
-             })
-     })
+        $.ajax({
+          type: 'POST',
+          url: '/admin/upload-course', 
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            showSuccess(response);
+          },
+          error: function(xhr, status, error) {
+            showError(JSON.stringify(xhr.responseJSON));
+          }
+        });
+      });
+      
+      $('#course-table').on('click','.delete-course',function(){
+        let id = $(this).attr('data-id');
+        $(this).closest('tr').remove();
+        let ApiObj = {
+          type:'POST',
+          url:'/admin/delete-course',
+          data:{
+            id:id
+          },
+          datatype:'JSON'
+        }
+        ajaxApi(ApiObj).then(result=>{
+          showSuccess(result);
+        }).catch(error =>{
+          showError(error.responseJSON);
+        })
+      })
+      $('#edit-course-modal').on('click','#update-course',function(){
+            let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
+            let id = $('#course-id').val();
+            let courseName = $('#course-name').val();
+            let credits = $('#course-credits').val();
+            let yearOfIntroduction = $('#year-of-introduction').val();
+            let minDemandCriteria   = $('#min-demand-criteria').val();
+            
+            let isCredits =  IsNumber(credits);
+            let isMinDemandCri  = IsNumber(minDemandCriteria);
+               if (!isCredits) {
+                  $('#error-credits').removeClass('d-none');
+                  return;
+                } else {
+                  $('#error-credits').addClass('d-none');
+                }
+
+                if (!isMinDemandCri) {
+                  $('#error-min-demand-criteria').removeClass('d-none');
+                  return;
+                } else {
+                  $('#error-min-demand-criteria').addClass('d-none');
+                }
+
+            
+            let editCourse = {
+              id:id,
+              course_name: courseName,
+              credits: credits,
+              year_of_introduction : yearOfIntroduction,
+              min_demand_criteria : minDemandCriteria
+            }
+            
+     
+            let ApiObj = {
+                type:'POST',
+                url:'/admin/course/update',
+                data: {
+                   editCourse:JSON.stringify(editCourse),
+                  biddingSessionId:biddingSessionId
+                },
+                dataType: 'JSON' 
+                }
+                ajaxApi(ApiObj).then(result => {
+                    showSuccess(result)
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
+            
+        });
+        $('#course-table').on('click','.edit-course',function(){
+          let courseName = $(this).attr('data-course-name')
+          let credits = $(this).attr('data-credits');
+          let dataYearOfIntroduction = $(this).attr('data-year-of-introduction');
+          let dataMinDemandCriteria =  $(this).attr('data-min-demand-criteria');
+          let id = $(this).attr('data-id');
+          
+          $('#edit-course-modal #course-id').val(id);
+          $('#edit-course-modal #course-name').val(courseName);
+          $('#edit-course-modal #course-credits').val(credits);
+          $('#edit-course-modal #year-of-introduction').val(dataYearOfIntroduction);
+          $('#edit-course-modal #min-demand-criteria').val(dataMinDemandCriteria);
+        })
+    });
+    
+function showError(errors) {
+  console.log('error',errors);
+        let simpleAlert = new SimpleAlert();
+        let obj = {
+            title : errors,
+            message: "",
+            type: 'alert-danger',
+            buttons: {
+                positive:{
+                    text: "Yes",
+                    action: function(){
+                        document.querySelector('.simple-alert').remove();
+                    }
+                },
+                negative: {
+                    text: "NO",
+                    action: function () {
+                    alert('Negative')
+                    }
+                }
+            }
+        }
+        simpleAlert.alert(obj);
+    }
    })
+
+   function IsNumber(inputString) {
+      let isNumber = false;
+      for (let i = 0; i < inputString.length; i++) {
+      const charCode = inputString.charCodeAt(i);
+      if (charCode >= 48 && charCode <= 57) {
+          isNumber = true;
+      }else{
+          isNumber = false;
+      }
+    }
+    return isNumber;
+  }
+
+
+
+
 </script>
 <%- include('../partials/footer.ejs') %>
 <%- include('../partials/footerEnd.ejs') %>

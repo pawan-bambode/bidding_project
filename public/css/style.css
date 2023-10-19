@@ -1950,3 +1950,10 @@ margin: auto;
  border-top-right-radius: 15px !important;   
 }
 
+#course-table tbody tr:nth-child(odd){
+    background-color: var(--primary-table-bg);
+}
+
+.select2-container--open {
+    z-index: 1500; 
+}

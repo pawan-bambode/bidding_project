@@ -201,7 +201,6 @@
                     dataType:'JSON'
                 }
                 ajaxApi(ApiObj).then(result =>{
-                  console.log('values of result',result);
                   showSuccess(result);
                 }).catch(error =>{
                     console.log('values of error',error);
@@ -262,7 +261,6 @@
                     dataType:'JSON'
                 }
                 ajaxApi(ApiObj).then(result =>{
-                  console.log('values of result',result);
                   showSuccess(result);
                 }).catch(error =>{
                     console.log('values of error',error);
@@ -326,10 +324,8 @@
                 dataType:'JSON'
               }
               ajaxApi(ApiObj).then(result =>{
-                console.log('values of result',result);
                 showSuccess(result);
               }).catch(error =>{
-                console.log('values of error',error);
                 showError(error.responseJSON);
               })
 
@@ -422,7 +418,6 @@
             dataType:'JSON'
            }
            ajaxApi(ApiObj).then(result =>{
-            console.log('values of result',result);
             showSuccess(result);
            }).catch(error =>{
             console.log('values of error',error);
