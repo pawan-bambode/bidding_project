@@ -25,7 +25,7 @@ module.exports =  class Program {
             .execute(`[${slug}].[sp_import_programs]`)
     })
 }
-static update(inputJSON,slug,userid,b){
+static update(inputJSON,slug,userid,biddingSessionId){
     return poolConnection.then(pool =>{
         return pool.request().input('input_json',sql.NVarChar(sql.MAX),JSON.stringify(inputJSON))
         .input('last_modified_by', sql.Int, userid)

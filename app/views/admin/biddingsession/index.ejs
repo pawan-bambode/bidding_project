@@ -41,8 +41,8 @@
                     <td><%- biddingSession.start_date %></td>
                     <td><%- biddingSession.end_date %></td>
                     <td>
-                       <a href="#" class="edit-bidding-session"><i class="fa fa-edit text-primary" id="edit-bidding-session"></i></a>
-                       <a href="#"> <i class="fas fa-trash text-danger"  id="delete-bidding-session"  data-id ="<%- biddingSession.id %>"></i> </a></td>
+                       <a href="#" class="edit-bidding-session" id="edit-bidding-session"><i class="fa fa-edit text-primary" ></i></a>
+                       <a href="#" id="delete-bidding-session" data-id ="<%- biddingSession.id %>"> <i class="fas fa-trash text-danger"></i> </a></td>
                 </tr>
                 <% } %>
           </tbody>
@@ -188,24 +188,23 @@
           $('#add-bidding-session').on('change','#start-date',function(){
                 formatDate(new Date($(this).val()),true,15);
             })
-          $('#bidding-sesssion').on('click','#delete-bidding-session',function(){
-            console.log('bidding-session-delete click');
+          $('#bidding-sesssion-table').on('click','#delete-bidding-session',function(){
                 let id = $(this).attr('data-id');
-                console.log('delete button is press now',id);
                 let ApiObj = {
-                    type:'POST',
-                    url:'/admin/bidding-session/delete',
-                    data:{
-                        id:id
-                    },
-                    dataType:'JSON'
-                }
-                ajaxApi(ApiObj).then(result =>{
-                  showSuccess(result);
-                }).catch(error =>{
-                    console.log('values of error',error);
-                    showError(error.inputJSON);
-                })
+                url:'/admin/bidding-session/delete',
+                type:'POST',
+                data:{
+                   id:id
+                },
+                dataType:'JSON'
+            }
+            ajaxApi(ApiObj).then(result =>{
+                console.log('response:::::::',result);
+                showSuccess(result)
+            }).catch(error =>{
+                console.log('error:::::',error.responseJSON);
+                showError(error.responseJSON)
+            })
             });
           $('#add-bidding-details').on('click',function(){
                 
@@ -239,10 +238,10 @@
                 } 
             })
             
-          $('#bidding-sesssion-table').on('click','#delete-bidding-session',function(){
-            console.log('inside the button click now');
+          $('#temp-bidding-session-details').on('click','#delete-bidding-session',function(){
                     $(this).closest('tr').remove();
                     let addBiddingSessionTableIsEmpty = $('#add-bidding-session #temp-bidding-session-details tbody').children().length;
+                    console.log('values of childre',addBiddingSessionTableIsEmpty);
                     if(addBiddingSessionTableIsEmpty == 0){
                         $('#add-bidding-session #add-acad-session').addClass('d-none');
                         $('#add-bidding-session #bidding-name').val('');
@@ -250,22 +249,6 @@
                         $('#add-bidding-session #end-date').val('');
                         $('#add-bidding-session #add-bidding-sessions').addClass('disabled');       
                     } 
-                    let id = $(this).attr('data-id');
-                console.log('delete button is press now',id);
-                let ApiObj = {
-                    type:'POST',
-                    url:'/admin/bidding-session/delete',
-                    data:{
-                        id:id
-                    },
-                    dataType:'JSON'
-                }
-                ajaxApi(ApiObj).then(result =>{
-                  showSuccess(result);
-                }).catch(error =>{
-                    console.log('values of error',error);
-                    showError(error.inputJSON);
-                })
                 })
 
           $('#add-bidding-session').on('click', '#add-acad-session-in-bidding-details', function() {
@@ -324,7 +307,7 @@
                 dataType:'JSON'
               }
               ajaxApi(ApiObj).then(result =>{
-                showSuccess(result);
+                showSuccess(result)
               }).catch(error =>{
                 showError(error.responseJSON);
               })
@@ -469,7 +452,31 @@
                 }
                 return returnValue
             }
-         
+            function showError(errors) {
+            console.log(errors);
+            console.log('values of description',errors)
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: "",
+                type: 'alert-danger',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+            }
       
 </script>
 <%- include('../partials/footer.ejs') %>

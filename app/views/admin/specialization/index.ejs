@@ -10,9 +10,9 @@
 <div class="main-content">
   <div class="card card-custom">
     <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-2"> Area</h3>
-        <button type="button" class="btn btn-danger ms-auto me-3"  id="refresh-areas">
-            <i class="fa-solid fa-rotate p-1"></i>Refresh
+        <h3 class="ms-2"> Specialization </h3>
+        <button type="button" class="btn add-btn-specialization me-2" data-bs-target="#add-specialization" data-bs-toggle="modal" >
+            <i class="fas fa-plus p-1"></i>
         </button>  
     </div>
     <div class="card-body table-responsive">
@@ -31,18 +31,23 @@
             </div>
         </div>
 
-        <table class="table custom_row table-bordered mt-4 w-50  m-auto" id="program-sessions-table">
+        <table class="table custom_row table-bordered mt-4 w-50  m-auto" id="specialization-table">
             <thead>
                 <th>Sr No.</th>
-                <th>Area Name</th>
+                <th>Specialization Name</th>
+                <th>Action</th>
                 
             </thead>
             <tbody>
                 <% let count = 1 %>
-                <%for(let area of areaList) {%>
+                <%for(let specialization of specializationList) {%>
                     <tr>
                         <td><%- count++ %></td>
-                        <td><%-area.area_name %></td> 
+                        <td><%-specialization.concentration_name %></td>
+                        <td>
+                            <a class="edit-specialization" data-bs-target="#edit-specialization-modal" data-bs-toggle="modal" data-specialization-id="<%- specialization.id %>" data-specialization-name="<%- specialization.concentration_name %>"> <i class="fa fa-edit"></i></a>
+                            <a data-specialization-id="<%- specialization.id %>" > <i class="fa fa-trash text-danger delete-specialization"></i></a>
+                        </td> 
                     </tr>
                 <%}%>
             </tbody>
@@ -61,50 +66,120 @@
 </div>
 
 
-<div class="modal" id="edit-program-sessions">
+<div class="modal" id="add-specialization">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Add Credits</h3>
+                <h3 class="modal-title">Add Specialization</h3>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              <label class="form-label mb-2" for="min-credits">Min Credits :</label>
-              <input type="hidden" id="program-session-id">
-              <span  class="text-danger d-none" id="min-credits-error">Min Credits Allow Only Numbers </span>
-              <input class="form-control" type="text" id="min-credits">              
-              <label class="form-label mb-2" for="max-credits">Max Credits :</label>
-              <input class="form-control" type="text" id="max-credits">  
-              <span  class="text-danger d-none" id="max-credits-error">Max Credits Allow Only Numbers </span>
+              <label class="form-label mb-2" for="specialization-name">Specialization Name :</label>
+              <input class="form-control" id="specialization-name">
+              
               </div>   
         
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-primary" id="update-program-sessions">Update</button>
+                <button class="btn btn-primary" id="add-specialization-name">Add</button>
+            </div>
+        </div>
+    </div>
+ </div>       
+<div class="modal" id="edit-specialization-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Update Specialization</h3>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <label class="form-label mb-2" for="previous-specialization-name">Previous Specialization Name :</label>
+              <input type="hidden" id="specialization-id">
+              <input class="form-control" type="text" id="previous-specialization-name" disabled readonly>              
+              <label class="form-label mb-2" for="new-specialization-name">New Specialization Name :</label>
+              <input class="form-control" type="text" id="new-specialization-name">    
+              </div>   
+        
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary" id="edit-specialization-button">Update</button>
             </div>
         </div>
     </div>
 </div>
 
+
 <script>
     $(document).ready(function() {
-     $('#refresh-areas').on('click',function(){
-        let ApiObj = {
-            url:'/admin/area/refresh',
+     $('#add-specialization-name').on('click',function(){  
+        let specializationName = $('#add-specialization #specialization-name').val();
+        
+        let ApiObj ={
+            url:'/admin/specialization/add',
             type:'POST',
-            data:{},
-            datatype:'JSON'
+            data:{
+                concentration_name:specializationName
+            },
+            datatype :'JSON'
         }
-        ajaxApi(ApiObj).then(result=>{
+        ajaxApi(ApiObj).then(result =>{
             console.log('values of result',result);
             showSuccess(result);
         }).catch(error =>{
-            console.log('values of error',error.responseJson);
+            console.log('values of error',error);
             showError(error.responseJson);
         })
-     })
+     })   
+
+    $('#specialization-table').on('click','.delete-specialization',function(){
+        let specializationId = $(this).closest('a').attr('data-specialization-id');
+        
+        let ApiObj = {
+            url:'/admin/specialization/delete',
+            type:'POST',
+            data:{
+                specializationId:specializationId
+            },
+            datatype:'JSON'
+        }
+        ajaxApi(ApiObj).then(result =>{
+            console.log('values of result',result);
+            showSuccess(result);
+        }).catch(error =>{
+            console.log('values of error',error);
+            showError(error.responseJson);
+        })
     })
 
+    $('#edit-specialization-modal').on('click','#edit-specialization-button',function(){
+        let specializationId = $('#edit-specialization-modal #specialization-id').val();
+        let specializationName = $('#edit-specialization-modal #new-specialization-name').val();
+      
+        let ApiObj = {
+            url:'/admin/specialization/update',
+            type:'POST',
+            data:{
+                id:specializationId,
+                concentration_name:specializationName
+            },
+            datatype:'JSON'
+        }
+        ajaxApi(ApiObj).then(result =>{
+            console.log('values of result',result);
+            showSuccess(result);
+        }).catch(error =>{
+            console.log('values of error',error);
+            showError(error.responseJson);
+        })
+    })
+    $('#specialization-table').on('click','.edit-specialization',function(){
+        let specializationName = $(this).attr('data-specialization-name');
+        let specializationId = $(this).attr('data-specialization-id')
+       $('#edit-specialization-modal #specialization-id').val(specializationId);
+       $('#edit-specialization-modal #previous-specialization-name').val(specializationName);
+    });
+})
 
 function showError(errors) {
             console.log(errors);

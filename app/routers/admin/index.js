@@ -18,6 +18,7 @@ function AdminRoute(app) {
     const biddingSession = require('../../routers/admin/biddingsession/biddingsession')
     const generateExcel = require('../../routers/admin/generatesampleCoursesImportExcelFile/generatedExecl')
     const area = require('../../routers/admin/areas/areas')
+    const specialization = require('../../routers/admin/specialization/specialization')
     
     app.use('/admin/', isLoggedIn, checkPermission, adminDashboard);
     app.use('/admin/', courseWorkload);
@@ -29,6 +30,7 @@ function AdminRoute(app) {
     app.use('/admin/', biddingSession);
     app.use('/admin/',generateExcel);
     app.use('/admin/',area);
+    app.use('/admin/',specialization);
 }
 
 module.exports = AdminRoute;

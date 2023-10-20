@@ -1963,3 +1963,13 @@ margin: auto;
 #program-sessions-table thead th{
     background-color: var(--primary-table-bg);
 }
+.add-btn-specialization {
+    background-color: whitesmoke !important;
+    border-radius: 50% !important;
+}
+#specialization-table thead th{
+    background-color: var(--primary-table-bg);
+}
+#specialization-table tbody tr:nth-child(odd){
+    background-color: var(--primary-table-bg);
+}
