@@ -4,6 +4,8 @@ const {
     execPreparedStmt
 } = require('../../config/db')
 
+
+
 function isJsonString(str) {
     try {
         JSON.parse(str);
@@ -29,6 +31,7 @@ if (array.length > 0){
 }
 }
 
+  
 module.exports = {
     isJsonString,
     currentAcadYear,

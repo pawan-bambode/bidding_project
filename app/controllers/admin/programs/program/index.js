@@ -3,7 +3,7 @@ const isJsonString = require('../../../../utils/util')
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([program.getAllProgram(req, res), program.getAllProgramFromDbo(req, res, res.locals.slug)])
+        Promise.all([program.getAllProgram(req, res,res.locals.slug), program.getAllProgramFromDbo(req, res, res.locals.slug)])
             .then(result => {
                 res.render('admin/programs/program/index.ejs', {
                     programList: result[0].recordset,
@@ -15,7 +15,7 @@ module.exports = {
         let object = {
             import_programs: JSON.parse(req.body.inputJSON)
         };
-        program.save(object, 'sbm_mum', res.locals.userId,req.body.biddingSessionId)
+        program.save(object,res.locals.slug, res.locals.userId,req.body.biddingSessionId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
@@ -33,7 +33,7 @@ module.exports = {
             });
     },
     update: (req, res) => {
-        program.update(req.body, 'sbm_mum', res.locals.userId,req.body.bidding_session_lid)
+        program.update(req.body,res.locals.slug, res.locals.userId,req.body.bidding_session_lid)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
@@ -52,7 +52,7 @@ module.exports = {
     delete: (req, res) => {
 
         req.body.program_id == 'undefined'?NULL:req.body.program_id;
-        program.delete(req.body.program_id, 'sbm_mum', res.locals.userId,req.body.biddingSessionId)
+        program.delete(req.body.program_id, res.locals.slug, res.locals.userId,req.body.biddingSessionId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })

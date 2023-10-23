@@ -13,7 +13,7 @@ module.exports = {
       
     },
     create:(req ,res) =>{
-        biddingSession.save(req.body.inputJSON, 'sbm_mum', res.locals.userId)
+        biddingSession.save(req.body.inputJSON,res.locals.slug, res.locals.userId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
@@ -32,7 +32,7 @@ module.exports = {
             });
     },
     delete:(req,res) =>{
-        biddingSession.delete(req.body.id,'sbm_mum',res.locals.userId).then(result => {
+        biddingSession.delete(req.body.id,res.locals.slug,res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json));
         })
         .catch(error => {
@@ -50,7 +50,7 @@ module.exports = {
 
     update : (req,res) => {
         
-        biddingSession.update(req.body.updateBiddingSession,req.body.id,'sbm_mum',res.locals.userId).then(result =>{
+        biddingSession.update(req.body.updateBiddingSession,req.body.id,res.locals.slug,res.locals.userId).then(result =>{
             res.status(200).json(JSON.parse(result.output.output_json));
         }).catch(error =>{
             if(isJsonString.isJsonString(error.originalError.info.message)){
@@ -65,8 +65,7 @@ module.exports = {
         })
     },
     getBiddingSessionList: (req, res) => {
-        slug = 'sbm-mum';
-        biddingSession.getBiddingSessionList(slug)
+        biddingSession.getBiddingSessionList(res.locals.slug)
             .then(result => {
                 res.json({
                     status: 200,
@@ -82,8 +81,7 @@ module.exports = {
             });
     },
     updateBiddingSession: (req, res) => {
-        slug = 'sbm-mum';
-        biddingSession.updateBiddingSession('sbm_mum', JSON.stringify(req.body))
+        biddingSession.updateBiddingSession(res.locals.slug, JSON.stringify(req.body))
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })

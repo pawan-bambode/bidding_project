@@ -19,6 +19,7 @@ function AdminRoute(app) {
     const generateExcel = require('../../routers/admin/generatesampleCoursesImportExcelFile/generatedExecl')
     const area = require('../../routers/admin/areas/areas')
     const specialization = require('../../routers/admin/specialization/specialization')
+    const concentrationSettings = require('../../routers/admin/concentrationsettings/concentration')
     
     app.use('/admin/', isLoggedIn, checkPermission, adminDashboard);
     app.use('/admin/', courseWorkload);
@@ -31,6 +32,7 @@ function AdminRoute(app) {
     app.use('/admin/',generateExcel);
     app.use('/admin/',area);
     app.use('/admin/',specialization);
+    app.use('/admin/',concentrationSettings);
 }
 
 module.exports = AdminRoute;

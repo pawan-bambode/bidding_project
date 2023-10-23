@@ -2,7 +2,7 @@ const courseworkload = require('../../../models/admin/courseworkload/courseworkl
 const isJsonString = require('../../../utils/util');
 module.exports = {
     getCourseworkload : (req, res) => {
-        Promise.all([courseworkload.getCourseList('sbm_mum')]).then(result =>{
+        Promise.all([courseworkload.getCourseList(res.locals.slug)]).then(result =>{
             res.render('admin/courseworkload/index.ejs',{
              courseList:result[0].recordset
             });
@@ -10,7 +10,7 @@ module.exports = {
     },
     delete :(req,res) =>{
 
-     courseworkload.delete(req.body.id,'sbm_mum',res.locals.biddingId,res.locals.userId).then(result =>{
+     courseworkload.delete(req.body.id,res.locals.slug,res.locals.biddingId,res.locals.userId).then(result =>{
         
         res.status(200).json(JSON.parse(result.output.output_json));
      }).catch(error =>{
@@ -28,7 +28,7 @@ module.exports = {
      })
     },
     update :(req,res) =>{
-        courseworkload.update(req.body.editCourse,req.body.biddingSessionId,res.locals.userId,'sbm_mum').then(result=>{
+        courseworkload.update(req.body.editCourse,req.body.biddingSessionId,res.locals.userId,res.locals.slug).then(result=>{
             res.status(200).json(JSON.parse(result.output.output_json));
         }).catch(error =>{
             if(isJsonString.isJsonString(error.originalError.info.message)){

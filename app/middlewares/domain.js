@@ -38,15 +38,16 @@ module.exports = {
                 res.locals.page_filter = JSON.parse(process.env.PAGE_FILTER)
             
                 poolConnection.then(async pool => {
+                    let slug = res.locals.slug;
                     const recordCount = await pool.request()
-                    .query(`SELECT COUNT(*) AS count FROM [sbm_mum].bidding_session WHERE status = 1`);
+                    .query(`SELECT COUNT(*) AS count FROM [${slug}].bidding_session WHERE status = 1`);
                 
                 if (recordCount.recordset[0].count > 0) {
                     return pool.request()
-                        .query(`SELECT bidding_name, id, status FROM [sbm_mum].bidding_session WHERE active = 1 AND status = 1`);
+                        .query(`SELECT bidding_name, id, status FROM [${slug}].bidding_session WHERE active = 1 AND status = 1`);
                 } else {
                     return pool.request()
-                        .query(`SELECT bidding_name, id, status FROM [sbm_mum].bidding_session WHERE active = 1`);
+                        .query(`SELECT bidding_name, id, status FROM [${slug}].bidding_session WHERE active = 1`);
                 }
                 }).then(result => {
                      res.locals.biddingId = result.recordset[0].id

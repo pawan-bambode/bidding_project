@@ -124,17 +124,15 @@
             datatype :'JSON'
         }
         ajaxApi(ApiObj).then(result =>{
-            console.log('values of result',result);
             showSuccess(result);
         }).catch(error =>{
-            console.log('values of error',error);
             showError(error.responseJson);
         })
      })   
 
     $('#specialization-table').on('click','.delete-specialization',function(){
         let specializationId = $(this).closest('a').attr('data-specialization-id');
-        
+        console.log('values of specializationId',specializationId);
         let ApiObj = {
             url:'/admin/specialization/delete',
             type:'POST',
@@ -144,10 +142,8 @@
             datatype:'JSON'
         }
         ajaxApi(ApiObj).then(result =>{
-            console.log('values of result',result);
             showSuccess(result);
         }).catch(error =>{
-            console.log('values of error',error);
             showError(error.responseJson);
         })
     })

@@ -10,14 +10,42 @@
     
     <div class="col-xl-3 col-lg-4 col-md-12">
         <a href="javascript:void(0)" class="tab-expand">
+            <div class="card row1-data-card" >
+                <div class="card-body d-flex justify-content-between">
+                    <div>
+                        <img src="/icon_imgs/bid.png" alt="">
+                    </div>
+                    <div>
+                        <h5 class="fw-normal pt-1">BIDDING INFORMATION</h5>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-xl-3 col-lg-4 col-md-12">
+        <a href="/admin/bidding_session" class="tab-expand">
+            <div class="card row1-data-card">
+                <div class="card-body d-flex justify-content-between">
+                    <img src="../icon_imgs/batch.png" alt="bidding-sessions">
+                  <div>
+                    <h5 class="fw-normal pt-1">BIDDING SESSIONS</h5>
+                  </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-xl-3 col-lg-4 col-md-12">
+        <a href="/admin/programs" class="tab-expand">
             <div class="card row1-data-card">
                 <div class="card-body d-flex justify-content-between">
                     <div>
-                        <img src="/icon_imgs/students.png" alt="">
+                        <img src="/icon_imgs/programs.png" alt="programs">
                     </div>
                     <div class="d-flex flex-column">
-                        <h5 class="fw-normal pt-1">Total Students</h5>
-                        <h3 class="align-self-end">1250</h3>
+                        <h5 class="fw-normal pt-1">PROGRAMS</h5>
+                        <h3 class="align-self-end"><%= locals.programCount %></h3>
                     </div>
                 </div>
             </div>
@@ -32,107 +60,36 @@
                         <img src="/icon_imgs/courses.png" alt="">
                     </div>
                     <div class="d-flex flex-column">
-                        <h5 class="fw-normal pt-1">Total Courses</h5>
-                        <h3 class="align-self-end">25</h3>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </div>
-    
-    <div class="col-xl-3 col-lg-4 col-md-12">
-        <a href="javascript:void(0)" class="tab-expand">
-            <div class="card row1-data-card" >
-                <div class="card-body d-flex justify-content-between">
-                    <div>
-                        <img src="/icon_imgs/faculty.png" alt="">
-                    </div>
-                    <div class="d-flex flex-column">
-                        <h5 class="fw-normal pt-1">Total Faculty</h5>
-                        <h3 class="align-self-end">62</h3>
+                        <h5 class="fw-normal pt-1">COURSES</h5>
+                        <h3 class="align-self-end"><%= locals.courseCount %></h3>
                     </div>
                 </div>
             </div>
         </a>
     </div>
 
-
-    <div class="col-xl-3 col-lg-4 col-md-12">
-        <a href="javascript:void(0)" class="tab-expand">
-            <div class="card row1-data-card" >
-                <div class="card-body d-flex justify-content-between">
-                    <div>
-                        <img src="/icon_imgs/bid.png" alt="">
-                    </div>
-                    <div>
-                        <h5 class="fw-normal pt-1">Bidding Info</h5>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </div>
-
-    <div class="col-xl-3 col-lg-4 col-md-12">
-        <a href="/student/showtimetable" class="tab-expand">
-            <div class="card row1-data-card">
-                <div class="card-body d-flex justify-content-between">
-                    <div>
-                      <img src="/icon_imgs/generation.png" alt="generation timetable">
-                    </div>  
-                    <div>
-                      <h5 class="fw-normal pt-1">Timetable</h5>
-                   </div>
-                </div>   
-            </div>
-        </a>
-    </div>
-    
-    <div class="col-xl-3 col-lg-4 col-md-12">
-        <a href="/admin/programs" class="tab-expand">
-            <div class="card row1-data-card">
-                <div class="card-body d-flex justify-content-between">
-                    <div>
-                        <img src="/icon_imgs/programs.png" alt="programs">
-                    </div>
-                    <div>
-                        <h5 class="fw-normal pt-1">Programs</h5>
-                    </div>
-                </div>
-            </div>
-        </a>
-    </div>
-    <div class="col-xl-3 col-lg-4 col-md-12">
-        <a href="/admin/bidding_session" class="tab-expand">
-            <div class="card row1-data-card">
-                <div class="card-body d-flex justify-content-between">
-                    <img src="../icon_imgs/batch.png" alt="bidding_sessions">
-                  <div>
-                    <h5 class="fw-normal pt-1">Bidding Sessions</h5>
-                  </div>
-                </div>
-            </div>
-        </a>
-    </div>
     <div class="col-xl-3 col-lg-4 col-md-12">
         <a href="/admin/program/program-session" class="tab-expand">
             <div class="card row1-data-card">
                 <div class="card-body d-flex justify-content-between">
                     <img src="../icon_imgs/room-type.PNG" alt="program-sessions">
-                  <div>
-                    <h5 class="fw-normal pt-1">Program Sessions</h5>
+                  <div class="d-flex flex-column">
+                    <h5 class="fw-normal pt-1">PROGRAM SESSIONS</h5>
+                    <h3 class="align-self-end"><%= locals.programSessionCount %></h3>
                   </div>
                 </div>
             </div>
         </a>
     </div>
-    
+
     <div class="col-xl-3 col-lg-4 col-md-12">
         <a href="/admin/areas" class="tab-expand">
             <div class="card row1-data-card">
                 <div class="card-body d-flex justify-content-between">
                     <img src="../icon_imgs/room-type.PNG" alt="areas">
-                    <div>
-                        <h5 class="fw-normal pt-1">Areas</h5>
+                    <div class="d-flex flex-column">
+                        <h5 class="fw-normal pt-1">AREAS</h5>
+                        <h3 class="align-self-end"><%= locals.areaCount %></h3>
                     </div>
                 </div>
             </div>
@@ -144,13 +101,82 @@
             <div class="card row1-data-card">
                 <div class="card-body d-flex justify-content-between">
                     <img src="../icon_imgs/room-type.PNG" alt="specialization">
-                    <div>
-                        <h5 class="fw-normal pt-1">Specialization</h5>
+                    <div class="d-flex flex-column">
+                        <h5 class="fw-normal pt-1">SPECIALIZATIONS</h5>
+                        <h3 class="align-self-end"><%= locals.concentrationCount %></h3>
                     </div>
                 </div>
             </div>
         </a>
     </div>
+
+    <div class="col-xl-3 col-lg-4 col-md-12">
+        <a href="/admin/concentration-settings" class="tab-expand">
+            <div class="card row1-data-card">
+                <div class="card-body d-flex justify-content-between">
+                    <img src="../icon_imgs/room-type.PNG" alt="concentration-settings">
+                    <div class="d-flex flex-column">
+                        <h5 class="fw-normal pt-1">CONCENTRATION SETTINGS</h5>
+                        <h3 class="align-self-end"><%= locals.concentrationSettingCount %></h3>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-xl-3 col-lg-4 col-md-12">
+        <a href="javascript:void(0)" class="tab-expand">
+            <div class="card row1-data-card">
+                <div class="card-body d-flex justify-content-between">
+                    <div>
+                        <img src="/icon_imgs/students.png" alt="">
+                    </div>
+                    <div class="d-flex flex-column">
+                        <h5 class="fw-normal pt-1">STUDENTS</h5>
+                        <h3 class="align-self-end"><%= locals.studentCount %></h3>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+
+<!--     
+    <div class="col-xl-3 col-lg-4 col-md-12">
+        <a href="javascript:void(0)" class="tab-expand">
+            <div class="card row1-data-card" >
+                <div class="card-body d-flex justify-content-between">
+                    <div>
+                        <img src="/icon_imgs/faculty.png" alt="">
+                    </div>
+                    <div class="d-flex flex-column">
+                        <h5 class="fw-normal pt-1">FACULTIES</h5>
+                        <h3 class="align-self-end"></h3>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div> -->
+
+
+
+
+    <div class="col-xl-3 col-lg-4 col-md-12">
+        <a href="/student/showtimetable" class="tab-expand">
+            <div class="card row1-data-card">
+                <div class="card-body d-flex justify-content-between">
+                    <div>
+                      <img src="/icon_imgs/generation.png" alt="generation timetable">
+                    </div>  
+                    <div>
+                      <h5 class="fw-normal pt-1">TIMETABLE</h5>
+                   </div>
+                </div>   
+            </div>
+        </a>
+    </div>
+    
+
 
     <div class="modal" id="createBiddingSession" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen">

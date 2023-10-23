@@ -4,7 +4,6 @@ const pool = require('mssql');
 
 module.exports = class BiddingSession{
       static getAllBiddingSession(slug,status) {
-        slug = 'sbm_mum';
        if(status)
         return poolConnection.then(pool => {
             return pool.request()
@@ -15,8 +14,8 @@ module.exports = class BiddingSession{
             STRING_AGG(CONCAT(bas.acad_session, ':', bas.acad_session_lid), ',') AS acad_sessions_and_ids,
             bs.start_date, 
             bs.end_date 
-        FROM [sbm_mum].bidding_session bs
-        INNER JOIN [sbm_mum].bidding_acad_sessions bas ON bas.bidding_session_lid = bs.id 
+        FROM [${slug}].bidding_session bs
+        INNER JOIN [${slug}].bidding_acad_sessions bas ON bas.bidding_session_lid = bs.id 
         WHERE bs.active = 1  AND status = 1
         GROUP BY bs.id, bs.bidding_name, bs.start_date, bs.end_date;`);
         });
@@ -28,10 +27,10 @@ module.exports = class BiddingSession{
             STRING_AGG(CONCAT(bas.acad_session, ':', bas.acad_session_lid), ',') AS acad_sessions_and_ids,
             bs.start_date, 
             bs.end_date 
-        FROM [sbm_mum].bidding_session bs
-        INNER JOIN [sbm_mum].bidding_acad_sessions bas ON bas.bidding_session_lid = bs.id 
+        FROM [${slug}].bidding_session bs
+        INNER JOIN [${slug}].bidding_acad_sessions bas ON bas.bidding_session_lid = bs.id 
         WHERE bs.active = 1 
-        GROUP BY bs.id, bs.bidding_name, bs.start_date, bs.end_date;`);
+        GROUP BY bs.id, bs.bidding_name, bs.start_date, bs.end_date`);
           })
         }
     }
@@ -62,7 +61,6 @@ module.exports = class BiddingSession{
       })
     }
     static getBiddingSessionList(slug){
-      slug = 'sbm_mum';
       return poolConnection.then(pool =>{
         return pool.request()
         .query(`SELECT id, bidding_name ,active, status FROM [${slug}].bidding_session WHERE active = 1`);

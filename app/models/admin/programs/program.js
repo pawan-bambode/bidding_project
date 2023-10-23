@@ -3,16 +3,16 @@ const {sql,poolConnection} = require('../../../../config/db');
 const pool = require('mssql');
 
 module.exports =  class Program {
- static getAllProgram(req,res){
+ static getAllProgram(req,res,slug){
     return poolConnection.then(pool =>{
         return pool.request()
-        .query(`SELECT id, RTRIM(LTRIM(program_name)) AS program_name, RTRIM(LTRIM(abbr)) AS abbr, RTRIM(LTRIM(ISNULL(program_code,'NA'))) program_code  FROM [sbm_mum].programs WHERE active = 1`);
+        .query(`SELECT id, RTRIM(LTRIM(program_name)) AS program_name, RTRIM(LTRIM(abbr)) AS abbr, RTRIM(LTRIM(ISNULL(program_code,'NA'))) program_code  FROM [${slug}].programs WHERE active = 1`);
     })
  }
- static getAllProgramFromDbo(req,res,abbr){
+ static getAllProgramFromDbo(req,res,slug,abbr){
     abbr = 'SBM-NM-M';
     return poolConnection.then(pool =>{
-        return pool.request().input('abbr',sql.NVarChar,abbr).query(`SELECT RTRIM(LTRIM(dboP.program_name))AS program_name, RTRIM(LTRIM(dboP.abbr)) as abbr,dboP.program_id FROM [dbo].programs dboP  WHERE dboP.program_id NOT IN(SELECT program_id FROM [sbm_mum].programs WHERE active = 1)
+        return pool.request().input('abbr',sql.NVarChar,abbr).query(`SELECT RTRIM(LTRIM(dboP.program_name))AS program_name, RTRIM(LTRIM(dboP.abbr)) as abbr,dboP.program_id FROM [dbo].programs dboP  WHERE dboP.program_id NOT IN(SELECT program_id FROM [${slug}].programs WHERE active = 1)
          AND dboP.abbr = @abbr`);
     })
  }

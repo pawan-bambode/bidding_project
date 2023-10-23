@@ -24,8 +24,13 @@ module.exports = {
                 resolve(key == derivedKey.toString('hex'))
             });
         })
-    }
-    
+    },
+    getCountOfCourses:async (slug) => {
+        return new Promise((resolve, reject) => {
+       
+          resolve(result);
+        });
+      }
 
 }
 

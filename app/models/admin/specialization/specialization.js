@@ -4,14 +4,12 @@ const pool = require('mssql');
 
 module.exports = class Specialization {
      static getAllSpecialization(req,res,slug){
-        slug = 'sbm_mum'
      return poolConnection.then(pool =>{
        return pool.request()
        .query(`SELECT id,concentration_name FROM [${slug}].concentration WHERE active = 1`);
      })
      }
      static add(specializationName,biddingId,userId,slug){
-      slug = 'sbm_mum';
       return poolConnection.then(pool =>{
         return pool.request()
         .input('input_json',sql.NVarChar(sql.MAX),JSON.stringify(specializationName))
@@ -22,7 +20,6 @@ module.exports = class Specialization {
       })
      }
      static delete(specializationId,biddingId,userId,slug){
-      slug = 'sbm_mum';
       return poolConnection.then(pool =>{
         return pool.request()
         .input('input_concentration_lid',sql.Int,specializationId)
@@ -33,7 +30,6 @@ module.exports = class Specialization {
       })
      }
      static update(inputJson,biddingId,userId,slug){
-      slug= 'sbm_mum';
       return poolConnection.then(pool =>{
         return pool.request()
         .input('input_json',sql.NVarChar,JSON.stringify(inputJson))

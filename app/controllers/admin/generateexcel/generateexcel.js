@@ -96,7 +96,7 @@ module.exports = {
                     };
                   })
     let course = {courses: courseDataWithColumnHypen}
-    courseworkload.uploadCourse('sbm_mum',JSON.stringify(course),res.locals.userId,biddingId).then(result =>{
+    courseworkload.uploadCourse(res.locals.slug,JSON.stringify(course),res.locals.userId,biddingId).then(result =>{
     res.status(200).json(JSON.parse(result.output.output_json));
    }).catch(error =>{
        if(isJsonString.isJsonString(error.originalError.info.message)){

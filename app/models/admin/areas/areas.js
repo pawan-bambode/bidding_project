@@ -4,14 +4,13 @@ const pool = require('mssql');
 
 module.exports = class Area {
    static getAreaList(slug){
-    slug = 'sbm_mum';
     return poolConnection.then(pool =>{
         return pool.request()
         .query(`SELECT * FROM [${slug}].areas`);
     })
    }
+   
    static refresh(slug,biddingId,userid){
-    slug = 'sbm_mum';
     return poolConnection.then(pool =>{
         return pool.request().
         input('last_modified_by', sql.Int, userid)

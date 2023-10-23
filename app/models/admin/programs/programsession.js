@@ -4,7 +4,6 @@ const pool = require('mssql');
 
 module.exports = class ProgramSession{
     static  getAllProgramSessions(req,res,slug){
-        slug = 'sbm_mum';
         return poolConnection.then(pool =>{
             return pool.request().query(`SELECT ps.id ,p.program_name,ad.acad_session,bs.year, IIF(ps.min_credits IS NULL, 0, ps.min_credits) AS min_credits,IIF(ps.max_credits IS NULL, 0, ps.max_credits) AS max_credits FROM [${slug}].program_sessions ps 
             INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id
@@ -13,7 +12,6 @@ module.exports = class ProgramSession{
         })
     }
     static refresh(slug,biddingId,userid) {
-        slug = 'sbm_mum';
         return poolConnection.then(pool => {
             const request = pool.request();
             return request
@@ -24,7 +22,6 @@ module.exports = class ProgramSession{
         })
     }
     static update(inputJSON,slug,biddingId,userid){
-        slug = 'sbm_mum';
         return poolConnection.then(pool =>{
             return pool.request()
             .input('input_json',sql.NVarChar,JSON.stringify(inputJSON))
