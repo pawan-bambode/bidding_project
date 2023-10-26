@@ -3,7 +3,7 @@ const dashboardCount = require('../../models/admin/dashboard/dashboardCount')
 const DashboardCount = require('../../models/admin/dashboard/dashboardCount')
 module.exports = {
     getDashboard: (req, res) => {
-      Promise.all([dashboardCount.getCouresCount(res.locals.slug),DashboardCount.getProgramCount(res.locals.slug),dashboardCount.getProgramSessionCount(res.locals.slug),dashboardCount.getAreaCount(res.locals.slug),dashboardCount.getConcentrationCount(res.locals.slug),dashboardCount.getConcentrationSettingsCount(res.locals.slug),dashboardCount.getStudentCount(res.locals.slug)]).then(result =>{
+      Promise.all([dashboardCount.getCouresCount(res.locals.slug,res.locals.biddingId),DashboardCount.getProgramCount(res.locals.slug,res.locals.biddingId),dashboardCount.getProgramSessionCount(res.locals.slug,res.locals.biddingId),dashboardCount.getAreaCount(res.locals.slug,res.locals.biddingId),dashboardCount.getConcentrationCount(res.locals.slug,res.locals.biddingId),dashboardCount.getConcentrationSettingsCount(res.locals.slug,res.locals.biddingId),dashboardCount.getStudentCount(res.locals.slug,res.locals.biddingId)]).then(result =>{
         res.render('admin/dashboard/index', {
             currentFormStep: 0,
             courseCount: result[0],

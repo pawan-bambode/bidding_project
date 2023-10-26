@@ -158,12 +158,12 @@
              <div class="edit-bidding-session-acad-seession d-none d-flex">
                  <div class="col-md-8">
                      <label class="form-label">Academic Session </label>
-                     <select class="form-select form-control select2 timetable-acad-session-select2"
+                     <select class="form-select form-control select2"
                          id="edit-academic-session-add">
                          <option class="disabled" selected >Select Acad Session </option>
-                        <option value="21"> Semester I </option>
-                        <option value="22"> Semester II </option>
-                        <option value="23">Semester III</option>
+                        <% for(let acadSession of acadSessionList) {  %>
+                            <option value="<%- acadSession.id %>"><%- acadSession.acad_session %></option>
+                            <%} %>
                      </select>
                  </div>
                  <div class="d-flex justify-content-end align-items-end col-md-4">
@@ -324,22 +324,30 @@
               let biddingAcadSession = biddingRow.attr('data-bidding-acad-session').split(',');
               
               let biddingSessionList = '';
+              
               biddingAcadSession.forEach(function(biddingElem, index){
                 let biddingSessionId = biddingElem.split(':');
-                biddingSessionList += `<span  class="d-flex justify-content-center align-items-center badge bg-secondary ms-2 bidding-acad-session-cancle" data-bidding-session-id="${biddingSessionId[1]}">${biddingSessionId[0]}
+               
+                
+                    biddingSessionList += `<span  class="d-flex justify-content-center align-items-center badge bg-secondary ms-2 bidding-acad-session-cancle" data-bidding-session-id="${biddingSessionId[1]}">${biddingSessionId[0]}
                     <i class="fa-solid fa-xmark ms-auto ps-2 text-danger"></i>
                     </span>`
-              });
-
+            });
+         
               $('#edit-bidding-session-modal .add-bidding-session-val').append(biddingSessionList);
               $('#edit-bidding-session-modal #bidding-name').val(biddingName);
               $('#edit-bidding-session-modal #start-date').val(startDate);
               $('#edit-bidding-session-modal #end-date').val(endDate);
               $('#edit-bidding-session-modal #bidding-id').val(id);
               $('#edit-bidding-session-modal').modal('show');
-
+                $('.add-bidding-session-val span').each(function(index, ele) {
+                  let acadSessionId = $(ele).data("bidding-session-id");
+                  $('#edit-academic-session-add').find(`option[value="${acadSessionId}"]`).addClass('d-none');
+                  })
            })
            $('#edit-bidding-session-modal').on('click','.bidding-acad-session-cancle',function(){
+                 let acadSessionId = $(this).closest('span').attr('data-bidding-session-id');
+                 $('#edit-academic-session-add').find(`option[value="${acadSessionId}"]`).removeClass('d-none'); 
                  $(this).closest('span').remove();
            })
 
@@ -360,7 +368,9 @@
                         $('#edit-bidding-session-modal .bidding-acad-session-label').addClass('d-none');
                     }
                 })
+               
                 if(flagToAdd){
+                    $('#edit-academic-session-add').find(`option[value="${selBissingAcadSessionVal.val()}"]`).addClass('d-none');
                let selectedSpan = `<span class="d-flex justify-content-center align-items-center badge bg-secondary ms-2 bidding-acad-session-cancle" data-bidding-session-id="${selBissingAcadSessionVal.val()}">${selBissingAcadSessionVal.text()}
                 <i class="fa-solid fa-xmark ms-auto ps-2 text-danger"></i>
                 </span>`

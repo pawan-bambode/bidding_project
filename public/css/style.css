@@ -1903,10 +1903,10 @@ margin: auto;
     border-radius: 50% !important;   
 }
 
-#programTable thead th{
+.custom-table thead th{
     background-color:var(--primary-table-bg);
 }
-#programTable tbody tr:nth-child(odd){
+.custom-table tbody tr:nth-child(odd){
     background-color:var(--primary-table-bg);   
 }
 .custum-imp-program{
@@ -1942,34 +1942,21 @@ margin: auto;
     background-color: var(--primary-table-bg);
     border-radius: 25px;
 }
-#course-table th{
-    background-color: var(--primary-table-bg);
-}
+
 #upload-course-modal .modal-content{
  border-top-left-radius: 15px !important;
  border-top-right-radius: 15px !important;   
 }
 
-#course-table tbody tr:nth-child(odd){
-    background-color: var(--primary-table-bg);
-}
-
 .select2-container--open {
     z-index: 1500; 
 }
-#program-sessions-table tbody tr:nth-child(odd){
-    background-color: var(--primary-table-bg);
-}
-#program-sessions-table thead th{
-    background-color: var(--primary-table-bg);
-}
+
 .add-btn-specialization {
     background-color: whitesmoke !important;
     border-radius: 50% !important;
 }
-#specialization-table thead th{
-    background-color: var(--primary-table-bg);
-}
-#specialization-table tbody tr:nth-child(odd){
-    background-color: var(--primary-table-bg);
+
+.select2-dropdown {
+    max-height: 100px; 
 }

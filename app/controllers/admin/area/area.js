@@ -3,14 +3,15 @@ const isJsonString = require('../../../utils/util');
 
 module.exports = {
     getPage : (req,res) =>{
-        Promise.all([biddingSession.getAreaList(res.locals.slug)]).then(result =>{
+        Promise.all([biddingSession.getAreaList(res.locals.slug,res.locals.biddingId),biddingSession.getCount(res.locals.slug,res.locals.biddingId)]).then(result =>{
             res.render('admin/areas/index.ejs',{
-             areaList:result[0].recordset
+             areaList:result[0].recordset,
+             pageCount: result[1].recordset[0]['']
             });
         })
     },
     refreshArea :(req,res) =>{
-        biddingSession.refresh(res.locals.slug,res.locals.biddingId,res.locals.userId).then(result =>{
+        biddingSession.refresh(res.locals.slug, res.locals.biddingId,res.locals.userId).then(result =>{
             res.status(200).json(JSON.parse(result.output.output_json));
         }).catch(error =>{
             console.log('values of error',error.originalError);

@@ -31,7 +31,7 @@
             </div>
         </div>
 
-        <table class="table custom_row table-bordered mt-4 w-50  m-auto" id="program-sessions-table">
+        <table class="table custom_row table-bordered mt-4 custom-table" id="areas-table">
             <thead>
                 <th>Sr No.</th>
                 <th>Area Name</th>
@@ -88,6 +88,51 @@
 
 <script>
     $(document).ready(function() {
+
+        let test = '<%- pageCount %>';
+        let rowCount = $('#changeEntry').val();
+        $('#page-no').html(test);
+        paginationData(rowCount, parseInt(test));
+
+   $(".pagination-search").on('click','.pagination li',function(){
+            let keyword = $("#searchkeyword").val();
+            let pageNo = $(this).attr('data-lp');
+            $.ajax({
+                type: "POST",
+                url: "/admin/programs/search",
+                data: {
+                    keyword: keyword,
+                    pageNo: pageNo
+                },
+                success: function (data) {
+                    AjaxtTable(data.data);
+                    console.log(data.data);
+                }
+            });
+        });
+
+        function paginationData(rowCount, totalCount) {
+            let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
+            console.log("Page Numbers", pageNos);
+            $('#pagination').bootpag({
+                total: pageNos,
+                page: 1,
+                maxVisible: 10,
+                leaps: true,
+                firstLastUse: true,
+                first: '←',
+                last: '→',
+                wrapClass: 'pagination',
+                activeClass: 'active', 
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+               
+            });
+        }
      $('#refresh-areas').on('click',function(){
         let ApiObj = {
             url:'/admin/area/refresh',

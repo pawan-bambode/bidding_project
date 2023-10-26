@@ -34,6 +34,13 @@ module.exports = class BiddingSession{
           })
         }
     }
+    static getAcadSessionList(slug,biddingId){
+      return poolConnection.then(pool =>{
+        return pool.request()
+        .input('biddingSessionId',sql.Int,biddingId)
+        .query(`SELECT id,acad_session FROM [dbo].acad_sessions`);
+      })
+    }
     static save(inputJSON, slug, userid) {
         return poolConnection.then(pool => { 
             const request = pool.request();

@@ -8,10 +8,10 @@ const User = require('../../../models/User')
 
 module.exports = {
     getStudentPage: (req, res) => {
-        Promise.all([Students.getStudentName()]).then(result => {
-            //console.log('checking ==', result[0].recordset)
+        Promise.all([Students.getStudentDataList(res.locals.slug,res.locals.biddingId),Students.getCount(res.locals.slug,res.locals.biddingId)]).then(result => {
             res.render('admin/students/index.ejs', {
-                studentNameList: result[0].recordset
+                studentDataList: result[0].recordset,
+                pageCount: result[1].recordset[0]['']
             })
         })
         

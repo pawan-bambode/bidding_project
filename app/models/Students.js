@@ -6,12 +6,24 @@ const pool = require('mssql');
 
 module.exports = class Students {
 
-    static getStudentName() {
+    static getStudentDataList(slug,biddingId) {
         return poolConnection.then(pool => {
-            return pool.request().query('SELECT DISTINCT first_name FROM [dbo].student_details')
+            return pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`
+            SELECT DISTINCT  sd.id ,sd.sap_id, sd.roll_no,sd.student_name,sd.email,p.program_name,sd.bid_points,sd.year_of_joining ,sd.previous_elective_credits
+            FROM [${slug}].student_data sd 
+            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1  AND  p.bidding_session_lid= @biddingId  AND sd.bidding_session_lid = @biddingId`)
         })
     }
-
+    static getCount(slug,biddingId) {
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`
+            SELECT COUNT(*) FROM [${slug}].student_data sd INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1  AND  p.bidding_session_lid= @biddingId  AND sd.bidding_session_lid = @biddingId`)
+        })
+    }
     static saveStudentDetails(inputJson){
         return poolConnection.then(pool => {
             const request = pool.request();
@@ -48,7 +60,7 @@ module.exports = class Students {
 
     static getStudentsData() {
         return poolConnection.then(pool => {
-            return pool.request().query(`SELECT first_name, last_name, email, phone, city, REPLACE(CONVERT(VARCHAR, date_of_birth, 103), '/', '') dob, active FROM student_details WHERE active = 0 AND isPasswordGenerate = 0`)
+            return pool.request().query(`SELECT first_name, last_name, email, phone, city, REPLACE(CONVERT(VARCHAR, date_of_birth, 103), '/', '') dob, active FROM  WHERE active = 0 AND isPasswordGenerate = 0`)
         })
     }
 
@@ -93,6 +105,8 @@ module.exports = class Students {
             .execute(`[dbo].add_student_subjects`);
         })
     }
+
+
     static updateSubject(inputJson){
         return poolConnection.then(pool =>{
             return pool.request()
@@ -123,4 +137,5 @@ module.exports = class Students {
             .query(`SELECT DISTINCT end_slot,CONCAT(start_slot, '-',end_slot) as slot_value,start_slot FROM [dbo].timetableSubject_testing where day_lid = @day_lid order by end_slot`);     
         })
     }
+
 }

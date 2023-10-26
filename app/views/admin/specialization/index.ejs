@@ -31,7 +31,7 @@
             </div>
         </div>
 
-        <table class="table custom_row table-bordered mt-4 w-50  m-auto" id="specialization-table">
+        <table class="table custom_row table-bordered mt-4 custom-table" id="specialization-table">
             <thead>
                 <th>Sr No.</th>
                 <th>Specialization Name</th>
@@ -46,7 +46,7 @@
                         <td><%-specialization.concentration_name %></td>
                         <td>
                             <a class="edit-specialization" data-bs-target="#edit-specialization-modal" data-bs-toggle="modal" data-specialization-id="<%- specialization.id %>" data-specialization-name="<%- specialization.concentration_name %>"> <i class="fa fa-edit"></i></a>
-                            <a data-specialization-id="<%- specialization.id %>" > <i class="fa fa-trash text-danger delete-specialization"></i></a>
+                            <a class="delete-specialization" data-specialization-id="<%- specialization.id %>" > <i class="fa fa-trash text-danger"></i></a>
                         </td> 
                     </tr>
                 <%}%>
@@ -54,7 +54,7 @@
         </table>
         <div class="d-flex justify-content-between">
             <div>
-                <p>Total entries:
+                <p>Total entries:&nbsp;<span id="page-no"></span>
                 </p>
             </div>
             <div>
@@ -112,6 +112,52 @@
 
 <script>
     $(document).ready(function() {
+
+        let test = '<%- pageCount %>';
+        let rowCount = $('#changeEntry').val();
+        $('#page-no').html(test);
+        paginationData(rowCount, parseInt(test));
+
+      $(".pagination-search").on('click','.pagination li',function(){
+            let keyword = $("#searchkeyword").val();
+            let pageNo = $(this).attr('data-lp');
+            $.ajax({
+                type: "POST",
+                url: "/admin/programs/search",
+                data: {
+                    keyword: keyword,
+                    pageNo: pageNo
+                },
+                success: function (data) {
+                    AjaxtTable(data.data);
+                    console.log(data.data);
+                }
+            });
+        });
+
+        function paginationData(rowCount, totalCount) {
+            let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
+            console.log("Page Numbers", pageNos);
+            $('#pagination').bootpag({
+                total: pageNos,
+                page: 1,
+                maxVisible: 10,
+                leaps: true,
+                firstLastUse: true,
+                first: '←',
+                last: '→',
+                wrapClass: 'pagination',
+                activeClass: 'active', 
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+               
+            });
+        }
+		
      $('#add-specialization-name').on('click',function(){  
         let specializationName = $('#add-specialization #specialization-name').val();
         
@@ -126,12 +172,12 @@
         ajaxApi(ApiObj).then(result =>{
             showSuccess(result);
         }).catch(error =>{
-            showError(error.responseJson);
+            showError(error.responseJSON);
         })
      })   
 
     $('#specialization-table').on('click','.delete-specialization',function(){
-        let specializationId = $(this).closest('a').attr('data-specialization-id');
+        let specializationId = $(this).attr('data-specialization-id');
         console.log('values of specializationId',specializationId);
         let ApiObj = {
             url:'/admin/specialization/delete',
@@ -144,7 +190,7 @@
         ajaxApi(ApiObj).then(result =>{
             showSuccess(result);
         }).catch(error =>{
-            showError(error.responseJson);
+            showError(error.responseJSON);
         })
     })
 
@@ -165,8 +211,8 @@
             console.log('values of result',result);
             showSuccess(result);
         }).catch(error =>{
-            console.log('values of error',error);
-            showError(error.responseJson);
+            console.log('values of error',error.responseJSON);
+            showError(error.responseJSON);
         })
     })
     $('#specialization-table').on('click','.edit-specialization',function(){

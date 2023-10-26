@@ -4,11 +4,21 @@ const pool = require('mssql');
 
 module.exports =  class ConcentrationSettigs{
 
- static getConcentrationSettingsList(slug){
+ static getConcentrationSettingsList(slug,biddingId){
     
     return poolConnection.then(pool =>{
         return pool.request()
-        .query(`SELECT id,concentration_name ,IIF(total_elective_credits IS NULL,0,total_elective_credits) AS total_elective_credits  ,IIF(max_credits_per_area IS NULL,0,max_credits_per_area) AS max_credits_per_area ,IIF(no_of_areas_to_cover IS NULL,0,no_of_areas_to_cover) AS no_of_areas_to_cover, IIF(min_credits_per_area IS NULL ,0,min_credits_per_area) AS min_credits_per_area ,  IIF(primary_area IS NULL,'NA',primary_area) AS primary_area  ,IIF(min_credits_in_primary_area IS NULL,0,min_credits_in_primary_area) AS min_credits_in_primary_area FROM [${slug}].concentration_settings WHERE active = 1 `);
+        .input('biddingId',sql.Int,biddingId)
+        .query(`SELECT id,concentration_name ,IIF(total_elective_credits IS NULL,0,total_elective_credits) AS total_elective_credits  ,IIF(max_credits_per_area IS NULL,0,max_credits_per_area) AS max_credits_per_area ,IIF(no_of_areas_to_cover IS NULL,0,no_of_areas_to_cover) AS no_of_areas_to_cover, IIF(min_credits_per_area IS NULL ,0,min_credits_per_area) AS min_credits_per_area ,  IIF(primary_area IS NULL,'NA',primary_area) AS primary_area  ,IIF(min_credits_in_primary_area IS NULL,0,min_credits_in_primary_area) AS min_credits_in_primary_area FROM [${slug}].concentration_settings WHERE active = 1 AND
+		bidding_session_lid =@biddingId`);
+    })
+ }
+ static getCount(slug,biddingId){
+    
+    return poolConnection.then(pool =>{
+        return pool.request()
+        .input('biddingId',sql.Int,biddingId)
+        .query(`SELECT COUNT(*) FROM [${slug}].concentration_settings WHERE active = 1 AND bidding_session_lid =@biddingId`);
     })
  }
   static refresh(slug,biddingId,userid){
@@ -32,7 +42,7 @@ module.exports =  class ConcentrationSettigs{
     })
 }
 static update(responseJson,slug,userId,biddingId){
-    console.log('valuesof responseJson',responseJson);
+
     return poolConnection.then(pool =>{
         return pool.request()
         .input('last_modified_by',sql.Int,userId)

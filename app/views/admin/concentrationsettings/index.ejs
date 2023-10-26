@@ -23,8 +23,23 @@
                 <i class="fa-solid fa-rotate p-1"></i>Refresh
             </button> 
         </div>
+
         <div class="card-body table-responsive" >
-            <table class="table custom_row table-bordered mt-4" id="concentration-settings-table">
+          <div class="d-flex justify-content-between">
+            <div>
+                <label>Show Entries</label>
+                <select class="form-select" id="changeEntry">
+                    <%for(let page of locals.page_filter){%>
+                       <option value="<%-page%>"><%-page%></option>
+                    <%}%>
+                </select>
+            </div>
+            <div>
+                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+            </div>
+        </div>
+            <table class="table custom_row table-bordered mt-4 custom-table" id="concentration-settings-table">
                 <thead>
                   <tr>
                     <th>id</th>
@@ -60,84 +75,136 @@
                   <%}%>
                 </tbody>
               </table>
-        </div>
-    </div>
-    
-
-
-      <div class="modal" id="edit-concentration-setting-modal">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">Update Concentration Settings</h3>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
+              <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries :&nbsp;<span id="page-no"></span>
+                    </p>
                 </div>
-                <div class="modal-body">
-                  <div class="row">
-                      <div class="col-md-6">
-                        <label class="mb-2 form-label" for="concentration-name">Concentration Name:</label>
-                        <input type="hidden" id="course-id">
-                        <input class="form-control" type="text" id="concentration-name" disabled>
-                  
-                      </div>
-                 
-
-                  <div class="col-md-6">
-                    <label class="mb-2 form-label" for="min-credits-in-primary-area">Min Credits in Primary Area:</label>
-                    <input type="hidden" id="course-id">
-                    <input class="form-control" type="text" id="min-credits-in-primary-area">
-                  </div>
-                
-                  
-                    </div>
-                    <div class="row">
-                  
-                    <div class="col-md-6">
-                      <label class="form-label mb-2" for="max-credits-per-area">Maximum Credits Per Area:</label>
-                      <input class="form-control" type="text" id="max-credits-per-area">
-                      <span id="error-min-demand-criteria" class="text-danger d-none">Min Demand Creteria Allow Only Numbers</span>
-                    </div>
-                    <div class="col-md-6">
-                      <label  class="form-label mb-2" for="min-credits-per-area">Minimum Credit Per Area:</label>
-                      <input class="form-control" type="text" id="min-credits-per-area">
-                      <span id="error-min-demand-criteria" class="text-danger d-none">Min Demand Creteria Allow Only Numbers</span>
-                    </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <label class="mb-2 form-label" for="course-credits">Total Elective Credits :</label>
-                        <input class="form-control" type="text" id="total-elective-credits">
-                        <span id="error-credits" class="text-danger d-none">Credits Allow Only Numbers</span>
-                    </div>
-                    <div class="col-md-6">
-                      <label class="mb-2 form-label" for="number-of-areas-to-cover">Number Of Areas To Cover:</label>
-                      <input class="form-control" type="text" id="number-of-areas-to-cover">
-                      <span id="error-credits" class="text-danger d-none">Credits Allow Only Numbers</span>
-                  </div>
-                    </div>
-                    <div>
-                      <label class="mb-2 form-label" for="primary-area">Primary Area :</label>
-                    <select class="form-control form-select select2 custom-select" id="primary-area">
-                   
-                      <% for(let area of areaList){ %>
-                        <option value="<%- area.id %>"><%- area.area_name %></option>
-                        <% }%>
-                    </select>
-                    <span id="error-year-of-intro" class="text-danger d-none">Invalid Year of introduction</span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-primary" id="update-concentration-settings">Update</button>
+                <div>
+                    <p id="pagination" class="pagination-search"></p>
                 </div>
             </div>
         </div>
     </div>
+    
+
+    <div class="modal" id="edit-concentration-setting-modal">
+      <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h3 class="modal-title">Update Concentration Settings</h3>
+                  <button class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                  <div class="row">
+                      <div class="col-md-6">
+                          <label class="mb-2 form-label" for="concentration-name">Concentration Name:</label>
+                          <input type="hidden" id="course-id">
+                          <input class="form-control" type="text" id="concentration-name" disabled>
+                      </div>
+  
+                      <div class="col-md-6">
+                          <label class="mb-2 form-label" for="total-elective-credits">Total Elective Credits:</label>
+                          <input class="form-control" type="text" id="total-elective-credits">
+                      </div>
+                  </div>
+  
+                  <div class="row">
+                      <div class="col-md-6">
+                          <label class="form-label mb-2" for="max-credits-per-area">Maximum Credits Per Area:</label>
+                          <input class="form-control" type="text" id="max-credits-per-area">
+                          <span id="error-max-demand-criteria" class="text-danger d-none">Max Demand Criteria Allow Only Numbers</span>
+                      </div>
+                      <div class="col-md-6">
+                          <label class="mb-2 form-label" for="number-of-areas-to-cover">Number Of Areas To Cover:</label>
+                          <input class="form-control" type="text" id="number-of-areas-to-cover">
+                          <span id="error-credits" class="text-danger d-none">Credits Allow Only Numbers</span>
+                      </div>
+                  </div>
+  
+                  <div class="row">
+                      <div class="col-md-6">
+                          <label class="form-label mb-2" for="min-credits-per-area">Minimum Credit Per Area:</label>
+                          <input class="form-control" type="text" id="min-credits-per-area">
+                          <span id="error-min-demand-criteria" class="text-danger d-none">Min Demand Criteria Allow Only Numbers</span>
+                      </div>
+                      <div class="col-md-6" id="primary-area-form">
+                        <label class="mb-2 form-label" for="primary-area">Primary Area :</label>
+                        <select class="form-control form-select select2 custom-select" id="primary-area">
+                            <option value="" disabled selected>--Select Primary Area--</option>
+                            <% for(let area of areaList){ %>
+                                <option value="<%- area.id %>"><%- area.area_name %></option>
+                            <% }%>
+                        </select>
+                        <span id="error-year-of-intro" class="text-danger d-none">Invalid Year of Introduction</span>
+                    </div>
+                     
+                  </div>
+                  <div class="col-md-6" id="primary-area-minimum">
+                    <label class="form-label mb-2" for="min-credits-in-primary-area">Minimum Credits in Primary Area:</label>
+                    <input class="form-control" type="text" id="min-credits-in-primary-area">
+                    <span id="error-min-demand-criteria" class="text-danger d-none">Min Demand Criteria Allow Only Numbers</span>
+                </div>
+                 
+              </div>
+              <div class="modal-footer">
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button class="btn btn-primary" id="update-concentration-settings">Update</button>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+      
 <script src='../../../../public/js/simpleAlert/simpleAlert.js'></script>
           
 <script>
    $(document).ready(function(){
     
+    let test = '<%- pageCount %>';
+        let rowCount = $('#changeEntry').val();
+        $('#page-no').html(test);
+        paginationData(rowCount, parseInt(test));
+
+$(".pagination-search").on('click','.pagination li',function(){
+            let keyword = $("#searchkeyword").val();
+            let pageNo = $(this).attr('data-lp');
+            $.ajax({
+                type: "POST",
+                url: "/admin/programs/search",
+                data: {
+                    keyword: keyword,
+                    pageNo: pageNo
+                },
+                success: function (data) {
+                    AjaxtTable(data.data);
+                    console.log(data.data);
+                }
+            });
+        });
+
+        function paginationData(rowCount, totalCount) {
+            let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
+            console.log("Page Numbers", pageNos);
+            $('#pagination').bootpag({
+                total: pageNos,
+                page: 1,
+                maxVisible: 10,
+                leaps: true,
+                firstLastUse: true,
+                first: '←',
+                last: '→',
+                wrapClass: 'pagination',
+                activeClass: 'active', 
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+               
+            });
+        }
     $('#refresh-concentration-settings').on('click',function(){
       console.log('refresh concentration settings');
       let ApiObj = {
@@ -149,7 +216,6 @@
       ajaxApi(ApiObj).then(result =>{
         showSuccess(result);
       }).catch(error =>{
-        console.log('values of error',error);
         showError(error.responseJSON);
       })
     })
@@ -176,16 +242,25 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
 
 
      $('#concentration-settings-table').on('click','.edit-concentration-settings',function(){
-      let editConcentration = $('.edit-concentration-settings').closest('tr').find('td.concentration-name').text();
+      let editConcentration = $(this).closest('tr').find('td.concentration-name').text().trim();
+      console.log('values of editconcentration',editConcentration);
+      if(editConcentration.toLowerCase() == 'general managment'){
+       $('#primary-area-minimum').addClass('d-none');
+       $('#primary-area-form').addClass('d-none');
+      
+      }
+      else{
+         $('#primary-area-minimum').removeClass('d-none');
+         $('#primary-area-form').removeClass('d-none');
+         
+      }
       $('#edit-concentration-setting-modal #concentration-name').val(editConcentration);
      
       let concentrationSettingsId = $(this).attr('data-concentration-setting-id');
       $('#edit-concentration-setting-modal #concentration-name').attr('data-id',concentrationSettingsId);
-      console.log('valueso fconc',concentrationSettingsId);
      })
 
      $('#edit-concentration-setting-modal').on('click', '#update-concentration-settings', function(){
-  console.log('values edit concentration is click now');
   let id = $('#concentration-name').attr('data-id');
   let concentrationName = $('#concentration-name').val();
   let minCreditsInPrimaryArea = $('#min-credits-in-primary-area').val();
@@ -193,7 +268,7 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
   let minCreditsPerArea = $('#min-credits-per-area').val();
   let totalElectiveCredits = $('#total-elective-credits').val();
   let numberOfAreasToCover = $('#number-of-areas-to-cover').val();
-  let primaryAreaOption = $('#primary-area option:selected').val();
+  let primaryAreaOption = $('#primary-area option:selected').text();
 
   let editConcentrationsettings = {
     id:id,
@@ -214,12 +289,10 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
    console.log('valuesof ApiObj',ApiObj);
   ajaxApi(ApiObj)
     .then(result => {
-      console.log('values of result', result);
       showSuccess(result);
     })
     .catch(error => {
       console.log('values of error', error);
-   //   showSuccess(error.responseJSON);
        showError(error.responseJSON);
     });
 });
@@ -227,8 +300,6 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
     });
     
     function showError(errors) {
-            console.log(errors);
-            console.log('values of description',errors)
             let simpleAlert = new SimpleAlert();
             let obj = {
                 title : errors.description,

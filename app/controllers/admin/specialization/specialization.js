@@ -3,9 +3,10 @@ const isJsonString =  require('../../../utils/util');
 
 module.exports = {
     getPage : (req,res) =>{
-       Promise.all([specialization.getAllSpecialization(req,res,res.locals.slug)]).then( result => {
+       Promise.all([specialization.getAllSpecialization(res.locals.slug,res.locals.biddingId),specialization.getCount(res.locals.slug,res.locals.biddingId)]).then( result => {
             res.render('admin/specialization/index.ejs',{
-               specializationList : result[0].recordset
+               specializationList : result[0].recordset,
+               pageCount: result[1].recordset[0]['']
             })
      })
     },
@@ -26,6 +27,7 @@ module.exports = {
       })
     },
     delete :(req,res) =>{
+     
       specialization.delete(req.body.specializationId,res.locals.biddingId,res.locals.userId,res.locals.slug).then(result =>{
          res.status(200).json(JSON.parse(result.output.output_json));
       }).catch(error =>{
@@ -41,7 +43,7 @@ module.exports = {
       })
     },
     update :(req,res) =>{
-      specialization.update(req.body,res.locals.biddingId,res.locals.userId,res.slug).then(result =>{
+      specialization.update(req.body,res.locals.biddingId,res.locals.userId,res.locals.slug).then(result =>{
          res.status(200).json(JSON.parse(result.output.output_json));
       }).catch(error =>{
          if(isJsonString.isJsonString(error.originalError.info.message)){

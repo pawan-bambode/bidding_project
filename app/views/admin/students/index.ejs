@@ -1,362 +1,376 @@
 <%- include('../partials/head') %>
 <%- include('../partials/leftSidebar.ejs') %>
 <%- include('../partials/header.ejs') %>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
 <div class="main-content">
-    <div class="col-12">
-        <div class="breadcrumb" style="margin: 10px 0;">
-            <!-- <a style="text-decoration: none; color: #007bff; font-weight: bold;" href="javascript:void(0)">Student</a>
-            <i class="fa fa-home" aria-hidden="true" style="margin: 0 5px;"></i>
-            <a href="javascript:void(0)" style="text-decoration: none;">Student</a> -->
-
-            <button class="btn btn-success" id="genrate-cred">Generate Credentials</button>
-        </div>
-
-        
+  <div class="card card-custom">
+    <div class="card-header-custom d-flex justify-content-between p-1">
+        <h3 class="ms-2">Student List</h3>
+        <div>
+           
+                <button type="button" class="btn btn-success me-2"  data-bs-target="#upload-student-modal" data-bs-toggle="modal">Upload Student Data</button>
+                <button type="button" class="btn btn-danger ms-auto me-3"  id="refresh-student-data">
+                    <i class="fa-solid fa-rotate p-1"></i>Refresh
+                </button>  
+       </div> 
     </div>
-    
-    
-    <div class="card course-card">
-        <div class="header">
-            <h2 style="font-size: 17px !important;">Students Data</h2>
-            <form action="/admin/get_excel_upload_data" id="excel-upload-form" method="post" enctype="multipart/form-data" style="position: absolute; right: 5px;">
-                <input type="file" name="excel-file"> 
-                <input type="submit" value="Upload"/>
-            </form>
-            <!-- <form action="/admin/get_excel_upload_data" method="post" enctype="multipart/form-data" id="upload-form">
-                <div class="form-group">
-                    <label for="excel-upload" class="btn btn-success" style="position: absolute; right: 5px;"><i class="fa-solid fa-file-excel"></i> Upload</label>
-                    <input type="file" name="excel-file" id="excel-upload" style="display:none" accept=".xlsx, .xls, .csv">
-                    <button type="submit" id="submit-btn" style="display: none;"></button>
-                    
-                </div>
-            </form> -->
-            <!-- <a class="btn btn-success" href="javascript:void(0)" style="position: absolute; right: 5px;"> Upload </a>  -->
-        </div>
-        <div class="table-responsive" style="padding: 14px 7px;">
-
-            <div class="row">
-                <div class="col-md-4">
-                    <label for="">Firstname</label>
-                    <select class="form-control" name="firstname" id="firstname">
-                        <option>Select</option>
-                        <% for(let data of studentNameList) { %>
-                            <option value="<%- data.first_name%>"><%- data.first_name%></option>
-                        <% } %>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="">Lastname</label>
-                    <select class="form-control" name="lastname" id="lastname">
-                        <option>Select</option>
-                       
-                    </select>
-                </div>
-
-                <div class="col-md-4">
-                    <label for="">Email</label>
-                    <select class="form-control" name="email" id="email">
-                        <option>Select</option>
-                        
-                    </select>
-                </div>
+    <div class="card-body table-responsive">
+        <div class="d-flex justify-content-between">
+            <div>
+                <label>Show Entries</label>
+                <select class="form-select" id="changeEntry">
+                    <%for(let page of locals.page_filter){%>
+                       <option value="<%-page%>"><%-page%></option>
+                    <%}%>
+                </select>
             </div>
-            
-            <table class="table course-table" id="student-info" style="width: 100%;">
-                <thead>
-                  <tr>
-                    <th>Sr No</th>
-                    <th>Firstname</th>
-                    <th>Lastname</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>City</th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  
-                </tbody>
-              </table>
+            <div>
+                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+            </div>
+        </div>
+
+        <table class="table custom_row table-bordered mt-4 custom-table" id="student-data-table">
+            <thead>
+                <th>#</th>
+                <th>Student Code</th>
+                <th>Roll No</th>
+                <th>Student Name</th>
+                <th>Email</th>
+                <th>Program Name</th>
+                <th>Bid Points</th>
+                <th>Year Of Joining</th>
+                <th>Action</th>
+            </thead>
+            <tbody>
+             
+                  <% let count = 1 %>
+                  <%for(let studentData of studentDataList) {%>
+                      <tr>
+                          <td><%- count++ %></td>
+                          <td><%-studentData.sap_id %></td> 
+                          <td><%-studentData.roll_no %></td> 
+                          <td><%-studentData.student_name %></td> 
+                          <td><%-studentData.email %></td> 
+                          <td><%-studentData.program_name %></td> 
+                          <td><%-studentData.bid_points %></td> 
+                          <td><%-studentData.year_of_joining %></td> 
+                          <td><a class="edit-student-data" data-bs-target="#edit-student-data" data-bs-toggle="modal" data-id="<%-studentData.id %>" data-student-sap-id="<%-studentData.sap_id %>" data-student-roll-no="<%- studentData.roll_no %>" data-student-name = "<%- studentData.student_name %>" data-student-email ="<%- studentData.email %>" data-student-bidding-points="<%- studentData.bid_points %>" data-student-year-of-join ="<%- studentData.year_of_joining %>" data-student-pre-ele-credits  ="<%- studentData.previous_elective_credits %>" >
+                            <i class="fa fa-edit"></i></a>
+                            <a class="delete-student-data" data-id="<%-studentData.id %>"><i class="fa-solid fa-trash text-danger"></i></a>
+                        </td>
+                      </tr>
+                  <%}%>
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-between">
+            <div>
+                <p>Total entries:
+                </p>
+            </div>
+            <div>
+                <p id="pagination" class="pagination-search"></p>
+            </div>
         </div>
     </div>
+  </div>  
 </div>
 
-<!-- Modal Popup -->
-<div class="modal bd-example-modal-lg" id="edit-student-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div class="modal" id="importProgram">
+    <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Edit Student Details</h5>
-                <button type="button" class="close modal-close-btn" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+              <h3>Select Program</h3>
+              <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-6 form-group">
-                            <label for="recipient-name" class="col-form-label">Firstname:</label>
-                            <input type="text" class="form-control" id="first-name">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label for="recipient-name" class="col-form-label">Lastname:</label>
-                            <input type="text" class="form-control" id="last-name">
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 form-group">
-                            <label for="recipient-name" class="col-form-label">Email:</label>
-                            <input type="text" class="form-control" id="student-email">
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label for="recipient-name" class="col-form-label">Phone:</label>
-                            <input type="text" class="form-control" id="student-phone">
-                        </div>
-                    </div>
-                    <input type="hidden" name="" id="student-id">
-                </form>
+            <div class="modal-body row custum-imp-program">
+               
+              <div class="col-md-3 border-end custm-padd-for-imp-program custm-padd pe-2 ps-2" >
+             
+                <label class="mb-2" for="select-program" >Select Program :</label>
+                    <input type="search" class="form-control p3 mb-3 searchItemProgramCustom" placeholder="Search Program" id="search-program">
+                  
+              
+              </div>
+              <div class="col-md-9 custm_padd p-2 ps-2">
+                <table class="table-responsive table-bordered table import-program-table">
+                    <thead>
+                        <th>Program Name</th>
+                        <th>Program Code</th>
+                        <th>Program Abbr</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+              </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="student-details-update">Update</button>
+                <button class="btn btn-success" id="import-program" >Import Program</button>
             </div>
         </div>
     </div>
 </div>
-<!-- End Modal Popup -->
-
-<!-- ERROR ALERT -->
-<div class="error-container">
-    <div class="alert alert-danger alert-dismissible fade test-p" role="alert">
-        Update chages done.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+<div class="modal" id="edit-student-data">
+  <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h3 class="modal-title">Update Student Data</h3>
+              <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col-md-6">
+                      <label class="mb-2" for="student-name">Student Name:</label>
+                      <input type="hidden" id="student-id">
+                      <input class="form-control" type="text" id="student-name">
+                  </div>
+                  <div class="col-md-6">
+                      <label class="mb-2" for="student-email">Email:</label>
+                      <input class="form-control" type="text" id="student-email">
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-md-6">
+                      <label class="mb-2" for="bidding-points">Bidding Points:</label>
+                      <input class="form-control" type="text" id="bidding-points">  
+                  </div>
+                  <div class="col-md-6">
+                      <label class="mb-2" for="year-of-joining">Year Of Joining:</label>
+                      <input class="form-control" type="text" id="year-of-joining">  
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-md-6">
+                      <label class="mb-2" for="previous-elective-credits">Previous Elective Credits:</label>
+                      <input class="form-control" type="text" id="previous-elective-credits">  
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button class="btn btn-primary" id="update-student-data">Update</button>
+          </div>
+      </div>
+  </div>
 </div>
-<!-- END ERROR ALERT -->
 
+<div class="modal" id="upload-student-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+     
+        <div class="modal-header">
+          <h5 class="modal-title">Upload Student Data</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <div class="modal-body">
+                <div class="d-flex">
+                <label class="form-label me-3">Import Student data :</label>
+                <form enctype="multipart/form-data"  method="post" id="upload-student-data-form">
+                <input type="file" name="import-student-data" id="import-student-data" accept=".xlsx">
+                </div>
+                <div class="d-flex justify-content-between align-item-center mt-5">
+                <input type="submit" class="btn btn-success mt-2 d-none" id="upload-student-data-button" value="Upload Student Data"></input> 
+                </form> 
+            
+              <a href="/admin/generate-excel-student" download="sampleForImportStudent.xlsx" name="sample-for-import-student" class="text-decoration-none align-self-end">Sample For Import Student data</a>
+             </div>
+         
+        </div>
+  
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+       
+      </div>
+    </div>
+  </div>
 <%- include('../partials/footer.ejs') %>
-
-<!-- Script -->
-
 <script>
     $(document).ready(function() {
-     
-        // Fetch dynamic data from the server
-        $.get('/admin/get_student_data', function(response) {
-            getDataTable(response)
-        });
+      
+        let test = '<%- pageCount %>';
+        let rowCount = $('#changeEntry').val();
+        $('#page-no').html(test);
+        paginationData(rowCount, parseInt(test));
 
-
-        $('body').on('change', '#firstname', function() {
-            let firstName = $(this).val();
-
-            $.ajax ({
-                method: "POST",
-                url: "/admin/student_info_by_firstname",
-                data: {firstName : firstName},
-                dataType: "JSON",
-                success: function (response) {
-                    $('#student-info').dataTable().fnDestroy();
-                    getDataTable(response)
-                }
-            })
-        })
-
-
-
-        $('body').on('click', 'td.editor-edit', function(e) {
-            e.preventDefault();
-            let studentId = $(this).data('id');
+$(".pagination-search").on('click','.pagination li',function(){
+            let keyword = $("#searchkeyword").val();
+            let pageNo = $(this).attr('data-lp');
             $.ajax({
-                method:'POST',
-                url: '/admin/student_details_by_id',
-                data: {studentId:studentId},
-                dataType: 'JSON',
-                success: function(response){
-                    let resultData = response.data;
-                    for (let data of resultData) {
-                        $('#first-name').val(data.first_name)
-                        $('#last-name').val(data.last_name)
-                        $('#student-email').val(data.email)
-                        $('#student-phone').val(data.phone)
-                        $('#student-id').val(data.id)
-                    }
-                    $('#edit-student-modal').modal('show');
-
-                }
-            })
-           
-        })
-
-        $('body').on('click', '#student-details-update', function(e) {
-            e.preventDefault();
-            let firstName = $('#first-name').val();
-            let lastName = $('#last-name').val();
-            let studentEmail = $('#student-email').val();
-            let studentPhone = $('#student-phone').val();
-            let studentId = $('#student-id').val();
-            //console.log('9999', studentId)
-            $.ajax({
-                method:'POST',
-                url: '/admin/update_student_details_by_id',
+                type: "POST",
+                url: "/admin/programs/search",
                 data: {
-                    firstName: firstName, 
-                    lastName: lastName,
-                    studentEmail: studentEmail,
-                    studentPhone: studentPhone,
-                    studentId: studentId
+                    keyword: keyword,
+                    pageNo: pageNo
                 },
-                dataType: 'JSON',
-                success: function(response){
-                    console.log('=======111', studentId);
-
-                    let tableTr = $('#student-info tbody tr');
-                    tableTr.each(function (index, element) {
-                        console.log('check tr ==>', $(element).data('id'));///data id
-                        if($(element).data('id') == studentId){
-                            //console.log('in if id==>', $(element).data('id'));///data id
-                            $(element).children('td:nth-child(2)').html(`${firstName}`)
-                            $(element).children('td:nth-child(3)').html(`${lastName}`)
-                            $(element).children('td:nth-child(4)').html(`${studentEmail}`)
-                            $(element).children('td:nth-child(5)').html(`${studentPhone}`)
-                        }
-                        
-                        $('#edit-student-modal').modal('hide')
-                        $('.test-p').addClass('show')
-
-                        setTimeout(() => {
-                            $('.test-p').removeClass('show')
-                        }, 2000);
-                    })
+                success: function (data) {
+                    AjaxtTable(data.data);
+                    console.log(data.data);
                 }
-            })
-           
-        })
-
-        $('body').on('click', 'td.editor-delete', function(e) {
-            e.preventDefault();
-            let dataId = $(this).data('delete-id');
-
-            if(confirm('Are you want to delete data..!') == true){
-                $('#student-info tbody tr').each(function(err, elem) {
-                    console.log('Check when delete', elem);
-                    let trId = $(elem).data('id');
-                
-                    if($(elem).data('id') == dataId){
-                        $(elem).remove()
-                    }
-                })
-            }
+            });
         });
 
-
-        $(document).on('click', '#genrate-cred', function () {
-
-            $.ajax({
-                method: 'POST',
-                url: '/admin/generate-student-credentials',
-                dataType: 'JSON',
-                success:function(data){
-                    console.log('====> ', data.status)
-                    if(data.status === 1){
-                        alert('Student credentials generated successfully.')
-                    }
-                }
-            })
-        })
-
-
-        function getDataTable(response) {
-            let data = response.aaData.recordset
-            console.log('===>> ', response.aaData.recordset)
-            // Populate the DataTable with the fetched data
-            $('#student-info').DataTable({
-                data: data,
-                columns: [
-                    { data: 'id' },
-                    { data: 'first_name' },
-                    { data: 'last_name' },
-                    { data: 'email' },
-                    { data: 'phone' },
-                    { data: 'city' },
-                    {
-                        data: null,
-                        className: `dt-center editor-edit`,
-                        defaultContent: '<i class="fa-solid fa-pen-to-square"></i>',
-                        orderable: false
-                    },
-                    {
-                        data: null,
-                        className: 'dt-center editor-delete',
-                        defaultContent: '<i class="fa-solid fa-trash"></i>',
-                        orderable: false
-                    }
-                ],
-                pageLength: 10,
-                dom: 'B<"clear">lfrtip',
-                buttons: [
-                    {
-                        extend: 'pdf',
-                        text: "<button class='btn btn-danger btn-sm pdf-btn'><i class='fa-solid fa-file-pdf'></i> Pdf</button>",
-                        exportOptions: {
-                            modifier: {
-                                page: 'all'
-                            }
-                        }
-                    },
-                    {
-                        extend: 'excel',
-                        text: "<button class='btn btn-success btn-sm pdf-btn'><i class='fa-solid fa-file-excel'></i> Excel</button>",
-                        exportOptions: {
-                            modifier: {
-                                page: 'all'
-                            }
-                        },
-                        filename: function(){
-                            let d = new Date();
-                            let n = d.getTime();
-                            return 'studentInfo_' + n;
-                        }
-                    },
-
-                    {
-                        extend: 'csv',
-                        text: "<button class='btn btn-success btn-sm pdf-btn'><i class='fa-solid fa-file-csv'></i> Csv</button>",
-                        exportOptions: {
-                            modifier: {
-                                page: 'all'
-                            }
-                        }
-                    }
-                ],
-                createdRow: function (row, data, indice) {
-                    $(row).attr('data-id', data.id)
-                    $(row).find("td:eq(6)").attr('data-id', data.id);
-                    $(row).find("td:eq(6)").attr('name-id', data.first_name);
-                    $(row).find("td:eq(7)").attr('data-delete-id', data.id);
-                }
+        function paginationData(rowCount, totalCount) {
+            let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
+            console.log("Page Numbers", pageNos);
+            $('#pagination').bootpag({
+                total: pageNos,
+                page: 1,
+                maxVisible: 10,
+                leaps: true,
+                firstLastUse: true,
+                first: '←',
+                last: '→',
+                wrapClass: 'pagination',
+                activeClass: 'active', 
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+               
             });
         }
 
-    
+      $('#student-data-table').on('click','.edit-student-data',function(){
+       
+       let id = $(this).closest('a').attr('data-id');
+       let studentName = $(this).closest('a').attr('data-student-name');
+       let studentEmail = $(this).closest('a').attr('data-student-email');
+       let studentBiddingPoints = $(this).closest('a').attr('data-student-bidding-points');
+       let studentYearOfJoining = $(this).closest('a').attr('data-student-year-of-join');
+       let studentPreviousElectiveCredits = $(this).closest('a').attr('data-student-pre-ele-credits');
+
+       $('#edit-student-data #student-name').val(studentName);
+       $('#edit-student-data #student-email').val(studentEmail);
+       $('#edit-student-data #bidding-points').val(studentBiddingPoints);
+       $('#edit-student-data #year-of-joining').val(studentYearOfJoining);
+       $('#edit-student-data #previous-elective-credits').val(studentPreviousElectiveCredits);
+       $('#edit-student-data #student-id').val(id); 
+      })
+      
+     $('#import-student-data').on('change', function(){
+        let importStudentData = $(this).val();
+        if(importStudentData != ''){
+            $('#upload-student-data-button').removeClass('d-none');
+        }
+      });
+
+      $('#refresh-student-data').on('click',function(){
+        let ApiObj = {
+            url:'/admin/student-data-raw/refresh',
+            type:'POST',
+            data:{},
+            datatype:'JSON'
+        }
+        ajaxApi(ApiObj).then(result=>{
+            showSuccess(result);
+        }).catch(error =>{
+            showError(error.responseJson);
+        })
+     })
+      $('#upload-student-data-form').on('submit', function(event) {
+        event.preventDefault(); 
+        var formData = new FormData(this); 
+
+        $.ajax({
+          type: 'POST',
+          url: '/admin/upload-student-data', 
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function(response) {
+            showSuccess(response);
+          },
+          error: function(xhr, status, error) {
+            showError(JSON.stringify(xhr.responseJSON));
+          }
+        });
+    });
+    $('#edit-student-data').on('click','#update-student-data',function(){
+      let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
+            let id = $('#edit-student-data #student-id').val();
+            let studentName = $('#edit-student-data #student-name').val();
+            let studentEmail = $('#edit-student-data #student-email').val();
+            let biddingPoints = $('#edit-student-data #bidding-points').val();
+            let yearOfJoining = $('#edit-student-data #year-of-joining').val();
+            let previousElectiveCredits = $('#edit-student-data #previous-elective-credits').val();
+          
+            let ApiObj = {
+                type:'POST',
+                url:'/admin/student-data/update',
+                data: {
+                  
+              id:id,
+              student_name: studentName,
+              email: studentEmail,
+              bid_points : biddingPoints,
+              year_of_joining : yearOfJoining,
+              previous_elective_credits:previousElectiveCredits
+            
+                },
+                dataType: 'JSON' 
+                }
+                ajaxApi(ApiObj).then(result => {
+                    showSuccess(result)
+                }).catch(error => {
+                    showError(error.responseJSON)
+                })
+            
     })
+    $('#student-data-table').on('click','.delete-student-data',function(){
+       let studentDataId = $(this).attr('data-id');
+
+            let ApiObj = {
+                url:'/admin/student-data/delete',
+                type:'POST',
+                data:{
+                  studentDataId:studentDataId
+                },
+                dataType:'JSON'
+            }
+            ajaxApi(ApiObj).then(result =>{
+                console.log('response:::::::',result);
+                showSuccess(result)
+            }).catch(error =>{
+                console.log('error:::::',error.responseJSON);
+                showError(error.responseJSON)
+            })
+
+        })
+
+});
+
+function showError(errors) {
+        let simpleAlert = new SimpleAlert();
+        let obj = {
+            title : errors,
+            message: "",
+            type: 'alert-danger',
+            buttons: {
+                positive:{
+                    text: "OK",
+                    action: function(){
+                        document.querySelector('.simple-alert').remove();
+                    }
+                },
+                negative: {
+                    text: "Cancle",
+                    action: function () {
+                    alert('Negative')
+                    }
+                }
+            }
+        }
+        simpleAlert.alert(obj);
+    }
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  
 <%- include('../partials/footerEnd.ejs') %>

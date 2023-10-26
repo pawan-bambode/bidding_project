@@ -3,10 +3,18 @@ const {sql,poolConnection} = require('../../../../config/db')
 const pool = require('mssql');
 
 module.exports = class Area {
-   static getAreaList(slug){
+   static getAreaList(slug, biddingId){
     return poolConnection.then(pool =>{
         return pool.request()
-        .query(`SELECT * FROM [${slug}].areas`);
+        .input('biddingId',sql.Int,biddingId)
+        .query(`SELECT * FROM [${slug}].areas WHERE bidding_session_lid = @biddingId`);
+    })
+   }
+   static getCount(slug,biddingId){
+    return poolConnection.then(pool =>{
+        return pool.request()
+        .input('biddingId',sql.Int,biddingId)
+        .query(`SELECT COUNT(*) FROM [${slug}].areas WHERE bidding_session_lid = @biddingId`);
     })
    }
    

@@ -2,9 +2,10 @@ const courseworkload = require('../../../models/admin/courseworkload/courseworkl
 const isJsonString = require('../../../utils/util');
 module.exports = {
     getCourseworkload : (req, res) => {
-        Promise.all([courseworkload.getCourseList(res.locals.slug)]).then(result =>{
+        Promise.all([courseworkload.getCourseList(res.locals.slug,res.locals.biddingId),courseworkload.getCount(res.locals.slug,res.locals.biddingId)]).then(result =>{
             res.render('admin/courseworkload/index.ejs',{
-             courseList:result[0].recordset
+             courseList:result[0].recordset,
+             pageCount: result[1].recordset[0]['']
             });
         })     
     },
@@ -42,5 +43,18 @@ module.exports = {
                 });
             }
         })
-    }
+    },
+    search :(req,res) =>{
+       
+        courseworkload.search(res.locals.slug,res.locals.biddingId,req.body.pageNo,res.locals.userId).then(result => {
+            res.json({
+                status: "200",
+                message: "Result fetched",
+                data: result.recordset,
+                length: result.recordset.length
+            })
+        }).catch(error => {
+            throw error
+        })
+}
 }

@@ -4,10 +4,12 @@ const isJsonString = require('../../../utils/util');
 
 module.exports = {
     getPage : (req,res) =>{
-        Promise.all([concentrationSettings.getConcentrationSettingsList(res.locals.slug),biddingSession.getAreaList(res.locals.slug)]).then(result =>{
+        Promise.all([concentrationSettings.getConcentrationSettingsList(res.locals.slug,res.locals.biddingId),concentrationSettings.getCount(res.locals.slug,res.locals.biddingId),biddingSession.getAreaList(res.locals.slug,res.locals.biddingId)]).then(result =>{
+            console.log('values of ',result[1].recordset)
             res.render('admin/concentrationsettings/index.ejs',{
                 concentrationSettingList : result[0].recordset,
-                areaList:result[1].recordset
+                pageCount: result[1].recordset[0][''],
+                areaList:result[2].recordset,
             })
         })
     },

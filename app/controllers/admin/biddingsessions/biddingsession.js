@@ -5,9 +5,10 @@ module.exports = {
     getBiddingSessionPage :(req , res) => {
         console.log('values of res',res.locals.status);
         console.log('values of req',req.status);
-        Promise.all([biddingSession.getAllBiddingSession(res.locals.slug,res.locals.status)]).then(result =>{
+        Promise.all([biddingSession.getAllBiddingSession(res.locals.slug,res.locals.status),biddingSession.getAcadSessionList(res.locals.slug,res.locals.biddingId)]).then(result =>{
             res.render('admin/biddingsession/index.ejs',{
-              biddingSessionList: result[0].recordset
+              biddingSessionList: result[0].recordset,
+              acadSessionList:result[1].recordset
             });
         })
       
