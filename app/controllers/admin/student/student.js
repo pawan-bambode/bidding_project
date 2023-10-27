@@ -83,7 +83,6 @@ module.exports = {
     },
 
     updateStudentDetailsById : (req, res) => {
-        console.log('body data', req.body)
         let updatedBody = {
             "firstName": req.body.firstName,
             "lastName": req.body.lastName,
@@ -92,7 +91,6 @@ module.exports = {
             "studentId": req.body.studentId,
         }
         Students.updateStudentDetails(req.body.firstName, req.body.lastName, req.body.studentEmail, req.body.studentPhone, req.body.studentId).then(data => {
-            console.log('======>>', data)
             res.status(200).json({
                 data: updatedBody,
                 message: 'success'

@@ -19,16 +19,13 @@ class SimpleAlert {
       
         if(obj.message.length > 0){
             if(obj.express){
-                console.log('yessssss')
                 for (let ele of  obj.message){
-                    console.log('listttttt', ele.msg)
                         list += `<li>${ele.msg}</li>`
                     
                 }
                 
             }
             else{
-            console.log('noooooo')
             for (let ele of  obj.message){
                 for (let key in ele){
                     list += `<li>${key} : ${ele[key]}</li>`

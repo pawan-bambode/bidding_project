@@ -5,7 +5,6 @@ const isJsonString = require('../../../utils/util');
 module.exports = {
     getPage : (req,res) =>{
         Promise.all([concentrationSettings.getConcentrationSettingsList(res.locals.slug,res.locals.biddingId),concentrationSettings.getCount(res.locals.slug,res.locals.biddingId),biddingSession.getAreaList(res.locals.slug,res.locals.biddingId)]).then(result =>{
-            console.log('values of ',result[1].recordset)
             res.render('admin/concentrationsettings/index.ejs',{
                 concentrationSettingList : result[0].recordset,
                 pageCount: result[1].recordset[0][''],
@@ -34,9 +33,7 @@ module.exports = {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
             .catch(error => {
-                console.log('values of error',error);
                 if ((isJsonString.isJsonString(error.originalError.info.message))) {
-                    console.log('inside teh if block of error');
                     res.status(500).json(JSON.parse(error.originalError.info.message));
                 } else {
                     res.status(500).json({

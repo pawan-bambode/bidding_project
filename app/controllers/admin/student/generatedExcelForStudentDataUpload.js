@@ -78,11 +78,9 @@ module.exports = {
   },
   refresh :(req,res) =>{
     studentRawData.refresh(res.locals.slug,res.locals.biddingId,res.locals.userId).then(result =>{
-      console.log('valuesof result',result);
        res.status(200).json(JSON.parse(result.output.output_json));
    
     }).catch(error => {
-      console.log('valuesof error',error);
        if(isJsonString.isJsonString(error.originalError.info.message)){
            res.status(500).json(JSON.parse(error.originalError.info.message));
        }
@@ -97,11 +95,9 @@ module.exports = {
 },
 update:(req,res) =>{
   studentRawData.update(res.locals.slug,res.locals.biddingId,res.locals.userId,req.body).then(result =>{
-    console.log('valuesof result',result);
     res.status(200).json(JSON.parse(result.output.output_json));
 
  }).catch(error => {
-   console.log('valuesof error',error);
     if(isJsonString.isJsonString(error.originalError.info.message)){
         res.status(500).json(JSON.parse(error.originalError.info.message));
     }

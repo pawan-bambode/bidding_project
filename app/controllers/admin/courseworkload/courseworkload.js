@@ -28,33 +28,49 @@ module.exports = {
         }
      })
     },
-    update :(req,res) =>{
-        courseworkload.update(req.body.editCourse,req.body.biddingSessionId,res.locals.userId,res.locals.slug).then(result=>{
-            res.status(200).json(JSON.parse(result.output.output_json));
-        }).catch(error =>{
-            if(isJsonString.isJsonString(error.originalError.info.message)){
-                res.status(500).json(JSON.parse(error.originalError.info.message));
-            }
-            else{
-                res.status(500).json({
-                    status:500,
-                    description:error.originalError.info.message,
-                    data:[]
-                });
-            }
-        })
+    update: (req, res) => {
+        courseworkload.update(req.body.editCourse, req.body.biddingSessionId, res.locals.userId, res.locals.slug)
+            .then(result => {
+                res.status(200).json(JSON.parse(result.output.output_json));
+            })
+            .catch(error => {
+
+                if (isJsonString.isJsonString(error.originalError.info.message)) {
+                    res.status(500).json(JSON.parse(error.originalError.info.message));
+                } else {
+                    res.status(500).json({
+                        status: 500,
+                        description: error.originalError.info.message,
+                        data: []
+                    });
+                }
+            });
     },
+    
     search :(req,res) =>{
        
-        courseworkload.search(res.locals.slug,res.locals.biddingId,req.body.pageNo,res.locals.userId).then(result => {
+     Promise.all([courseworkload.search(res.locals.slug,res.locals.biddingId,req.body.searchLetter,res.locals.userId),courseworkload.getCountSearch(res.locals.slug,res.locals.biddingId,req.body.searchLetter,res.locals.userId)]).then(result => {
+        console.log('values of result',result[1].recordset[0]['']);
             res.json({
                 status: "200",
                 message: "Result fetched",
-                data: result.recordset,
-                length: result.recordset.length
+                data: result[0].recordset,
+                length: result[1].recordset[0]['']    
             })
         }).catch(error => {
             throw error
         })
-}
-}
+},
+searchByLetter :(req,res) =>{
+    
+    courseworkload.searchByLetter(res.locals.slug,res.locals.biddingId,req.body.searchLetter,req.body.pageNo).then(result =>{
+        res.json({
+            status:'200',
+            message:'Result fetched',
+            data:result.recordset,
+            length:result.recordset.length
+        })
+    }).catch(error =>{
+        throw error
+    })
+}}

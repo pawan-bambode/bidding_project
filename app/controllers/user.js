@@ -51,11 +51,7 @@ module.exports = {
 
         try {
             const sess = req.session;
-            console.log('check user id ', sess.username)
-             console.log('values of re ')
                 let userData = await User.getUserDetails(req.body.username);
-
-                console.log('===>>>', userData)
 
                 if (req.body.username == '') {
                     return res.render('login', {
@@ -70,8 +66,6 @@ module.exports = {
                 }
 
                 let isVerified = await hash.verifyPassword(req.body.password, userData.recordset[0].password)
-                console.log('check pass verify ', isVerified)
-
             
                 req.session.userId = userData.recordset[0].id;
                 req.session.username = userData.recordset[0].username;
@@ -85,8 +79,6 @@ module.exports = {
 
                 if (req.body.is_trusted == "on") {
                     req.session.usersecretkey = encrypt(uuidv4())
-                    
-                        console.log('is checked:::::::::::>>')
                         const headers = {
                             ip: req.ip,
                             platform: req.headers["user-agent"]

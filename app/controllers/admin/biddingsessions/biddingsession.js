@@ -3,8 +3,6 @@ const isJsonString = require('../../../utils/util')
 
 module.exports = {
     getBiddingSessionPage :(req , res) => {
-        console.log('values of res',res.locals.status);
-        console.log('values of req',req.status);
         Promise.all([biddingSession.getAllBiddingSession(res.locals.slug,res.locals.status),biddingSession.getAcadSessionList(res.locals.slug,res.locals.biddingId)]).then(result =>{
             res.render('admin/biddingsession/index.ejs',{
               biddingSessionList: result[0].recordset,
@@ -19,9 +17,7 @@ module.exports = {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
             .catch(error => {
-                console.log('values of error', error);
                 if (isJsonString.isJsonString(error.originalError.info.message)) {
-                    console.log('inside the if block');
                     res.status(500).json(JSON.parse(error.originalError.info.message));
                 } else {
                     res.status(500).json({

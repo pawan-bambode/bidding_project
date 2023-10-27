@@ -18,9 +18,6 @@ module.exports = {
 
     renderLoginPage: (req, res, next) => {
 
-        console.log('sessionID: ', req.sessionID)
-        console.log('sessionID: ', req.session)
-
         OrganizationSlug.fetchAll().then(result => {
             // console.log(result.recordset)
             res.render('login')
@@ -39,8 +36,6 @@ module.exports = {
             });
         }
 
-        console.log(req.sessionID)
-        console.log(req.session.name)
 
         req.session.username = req.body.username
         req.session.email = 'bkapilsharma@gmail.com'
@@ -48,7 +43,6 @@ module.exports = {
 
         store.get(req.sessionID, async function (err, data) {
             let result = await data;
-            console.log('Data: ', result)
         })
         res.redirect('/login')
     }

@@ -7,7 +7,6 @@ module.exports = {
     getPage: (req, res) => {
         Promise.all([programSession.getAllProgramSessions(req, res,res.locals.slug,res.locals.biddingId),programSession.getCount(res.locals.slug,res.locals.biddingId)])
             .then(result => {
-                console.log('values of result',result[1].recordset);
                 res.render('admin/programs/programsession/index.ejs', {
                     programSessionList: result[0].recordset,
                     pageCount: result[1].recordset[0][''],
@@ -16,7 +15,6 @@ module.exports = {
     },
     refresh :(req,res) =>{
          ProgramSession.refresh(res.locals.slug,res.locals.biddingId,res.locals.userId).then(result =>{
-            console.log('values or result',result);
             res.status(200).json(JSON.parse(result.output.output_json));
         
          }).catch(error => {

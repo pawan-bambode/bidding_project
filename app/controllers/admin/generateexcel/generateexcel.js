@@ -22,7 +22,7 @@ module.exports = {
     worksheet.cell(1, 2).string('courseId').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
     worksheet.cell(1, 3).string('credits').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
     worksheet.cell(1, 4).string('programId').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 5).string('acadSessionName').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
+    worksheet.cell(1, 5).string('acadSession').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
     worksheet.cell(1, 6).string('areaName').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
     worksheet.cell(1, 7).string('yearOfIntroduction').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
     worksheet.cell(1, 8).string('minDemandCriteria').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
@@ -48,18 +48,18 @@ module.exports = {
     const courseJsonData = xlsx.utils.sheet_to_json(sheet);
     const courseDataWithColumnHypen = courseJsonData.map(item =>{
                     return {
-                      course_name: item.courseName,
+                      course_name: item.courseName.replace(/\s+/g, ' ').trim(),
                       course_id: item.courseId,
                       credits: item.credits,
                       program_id: item.programId,
-                      sap_acad_session_id: item.acadSessionName,
-                      area_name: item.areaName,
+                      acad_session: item.acadSession,
+                      area_name: item.areaName.replace(/\s+/g, ' ').trim(),
                       year_of_introduction: item.yearOfIntroduction,
                       min_demand_criteria: item.minDemandCriteria
                     };
                   })
     let course = {courses: courseDataWithColumnHypen}
-    courseworkload.uploadCourse(res.locals.slug,JSON.stringify(course),res.locals.userId,biddingId).then(result =>{
+    courseworkload.uploadCourse(res.locals.slug,course,res.locals.userId,biddingId).then(result =>{
     res.status(200).json(JSON.parse(result.output.output_json));
    }).catch(error =>{
        if(isJsonString.isJsonString(error.originalError.info.message)){

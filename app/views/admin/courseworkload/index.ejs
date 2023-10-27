@@ -173,9 +173,8 @@
     paginationData(rowCount, parseInt(test));
   
     function paginationData(rowCount, totalCount) {
-
             let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
-            console.log("Page Numbers", pageNos);
+            $('#page-no').html(totalCount);
             $('#pagination').bootpag({
                 total: pageNos,
                 page: 1,
@@ -195,22 +194,37 @@
                
             });
         }
+        $('#searchkeyword').on('input',function(){
+         let searchValue = $(this).val();
+         $.ajax({
+          type:'POST',
+          url:'/admin/course/search',
+          data:{
+            searchLetter:searchValue
+          },
+          success:function(data){
+           paginationData(rowCount,data.length)
+            AjaxtTable(data.data)
+          }
+         })
+        })
         $(".pagination-search").on('click', '.pagination li', function () {
-                console.log('pagination-search is heating now',$(this));
                 let pageNo = $(this).attr('data-lp')
-                console.log('values of PageNo',pageNo);
+                let searchValue = $(this).val();
                             
-                   $.ajax({
-                          type: "POST",
-                          url: "/admin/course/search",
-                          data: {
-                                  pageNo: pageNo,
-                                  },
-                                  success: function (data) {
-                                    AjaxtTable(data.data) 
-                                  }
-                              })
-                        })
+                $.ajax({
+                        type:'POST',
+                        url:'/admin/course/search-by-letter',
+                      data:{
+                        searchLetter:searchValue,
+                        pageNo:pageNo
+                      },
+                 success:function(data){
+                 AjaxtTable(data.data)
+
+          }
+         })
+        })
                         function AjaxtTable(courseList) {
                           $("#course-table tbody").empty();
                           console.log('values of courseList',courseList);
@@ -290,7 +304,7 @@
       $('#edit-course-modal').on('click','#update-course',function(){
             let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
             let id = $('#course-id').val();
-            let courseName = $('#course-name').val();
+            let courseName = $('#course-name').val().replace(/\s+/g,' ').trim();
             let credits = $('#course-credits').val();
             let yearOfIntroduction = $('#year-of-introduction').val();
             let minDemandCriteria   = $('#min-demand-criteria').val();
@@ -311,7 +325,6 @@
                   $('#error-min-demand-criteria').addClass('d-none');
                 }
 
-            
             let editCourse = {
               id:id,
               course_name: courseName,
@@ -333,7 +346,7 @@
                 ajaxApi(ApiObj).then(result => {
                     showSuccess(result)
                 }).catch(error => {
-                    showError(error.responseJSON)
+                    showError(JSON.stringify(error.responseJSON))
                 })
             
         });
