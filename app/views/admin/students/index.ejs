@@ -297,8 +297,8 @@ $(".pagination-search").on('click','.pagination li',function(){
     $('#edit-student-data').on('click','#update-student-data',function(){
       let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
             let id = $('#edit-student-data #student-id').val();
-            let studentName = $('#edit-student-data #student-name').val();
-            let studentEmail = $('#edit-student-data #student-email').val();
+            let studentName = $('#edit-student-data #student-name').val().replace(/\s+/g,' ').trim();;
+            let studentEmail = $('#edit-student-data #student-email').val().replace(/\s+/g,' ').trim();;
             let biddingPoints = $('#edit-student-data #bidding-points').val();
             let yearOfJoining = $('#edit-student-data #year-of-joining').val();
             let previousElectiveCredits = $('#edit-student-data #previous-elective-credits').val();

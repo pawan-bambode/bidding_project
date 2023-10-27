@@ -50,7 +50,6 @@ module.exports = {
     search :(req,res) =>{
        
      Promise.all([courseworkload.search(res.locals.slug,res.locals.biddingId,req.body.searchLetter,res.locals.userId),courseworkload.getCountSearch(res.locals.slug,res.locals.biddingId,req.body.searchLetter,res.locals.userId)]).then(result => {
-        console.log('values of result',result[1].recordset[0]['']);
             res.json({
                 status: "200",
                 message: "Result fetched",

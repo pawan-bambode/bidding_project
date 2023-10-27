@@ -50,13 +50,13 @@ module.exports = {
     const studentDataWithColumnHypen = studentJsonData.map(item =>{
                     return {
                       sap_id: item.studentSapId,
-                      roll_no: item.rollNo,
-                      student_name: item.studentName,
-                      email: item.email,
+                      roll_no: item.rollNo.replace(/\s+/g,' ').trim(),
+                      student_name: item.studentName.replace(/\s+/g,' ').trim(),
+                      email: item.email.replace(/\s+/g,' ').trim(),
                       program_id: item.programId,
                       bid_points: item.bidPoints,
                       year_of_joining: item.yearOfJoining,
-                      concentration_name: item.SpecilizationName,
+                      concentration_name: item.SpecilizationName.replace(/\s+/g,' ').trim(),
                       previous_elective_credits:item.previousElectiveCredits
                     };
                   })

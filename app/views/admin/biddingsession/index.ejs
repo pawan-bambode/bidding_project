@@ -212,7 +212,7 @@
                 let tempBiddingTable = $('#add-bidding-session #temp-bidding-session-details tbody');
                 
                 if(tempBiddingTable.children().length == 0){
-                let biddingName  = $('#add-bidding-session #bidding-name').val();
+                let biddingName  = $('#add-bidding-session #bidding-name').val().replace(/\s+/g,' ').trim();
                 let startDate    = $('#add-bidding-session #start-date').val();
                 let endDate      = $('#add-bidding-session #end-date').val();
 
@@ -379,7 +379,7 @@
            })
            $('#edit-bidding-session-modal').on('click','#update-bidding-session',function(){
             let biddingId = $('#edit-bidding-session-modal #bidding-id').val();
-            let biddingName = $('#edit-bidding-session-modal #bidding-name').val();
+            let biddingName = $('#edit-bidding-session-modal #bidding-name').val().replace(/\s+/g, ' ').trim();
             let startDate = $('#edit-bidding-session-modal #start-date').val();
             let endDate = $('#edit-bidding-session-modal #end-date').val();
             let biddingSessionAcadId = [];

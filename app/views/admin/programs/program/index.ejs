@@ -301,9 +301,9 @@ $(".pagination-search").on('click','.pagination li',function(){
         $('#edit_program').on('click','#updateProgram',function(){
             let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
             let edit_program  = {};
-            let program_name = $('#program_name').val();
+            let program_name = $('#program_name').val().replace(/\s+/g, ' ').trim();
             let program_code = $('#program_code').val();
-            let program_abbr = $('#program_abbr').val();
+            let program_abbr = $('#program_abbr').val().replace(/\s+/g, ' ').trim();
             let program_id   = $('#program_id').val();
 
             edit_program.program_name = program_name;
