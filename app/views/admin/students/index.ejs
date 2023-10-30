@@ -321,7 +321,7 @@ $(".pagination-search").on('click','.pagination li',function(){
                 ajaxApi(ApiObj).then(result => {
                     showSuccess(result)
                 }).catch(error => {
-                    showError(error.responseJSON)
+                    showError(JSON.stringify(error.responseJSON))
                 })
             
     })

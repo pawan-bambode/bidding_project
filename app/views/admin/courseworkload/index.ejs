@@ -19,9 +19,12 @@
     <div class="card card-custom" >
         <div class="card-header-custom d-flex justify-content-between p-2">
             <h4 class="ms-2">Course Data</h4>
+            <div>
+              <button class="btn btn-danger disabled" id="delete-all-coures">Delete All Courses</button>
             <button type="button" class="btn btn-success me-2"  data-bs-target="#upload-course-modal" data-bs-toggle="modal">Upload Courses</button>
+            </div>
         </div>
-        <div class="card-body table-responsive custom-table" id="course-table">
+        <div class="card-body table-responsive custom-table">
 
           <div class="d-flex justify-content-between">
             <div>
@@ -32,12 +35,28 @@
                     <%}%>
                 </select>
             </div>
+            <div class="col-md-3 mt-4">
+              <select class="form-select form-control select2" id="program-name-filter">
+                  <option selected>Select Program</option>
+                  <%for(let prog of programList){%>
+                  <option value="<%-prog.program_id%>"><%-prog.program_name%></option>
+                  <%}%>
+              </select>
+          </div>
+          <div class="col-md-2 mt-4">
+              <select class="form-select form-control select2" id="session-name-filter">
+                <option value="" selected>Select Session</option>
+              </select>
+          </div>
+          <div class="col-md-3 mt-4">
+            <select class="form-select form-control select2" id="course-name-filter"></select>
+          </div>
             <div>
                 <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
             </div>
         </div>
-            <table class="table custom_row table-bordered mt-4">
+            <table class="table custom_row table-bordered mt-4" id="course-table">
                 <thead>
                   <tr>
                     <th>id</th>
@@ -48,7 +67,7 @@
                     <th>Area</th>
                     <th>Year Of Introduction</th>
                     <th>Min Demand Criteria</th>
-                    <th>Action</th>
+                    <th>Action <input type="checkbox" name="courses-checkbox" id="course-checkbox"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -67,7 +86,9 @@
                       <a class="edit-course" data-bs-target="#edit-course-modal" data-bs-toggle="modal" data-id="<%- course.id %>"
                         data-course-name="<%- course.course_name%>"  data-credits="<%- course.credits %>" data-year-of-introduction ="<%- course.year_of_introduction %>" data-min-demand-criteria="<%- course.min_demand_criteria %>"
                         ><i class="fa fa-edit"></i></a>
-                      <a data-id="<%- course.id %>" class="delete-course" ><i class="fas fa-trash text-danger"></i></a>
+                      <a data-id="<%- course.id %>" class="delete-course" ><i class="fas fa-trash text-danger"></i>
+                      </a>
+                      <input class="d-none checkbox-course" type="checkbox" name="course" data-id="<%- course.id %>" >
                       </td>
                     </tr>
                     
@@ -164,9 +185,198 @@
             </div>
         </div>
     </div>
-      
+    <div class="modal position-absolute bottom-0 end-3" id="confirmation-delete-all-courses">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">
+                 Delete All Courses
+            </h3>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="d-flex flex-column p-3">
+               <h4>You are sure to delete all courses ?</h4>
+               <div class="">
+                <button class="btn btn-success">Yes</button>
+                <button class="btn btn-danger">No</button>
+               </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
 <script>
    $(document).ready(function(){
+    $('.select2').select2();
+    
+    $('#course-table').on('change','#course-checkbox', function() {
+        if (this.checked) {
+           $('.checkbox-course').removeClass('d-none');
+           $('.checkbox-course').attr('checked','checked');
+           $('.delete-course').addClass('d-none');
+           $('#delete-all-coures').removeClass('disabled');
+        } else {
+          $('.checkbox-course').addClass('d-none');
+           $('.delete-course').removeClass('d-none');   
+           $('#delete-all-coures').addClass('disabled');  
+        }
+    });
+    $('#delete-all-coures').on('click', function () {
+    let deleteCourseArray = [];
+    $('#course-table tbody tr td input[type="checkbox"]:checked').each(function (ele, index) {
+        let courseId = Number($(index).attr("data-id"));
+        deleteCourse = {
+            id: courseId
+        }
+        deleteCourseArray.push(deleteCourse);
+    });
+  
+    if(deleteCourseArray.length > 0){
+     ConfirmationForDeleteAllCoures().then(result =>{
+      if(result){
+        let ApiObj = {
+             url:'/admin/course/delete-all',
+             type:'POST',
+             data:{deleteCourseArray},
+             dataType:'JSON'
+            }
+             ajaxApi(ApiObj).then(result =>{
+                  showSuccess(result);
+             }).catch(error =>{
+              console.log('values of error',error);
+              showError(error.responseJSON);
+             })
+        }
+    });
+    }  
+});
+
+$('#program-name-filter').on('change', function() {
+    let programId = $(this).val();
+    let showEntry = $('#changeEntry').val();
+
+    let ApiObj = {
+        type: 'POST',
+        url: '/admin/course/filter-by/programId',
+        data: {
+            programId: programId,
+            showEntry: showEntry
+        },
+        dataType: 'JSON'
+    };
+
+    ajaxApi(ApiObj)
+        .then(result => {
+      
+            let sessionName = `<option  >Select Session</option>`;
+            if (result.sessionList.length > 0) {
+                result.sessionList.forEach(element => {
+                    sessionName += `<option value="${element.sap_acad_session_id}">${element.acad_session}</option>`;
+                });
+                paginationData(showEntry,result.workloadLength)
+                AjaxtTable(result.workload);
+            } else {
+                sessionName += `<option value="">No Session Found!</option>`;
+            }
+
+            $("#session-name-filter").html(sessionName);
+            AjaxtTable(result.workload);
+        })
+        .catch(error => {
+            console.log('values of error', error);
+            showError(error.responseJSON);
+        });
+});
+
+$(document).on('change', '#session-name-filter', function() {
+    let sessionId = $(this).val();
+    let programId = $('#program-name-filter').val();
+    let showEntry = $('#changeEntry').val();
+
+    let ApiObj = {
+        type: 'POST',
+        url: '/admin/course/filter-by/session-id',
+        data: {
+            programId: programId,
+            showEntry: showEntry,
+            sessionId: sessionId
+        },
+        dataType: 'JSON'
+    };
+
+    ajaxApi(ApiObj)
+        .then(result => {
+            let courseName = `<option>Select Session</option>`;
+            if (result.moduleList.length > 0) {
+                result.moduleList.forEach(element => {
+                  courseName += `<option value="${element.course_id}">${element.course_name}</option>`;
+                });
+                AjaxtTable(result.workload);
+            } else {
+              courseName += `<option value="">No Session Found!</option>`;
+            }
+
+            $("#course-name-filter").html(courseName);
+            paginationData(showEntry,result.workloadLength)
+            AjaxtTable(result.workload);
+        })
+        .catch(error => {
+            console.log('Error:', error);
+            showError(error.responseJSON);
+        });
+});
+$(document).on('change', '#course-name-filter', function() {
+
+    let sessionId = $('#session-name-filter').val();
+    let programId = $('#program-name-filter').val();
+    let showEntry = $('#changeEntry').val();
+    let courseId = $(this).val();
+
+    let ApiObj = {
+        type: 'POST',
+        url: '/admin/course/filter-by/course-id',
+        data: {
+            programId: programId,
+            showEntry: showEntry,
+            sessionId: sessionId,
+            courseId:courseId
+        },
+        dataType: 'JSON'
+    };
+    ajaxApi(ApiObj)
+        .then(result => {
+            AjaxtTable(result.workload);
+            paginationData(showEntry,result.workloadLength)
+        })
+        .catch(error => {
+            console.log('Error:', error);
+            showError(error.responseJSON);
+        });
+});
+
+
+    $('#changeEntry').on('change',function(){
+      let showEntry = $(this).val();
+      let ApiObj = {
+          type:'POST',
+          url:'/admin/course/showEntryCouresList',
+          data:{
+            showEntry:showEntry
+          },
+          datatype:'JSON'
+        }
+        ajaxApi(ApiObj).then(result=>{
+          paginationData(showEntry,result.length)
+            AjaxtTable(result.data)
+        }).catch(error =>{
+          showError(error.responseJSON);
+        })    
+    })
+ 
     let test = '<%- pageCount %>';
     let rowCount = $('#changeEntry').val();
     $('#page-no').html(test);
@@ -211,49 +421,54 @@
         $(".pagination-search").on('click', '.pagination li', function () {
                 let pageNo = $(this).attr('data-lp')
                 let searchValue = $(this).val();
-                            
-                $.ajax({
-                        type:'POST',
-                        url:'/admin/course/search-by-letter',
+                  $.ajax({
+                      type:'POST',
+                      url:'/admin/course/search-by-letter',
                       data:{
                         searchLetter:searchValue,
                         pageNo:pageNo
                       },
                  success:function(data){
                  AjaxtTable(data.data)
-
           }
          })
         })
-                        function AjaxtTable(courseList) {
-                          $("#course-table tbody").empty();
-                          console.log('values of courseList',courseList);
-                let AjaxTable = ``;
-                if (courseList.length > 0) {
-                    let count = 1;
-                    for (course of courseList) {
-                        AjaxTable +=
-                            `<tr>
-                                <td>${count++}</td>
-                                <td>${course.course_name}</td>
-                                <td>${course.credits}</td>
-                                <td>${course.program_id}</td>
-                                <td>${course.acad_session}</td>
-                                <td>${course.area_name}</td>
-                                <td>${course.year_of_introduction}</td>
-                                <td>${course.min_demand_criteria}</td>
-                      <td>
-                      <a class="edit-course" data-bs-target="#edit-course-modal" data-bs-toggle="modal" data-id="${course.id}"
-                        data-course-name="${course.course_name}"  data-credits="${course.credits}" data-year-of-introduction ="${course.year_of_introduction}" data-min-demand-criteria="${course.min_demand_criteria}"
-                        ><i class="fa fa-edit"></i></a>
-                      <a data-id="${course.id}" class="delete-course" ><i class="fas fa-trash text-danger"></i></a>
-                      </td>
-                            </tr>`
-                    }
+        function AjaxtTable(courseList) {
+             if ($('#course-checkbox').prop('checked')) {
+              $('#course-checkbox').prop('checked', false);
+             }
+            $("#course-table tbody").empty();
+            let AjaxTable = ``;
+            if (courseList.length > 0) {
+                let count = 1;
+                for (course of courseList) {
+                    AjaxTable +=
+                        `<tr>
+                            <td>${count++}</td>
+                            <td>${course.course_name}</td>
+                            <td>${course.credits}</td>
+                            <td>${course.program_id}</td>
+                            <td>${course.acad_session}</td>
+                            <td>${course.area_name}</td>
+                            <td>${course.year_of_introduction}</td>
+                            <td>${course.min_demand_criteria}</td>
+                            <td>
+                                <a class="edit-course" data-bs-target="#edit-course-modal" data-bs-toggle="modal" data-id="${course.id}"
+                                    data-course-name="${course.course_name}"  data-credits="${course.credits}" data-year-of-introduction ="${course.year_of_introduction}" data-min-demand-criteria="${course.min_demand_criteria}">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a data-id="${course.id}" class="delete-course">
+                                    <i class="fas fa-trash text-danger"></i>
+                                </a>
+                                <input class="d-none checkbox-course" type="checkbox" name="course" data-id="${course.id}">
+                            </td>
+                        </tr>`
                 }
-        $('#page-no').val(courseList.length);        
-        $("#course-table tbody").html(AjaxTable);
-    }
+            }
+            $('#page-no').val(courseList.length);        
+            $("#course-table tbody").html(AjaxTable);
+        }
+
     $('#edit-course-modal').on('shown.bs.modal',function(){
       $('.select2').select2();
     })
@@ -367,6 +582,56 @@
      
     });
     
+    function ConfirmationForDeleteAllCoures() {
+    return new Promise((success, failed) => {
+    let dialog = document.createElement('div');
+    dialog.classList.add('dialogConfirmation');
+   
+
+    let dialogBox = document.createElement('div');
+    dialogBox.classList.add('dialogBox');
+    dialog.appendChild(dialogBox);
+    
+    let messageBox = document.createElement('div');
+    messageBox.classList.add('messageBox');
+    dialogBox.appendChild(messageBox);
+
+    let dialogHeading = document.createElement('h1');
+    dialogHeading.classList.add('dialogHeading');
+    dialogHeading.textContent = 'Confirmation';
+    messageBox.appendChild(dialogHeading); 
+
+    let dialogMessage = document.createElement('p');
+    dialogMessage.classList.add('dialogMessage');
+    dialogMessage.textContent = 'Are you sure to delete the selected courses ?';
+    messageBox.appendChild(dialogMessage);
+
+    let buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('buttonContainer');
+    dialogBox.appendChild(buttonContainer);
+
+    let yesButton = document.createElement('button');
+    yesButton.classList.add('okButton');
+    yesButton.textContent = 'Yes';
+    buttonContainer.appendChild(yesButton);
+
+    let noButton = document.createElement('button');
+    noButton.classList.add('cancelButton');
+    noButton.textContent = 'No';
+    buttonContainer.appendChild(noButton);
+
+    document.querySelector('body').append(dialog);
+    yesButton.addEventListener('click', function () {
+        document.querySelector('.dialogConfirmation').remove();
+        success(true);
+    });
+
+    noButton.addEventListener('click',  function (){
+        document.querySelector('.dialogConfirmation').remove();
+        success(false);
+    });
+})
+}
 function showError(errors) {
   console.log('error',errors);
         let simpleAlert = new SimpleAlert();
