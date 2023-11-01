@@ -166,15 +166,38 @@
         $('#page-no').html(test);
         paginationData(rowCount, parseInt(test));
 
-$(".pagination-search").on('click','.pagination li',function(){
+        
+        $('#searchkeyword').on('input',function(){
+
+            let areaValue = $(this).val();
+            let showEntry = $('#changeEntry').val();
+
+                $.ajax({
+                type:'POST',
+                url:'/admin/concentration-settings/search',
+                data:{
+                searchLetter:searchValue,
+                showEntry:showEntry
+                },
+                success:function(data){
+                paginationData(rowCount,data.length)
+                AjaxtTable(data.data)
+                }
+                })
+         })       
+
+        $(".pagination-search").on('click','.pagination li',function(){
             let keyword = $("#searchkeyword").val();
+            let showEntry = $('#changeEntry').val();
             let pageNo = $(this).attr('data-lp');
+
             $.ajax({
                 type: "POST",
-                url: "/admin/programs/search",
+                url: "/admin/concentration-settings/search",
                 data: {
-                    keyword: keyword,
-                    pageNo: pageNo
+                    searchLetter: keyword,
+                    pageNo: pageNo,
+                    showEntry:showEntry
                 },
                 success: function (data) {
                     AjaxtTable(data.data);
@@ -183,6 +206,23 @@ $(".pagination-search").on('click','.pagination li',function(){
             });
         });
 
+        $('#changeEntry').on('change',function(){
+        let showEntry = $(this).val();
+        let ApiObj = {
+            type:'POST',
+            url:'/admin/concentration-settings/showEntryConcentrationList',
+            data:{
+                showEntry:showEntry
+            },
+            datatype:'JSON'
+            }
+            ajaxApi(ApiObj).then(result=>{
+            paginationData(showEntry,result.length)
+                AjaxtTable(result.data)
+            }).catch(error =>{
+            showError(error.responseJSON);
+            })    
+        })
         function paginationData(rowCount, totalCount) {
             let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
             console.log("Page Numbers", pageNos);

@@ -236,7 +236,7 @@
     });
   
     if(deleteCourseArray.length > 0){
-     ConfirmationForDeleteAllCoures().then(result =>{
+      ConfirmationForAllDelete('Are you sure to delete the selected courses ?').then(result =>{
       if(result){
         let ApiObj = {
              url:'/admin/course/delete-all',
@@ -421,12 +421,14 @@ $(document).on('change', '#course-name-filter', function() {
         $(".pagination-search").on('click', '.pagination li', function () {
                 let pageNo = $(this).attr('data-lp')
                 let searchValue = $(this).val();
+                let showEntry = $('#changeEntry').val();
                   $.ajax({
                       type:'POST',
                       url:'/admin/course/search-by-letter',
                       data:{
                         searchLetter:searchValue,
-                        pageNo:pageNo
+                        pageNo:pageNo,
+                        showEntry:showEntry
                       },
                  success:function(data){
                  AjaxtTable(data.data)
@@ -582,7 +584,7 @@ $(document).on('change', '#course-name-filter', function() {
      
     });
     
-    function ConfirmationForDeleteAllCoures() {
+    function ConfirmationForAllDelete(message) {
     return new Promise((success, failed) => {
     let dialog = document.createElement('div');
     dialog.classList.add('dialogConfirmation');
@@ -603,7 +605,7 @@ $(document).on('change', '#course-name-filter', function() {
 
     let dialogMessage = document.createElement('p');
     dialogMessage.classList.add('dialogMessage');
-    dialogMessage.textContent = 'Are you sure to delete the selected courses ?';
+    dialogMessage.textContent = message;
     messageBox.appendChild(dialogMessage);
 
     let buttonContainer = document.createElement('div');

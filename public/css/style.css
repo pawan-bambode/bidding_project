@@ -2037,4 +2037,7 @@ margin: auto;
     border: none;
 }
 
-
+#edit-bidding-session-modal .select2-dropdown{
+ min-height: 200px;
+ max-height: 200px;
+}

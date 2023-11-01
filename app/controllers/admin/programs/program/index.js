@@ -69,10 +69,17 @@ module.exports = {
                 }
             });
     },
-    search :(req,res) =>{
-      program.search(res.locals.slug,res.locals.biddingId,req.body.pageNo,res.locals.userId).then(result => {
-        res.status(200).json(JSON.parse(result.output.output_json));
+    programSearch :(req,res) =>{
+     Promise.all([program.search(res.locals.slug,res.locals.biddingId,req.body.pageNo,res.locals.userId,req.body.searchLetter,req.body.showEntry),program.getCountOfSearch(res.locals.slug,res.locals.biddingId,req.body.pageNo,res.locals.userId,req.body.searchLetter)]).then(result => {
+        res.json({
+            status:'200',
+            message:'Result fetched',
+            data:result[0].recordset,
+            length:result[1].recordset[0]['']
+            
+        });
       }).catch(error => {
+        console.log('values of error',error);
         if ((isJsonString.isJsonString(error.originalError.info.message))) {
             res.status(500).json(JSON.parse(error.originalError.info.message));
         } else {
@@ -83,5 +90,20 @@ module.exports = {
             });
         }
     })
-}
+},
+
+  showEntryProgramList :(req,res) =>{
+   Promise.all([program.showEntryProgramList(res.locals.slug,res.locals.biddingId,req.body.showEntry),program.getCounts(res.locals.slug,res.locals.biddingId,req.body.showEntry)]).then(result =>{
+   
+    res.json({
+           status:'200',
+           message:'Result fetched',
+           data:result[0].recordset,
+           length:result[1].recordset[0]['']
+           
+       })
+   }).catch(error =>{
+       throw error
+   })
+  }
 };

@@ -7,11 +7,12 @@ const pool = require('mssql');
 module.exports = class Students {
 
     static getStudentDataList(slug,biddingId) {
+         let showEntry = 10;
         return poolConnection.then(pool => {
             return pool.request()
             .input('biddingId',sql.Int,biddingId)
             .query(`
-            SELECT DISTINCT  sd.id ,sd.sap_id, sd.roll_no,sd.student_name,sd.email,p.program_name,sd.bid_points,sd.year_of_joining ,sd.previous_elective_credits
+            SELECT TOP ${showEntry}  sd.id ,sd.sap_id, sd.roll_no,sd.student_name,sd.email,p.program_name,sd.bid_points,sd.year_of_joining ,sd.previous_elective_credits
             FROM [${slug}].student_data sd 
             INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1  AND  p.bidding_session_lid= @biddingId  AND sd.bidding_session_lid = @biddingId`)
         })
@@ -24,6 +25,16 @@ module.exports = class Students {
             SELECT COUNT(*) FROM [${slug}].student_data sd INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1  AND  p.bidding_session_lid= @biddingId  AND sd.bidding_session_lid = @biddingId`)
         })
     }
+    static getProgramList(slug,biddingId) {
+       return poolConnection.then(pool => {
+           return pool.request()
+           .input('biddingId',sql.Int,biddingId)
+           .query(` SELECT p.program_id,p.program_name
+            FROM [${slug}].student_data sd 
+            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1  AND  p.bidding_session_lid = @biddingId   AND sd.bidding_session_lid = @biddingId GROUP BY p.program_id,p.program_name`)
+       })
+   }
+    
     static saveStudentDetails(inputJson){
         return poolConnection.then(pool => {
             const request = pool.request();

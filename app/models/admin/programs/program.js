@@ -3,12 +3,14 @@ const {sql,poolConnection} = require('../../../../config/db');
 const pool = require('mssql');
 
 module.exports =  class Program {
+  
  static getAllProgram(req,res,slug,biddingId){
-    console.log('values of biddingId',biddingId);
+    console.log('values of res.locals',res.locals);
+    let showEntry = 10;
     return poolConnection.then(pool =>{
         return pool.request()
         .input('biddingId',sql.Int,biddingId)
-        .query(`SELECT id, RTRIM(LTRIM(program_name)) AS program_name, RTRIM(LTRIM(abbr)) AS abbr, RTRIM(LTRIM(ISNULL(program_code,'NA'))) program_code  FROM [${slug}].programs WHERE active = 1 AND bidding_session_lid = @biddingId`);
+        .query(`SELECT TOP ${showEntry} id, RTRIM(LTRIM(program_name)) AS program_name, RTRIM(LTRIM(abbr)) AS abbr, RTRIM(LTRIM(ISNULL(program_code,'NA'))) program_code  FROM [${slug}].programs WHERE active = 1 AND bidding_session_lid = @biddingId`);
     })
  }
  static getCount(slug,biddingId){
@@ -57,14 +59,69 @@ static delete(programlid,slug,userId,biddingSessionId){
         .execute(`[${slug}].[sp_delete_programs]`)
     })
 }
-static search(slug,biddingId,pageNo,userId){
+static search(slug,biddingId,pageNo,userId,letterSearch,showEntry){
+    showEntry = showEntry?showEntry:10;
+   if(pageNo){
     return poolConnection.then(pool =>{
         return pool.request()
         .input('pageNo',sql.Int,pageNo)
         .input('last_modified_by',sql.Int,userId)
         .input('bidding_session_lid',sql.Int,biddingId)
-        .query(`SELECT  id, RTRIM(LTRIM(program_name)) AS program_name, RTRIM(LTRIM(abbr)) AS abbr, RTRIM(LTRIM(ISNULL(program_code,'NA'))) program_code FROM [${slug}].programs ac  ORDER BY id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY
-        `)
+        .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+        .query(`SELECT  id, RTRIM(LTRIM(program_name)) AS program_name, RTRIM(LTRIM(abbr)) AS abbr, RTRIM(LTRIM(ISNULL(program_code,'NA'))) program_code FROM [${slug}].programs p
+        WHERE p.active = 1 AND p.bidding_session_lid = @bidding_session_lid AND (p.program_name  LIKE @letterSearch OR p.abbr LIKE @letterSearch OR p.program_code LIKE @letterSearch )    
+        ORDER BY p.id DESC  OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`)
+    })
+} else{
+    return poolConnection.then(pool =>{
+        return pool.request()
+        .input('pageNo',sql.Int,pageNo)
+        .input('last_modified_by',sql.Int,userId)
+        .input('bidding_session_lid',sql.Int,biddingId)
+        .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+        .query(`SELECT TOP ${showEntry}  id, RTRIM(LTRIM(program_name)) AS program_name, RTRIM(LTRIM(abbr)) AS abbr, RTRIM(LTRIM(ISNULL(program_code,'NA'))) program_code FROM [${slug}].programs p
+        WHERE  p.active = 1 AND p.bidding_session_lid = @bidding_session_lid AND (p.program_name LIKE @letterSearch OR p.abbr LIKE @letterSearch OR p.program_code LIKE @letterSearch)`)
     })
 }
+}
+static getCountOfSearch(slug,biddingId,pageNo,userId,letterSearch,showEntry){
+
+    showEntry = showEntry?showEntry:10;
+   if(pageNo){
+    return poolConnection.then(pool =>{
+        return pool.request()
+        .input('pageNo',sql.Int,pageNo)
+        .input('last_modified_by',sql.Int,userId)
+        .input('bidding_session_lid',sql.Int,biddingId)
+        .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+        .query(`SELECT COUNT(*) FROM [${slug}].programs p
+        WHERE p.active = 1 AND p.bidding_session_lid = @bidding_session_lid AND (p.program_name LIKE @letterSearch AND p.abbr LIKE @letterSearch AND p.program_code LIKE @letterSearch)`)
+    })
+} else{
+    return poolConnection.then(pool =>{
+        return pool.request()
+        .input('pageNo',sql.Int,pageNo)
+        .input('last_modified_by',sql.Int,userId)
+        .input('bidding_session_lid',sql.Int,biddingId)
+        .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+        .query(`SELECT  COUNT(*) FROM [${slug}].programs p
+        WHERE p.active = 1 AND p.bidding_session_lid = @bidding_session_lid AND (p.program_name LIKE @letterSearch OR p.abbr LIKE @letterSearch OR p.program_code LIKE @letterSearch)`)
+    })
+}
+}
+static showEntryProgramList(slug,biddingId,showEntry){
+    return poolConnection.then(pool =>{
+        return pool.request()
+        .input('biddingId',sql.Int,biddingId)
+        .query(`SELECT TOP ${showEntry} id, RTRIM(LTRIM(program_name)) AS program_name, RTRIM(LTRIM(abbr)) AS abbr, RTRIM(LTRIM(ISNULL(program_code,'NA'))) program_code  FROM [${slug}].programs WHERE active = 1 AND bidding_session_lid = @biddingId`);
+    })
+ }
+ 
+ static getCounts(slug,biddingId,showEntry){
+    return poolConnection.then(pool =>{
+        return pool.request()
+        .input('biddingId',sql.Int,biddingId)
+        .query(`SELECT COUNT(*)  FROM [${slug}].programs WHERE active = 1 AND bidding_session_lid = @biddingId`);
+    })
+ }
 }

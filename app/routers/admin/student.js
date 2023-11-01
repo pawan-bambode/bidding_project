@@ -11,6 +11,12 @@ router.post('/upload-student-data',upload.single('import-student-data'),studentD
 router.post('/student-data-raw/refresh',studentDataUpload.refresh);
 router.post('/student-data/update',studentDataUpload.update);
 router.post('/student-data/delete',studentDataUpload.delete);
+router.post('/student-data/delete-all',studentDataUpload.deleteAll);
+router.post('/student-data/search',studentDataUpload.searchStudentData)
+router.post('/student-data/search-by-letter',studentDataUpload.searchStudentDataByletter);
+router.post('/student-data/showEntryCouresList',studentDataUpload.showEntryStudentDataList)
+router.post('/student-data/filter-by/programId',studentDataUpload.studentDataFilterByProgramId)
+router.post('/student-data/filter-by/student-sap-id',studentDataUpload.studentDataFilterByStudentSapId)
 
 router.post('/get_excel_upload_data', upload.single('excel-file'), studentController.readExcelFile)
 router.get('/get_student_data', studentController.getStudentDetails);

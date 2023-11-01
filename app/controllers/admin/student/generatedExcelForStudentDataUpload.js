@@ -127,6 +127,82 @@ delete: (req, res) => {
               });
           }
       });
+},
+deleteAll :(req, res) => {
+  studentRawData.deleteAll(req.body, res.locals.slug, res.locals.userId,res.locals.biddingId)
+      .then(result => {
+          res.status(200).json(JSON.parse(result.output.output_json));
+      })
+      .catch(error => {
+          if ((isJsonString.isJsonString(error.originalError.info.message))) {
+              res.status(500).json(JSON.parse(error.originalError.info.message));
+          } else {
+              res.status(500).json({
+                  status: 500,
+                  description: error.originalError.info.message,
+                  data: []
+              });
+          }
+      });
+},
+searchStudentData :(req,res) =>{  
+  Promise.all([studentRawData.searchStudentData(res.locals.slug,res.locals.biddingId,req.body.searchLetter,res.locals.userId,req.body.pageNo,req.body.showEntry),studentRawData.getCountSearch(res.locals.slug,res.locals.biddingId,req.body.searchLetter,res.locals.userId)]).then(result => {
+         res.json({
+             status: "200",
+             message: "Result fetched",
+             data: result[0].recordset,
+             length: result[1].recordset[0]['']    
+         })
+     }).catch(error => {
+         throw error
+     })
+},
+searchStudentDataByletter :(req,res) =>{
+   Promise.all([studentRawData.searchStudentDataByletter(res.locals.slug,res.locals.biddingId,req.body.searchLetter,req.body.pageNo,req.body.showEntry),studentRawData.getCounts(res.locals.slug,res.locals.biddingId,req.body.searchLetter,req.body.pageNo)]).then(result =>{
+     res.json({
+         status:'200',
+         message:'Result fetched',
+         data:result[0].recordset,
+         length:result[1].recordset[0]['']
+     })
+ }).catch(error =>{
+     throw error
+ })
+},
+showEntryStudentDataList :(req,res) =>{
+  Promise.all([studentRawData.showEntryCouresList(res.locals.slug,res.locals.biddingId,req.body.showEntry,req.body.pageNo,req.body.showEntry),studentRawData.getCounts(res.locals.slug,res.locals.biddingId,req.body.showEntry)]).then(result =>{
+     res.json({
+         status:'200',
+         message:'Result fetched',
+         data:result[0].recordset,
+         length:result[1].recordset[0]['']
+     })
+ }).catch(error =>{
+     throw error
+ })
+},
+studentDataFilterByProgramId : (req,res) =>{
+  Promise.all([studentRawData.studentDataFilterByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry),studentRawData.studentSapIdByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId),studentRawData.getCountfilterByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId)]).then(result =>{
+    res.json({
+      stats:'200',
+      message:'Result Fetched',
+      data:result[0].recordset,
+      studentDataSapIdList:result[1].recordset,
+      length:result[2].recordset[0]['']
+    })
+  })
+},
+studentDataFilterByStudentSapId : (req,res) =>{
+  Promise.all([studentRawData.studentDataFilterByStudentId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry,req.body.studentSapId),studentRawData.getCountfilterByStudentId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.studentSapId)]).then(result =>{
+    console.log('values of result[1]',result[1].recordset[0]['']);
+    res.json({
+      stats:'200',
+      message:'Result Fetched',
+      data:result[0].recordset,
+      length:result[1].recordset[0]['']
+    })
+  })
 }
+
 }
 

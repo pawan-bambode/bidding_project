@@ -19,6 +19,10 @@
             <th>Acad Session</th>
             <th>Start Date</th>
             <th>End Date</th>
+            <th>Total Students</th>
+            <th>Total Courses</th>
+            <th>Minimum Yearly Credits</th>
+            <th>Maximum Yearly Credits</th>
             <th>Action</th>
           </thead>
           <tbody>
@@ -40,6 +44,10 @@
                     
                     <td><%- biddingSession.start_date %></td>
                     <td><%- biddingSession.end_date %></td>
+                    <td><%- biddingSession.student_count ? biddingSession.student_count : 0 %></td>
+                    <td><%- biddingSession.course_count  ? biddingSession.course_count : 0  %></td>
+                    <td><%- biddingSession.max_credits   ? biddingSession.max_credits: 0 %></td>
+                    <td><%- biddingSession.min_credits   ? biddingSession.min_credits : 0 %></td>
                     <td>
                        <a href="#" class="edit-bidding-session" id="edit-bidding-session"><i class="fa fa-edit text-primary" ></i></a>
                        <a href="#" id="delete-bidding-session" data-id ="<%- biddingSession.id %>"> <i class="fas fa-trash text-danger"></i> </a></td>
@@ -183,6 +191,7 @@
 
 <script>
         $(document).ready(function() {
+            $('.select2').select2();
             formatDate(new Date(),false,6)
 
           $('#add-bidding-session').on('change','#start-date',function(){

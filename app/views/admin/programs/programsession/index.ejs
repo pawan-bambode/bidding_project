@@ -181,6 +181,63 @@
        let programSessionId = $(this).closest('a').attr('data-id');
        $('#edit-program-sessions #program-session-id').val(programSessionId);
     })
+    $('#searchkeyword').on('input',function(){
+
+        let searchValue = $(this).val();
+        let showEntry = $('#changeEntry').val();
+         
+            $.ajax({
+            type:'POST',
+            url:'/admin/program-sessions/search',
+            data:{
+            searchLetter:searchValue,
+            showEntry:showEntry
+            },
+            success:function(data){
+            paginationData(rowCount,data.length)
+            AjaxtTable(data.programSessionList )
+            }
+            })
+        })       
+
+$(".pagination-search").on('click','.pagination li',function(){
+    let keyword = $("#searchkeyword").val();
+    let showEntry = $('#changeEntry').val();
+    let pageNo = $(this).attr('data-lp');
+ 
+    $.ajax({
+        type: "POST",
+        url: "/admin/program-sessions/search",
+        data: {
+            searchLetter: keyword,
+            pageNo: pageNo,
+            showEntry:showEntry
+        },
+        success: function (data) {
+            AjaxtTable(data.programSessionList);
+            console.log(data.data);
+        }
+    });
+});
+
+$('#changeEntry').on('change',function(){
+let showEntry = $(this).val();
+let ApiObj = {
+    type:'POST',
+    url:'/admin/program-sessions/showEntryProgramList',
+    data:{
+        showEntry:showEntry
+    },
+    datatype:'JSON'
+    }
+    ajaxApi(ApiObj).then(result=>{
+    paginationData(showEntry,result.programSessionList.length)
+        AjaxtTable(result.programSessionList)
+    }).catch(error =>{
+    showError(error.responseJSON);
+    })    
+})
+
        
 });
 
@@ -221,6 +278,33 @@ function showError(errors) {
                 }
                 return isNumber;
             }
+            function AjaxtTable(programSessionList) {
+                console.log('values of programSessionList',programSessionList);
+           $("#program-sessions-table tbody").empty();
+           let AjaxTable = ``;
+           if (programSessionList.length > 0) {
+               let count = 1;
+               for (programSession of programSessionList) {
+                   AjaxTable +=
+                       `<tr>
+                           <td>${count++}</td>
+                           <td>${programSession.acad_session}</td>
+                           <td>${programSession.program_name}</td>
+                           <td>${programSession.year}</td>
+                           <td>${programSession.min_credits}</td>
+                           <td>${programSession.max_credits}</td>
+                           <td>
+                               <a class="edit-program-data" data-bs-target="#edit-program-sessions" data-bs-toggle="modal" data-id="${programSession.id}">
+                           <i class="fa fa-edit"></i></a>
+                           <a class="delete-program-data" data-id="${programSession.id}"><i class="fa-solid fa-trash text-danger"></i></a>
+                           </td>
+                       </tr>`
+               }
+           }
+           
+           $('#page-no').html(programSessionList.length);        
+           $("#program-sessions-table tbody").html(AjaxTable);
+       }
 </script>
   
 <%- include('../../partials/footerEnd.ejs') %>

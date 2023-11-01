@@ -12,7 +12,7 @@
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2">Student List</h3>
         <div>
-           
+                <button class="btn btn-danger disabled" id="delete-all-student-data">Delete All Student Data</button>
                 <button type="button" class="btn btn-success me-2"  data-bs-target="#upload-student-modal" data-bs-toggle="modal">Upload Student Data</button>
                 <button type="button" class="btn btn-danger ms-auto me-3"  id="refresh-student-data">
                     <i class="fa-solid fa-rotate p-1"></i>Refresh
@@ -27,6 +27,19 @@
                     <%for(let page of locals.page_filter){%>
                        <option value="<%-page%>"><%-page%></option>
                     <%}%>
+                </select>
+            </div>
+            <div class="col-md-3 mt-4">
+                <select class="form-select form-control select2" id="program-name-filter">
+                    <option selected>Select Program</option>
+                    <%for(let program of programList){%>
+                    <option value="<%-program.program_id%>"><%-program.program_name%></option>
+                    <%}%>
+                </select>
+            </div>
+            <div class="col-md-3 mt-4">
+                <select class="form-select form-control select2" id="student-name-filter">
+                  <option value="" selected>Select Student</option>
                 </select>
             </div>
             <div>
@@ -45,7 +58,7 @@
                 <th>Program Name</th>
                 <th>Bid Points</th>
                 <th>Year Of Joining</th>
-                <th>Action</th>
+                <th>Action <input class="d-none" type="checkbox" name="student-data-checkbox" id="student-data-checkbox"></th>
             </thead>
             <tbody>
              
@@ -63,6 +76,7 @@
                           <td><a class="edit-student-data" data-bs-target="#edit-student-data" data-bs-toggle="modal" data-id="<%-studentData.id %>" data-student-sap-id="<%-studentData.sap_id %>" data-student-roll-no="<%- studentData.roll_no %>" data-student-name = "<%- studentData.student_name %>" data-student-email ="<%- studentData.email %>" data-student-bidding-points="<%- studentData.bid_points %>" data-student-year-of-join ="<%- studentData.year_of_joining %>" data-student-pre-ele-credits  ="<%- studentData.previous_elective_credits %>" >
                             <i class="fa fa-edit"></i></a>
                             <a class="delete-student-data" data-id="<%-studentData.id %>"><i class="fa-solid fa-trash text-danger"></i></a>
+                            <input class="d-none checkbox-student-data" type="checkbox" name="student-data" data-id="<%- studentData.id %>" >
                         </td>
                       </tr>
                   <%}%>
@@ -70,7 +84,7 @@
         </table>
         <div class="d-flex justify-content-between">
             <div>
-                <p>Total entries:
+                <p>Total entries:&nbsp;<span id="page-no"><%- pageCount%></span>
                 </p>
             </div>
             <div>
@@ -81,140 +95,214 @@
   </div>  
 </div>
 
-<div class="modal" id="importProgram">
-    <div class="modal-dialog modal-fullscreen">
+    <div class="modal" id="edit-student-data">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-              <h3>Select Program</h3>
-              <button class="btn-close" data-bs-dismiss="modal"></button>
+                <h3 class="modal-title">Update Student Data</h3>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body row custum-imp-program">
-               
-              <div class="col-md-3 border-end custm-padd-for-imp-program custm-padd pe-2 ps-2" >
-             
-                <label class="mb-2" for="select-program" >Select Program :</label>
-                    <input type="search" class="form-control p3 mb-3 searchItemProgramCustom" placeholder="Search Program" id="search-program">
-                  
-              
-              </div>
-              <div class="col-md-9 custm_padd p-2 ps-2">
-                <table class="table-responsive table-bordered table import-program-table">
-                    <thead>
-                        <th>Program Name</th>
-                        <th>Program Code</th>
-                        <th>Program Abbr</th>
-                        <th>Action</th>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-              </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="mb-2" for="student-name">Student Name:</label>
+                        <input type="hidden" id="student-id">
+                        <input class="form-control" type="text" id="student-name">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="mb-2" for="student-email">Email:</label>
+                        <input class="form-control" type="text" id="student-email">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="mb-2" for="bidding-points">Bidding Points:</label>
+                        <input class="form-control" type="text" id="bidding-points">  
+                    </div>
+                    <div class="col-md-6">
+                        <label class="mb-2" for="year-of-joining">Year Of Joining:</label>
+                        <input class="form-control" type="text" id="year-of-joining">  
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="mb-2" for="previous-elective-credits">Previous Elective Credits:</label>
+                        <input class="form-control" type="text" id="previous-elective-credits">  
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-success" id="import-program" >Import Program</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary" id="update-student-data">Update</button>
             </div>
         </div>
     </div>
-</div>
-<div class="modal" id="edit-student-data">
-  <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h3 class="modal-title">Update Student Data</h3>
-              <button class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-              <div class="row">
-                  <div class="col-md-6">
-                      <label class="mb-2" for="student-name">Student Name:</label>
-                      <input type="hidden" id="student-id">
-                      <input class="form-control" type="text" id="student-name">
-                  </div>
-                  <div class="col-md-6">
-                      <label class="mb-2" for="student-email">Email:</label>
-                      <input class="form-control" type="text" id="student-email">
-                  </div>
-              </div>
-              <div class="row">
-                  <div class="col-md-6">
-                      <label class="mb-2" for="bidding-points">Bidding Points:</label>
-                      <input class="form-control" type="text" id="bidding-points">  
-                  </div>
-                  <div class="col-md-6">
-                      <label class="mb-2" for="year-of-joining">Year Of Joining:</label>
-                      <input class="form-control" type="text" id="year-of-joining">  
-                  </div>
-              </div>
-              <div class="row">
-                  <div class="col-md-6">
-                      <label class="mb-2" for="previous-elective-credits">Previous Elective Credits:</label>
-                      <input class="form-control" type="text" id="previous-elective-credits">  
-                  </div>
-              </div>
-          </div>
-          <div class="modal-footer">
-              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button class="btn btn-primary" id="update-student-data">Update</button>
-          </div>
-      </div>
-  </div>
-</div>
-
-<div class="modal" id="upload-student-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-     
-        <div class="modal-header">
-          <h5 class="modal-title">Upload Student Data</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        
-        <div class="modal-body">
-                <div class="d-flex">
-                <label class="form-label me-3">Import Student data :</label>
-                <form enctype="multipart/form-data"  method="post" id="upload-student-data-form">
-                <input type="file" name="import-student-data" id="import-student-data" accept=".xlsx">
-                </div>
-                <div class="d-flex justify-content-between align-item-center mt-5">
-                <input type="submit" class="btn btn-success mt-2 d-none" id="upload-student-data-button" value="Upload Student Data"></input> 
-                </form> 
-            
-              <a href="/admin/generate-excel-student" download="sampleForImportStudent.xlsx" name="sample-for-import-student" class="text-decoration-none align-self-end">Sample For Import Student data</a>
-             </div>
-         
-        </div>
-  
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-       
-      </div>
     </div>
-  </div>
+
+    <div class="modal" id="upload-student-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
+        <div class="modal-dialog">
+        <div class="modal-content">
+        
+            <div class="modal-header">
+            <h5 class="modal-title">Upload Student Data</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                    <div class="d-flex">
+                    <label class="form-label me-3">Import Student data :</label>
+                    <form enctype="multipart/form-data"  method="post" id="upload-student-data-form">
+                    <input type="file" name="import-student-data" id="import-student-data" accept=".xlsx">
+                    </div>
+                    <div class="d-flex justify-content-between align-item-center mt-5">
+                    <input type="submit" class="btn btn-success mt-2 d-none" id="upload-student-data-button" value="Upload Student Data"></input> 
+                    </form> 
+                
+                <a href="/admin/generate-excel-student" download="sampleForImportStudent.xlsx" name="sample-for-import-student" class="text-decoration-none align-self-end">Sample For Import Student data</a>
+                </div>
+            
+            </div>
+    
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        
+        </div>
+        </div>
+    </div>
 <%- include('../partials/footer.ejs') %>
 <script>
     $(document).ready(function() {
-      
+        $('.select2').select2();
+
+         if($('#student-data-table tbody tr').length > 0){ 
+           $('#student-data-checkbox').removeClass('d-none');
+        }
+
         let test = '<%- pageCount %>';
         let rowCount = $('#changeEntry').val();
         $('#page-no').html(test);
         paginationData(rowCount, parseInt(test));
 
-$(".pagination-search").on('click','.pagination li',function(){
-            let keyword = $("#searchkeyword").val();
-            let pageNo = $(this).attr('data-lp');
-            $.ajax({
-                type: "POST",
-                url: "/admin/programs/search",
+        $('#searchkeyword').on('input',function(){
+
+         let searchValue = $(this).val();
+         $.ajax({
+          type:'POST',
+          url:'/admin/student-data/search',
+          data:{
+            searchLetter:searchValue
+          },
+          success:function(data){
+        
+           paginationData(rowCount,data.length)
+            AjaxtTable(data.data)
+          }
+         })
+        })
+
+        $('#program-name-filter').on('change', function() {
+            let programId = $(this).val();
+            let showEntry = $('#changeEntry').val();
+
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/student-data/filter-by/programId',
                 data: {
-                    keyword: keyword,
-                    pageNo: pageNo
+                    programId: programId,
+                    showEntry: showEntry
                 },
-                success: function (data) {
-                    AjaxtTable(data.data);
-                    console.log(data.data);
-                }
-            });
+                dataType: 'JSON'
+            };
+
+            ajaxApi(ApiObj)
+                .then(result => {
+
+                    let studentName = `<option  >Select Student Name</option>`;
+                    if (result.studentDataSapIdList.length > 0) {
+                        result.studentDataSapIdList.forEach(element => {
+                            studentName += `<option value="${element.sap_id}">${element.student_name}</option>`;
+                        });
+                        paginationData(showEntry,result.length)
+                        AjaxtTable(result.data);
+                    } else {
+                        studentName += `<option value="">No Session Found!</option>`;
+                    }
+
+                    $("#student-name-filter").html(studentName);
+                    AjaxtTable(result.data);
+                    $('#page-no').html(result.length);
+                })
+                .catch(error => {
+                    console.log('values of error', error);
+                    showError(error.responseJSON);
+                });
         });
+
+        $(document).on('change', '#student-name-filter', function() {
+            let studentSapId = $(this).val();
+            let programId = $('#program-name-filter').val();
+            let showEntry = $('#changeEntry').val();
+
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/student-data/filter-by/student-sap-id',
+                data: {
+                    programId: programId,
+                    showEntry: showEntry,
+                    studentSapId: studentSapId
+                },
+                dataType: 'JSON'
+            };
+
+            ajaxApi(ApiObj)
+                .then(result => {
+                    AjaxtTable(result.data);
+                    paginationData(showEntry,result.length)
+                })
+                .catch(error => {
+                    console.log('Error:', error);
+                    showError(error.responseJSON);
+                });
+        });
+        $(".pagination-search").on('click','.pagination li',function(){
+                    let keyword = $("#searchkeyword").val();
+                    let pageNo = $(this).attr('data-lp');
+                    let showEntry = $('#changeEntry').val();
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/admin/student-data/search-by-letter",
+                        data: {
+                            searchLetter: keyword,
+                            pageNo: pageNo,
+                            showEntry:showEntry
+                        },
+                        success: function (data) { 
+                            AjaxtTable(data.data);
+                            $('#page-no').html(data.length);
+                        }
+                    });
+                });
+
+        $('#changeEntry').on('change',function(){
+        let showEntry = $(this).val();
+        let ApiObj = {
+            type:'POST',
+            url:'/admin/student-data/showEntryCouresList',
+            data:{
+                showEntry:showEntry
+            },
+            datatype:'JSON'
+            }
+            ajaxApi(ApiObj).then(result=>{
+            paginationData(showEntry,result.length)
+                AjaxtTable(result.data)
+            }).catch(error =>{
+            showError(error.responseJSON);
+            })    
+        })
+ 
 
         function paginationData(rowCount, totalCount) {
             let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
@@ -239,6 +327,18 @@ $(".pagination-search").on('click','.pagination li',function(){
             });
         }
 
+        $('#student-data-table').on('change','#student-data-checkbox', function() {
+        if (this.checked) {
+           $('.checkbox-student-data').removeClass('d-none');
+           $('.checkbox-student-data').attr('checked','checked');
+           $('.delete-student-data').addClass('d-none');
+           $('#delete-all-student-data').removeClass('disabled');
+        } else {
+          $('.checkbox-student-data').addClass('d-none');
+           $('.delete-student-data').removeClass('d-none');   
+           $('#delete-all-student-data').addClass('disabled');  
+        }
+    });
       $('#student-data-table').on('click','.edit-student-data',function(){
        
        let id = $(this).closest('a').attr('data-id');
@@ -294,6 +394,67 @@ $(".pagination-search").on('click','.pagination li',function(){
           }
         });
     });
+    $('#delete-all-student-data').on('click', function () {
+    let deleteAllStudentData = [];
+    $('#student-data-table tbody tr td input[type="checkbox"]:checked').each(function (ele, index) {
+        let studentSapId = Number($(index).attr("data-id"));
+        deleteStudentData = {
+            id: studentSapId
+        }
+        deleteAllStudentData.push(deleteStudentData);
+    });
+
+    if(deleteAllStudentData.length > 0){
+     ConfirmationForAllDelete('Are you sure to delete the selected student data ?').then(result =>{
+      if(result){
+        let ApiObj = {
+             url:'/admin/student-data/delete-all',
+             type:'POST',
+             data:{deleteAllStudentData},
+             dataType:'JSON'
+            }
+             ajaxApi(ApiObj).then(result =>{
+                  showSuccess(result);
+             }).catch(error =>{
+              console.log('values of error',error);
+              showError(error.responseJSON);
+             })
+        }
+    });
+    }  
+});
+function AjaxtTable(studentDataList) {
+             if ($('#student-data-checkbox').prop('checked')) {
+              $('#student-data-checkbox').prop('checked', false);
+             }
+            $("#student-data-table tbody").empty();
+            let AjaxTable = ``;
+            if (studentDataList.length > 0) {
+                let count = 1;
+                for (studentData of studentDataList) {
+                    AjaxTable +=
+                        `<tr>
+                            <td>${count++}</td>
+                            <td>${studentData.sap_id}</td>
+                            <td>${studentData.roll_no}</td>
+                            <td>${studentData.student_name}</td>
+                            <td>${studentData.email}</td>
+                            <td>${studentData.program_name}</td>
+                            <td>${studentData.bid_points}</td>
+                            <td>${studentData.year_of_joining}</td>
+                            
+                            <td>
+                                <a class="edit-student-data" data-bs-target="#edit-student-data" data-bs-toggle="modal" data-id="${studentData.id}" data-student-sap-id="${studentData.sap_id}" data-student-roll-no="${studentData.roll_no}" data-student-name = "${studentData.student_name}" data-student-email ="${studentData.email}" data-student-bidding-points=" ${studentData.bid_points}" data-student-year-of-join ="${studentData.year_of_joining}" data-student-pre-ele-credits  ="${studentData.previous_elective_credits}" >
+                            <i class="fa fa-edit"></i></a>
+                            <a class="delete-student-data" data-id="${studentData.id}"><i class="fa-solid fa-trash text-danger"></i></a>
+                            <input class="d-none checkbox-student-data" type="checkbox" name="student-data" data-id="${studentData.id}" >
+                            </td>
+                        </tr>`
+                }
+            }
+                  
+            $("#student-data-table tbody").html(AjaxTable);
+        }
     $('#edit-student-data').on('click','#update-student-data',function(){
       let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
             let id = $('#edit-student-data #student-id').val();
@@ -371,6 +532,56 @@ function showError(errors) {
         }
         simpleAlert.alert(obj);
     }
+    function ConfirmationForAllDelete(message) {
+    return new Promise((success, failed) => {
+    let dialog = document.createElement('div');
+    dialog.classList.add('dialogConfirmation');
+   
+
+    let dialogBox = document.createElement('div');
+    dialogBox.classList.add('dialogBox');
+    dialog.appendChild(dialogBox);
+    
+    let messageBox = document.createElement('div');
+    messageBox.classList.add('messageBox');
+    dialogBox.appendChild(messageBox);
+
+    let dialogHeading = document.createElement('h1');
+    dialogHeading.classList.add('dialogHeading');
+    dialogHeading.textContent = 'Confirmation';
+    messageBox.appendChild(dialogHeading); 
+
+    let dialogMessage = document.createElement('p');
+    dialogMessage.classList.add('dialogMessage');
+    dialogMessage.textContent = message;
+    messageBox.appendChild(dialogMessage);
+
+    let buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('buttonContainer');
+    dialogBox.appendChild(buttonContainer);
+
+    let yesButton = document.createElement('button');
+    yesButton.classList.add('okButton');
+    yesButton.textContent = 'Yes';
+    buttonContainer.appendChild(yesButton);
+
+    let noButton = document.createElement('button');
+    noButton.classList.add('cancelButton');
+    noButton.textContent = 'No';
+    buttonContainer.appendChild(noButton);
+
+    document.querySelector('body').append(dialog);
+    yesButton.addEventListener('click', function () {
+        document.querySelector('.dialogConfirmation').remove();
+        success(true);
+    });
+
+    noButton.addEventListener('click',  function (){
+        document.querySelector('.dialogConfirmation').remove();
+        success(false);
+    });
+})
+}
 </script>
   
 <%- include('../partials/footerEnd.ejs') %>
