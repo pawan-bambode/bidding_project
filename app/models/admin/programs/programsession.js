@@ -4,13 +4,15 @@ const pool = require('mssql');
 
 module.exports = class ProgramSession{
     static  getAllProgramSessions(req,res,slug,biddingId){
+        let showEntry = 10;
         return poolConnection.then(pool =>{
             return pool.request()
             .input('biddingId',sql.Int,biddingId)
-            .query(`SELECT DISTINCT ps.id ,p.program_name,ad.acad_session,bs.year, IIF(ps.min_credits IS NULL, 0, ps.min_credits) AS min_credits,IIF(ps.max_credits IS NULL, 0, ps.max_credits) AS max_credits FROM [${slug}].program_sessions ps 
+            .query(`SELECT TOP ${showEntry}  ps.id ,p.program_name,ad.acad_session,bs.year, IIF(ps.min_credits IS NULL, 0, ps.min_credits) AS min_credits,IIF(ps.max_credits IS NULL, 0, ps.max_credits) AS max_credits FROM [${slug}].program_sessions ps 
             INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = @biddingId
             INNER JOIN [${slug}].bidding_session bs ON ps.bidding_session_lid = bs.id
-            INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = @biddingId`);
+            INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = @biddingId
+            `);
         })
     }
     static getCount(slug,biddingId){
@@ -41,7 +43,15 @@ module.exports = class ProgramSession{
         })
     }
     static search(pageNo,letterSearch,showEntry,slug,biddingId,userId){
+        console.log('values of showEntry in search',showEntry);
         showEntry = showEntry?showEntry:10;
+        console.log('values of showEntry',showEntry);
+        console.log('values of pageNOd',pageNo);
+        console.log('values of letter SEarch',letterSearch);
+        console.log('values of showEntry',showEntry);
+        console.log('values of slug',slug);
+        console.log('values of bidding',biddingId);
+        console.log('values of userId',userId);
         if(pageNo){
          return poolConnection.then(pool =>{
              return pool.request()
@@ -49,13 +59,13 @@ module.exports = class ProgramSession{
              .input('last_modified_by',sql.Int,userId)
              .input('bidding_session_lid',sql.Int,biddingId)
              .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
-             .query(`SELECT DISTINCT ps.id ,p.program_name,ad.acad_session,bs.year, IIF(ps.min_credits IS NULL, 0, ps.min_credits) AS min_credits,IIF(ps.max_credits IS NULL, 0, ps.max_credits) AS max_credits
+             .query(`SELECT  ps.id ,p.program_name,ad.acad_session,bs.year, IIF(ps.min_credits IS NULL, 0, ps.min_credits) AS min_credits,IIF(ps.max_credits IS NULL, 0, ps.max_credits) AS max_credits
 			 FROM  [${slug}].program_sessions ps 
-			 INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = 18
-			 INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = 18
+			 INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = @bidding_session_lid
+			 INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = @bidding_session_lid
 			 INNER JOIN [${slug}].bidding_session bs ON bs.id = p.bidding_session_lid
 			 WHERE p.program_name LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR bs.year LIKE @letterSearch OR ps.max_credits LIKE @letterSearch  OR ps.min_credits LIKE @letterSearch     
-             ORDER BY ps.id   OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+             ORDER BY ps.id   OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`)
          })
      } else{
          return poolConnection.then(pool =>{
@@ -65,8 +75,8 @@ module.exports = class ProgramSession{
              .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
              .query(`SELECT DISTINCT ps.id ,p.program_name,ad.acad_session,bs.year, IIF(ps.min_credits IS NULL, 0, ps.min_credits) AS min_credits,IIF(ps.max_credits IS NULL, 0, ps.max_credits) AS max_credits
 			 FROM  [${slug}].program_sessions ps 
-			 INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = 18
-			 INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = 18
+			 INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = @bidding_session_lid
+			 INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = @bidding_session_lid
 			 INNER JOIN [${slug}].bidding_session bs ON bs.id = p.bidding_session_lid
 			 WHERE p.program_name LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR bs.year LIKE @letterSearch OR ps.max_credits LIKE @letterSearch  OR ps.min_credits LIKE @letterSearch`)
          })
@@ -82,11 +92,10 @@ module.exports = class ProgramSession{
              .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
              .query(`SELECT COUNT(*)
 			 FROM  [${slug}].program_sessions ps 
-			 INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = 18
-			 INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = 18
+			 INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = @bidding_session_lid
+			 INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = @bidding_session_lid
 			 INNER JOIN [${slug}].bidding_session bs ON bs.id = p.bidding_session_lid
-			 WHERE p.program_name LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR bs.year LIKE @letterSearch OR ps.max_credits LIKE @letterSearch  OR ps.min_credits LIKE @letterSearch     
-             ORDER BY ps.id   OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY`)
+			 WHERE p.program_name LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR bs.year LIKE @letterSearch OR ps.max_credits LIKE @letterSearch  OR ps.min_credits LIKE @letterSearch`)
          })
      } else{
          return poolConnection.then(pool =>{
@@ -96,22 +105,50 @@ module.exports = class ProgramSession{
              .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
              .query(`SELECT COUNT(*)
 			 FROM  [${slug}].program_sessions ps 
-			 INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = 18
-			 INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = 18
+			 INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = @bidding_session_lid
+			 INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = @bidding_session_lid
 			 INNER JOIN [${slug}].bidding_session bs ON bs.id = p.bidding_session_lid
 			 WHERE p.program_name LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR bs.year LIKE @letterSearch OR ps.max_credits LIKE @letterSearch  OR ps.min_credits LIKE @letterSearch`)
          })
      }
     }
 
-    static showEntryProgramSessionList(showEntry,slug,biddingId){
+    static showEntryProgramSessionList(showEntry,slug,biddingId,pageNo){
+
+        if(pageNo){
+            return poolConnection.then(pool=>{
+              return pool.request() 
+              .input('biddingId',sql.Int,biddingId)
+              .input('pageNo',sql.Int,pageNo)
+              .query(`SELECT TOP ${showEntry} ps.id ,p.program_name,ad.acad_session,bs.year, IIF(ps.min_credits IS NULL, 0, ps.min_credits) AS min_credits,IIF(ps.max_credits IS NULL, 0, ps.max_credits) AS max_credits FROM [${slug}].program_sessions ps 
+              INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = @biddingId
+              INNER JOIN [${slug}].bidding_session bs ON ps.bidding_session_lid = bs.id
+              INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = @biddingId
+              ORDER BY c.id   OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`)
+            })
+        }
+        else{
+            return poolConnection.then(pool=>{
+                return pool.request() 
+                .input('biddingId',sql.Int,biddingId)
+                .query(`SELECT TOP ${showEntry} ps.id ,p.program_name,ad.acad_session,bs.year, IIF(ps.min_credits IS NULL, 0, ps.min_credits) AS min_credits,IIF(ps.max_credits IS NULL, 0, ps.max_credits) AS max_credits FROM [${slug}].program_sessions ps 
+                INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = @biddingId
+                INNER JOIN [${slug}].bidding_session bs ON ps.bidding_session_lid = bs.id
+                INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = @biddingId`)
+              })
+        }
+    
+    }
+
+    static getCountsProgramSession(showEntry,slug,biddingId){
         return poolConnection.then(pool =>{
             return pool.request()
             .input('biddingId',sql.Int,biddingId)
-            .query(`SELECT TOP ${showEntry} ps.id ,p.program_name,ad.acad_session,bs.year, IIF(ps.min_credits IS NULL, 0, ps.min_credits) AS min_credits,IIF(ps.max_credits IS NULL, 0, ps.max_credits) AS max_credits FROM [${slug}].program_sessions ps 
+            .query(`SELECT  COUNT(*) FROM [${slug}].program_sessions ps 
                 INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = @biddingId
                 INNER JOIN [${slug}].bidding_session bs ON ps.bidding_session_lid = bs.id
                 INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = @biddingId`);
         })
     }
+    
 }

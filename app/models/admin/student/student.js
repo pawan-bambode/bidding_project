@@ -75,7 +75,6 @@ module.exports = class StudentsData {
         })
     }
     else{
-        console.log('inside the else block ',pageNo);
         return poolConnection.then(pool=>{
             return pool.request() 
             .input('biddingId',sql.Int,biddingId)

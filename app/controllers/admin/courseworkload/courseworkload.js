@@ -87,14 +87,19 @@ showEntryCouresList :(req,res) =>{
 },
 deleteAll:(req,res) =>{
              courseworkload.deleteAll(res.locals.slug,res.locals.biddingId,res.locals.userId,req.body).then(result =>{
-                res.json({
-                    status: "200",
-                    message: "deleted",
-                    data: result.recordset,
+                    res.status(200).json(JSON.parse(result.output.output_json));
                 })
-            }).catch(error => {
-                throw error
-            })
+                .catch(error => {
+                    if (isJsonString.isJsonString(error.originalError.info.message)) {
+                        res.status(500).json(JSON.parse(error.originalError.info.message));
+                    } else {
+                        res.status(500).json({
+                            status: 500,
+                            description: error.originalError.info.message,
+                            data: []
+                        });
+                    }
+                })
 },
 filterByProgramId  :(req,res) =>{
  Promise.all([courseworkload.filterByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry),courseworkload.sessionByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry),courseworkload.getCountfilterByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry)]).then(result =>{

@@ -185,7 +185,7 @@
 
         let searchValue = $(this).val();
         let showEntry = $('#changeEntry').val();
-         
+            
             $.ajax({
             type:'POST',
             url:'/admin/program-sessions/search',
@@ -194,6 +194,7 @@
             showEntry:showEntry
             },
             success:function(data){
+                console.log('values of data',data);
             paginationData(rowCount,data.length)
             AjaxtTable(data.programSessionList )
             }
@@ -214,8 +215,10 @@ $(".pagination-search").on('click','.pagination li',function(){
             showEntry:showEntry
         },
         success: function (data) {
+            console.log('values of data',data);
             AjaxtTable(data.programSessionList);
-            console.log(data.data);
+            paginationData(showEntry,data.length)
+            $('#page-no').html(data.length);
         }
     });
 });
@@ -231,8 +234,9 @@ let ApiObj = {
     datatype:'JSON'
     }
     ajaxApi(ApiObj).then(result=>{
-    paginationData(showEntry,result.programSessionList.length)
-        AjaxtTable(result.programSessionList)
+    paginationData(showEntry,result.length)
+    AjaxtTable(result.programSessionList)
+    $('#page-no').html(data.length)
     }).catch(error =>{
     showError(error.responseJSON);
     })    
@@ -279,7 +283,6 @@ function showError(errors) {
                 return isNumber;
             }
             function AjaxtTable(programSessionList) {
-                console.log('values of programSessionList',programSessionList);
            $("#program-sessions-table tbody").empty();
            let AjaxTable = ``;
            if (programSessionList.length > 0) {
@@ -301,8 +304,7 @@ function showError(errors) {
                        </tr>`
                }
            }
-           
-           $('#page-no').html(programSessionList.length);        
+                
            $("#program-sessions-table tbody").html(AjaxTable);
        }
 </script>

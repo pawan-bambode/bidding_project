@@ -52,5 +52,67 @@ static update(responseJson,slug,userId,biddingId){
         .execute(`[${slug}].[sp_update_concentration_settings]`)
     })
 }
+static showEntryConcentrationSettingList(slug,biddingId,showEntry,pageNo){
+   if(pageNo){
+    return poolConnection.then(pool=>{
+      return pool.request() 
+      .input('biddingId',sql.Int,biddingId)
+      .input('pageNo',sql.Int,pageNo)
+      .query(`SELECT id,concentration_name ,IIF(total_elective_credits IS NULL,0,total_elective_credits) AS total_elective_credits  ,IIF(max_credits_per_area IS NULL,0,max_credits_per_area) AS max_credits_per_area ,IIF(no_of_areas_to_cover IS NULL,0,no_of_areas_to_cover) AS no_of_areas_to_cover, IIF(min_credits_per_area IS NULL ,0,min_credits_per_area) AS min_credits_per_area ,  IIF(primary_area IS NULL,'NA',primary_area) AS primary_area  ,IIF(min_credits_in_primary_area IS NULL,0,min_credits_in_primary_area) AS min_credits_in_primary_area
+       FROM [${slug}].concentration_settings  WHERE active = 1 AND bidding_session_lid = @biddingId
+      ORDER BY a.id DESC  OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`)
+    })
+}
+else{
+    return poolConnection.then(pool=>{
+        return pool.request() 
+        .input('biddingId',sql.Int,biddingId)
+        .query(`SELECT TOP ${showEntry} id,concentration_name ,IIF(total_elective_credits IS NULL,0,total_elective_credits) AS total_elective_credits  ,IIF(max_credits_per_area IS NULL,0,max_credits_per_area) AS max_credits_per_area ,IIF(no_of_areas_to_cover IS NULL,0,no_of_areas_to_cover) AS no_of_areas_to_cover, IIF(min_credits_per_area IS NULL ,0,min_credits_per_area) AS min_credits_per_area ,  IIF(primary_area IS NULL,'NA',primary_area) AS primary_area  ,IIF(min_credits_in_primary_area IS NULL,0,min_credits_in_primary_area) AS min_credits_in_primary_area
+        FROM [${slug}].concentration_settings  WHERE active = 1 AND bidding_session_lid = @biddingId`)
+      })
+}
+}
+static getCountsOfShowEntry(slug,biddingId){
+     return poolConnection.then(pool=>{
+         return pool.request() 
+         .input('biddingId',sql.Int,biddingId)
+         .query(`SELECT COUNT(*) FROM [${slug}].concentration_settings  WHERE active = 1 AND bidding_session_lid = @biddingId`)
+       })
+ }
+ 
+ static concentrationSettingsSearch(slug,biddingId,pageNo,letterSearch,showEntry){
+    showEntry = showEntry?showEntry:10;
+   if(pageNo){
+    return poolConnection.then(pool =>{
+        return pool.request()
+        .input('pageNo',sql.Int,pageNo)
+        .input('bidding_session_lid',sql.Int,biddingId)
+        .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+        .query(`SELECT id,concentration_name ,IIF(total_elective_credits IS NULL,0,total_elective_credits) AS total_elective_credits  ,IIF(max_credits_per_area IS NULL,0,max_credits_per_area) AS max_credits_per_area ,IIF(no_of_areas_to_cover IS NULL,0,no_of_areas_to_cover) AS no_of_areas_to_cover, IIF(min_credits_per_area IS NULL ,0,min_credits_per_area) AS min_credits_per_area ,  IIF(primary_area IS NULL,'NA',primary_area) AS primary_area  ,IIF(min_credits_in_primary_area IS NULL,0,min_credits_in_primary_area) AS min_credits_in_primary_area 
+         FROM [${slug}].concentration_settings a
+        WHERE a.active = 1 AND a.bidding_session_lid = @bidding_session_lid AND (concentration_name LIKE @letterSearch)    
+        ORDER BY p.id DESC  OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`)
 
+    })
+} else{
+    return poolConnection.then(pool =>{
+        return pool.request()
+        .input('pageNo',sql.Int,pageNo)
+        .input('bidding_session_lid',sql.Int,biddingId)
+        .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+        .query(`SELECT TOP ${showEntry} id,concentration_name ,IIF(total_elective_credits IS NULL,0,total_elective_credits) AS total_elective_credits  ,IIF(max_credits_per_area IS NULL,0,max_credits_per_area) AS max_credits_per_area ,IIF(no_of_areas_to_cover IS NULL,0,no_of_areas_to_cover) AS no_of_areas_to_cover, IIF(min_credits_per_area IS NULL ,0,min_credits_per_area) AS min_credits_per_area ,  IIF(primary_area IS NULL,'NA',primary_area) AS primary_area  ,IIF(min_credits_in_primary_area IS NULL,0,min_credits_in_primary_area) AS min_credits_in_primary_area  FROM [${slug}].concentration_settings WHERE active = 1 AND bidding_session_lid = @bidding_session_lid AND (concentration_name LIKE @letterSearch)`)
+    })
+}
+}
+
+static getCountOfSearch(slug,biddingId,pageNo,letterSearch,showEntry){
+    showEntry = showEntry?showEntry:10;
+    return poolConnection.then(pool =>{
+        return pool.request()
+        .input('pageNo',sql.Int,pageNo)
+        .input('bidding_session_lid',sql.Int,biddingId)
+        .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+        .query(`SELECT COUNT(*) FROM [${slug}].concentration_settings  WHERE active = 1 AND bidding_session_lid = @bidding_session_lid AND (concentration_name LIKE @letterSearch)`)
+    })
+}
 }

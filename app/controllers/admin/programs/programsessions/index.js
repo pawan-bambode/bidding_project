@@ -49,7 +49,7 @@ module.exports = {
 
     search :(req,res) =>{
        Promise.all([ programSession.search(req.body.pageNo,req.body.searchLetter,req.body.showEntry,res.locals.slug,res.locals.biddingId,res.locals.userId),programSession.getCounts(req.body.pageNo,req.body.searchLetter,res.locals.slug,res.locals.biddingId,res.locals.userId)]).then(result =>{
-            res.json({
+        res.json({
             status:'200',
             programSessionList:result[0].recordset,
             message:'Result Data is Fetch',
@@ -69,12 +69,13 @@ module.exports = {
         });
     },
     showEntryProgramSessionList :(req,res) =>{
-        programSession.showEntryProgramSessionList(req.body.showEntry,res.locals.slug,res.locals.biddingId).then(result =>{
-            
+        console.log('values hos show Entry',req.body)
+        Promise.all([programSession.showEntryProgramSessionList(req.body.showEntry,res.locals.slug,res.locals.biddingId,req.body.pageNo),programSession.getCountsProgramSession(req.body.showEntry,res.locals.slug,res.locals.biddingId,req.body.pageNo)]).then(result =>{
              res.json({
              status:'200',
-             programSessionList:result.recordset,
-             message:'Result Data is Fetch'
+             programSessionList:result[0].recordset,
+             message:'Result Data is Fetch',
+             length:result[1].recordset[0]['']
             })
          }).catch(error => {
             if(isJsonString.isJsonString(error.originalError.info.message)){

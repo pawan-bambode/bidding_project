@@ -5,7 +5,7 @@ const pool = require('mssql');
 module.exports =  class Program {
   
  static getAllProgram(req,res,slug,biddingId){
-    console.log('values of res.locals',res.locals);
+
     let showEntry = 10;
     return poolConnection.then(pool =>{
         return pool.request()

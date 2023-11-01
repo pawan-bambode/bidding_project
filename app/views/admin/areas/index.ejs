@@ -49,7 +49,7 @@
         </table>
         <div class="d-flex justify-content-between">
             <div>
-                <p>Total entries:
+                <p>Total entries :&nbsp;<span id="page-no"></span>
                 </p>
             </div>
             <div>
@@ -103,12 +103,13 @@
             type:'POST',
             url:'/admin/area/search',
             data:{
-            searchLetter:searchValue,
+            searchLetter:areaValue,
             showEntry:showEntry
             },
             success:function(data){
             paginationData(rowCount,data.length)
             AjaxtTable(data.data)
+            $('#page-no').html(data.length);
             }
             })
         })       
@@ -128,7 +129,7 @@
                 },
                 success: function (data) {
                     AjaxtTable(data.data);
-                    console.log(data.data);
+                    $('#page-no').html(data.length);
                 }
             });
         });
@@ -146,6 +147,7 @@
             ajaxApi(ApiObj).then(result=>{
             paginationData(showEntry,result.length)
                 AjaxtTable(result.data)
+                $('#page-no').html(data.length);
             }).catch(error =>{
             showError(error.responseJSON);
             })    
@@ -227,6 +229,23 @@ function showError(errors) {
                 }
                 return isNumber;
             }
+            function AjaxtTable(areaList) {
+           $("#areas-table tbody").empty();
+           let AjaxTable = ``;
+           if (areaList.length > 0) {
+               let count = 1;
+               for (area of areaList) {
+                   AjaxTable +=
+                       `<tr>
+                           <td>${count++}</td>
+                           <td>${area.area_name}</td>
+                       </tr>`
+               }
+           }
+           
+                  
+           $("#areas-table tbody").html(AjaxTable);
+       }
 </script>
   
 <%- include('../partials/footer.ejs') %>

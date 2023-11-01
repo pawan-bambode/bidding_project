@@ -1,10 +1,10 @@
 const concentrationSettings = require('../../../models/admin/concentrationsettings/concentrationsettings')
-const biddingSession = require('../../../models/admin/areas/areas')
+const Areas = require('../../../models/admin/areas/areas')
 const isJsonString = require('../../../utils/util');
 
 module.exports = {
     getPage : (req,res) =>{
-        Promise.all([concentrationSettings.getConcentrationSettingsList(res.locals.slug,res.locals.biddingId),concentrationSettings.getCount(res.locals.slug,res.locals.biddingId),biddingSession.getAreaList(res.locals.slug,res.locals.biddingId)]).then(result =>{
+        Promise.all([concentrationSettings.getConcentrationSettingsList(res.locals.slug,res.locals.biddingId),concentrationSettings.getCount(res.locals.slug,res.locals.biddingId),Areas.getAreaList(res.locals.slug,res.locals.biddingId)]).then(result =>{
             res.render('admin/concentrationsettings/index.ejs',{
                 concentrationSettingList : result[0].recordset,
                 pageCount: result[1].recordset[0][''],
@@ -59,5 +59,40 @@ module.exports = {
             });
         }
        })
-    }
+    },
+    showEntryConcentrationSettingList :(req,res) =>{
+        Promise.all([concentrationSettings.showEntryConcentrationSettingList(res.locals.slug,res.locals.biddingId,req.body.showEntry,req.body.pageNo),concentrationSettings.getCountsOfShowEntry(res.locals.slug,res.locals.biddingId)]).then(result =>{
+              res.json({
+                  status:'200',
+                  message:'Result fetched',
+                  data:result[0].recordset,
+                  length:result[1].recordset[0]['']
+              })
+          }).catch(error =>{
+              throw error
+          })
+      },
+      concentrationSettingsSearch :(req,res) =>{
+        Promise.all([concentrationSettings.concentrationSettingsSearch(res.locals.slug,res.locals.biddingId,req.body.pageNo,req.body.searchLetter,req.body.showEntry),concentrationSettings.getCountOfSearch(res.locals.slug,res.locals.biddingId,req.body.pageNo,req.body.searchLetter)]).then(result => {
+            console.log('values of result',result[0]);
+           res.json({
+               status:'200',
+               message:'Result fetched',
+               data:result[0].recordset,
+               length:result[1].recordset[0]['']
+               
+           });
+         }).catch(error => {
+           console.log('values of error',error);
+           if ((isJsonString.isJsonString(error.originalError.info.message))) {
+               res.status(500).json(JSON.parse(error.originalError.info.message));
+           } else {
+               res.status(500).json({
+                   status: 500,
+                   description: error.originalError.info.message,
+                   data: []
+               });
+           }
+       })
+   }
 }

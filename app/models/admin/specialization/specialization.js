@@ -3,14 +3,16 @@ const {sql,poolConnection} = require('../../../../config/db')
 const pool = require('mssql');
 
 module.exports = class Specialization {
-     static getAllSpecialization(slug,biddingId){
+     static getAllSpecialization(slug,biddingId,showEntry){
+      showEntry = showEntry?showEntry:10;
      return poolConnection.then(pool =>{
        return pool.request()
        .input('biddingId',sql.Int,biddingId)
-       .query(`SELECT id,concentration_name FROM [${slug}].concentration WHERE active = 1 AND bidding_session_lid = @biddingId`);
+       .query(`SELECT TOP ${showEntry} id,concentration_name FROM [${slug}].concentration WHERE active = 1 AND bidding_session_lid = @biddingId`);
      })
      }
      static getCount(slug,biddingId){
+    
       return poolConnection.then(pool =>{
         return pool.request()
         .input('biddingId',sql.Int,biddingId)
@@ -38,7 +40,6 @@ module.exports = class Specialization {
       })
      }
      static update(inputJson,biddingId,userId,slug){
-      console.log('values of slug',slug);
       return poolConnection.then(pool =>{
         return pool.request()
         .input('input_json',sql.NVarChar,JSON.stringify(inputJson))
@@ -48,4 +49,56 @@ module.exports = class Specialization {
         .execute(`[${slug}].[sp_update_specialization]`);
       })
      }
+     static search(slug,biddingId,pageNo,letterSearch,showEntry){
+      showEntry = showEntry?showEntry:10;
+     if(pageNo){
+
+      return poolConnection.then(pool =>{
+          return pool.request()
+          .input('pageNo',sql.Int,pageNo)
+          .input('bidding_session_lid',sql.Int,biddingId)
+          .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+          .query(`SELECT  c.id, c.concentration_name  FROM [${slug}].concentration c
+          WHERE c.active = 1 AND c.bidding_session_lid = @bidding_session_lid AND (c.concentration_name LIKE @letterSearch)    
+          ORDER BY c.id DESC  OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`)})
+  } else{
+      return poolConnection.then(pool =>{
+          return pool.request()
+          .input('pageNo',sql.Int,pageNo)
+          .input('bidding_session_lid',sql.Int,biddingId)
+          .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+          .query(`SELECT TOP ${showEntry}  c.id, c.concentration_name FROM [${slug}].concentration c WHERE c.active = 1 AND c.bidding_session_lid = @bidding_session_lid AND (c.concentration_name LIKE @letterSearch)`)
+      })
+  }
+  }
+  
+  static getCountOfSearch(slug,biddingId,pageNo,letterSearch,showEntry){
+      showEntry = showEntry?showEntry:10;
+      return poolConnection.then(pool =>{
+          return pool.request()
+          .input('pageNo',sql.Int,pageNo)
+          .input('bidding_session_lid',sql.Int,biddingId)
+          .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+          .query(`SELECT COUNT(*) FROM [${slug}].concentration c WHERE c.active = 1 AND c.bidding_session_lid = @bidding_session_lid AND (c.concentration_name LIKE @letterSearch)`)
+      })
+  }
+  
+  static showEntrySpecializationList(slug,biddingId,showEntry,pageNo){
+   if(pageNo){
+    return poolConnection.then(pool=>{
+      return pool.request() 
+      .input('biddingId',sql.Int,biddingId)
+      .input('pageNo',sql.Int,pageNo)
+      .query(`SELECT c.id, c.concentration_name FROM [${slug}].concentration c WHERE c.active = 1 AND c.bidding_session_lid = @biddingId
+      ORDER BY a.id DESC  OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`)
+    })
+}
+else{
+    return poolConnection.then(pool=>{
+        return pool.request() 
+        .input('biddingId',sql.Int,biddingId)
+        .query(`SELECT TOP ${showEntry} c.id, c.concentration_name FROM [${slug}].concentration c WHERE c.active = 1 AND c.bidding_session_lid = @biddingId`)
+      })
+}
+}
 }

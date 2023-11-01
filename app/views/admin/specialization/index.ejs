@@ -121,14 +121,14 @@
         
         $('#searchkeyword').on('input',function(){
 
-         let areaValue = $(this).val();
+         let specializationValue = $(this).val();
          let showEntry = $('#changeEntry').val();
 
             $.ajax({
             type:'POST',
             url:'/admin/specialization/search',
             data:{
-            searchLetter:searchValue,
+            searchLetter:specializationValue,
             showEntry:showEntry
             },
             success:function(data){
@@ -169,8 +169,8 @@
                 datatype:'JSON'
                 }
                 ajaxApi(ApiObj).then(result=>{
-                paginationData(showEntry,result.length)
                     AjaxtTable(result.data)
+                    paginationData(showEntry,result.length)
                 }).catch(error =>{
                 showError(error.responseJSON);
                 })    
@@ -300,6 +300,30 @@ function showError(errors) {
                 }
                 return isNumber;
             }
+            function AjaxtTable(specializationList) {
+           $("#specialization-table tbody").empty();
+           let AjaxTable = ``;
+           if (specializationList.length > 0) {
+               let count = 1;
+               for (specialization of specializationList) {
+                   AjaxTable +=
+                       `<tr>
+                           <td>${count++}</td>
+                           
+                           <td>${specialization.concentration_name}</td>
+                
+                           <td>
+                            <a class="edit-specialization" data-bs-target="#edit-specialization-modal" data-bs-toggle="modal" data-id="${specialization.id}" data-specialization-name="${specialization.concentration_name}">
+                           <i class="fa fa-edit"></i></a>
+                           <a class="delete-specialization" data-id="${specialization.id}"><i class="fa-solid fa-trash text-danger"></i></a>
+                           </td>
+                       </tr>`
+               }
+           }
+           
+                  
+           $("#specialization-table tbody").html(AjaxTable);
+       }
 </script>
   
 <%- include('../partials/footer.ejs') %>

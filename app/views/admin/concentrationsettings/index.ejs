@@ -169,14 +169,14 @@
         
         $('#searchkeyword').on('input',function(){
 
-            let areaValue = $(this).val();
+            let concentrationSettingsValue = $(this).val();
             let showEntry = $('#changeEntry').val();
 
                 $.ajax({
                 type:'POST',
                 url:'/admin/concentration-settings/search',
                 data:{
-                searchLetter:searchValue,
+                searchLetter:concentrationSettingsValue,
                 showEntry:showEntry
                 },
                 success:function(data){
@@ -362,6 +362,33 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
             }
             simpleAlert.alert(obj);
             }
+
+            function AjaxtTable(concentrationSettingList) {
+           $("#concentration-settings-table tbody").empty();
+           let AjaxTable = ``;
+           if (concentrationSettingList.length > 0) {
+               let count = 1;
+               for (concentrationSetting of concentrationSettingList) {
+                   AjaxTable +=
+                       `<tr>
+                           <td>${count++}</td>
+                           <td>${concentrationSetting.concentration_name}</td>
+                           <td>${concentrationSetting.total_elective_credits}</td>
+                           <td>${concentrationSetting.max_credits_per_area}</td>
+                           <td>${concentrationSetting.no_of_areas_to_cover}</td>
+                           <td>${concentrationSetting.min_credits_per_area}</td>
+                           <td>${concentrationSetting.primary_area}</td>
+                           <td>${concentrationSetting.min_credits_in_primary_area}</td>
+                           <td>
+                               <a class="edit-concentration-settings" data-bs-target="#edit-concentration-setting-modal" data-bs-toggle="modal" data-id="${concentrationSetting.id}">
+                           <i class="fa fa-edit"></i></a>
+                           <a class="delete-concentration-settings" data-id="${concentrationSetting.id}"><i class="fa-solid fa-trash text-danger"></i></a>
+                           </td>
+                       </tr>`
+               }
+           }        
+           $("#concentration-settings-table tbody").html(AjaxTable);
+       }
 
 </script>
 <%- include('../partials/footer.ejs') %>
