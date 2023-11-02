@@ -7,4 +7,6 @@ function checkNUE(elem) {
     
 }
 
-export {checkNUE}
+
+
+module.exports = {checkNUE}

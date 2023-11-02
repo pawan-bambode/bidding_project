@@ -72,7 +72,6 @@ module.exports = {
     },
     specializationSearch :(req,res) =>{
       Promise.all([specialization.search(res.locals.slug,res.locals.biddingId,req.body.pageNo,req.body.searchLetter,req.body.showEntry),specialization.getCountOfSearch(res.locals.slug,res.locals.biddingId,req.body.pageNo,req.body.searchLetter)]).then(result => {
-          console.log('values of result',result[0]);
          res.json({
              status:'200',
              message:'Result fetched',

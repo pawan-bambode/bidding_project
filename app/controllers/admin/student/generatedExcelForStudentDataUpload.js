@@ -194,7 +194,6 @@ studentDataFilterByProgramId : (req,res) =>{
 },
 studentDataFilterByStudentSapId : (req,res) =>{
   Promise.all([studentRawData.studentDataFilterByStudentId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry,req.body.studentSapId),studentRawData.getCountfilterByStudentId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.studentSapId)]).then(result =>{
-    console.log('values of result[1]',result[1].recordset[0]['']);
     res.json({
       stats:'200',
       message:'Result Fetched',

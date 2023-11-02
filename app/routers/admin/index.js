@@ -20,6 +20,7 @@ function AdminRoute(app) {
     const area = require('../../routers/admin/areas/areas')
     const specialization = require('../../routers/admin/specialization/specialization');
     const concentrationSettings = require('../../routers/admin/concentrationsettings/concentration')
+    const divisionBatches = require('../../routers/admin/divisionBatches/divisionBatches')
     
     app.use('/admin/', isLoggedIn, checkPermission, adminDashboard);
     app.use('/admin/', courseWorkload);
@@ -33,6 +34,7 @@ function AdminRoute(app) {
     app.use('/admin/',area);
     app.use('/admin/',specialization);
     app.use('/admin/',concentrationSettings);
+    app.use('/admin/',divisionBatches);
 }
 
 module.exports = AdminRoute;
