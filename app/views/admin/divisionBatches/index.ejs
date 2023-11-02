@@ -34,7 +34,19 @@
                     <%}%>
                 </select>
             </div>
-          
+            <div class="col-md-3 mt-4">
+              <select class="form-select form-control select2" id="program-name-filter">
+                  <option selected>Select Program</option>
+                  <%for(let prog of programList){%>
+                  <option value="<%-prog.program_id%>"><%-prog.program_name%></option>
+                  <%}%>
+              </select>
+          </div>
+          <div class="col-md-2 mt-4">
+              <select class="form-select form-control select2" id="session-name-filter">
+                <option value="" selected>Select Session</option>
+              </select>
+          </div>
             <div>
                 <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
                     type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
@@ -345,7 +357,7 @@
 
      $('#changeEntry').on('change',function(){
       let showEntry = $(this).val();
-      showEntry = 1;
+      
       let ApiObj = {
           type:'POST',
           url:'/admin/division-batches/showEntryDivisionBatchesList',
@@ -423,6 +435,71 @@
           }
          })
         })
+        $('#program-name-filter').on('change', function() {
+     
+          let programId = $(this).val();
+          let showEntry = $('#changeEntry').val();
+        
+          let ApiObj = {
+              type: 'POST',
+              url: '/admin/division-batches/filter-by-programId',
+              data: {
+                  programId: programId,
+                  showEntry: showEntry
+              },
+              dataType: 'JSON'
+          };
+
+          ajaxApi(ApiObj)
+              .then(result => {
+        
+                  let sessionName = `<option  >Select Session</option>`;
+                  if (result.sessionList.length > 0) {
+                      result.sessionList.forEach(element => {
+                          sessionName += `<option value="${element.sap_acad_session_id}">${element.acad_session}</option>`;
+                      });
+                      paginationData(showEntry,result.workloadLength)
+                      AjaxtTable(result.workload);
+                  } else {
+                      sessionName += `<option value="">No Session Found!</option>`;
+                  }
+
+                  $("#session-name-filter").html(sessionName);
+                  AjaxtTable(result.workload);
+              })
+              .catch(error => {
+                  console.log('values of error', error);
+                  showError(JSON.stringify(error.responseJSON));
+              });
+          });
+
+          $('#session-name-filter').on('change',function() {
+            let sessionId = $(this).val();
+            let programId = $('#program-name-filter').val();
+            let showEntry = $('#changeEntry').val();
+
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/division-batches/filter-by-session-id',
+                data: {
+                    programId: programId,
+                    showEntry: showEntry,
+                    sessionId: sessionId
+                },
+                dataType: 'JSON'
+            };
+
+            ajaxApi(ApiObj)
+                .then(result => {
+                    paginationData(showEntry,result.workloadLength)
+                    AjaxtTable(result.workload);
+                })
+                .catch(error => {
+                    console.log('Error:', error);
+                    showError(JSON.stringify(error.responseJSON));
+                });
+        });
+     
      function AjaxtTable(divisionBatchesList) {
           
             $("#division-batches-table tbody").empty();

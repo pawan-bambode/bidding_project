@@ -5,10 +5,11 @@ const xlsx = require('xlsx');
 
 module.exports = {
     getDivisionBatches : (req, res) => {
-        Promise.all([divisionBatch.getDivisionBatches(res.locals.slug,res.locals.biddingId),divisionBatch.getCountOfDivisionBatches(res.locals.slug,res.locals.biddingId)]).then(result =>{
+        Promise.all([divisionBatch.getDivisionBatches(res.locals.slug,res.locals.biddingId),divisionBatch.getCountOfDivisionBatches(res.locals.slug,res.locals.biddingId),divisionBatch.getProgramList(res.locals.slug,res.locals.biddingId)]).then(result =>{
             res.render('admin/divisionBatches/index.ejs',{
              divisionBatchList:result[0].recordset,
-             pageCount: result[1].recordset[0]['']
+             pageCount: result[1].recordset[0][''],
+             programList: result[2].recordset
             });
         })     
     },
@@ -157,8 +158,7 @@ showEntryDivisionBatchesList :(req,res) =>{
 },
 
 filterByProgramId  :(req,res) =>{
- Promise.all([courseworkload.filterByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry),courseworkload.sessionByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry),courseworkload.getCountfilterByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry)]).then(result =>{
-
+ Promise.all([divisionBatch.filterByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry),divisionBatch.sessionByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId),divisionBatch.getCountfilterByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry)]).then(result =>{
        res.json({
         status: "200",
         message: "Sucessfull",
@@ -180,15 +180,15 @@ filterByProgramId  :(req,res) =>{
     })
 },
 filterBySessionId:(req,res) =>{
-    Promise.all([courseworkload.filterBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.showEntry),courseworkload.moduleBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.showEntry),courseworkload.getCountFilterBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.showEntr)]).then(result =>{
+    Promise.all([divisionBatch.filterBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.showEntry),divisionBatch.getCountFilterBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.showEntr)]).then(result =>{
           res.json({
            status: "200",
            message: "Sucessfull",
            workload: result[0].recordset,
-           moduleList :  result[1].recordset,
-           workloadLength:result[2].recordset[0][''] 
+           workloadLength:result[1].recordset[0][''] 
           })
        }) .catch(error => {
+        console.log('values of error',error);
            if (isJsonString.isJsonString(error.originalError.info.message)) {
                res.status(500).json(JSON.parse(error.originalError.info.message));
            } else {

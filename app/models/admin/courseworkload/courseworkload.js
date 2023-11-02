@@ -188,7 +188,7 @@ static getProgramList(slug,biddingId){
     return poolConnection.then(pool =>{
         return pool.request()
         .input('bidding_session_lid',sql.Int,biddingId)
-        .query(`select p.program_name,p.program_id from [sbm-mum].courses c
+        .query(`select p.program_name,p.program_id from [${slug}].courses c
         INNER JOIN [${slug}].programs p ON p.program_id = c.program_id WHERE c.active = 1 AND p.bidding_session_lid = @bidding_session_lid GROUP BY p.program_id,program_name`)
     })
 }
