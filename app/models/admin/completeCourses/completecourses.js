@@ -4,27 +4,25 @@ const pool = require('mssql');
 const { use } = require('../../../routers/admin/courseworkload');
 const s = require('connect-redis');
 
-module.exports = class courseworkload {
- static uploadCourse(slug,inputJson,userid,biddingId){
+module.exports = class completeCourses {
+ static uploadCompleteCoursesData(slug,inputJson,userid,biddingId){
 return poolConnection.then(pool=>{
     return pool.request()
     .input('input_json',sql.NVarChar(sql.MAX),JSON.stringify(inputJson))
     .input('last_modified_by', sql.Int, userid)
     .input('bidding_session_lid',sql.Int,biddingId)
     .output('output_json', sql.NVarChar(sql.MAX))
-    .execute(`[${slug}].[sp_upload_courses]`)
+    .execute(`[${slug}].[sp_upload_completed_courses]`)
 })
 }
-static getCourseList(slug,biddingId){
-      let showEntry = 10;
+static getCompleteCourseList(slug,biddingId,showEntry){
+      showEntry = showEntry?showEntry: 10;
       return poolConnection.then(pool=>{
         return pool.request() 
         .input('biddingId',sql.Int,biddingId)
-        .query(`SELECT TOP ${showEntry} c.id, course_name, credits, program_id, ad.acad_session, area_name, min_demand_criteria, year_of_introduction
-        FROM [${slug}].courses c
-        INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
-        WHERE c.active = 1 AND c.bidding_session_lid = @biddingId
-        ORDER BY c.id`)
+        .query(`SELECT TOP ${showEntry} cc.id, sd.student_name , cc.course_name FROM [${slug}].completed_courses cc 
+        INNER JOIN [${slug}].student_data sd ON cc.sap_id = sd.sap_id  WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND sd.bidding_session_lid = @biddingId
+        ORDER BY cc.id`)
       })
 }
 
@@ -32,8 +30,8 @@ static getCount(slug,biddingId){
     return poolConnection.then(pool=>{
         return pool.request()
         .input('biddingId',sql.Int,biddingId)
-        .query(`SELECT COUNT(*)  FROM [${slug}].courses c
-        INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id WHERE c.active = 1 AND c.bidding_session_lid  = @biddingId`)
+        .query(`SELECT COUNT(*)  FROM [${slug}].completed_courses cc 
+        INNER JOIN [${slug}].student_data sd ON cc.sap_id = sd.sap_id  WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId`)
       })
 }
 
@@ -141,20 +139,48 @@ static getCounts(slug,biddingId,showEntry){
     })
 }
 
+// static getCountOfSearchLetter(slug, biddingId, letterSearch,pageNo) {
+    
+//     if(pageNo){
+//     return poolConnection.then(pool => {
+//         return pool.request()
+//             .input('pageNo',sql.Int,pageNo)
+//             .input('bidding_session_lid', sql.Int, biddingId)
+//             .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+//             .query(`SELECT COUNT(c.id), c.id, course_name, credits, program_id, ad.acad_session, area_name, min_demand_criteria, year_of_introduction
+//                 FROM [${slug}].courses c
+//                 INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
+//                 WHERE c.bidding_session_lid = @bidding_session_lid AND active = '1' AND (course_name LIKE @letterSearch OR credits LIKE  @letterSearch OR program_id LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR area_name LIKE @letterSearch  OR year_of_introduction LIKE @letterSearch OR min_demand_criteria LIKE @letterSearch) ORDER BY c.id DESC  OFFSET (@pageNo - 1) * 10 ROWS FETCH NEXT 10 ROWS ONLY
+//             `);
+//     })}
+//     else{
+//         return poolConnection.then(pool => {
+        
+//             return pool.request()
+//                 .input('bidding_session_lid', sql.Int, biddingId)
+//                 .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+//                 .query(`SELECT COUNT(c.id), c.id, course_name, credits, program_id, ad.acad_session, area_name, min_demand_criteria, year_of_introduction
+//                     FROM [${slug}].courses c
+//                     INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
+//                     WHERE c.bidding_session_lid = @bidding_session_lid AND active = '1' AND (course_name LIKE @letterSearch OR credits LIKE  @letterSearch OR program_id LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR area_name LIKE @letterSearch  OR year_of_introduction LIKE @letterSearch OR min_demand_criteria LIKE @letterSearch)
+//                 `);
+//         })
+//     }
+// }
 
-
-static deleteAll(slug,biddingId,userId,deleteCourseIdJson){
-    deleteCourseIdJson = Object.keys(deleteCourseIdJson).map(key => {
-    const id = deleteCourseIdJson[key];
+static deleteAll(slug,biddingId,userId,deleteCompletedCoursesIdJson){
+    deleteCompletedCoursesIdJson = Object.keys(deleteCompletedCoursesIdJson).map(key => {
+    const id = deleteCompletedCoursesIdJson[key];
     return { id: parseInt(id) }; 
 })
     return poolConnection.then(pool =>{
+        console.log('valuesof ',JSON.stringify(deleteCompletedCoursesIdJson));
         return pool.request()
         .input('last_modified_by',sql.Int,userId)
         .input('bidding_session_lid',sql.Int,biddingId)
-        .input('input_json',sql.NVarChar(sql.MAX),JSON.stringify(deleteCourseIdJson))
+        .input('input_json',sql.NVarChar(sql.MAX),JSON.stringify(deleteCompletedCoursesIdJson))
         .output('output_json',sql.NVarChar(sql.MAX))
-        .execute(`[${slug}].[sp_delete_all_courses]`)
+        .execute(`[${slug}].[sp_delete_all_completed_courses]`)
     })
 }
 static getProgramList(slug,biddingId){
@@ -267,5 +293,4 @@ static getCountFilterByCourseId(slug,biddingId,programId,sessionId,courseId,show
         WHERE c.active = 1 AND c.bidding_session_lid =  @biddingId AND program_id = @programId AND c.sap_acad_session_id = @sessionId AND c.course_id = @courseId`)
       })
 }
-
 }

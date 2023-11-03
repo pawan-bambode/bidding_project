@@ -136,30 +136,13 @@
                     <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                  <div class="row">
-                  <div class="col-md-6">
-                    <label class="mb-2 form-label" for="division">Division:</label>
-                    <input type="hidden" id="division-id">
-                    <input class="form-control" type="text" id="division">
-                  </div>
-                    <div class="col-md-6">
-                        <label class="mb-2 form-label" for="batch">Batch :</label>
-                        <input class="form-control" type="text" id="batch">
-                    </div>
-                    </div>
                     <div class="row">
-                    <div class="col-md-6">
-                      <label class="mb-2 form-label" for="max-seats">Max Seats :</label>
-                      <input class="form-control" type="text" id="max-seats">
-                      <span class="text-danger d-none" id="error-max-seats">You Enter Numeric Values</span>
-                    </div>
-                  
-                    <div class="col-md-6">
-                      <label class="form-label mb-2" for="input-batch-count">Input Batch Count :</label>
-                      <input class="form-control" type="text" id="input-batch-count">
-                      <span class="text-danger d-none" id="error-input-batch-count">You Enter Numeric Values</span>
-                    </div>
-                    </div>
+                      <div class="col-md-6">
+                          <label class="mb-2 form-label" for="max-seats">Max Seats :</label>
+                          <input class="form-control" type="text" id="max-seats">
+                          <span class="text-danger d-none" id="error-max-seats">You Enter Numeric Values</span>
+                      </div>
+                    </div> 
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -233,21 +216,9 @@
 
             let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
             let divisionId = $('#division-id').val();
-            let division = $('#division').val().replace(/\s+/g,' ').trim();
-            let batch = $('#batch').val();
-            let inputBatchCount = $('#input-batch-count').val();
             let maxSeats   = $('#max-seats').val();
-            
             let isMaxSeats =  IsNumber(maxSeats);
-            let isInputBatchCount = IsNumber(inputBatchCount);
-            
-             if (!isInputBatchCount) {
-                $('#error-input-batch-count').removeClass('d-none');
-                return;
-              } else {
-                $('#error-input-batch-count').addClass('d-none');
-              }
-
+  
               if (!isMaxSeats) {
                 $('#error-max-seats').removeClass('d-none');
                 return;
@@ -257,10 +228,7 @@
 
               let editDivisionBatches = {
                 id:divisionId,
-                division: division,
-                batch: batch,
-                max_seats : maxSeats,
-                input_batch_count : inputBatchCount
+                max_seats : maxSeats
               }
             
             let ApiObj = {
