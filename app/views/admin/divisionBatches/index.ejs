@@ -77,10 +77,10 @@
                       <td><%- divisionBatch.division %></td>
                       <td><%- divisionBatch.batch %></td>
                       <td><%- divisionBatch.max_seats %></td> 
-                      <td><%- divisionBatch.input_batch_count %></td>
+                      
                       <td>
                         <a class="edit-division-batches" data-bs-target="#edit-division-batches-modal" data-bs-toggle="modal" data-id="<%- divisionBatch.id %>"
-                          data-division-batches-name="<%- divisionBatch.course_name%>"  data-division="<%- divisionBatch.division %>" data-batch ="<%- divisionBatch.batch %>" data-max-seats="<%- divisionBatch.max_seats %>" data-input-batch-count ="<%- divisionBatch.input_batch_count %>"
+                          data-division-batches-name="<%- divisionBatch.course_name%>"  data-division="<%- divisionBatch.division %>" data-batch ="<%- divisionBatch.batch %>" data-max-seats="<%- divisionBatch.max_seats %>" 
                           ><i class="fa fa-edit"></i></a>
                         <a data-id="<%- divisionBatch.id %>" class="delete-division-batches" ><i class="fas fa-trash text-danger"></i>
                         </a>
@@ -484,11 +484,10 @@
                             <td>${divisionBatches.division}</td>
                             <td>${divisionBatches.batch}</td>
                             <td>${divisionBatches.max_seats}</td>
-                            <td>${divisionBatches.input_batch_count}</td>
                             <td>
                             
                                 <a class="edit-course" data-bs-target="#edit-course-modal" data-bs-toggle="modal" data-id="${divisionBatches.id}"
-                                data-division-batches-course-name="${divisionBatches.course_name}"  data-division="${divisionBatches.division}" data-batch ="${divisionBatches.batch}" data-max-seats="${divisionBatches.max_seats}" data-input-batch-count ="${divisionBatches.input_batch_count}">
+                                data-division-batches-course-name="${divisionBatches.course_name}"  data-division="${divisionBatches.division}" data-batch ="${divisionBatches.batch}" data-max-seats="${divisionBatches.max_seats}">
                                     <i class="fa fa-edit"></i>
                                 </a>
                                 <a data-id="${divisionBatches.id}" class="delete-division-batches">

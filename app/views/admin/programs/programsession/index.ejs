@@ -51,7 +51,9 @@
                         <td><%-programSession.year %></td>
                         <td><%-programSession.min_credits %></td>
                         <td><%-programSession.max_credits %></td>
-                        <td><a class="edit-program-sessions" data-bs-target="#edit-program-sessions" data-bs-toggle="modal" data-id="<%-programSession.id %>"><i class="fa fa-edit"></i></a>
+                        <td><a class="edit-program-sessions" data-bs-target="#edit-program-sessions" data-bs-toggle="modal" data-id="<%-programSession.id %>" data-min-credits ="<%- programSession.min_credits %>"
+                            data-max-credits ="<%- programSession.max_credits %>"
+                            ><i class="fa fa-edit"></i></a>
                             
                         </td>
                     </tr>
@@ -177,9 +179,14 @@
         })
     })   
 
-    $('#program-sessions-table').on('click','.fa-edit',function(){
+    $('#program-sessions-table').on('click','.edit-program-sessions',function(){
+        let dataMinCredits = $(this).attr('data-min-credits');
+        let dataMaxCredits = $(this).attr('data-max-credits');
+
        let programSessionId = $(this).closest('a').attr('data-id');
        $('#edit-program-sessions #program-session-id').val(programSessionId);
+       $('#edit-program-sessions #min-credits').val(dataMinCredits);
+       $('#edit-program-sessions #max-credits').val(dataMaxCredits);
     })
     $('#searchkeyword').on('input',function(){
 

@@ -1,0 +1,112 @@
+<%- include('../partials/head') %>
+<%- include('../partials/leftSidebar.ejs') %>
+<%- include('../partials/header.ejs') %>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<div class="main-content">
+  <div class="card card-custom">
+    <div class="card-header-custom d-flex justify-content-between p-1">
+        <h3 class="ms-2">Elective Timetable</h3>
+        <div>
+                <button class="btn btn-danger disabled" id="delete-all-student-data">Delete</button>
+                <button type="button" class="btn btn-success me-2"  data-bs-target="#upload-elective-timetable-modal" data-bs-toggle="modal">Upload Elective Timetable</button>
+                <button type="button" class="btn btn-danger ms-auto me-3"  id="fetch-elective-timetable">
+                    <i class="fa-solid fa-rotate p-1"></i>Fetch Elective Timetable 
+                </button>  
+       </div> 
+    </div>
+    <div class="card-body table-responsive">
+        <div class="d-flex justify-content-between">
+            <div>
+                <label>Show Entries</label>
+               
+            </div>
+           
+            <div>
+                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+            </div>
+        </div>
+
+     
+        <div class="d-flex justify-content-between">
+            <div>
+                
+                </p>
+            </div>
+            <div>
+                <p id="pagination" class="pagination-search"></p>
+            </div>
+        </div>
+    </div>
+  </div>  
+</div>
+
+
+
+    <div class="modal" id="upload-elective-timetable-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
+        <div class="modal-dialog">
+        <div class="modal-content">
+        
+            <div class="modal-header">
+            <h5 class="modal-title">Upload Elective Timetable</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                    <div class="d-flex">
+                    <label class="form-label me-3">Import Elective Timetable :</label>
+                    <form enctype="multipart/form-data"  action="/admin/timetable/upload" method="post" id="upload-elective-timetable-form">
+                    <input type="file" name="import-elective-timetable" id="import-elective-timetable" accept=".xlsx">
+                    </div>
+                    <div class="d-flex justify-content-between align-item-center mt-5">
+                    <input type="submit" class="btn btn-success mt-2 d-none" id="upload-elective-timetable-button" value="Upload Elective Timetable"></input> 
+                    </form> 
+                
+                <a href="/admin/timetable/generate-excel" download="sampleForImportTimetable.xlsx" name="sample-for-import-timetable" class="text-decoration-none align-self-end">Sample For Import Elective Timetable</a>
+                </div>
+            
+            </div>
+    
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        
+        </div>
+        </div>
+    </div>
+<%- include('../partials/footer.ejs') %>
+<script>
+    $('#import-elective-timetable').on('change',function(){
+        let electiveTimetable = $(this).val();
+        if(electiveTimetable != ''){
+            $('#upload-elective-timetable-button').removeClass('d-none');
+        }
+    })
+
+    $('#upload-elective-timetable-button').on('submit',function(event){
+        event.preventDefault();
+        let formData = new FormData(this);
+
+        $.ajax({
+            type:'POST',
+            url:'/admin/timetable/upload',
+            data:formData,
+            processData:false,
+            contentType:false,
+            success :function(response){
+               showSuccess(response);
+            },
+            error:function(xhr,status,error){
+                showError(JSON.stringify(xhr.responseJSON));
+            }
+        })
+    })
+
+</script>
+  
+<%- include('../partials/footerEnd.ejs') %>

@@ -88,6 +88,32 @@ module.exports = {
                        });
                    }
                })
-},
+          },
+
+          showEntry :(req,res) =>{
+            Promise.all([completeCourses.showEntry(res.locals.slug,res.locals.biddingId,req.body.showEntry,req.body.pageNo),
+              completeCourses.getCounts(res.locals.slug,res.locals.biddingId)]).then(result =>{
+                  res.json({
+                      status:'200',
+                      message:'Result fetched',
+                      data:result[0].recordset,
+                      length:result[1].recordset[0]['']
+                  })
+              }).catch(error =>{
+                  throw error
+              })
+          },
+          search :(req,res) =>{  
+            Promise.all([completeCourses.search(res.locals.slug,res.locals.biddingId,req.body.searchLetter,res.locals.userId),completeCourses.getCountSearch(res.locals.slug,res.locals.biddingId,req.body.searchLetter,res.locals.userId)]).then(result => {
+                   res.json({
+                       status: "200",
+                       message: "Result fetched",
+                       data: result[0].recordset,
+                       length: result[1].recordset[0]['']    
+                   })
+               }).catch(error => {
+                   throw error
+               })
+       }
         }      
           

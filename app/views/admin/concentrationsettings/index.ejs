@@ -66,7 +66,12 @@
                       <td><%- concentrationSetting.primary_area %></td>
                       <td><%- concentrationSetting.min_credits_in_primary_area %></td>
                       <td>
-                        <a class="edit-concentration-settings" data-concentration-setting-id="<%- concentrationSetting.id %>" data-bs-toggle="modal" data-bs-target="#edit-concentration-setting-modal"><i class="fa fa-edit"></i></a>
+                        <a class="edit-concentration-settings" data-concentration-setting-id="<%- concentrationSetting.id %>"    data-concen-settings-total-ele-credits = "<%- concentrationSetting.total_elective_credits %>" 
+                            data-concen-settings-max-cre-per-area = "<%- concentrationSetting.max_credits_per_area %>"
+                            data-concen-settings-no-of-area-to-cover = "<%- concentrationSetting.no_of_areas_to_cover %>"
+                            data-concen-settings-min-credits-per-area = "<%- concentrationSetting.min_credits_per_area %>"
+                            data-concen-settings-min-credits-in-primary-area="<%- concentrationSetting.min_credits_in_primary_area %>"   
+                            data-bs-toggle="modal" data-bs-target="#edit-concentration-setting-modal"><i class="fa fa-edit"></i></a>
                         <a class="text-danger delete-concentration-settings" data-concentration-setting-id="<%- concentrationSetting.id %>"><i class="fas fa-trash"></i></a>
                       </td>
                       </td>
@@ -283,7 +288,13 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
 
      $('#concentration-settings-table').on('click','.edit-concentration-settings',function(){
       let editConcentration = $(this).closest('tr').find('td.concentration-name').text().trim();
-      console.log('values of editconcentration',editConcentration);
+      let totalEleCredits   = $(this).attr('data-concen-settings-total-ele-credits');
+      let maxCreditsPerArea   = $(this).attr('data-concen-settings-max-cre-per-area');
+      let noOfAreaToCover   = $(this).attr('data-concen-settings-no-of-area-to-cover');
+      let minCreditsPerArea   = $(this).attr('data-concen-settings-min-credits-per-area');
+      let minCreditsInPrimaryArea   = $(this).attr('data-concen-settings-min-credits-in-primary-area');
+
+
       if(editConcentration.toLowerCase() == 'general managment'){
        $('#primary-area-minimum').addClass('d-none');
        $('#primary-area-form').addClass('d-none');
@@ -295,7 +306,12 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
          
       }
       $('#edit-concentration-setting-modal #concentration-name').val(editConcentration);
-     
+      $('#edit-concentration-setting-modal #total-elective-credits').val(totalEleCredits);
+      $('#edit-concentration-setting-modal #max-credits-per-area').val(maxCreditsPerArea);
+      $('#edit-concentration-setting-modal #number-of-areas-to-cover').val(noOfAreaToCover);
+      $('#edit-concentration-setting-modal #min-credits-per-area').val(minCreditsPerArea);
+      $('#edit-concentration-setting-modal #min-credits-in-primary-area').val(minCreditsInPrimaryArea);
+
       let concentrationSettingsId = $(this).attr('data-concentration-setting-id');
       $('#edit-concentration-setting-modal #concentration-name').attr('data-id',concentrationSettingsId);
      })
@@ -310,6 +326,10 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
   let numberOfAreasToCover = $('#number-of-areas-to-cover').val();
   let primaryAreaOption = $('#primary-area option:selected').text();
 
+  if(primaryAreaOption === '--Select Primary Area--'){
+    alert('Select Primary Area');
+  }
+ else{
   let editConcentrationsettings = {
     id:id,
     total_elective_credits: totalElectiveCredits,
@@ -335,6 +355,7 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
       console.log('values of error', error);
        showError(error.responseJSON);
     });
+}
 });
 
     });

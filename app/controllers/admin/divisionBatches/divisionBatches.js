@@ -26,8 +26,7 @@ module.exports = {
                           course_id: item.courseId,
                           division: item.division,
                           batch: item.batch,
-                          max_seats: item.maxSeats,
-                          input_batch_count: item.inputBatchCount
+                          max_seats: item.maxSeats
                         };
                       })
         let divisionBatches = {division_batches: divisionBatchesWithColumnHypen}
