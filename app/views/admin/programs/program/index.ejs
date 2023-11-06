@@ -11,7 +11,7 @@
   <div class="card card-custom">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2">Program List</h3>
-        <button type="button" class="btn add-btn-program me-2" data-bs-target="#importProgram" data-bs-toggle="modal">
+        <button type="button" class="btn add-btn-program me-2" data-bs-target="#import-program-modal" data-bs-toggle="modal">
             <i class="fas fa-plus"></i>
         </button>  
     </div>
@@ -67,7 +67,7 @@
   </div>  
 </div>
 
-<div class="modal" id="importProgram">
+<div class="modal" id="import-program-modal">
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header">
@@ -98,7 +98,7 @@
               </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-success" id="import-program" >Import Program</button>
+                <button class="btn btn-success disabled" id="import-program">Import Program</button>
             </div>
         </div>
     </div>
@@ -234,6 +234,10 @@ $(".pagination-search").on('click','.pagination li',function(){
 
             let importProgramTbody = $('.import-program-table tbody');
             importProgramTbody.append(importRow);
+            if($('.import-program-table tbody tr').length > 0)
+         {
+            $('#import-program-modal #import-program').removeClass('disabled');
+                       }
 
             $(this).remove();
         });
@@ -264,9 +268,11 @@ $(".pagination-search").on('click','.pagination li',function(){
            
         });
          
+      
         $(document).on('click','#import-program',function(){
             let importProgramArray = [];
           let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
+        
           $('.import-program-table tbody tr').each((index,element) => {
             
             let importProgram = {};

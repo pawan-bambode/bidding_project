@@ -12,7 +12,7 @@
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2">Elective Timetable</h3>
         <div>
-                <button class="btn btn-danger disabled" id="delete-all-student-data">Delete</button>
+                <button class="btn btn-danger" id="delete-timetable">Delete Timetable</button>
                 <button type="button" class="btn btn-success me-2"  data-bs-target="#upload-elective-timetable-modal" data-bs-toggle="modal">Upload Elective Timetable</button>
                 <button type="button" class="btn btn-danger ms-auto me-3"  id="fetch-elective-timetable">
                     <i class="fa-solid fa-rotate p-1"></i>Fetch Elective Timetable 
@@ -79,8 +79,57 @@
         </div>
         </div>
     </div>
+    <div class="modal" tabindex="-1" data-bs-backdrop="static" id="timetable-delete-modal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Delete timetable</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">    
+                       <label for="program-wise">Program:</label>
+                       <input type="radio" class="delete-timetable" name="delete-timetable" id="program-wise"  data-id="1">
+                    </div>
+                    <div class="col-md-6">
+                      <label for="program-acadsession-wise">Program Acad Session:</label>
+                      <input type="radio" class="delete-timetable" name="delete-timetable" id="program-acadsession-wise" data-id="2">
+                    </div>
+                </div>
+                <select class="form-select form-control select2 mt-4" id="program-name-filter" disabled>
+                    <option selected>--Select Program--</option>
+                   <% for(let program of programList) { %>
+                    <option value="<%- program.id %>" data-delete="<%- program.program_id %>" ><%-program.program_name %></option>
+                    <% } %>
+                </select>
+
+                <select class="form-select form-control select2 mt-4" id="session-filter" disabled>
+                    <option selected>--Select Session--</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="delete-timetable-modal">Delete Timetable</button>
+            </div>
+          </div>
+        </div>
+      </div>
 <%- include('../partials/footer.ejs') %>
 <script>
+      $('#timetable-delete-modal').on('change','.delete-timetable',function(){
+        let id = $(this).attr('data-id');
+        if(id=='1'){
+            $('#session-filter').addClass('d-none');
+            $('#program-name-filter').removeAttr('disabled');
+        }
+        else{
+            $('#session-filter').removeClass('d-none');
+            $('#program-name-filter').removeAttr('disabled');
+            $('#session-filter').removeAttr('disabled');
+        }
+    })
+
     $('#import-elective-timetable').on('change',function(){
         let electiveTimetable = $(this).val();
         if(electiveTimetable != ''){
@@ -88,6 +137,72 @@
         }
     })
 
+    $('#program-name-filter').on('change', function() {
+            let programId = $(this).val();
+            
+            if ($('input[name="delete-timetable"]:checked').data('id') == 2) {
+
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/timetable-delete-modal/acadsession',
+                data: {
+                    programId: programId,
+                },
+                dataType: 'JSON'
+            };
+           
+
+           
+            ajaxApi(ApiObj)
+                .then(result => {
+                    let acadSession = `<option value="">--Select Acad Session--</option>`;
+                    if (result.acadSessionList.length > 0) {
+                        result.acadSessionList.forEach(element => {
+                            console.log('value sof element',element);
+                           acadSession  += `<option value="${element.id}">${element.acad_session}</option>`;
+                        });
+                       
+                    } else {
+                        acadSession += `<option value="">No Session Found!</option>`;
+                    }
+
+                    $("#session-filter").html(acadSession);
+                })
+                .catch(error => {
+                    console.log('values of error', error);
+                    showError(error.responseJSON);
+                });
+                
+            }else{
+                $('#timetable-delete-modal #delete-timetable-modal').attr('data-timetable-delete',programId)
+                $('#timetable-delete-modal #delete-timetable-modal').attr('data-timetable-radio','program');                
+            }
+        });
+
+        $('#session-filter').on('change',function(){
+            let sessionId = $(this).val();
+            $('#timetable-delete-modal #delete-timetable-modal').attr('data-timetable-delete',sessionId);
+            $('#timetable-delete-modal #delete-timetable-modal').attr('data-timetable-radio','programsession');
+        })
+
+        $('#delete-timetable-modal').on('click',function(){
+            let deleteTimetableId = $(this).attr('data-timetable-delete');
+            let deleteRadioButton = $(this).attr('data-timetable-radio');
+            let ApiObj = {
+                url:'/admin/timetable-delete-modal/delete',
+                type:'POST',
+                data:{
+                  deleteTimetable:  deleteTimetableId,
+                  deleteRadioButton:deleteRadioButton
+                },
+                dataType:'JSON'
+            }
+            ajaxApi(ApiObj).then(result =>{
+                showSuccess(result);
+            }).catch(error =>{
+                showError(error);
+            })
+        })
     $('#upload-elective-timetable-button').on('submit',function(event){
         event.preventDefault();
         let formData = new FormData(this);
@@ -105,6 +220,9 @@
                 showError(JSON.stringify(xhr.responseJSON));
             }
         })
+    })
+    $('#delete-timetable').on('click',function(){
+        $('#timetable-delete-modal').modal('show');
     })
 
 </script>

@@ -5,7 +5,11 @@ const xlsx = require('xlsx');
 
 module.exports = {
     getTimetablePage : (req, res) => {
-            res.render('admin/timetable/index.ejs');     
+       Promise.all([timetable.getProgramList(res.locals.slug,res.locals.biddingId)]).then(result =>{
+             res.render('admin/timetable/index.ejs',{
+             programList:result[0].recordset
+            })   
+          })
     },
 
     generateExcel: (req, res) => {
@@ -60,23 +64,23 @@ module.exports = {
             const sheet = excelFileDataWorkbook.Sheets[sheetName];
             const timetableJsonData = xlsx.utils.sheet_to_json(sheet);
             const timetableDataWithColumnHypen = timetableJsonData.map(item =>{
-                console.log('values of item',item);
+                
                             return {
                               program_id: item.programId,
-                              acad_session_id: item.acadSession.replace(/\s+/g,' ').trim(),
+                              acad_session: item.acadSession.replace(/\s+/g,' ').trim(),
                               course_name: item.courseName.replace(/\s+/g,' ').trim(),
                               division: item.division.replace(/\s+/g,' ').trim(),
                               batch: item.batch,
                               day: item.day,
-                              startTime: isJsonString.convertExcelTimeToHHMM(item.startTime),
-                              endTime: isJsonString.convertExcelTimeToHHMM(item.endTime),
-                              roomNo:item.roomNo,
-                              faculty_id :item.facultyId,
+                              start_time : isJsonString.convertExcelTimeToHHMM(item.startTime),
+                              end_time : isJsonString.convertExcelTimeToHHMM(item.endTime),
+                              room_no :item.roomNo.toString(),
+                              faculty_id :item.facultyId.toString(),
                               faculty_name:item.facultyName.replace(/\s+/g,' ').trim(),
                               faculty_type_abbr:item.facultyType
                             };
                           })
-                          console.log('values of timetabledata  with columnhypen',timetableDataWithColumnHypen)
+                          
             let timetableDataValue = {timetable: timetableDataWithColumnHypen}
     
             timetable.uploadTimetable(res.locals.slug,JSON.stringify(timetableDataValue),res.locals.userId,biddingId).then(result =>{
@@ -93,5 +97,34 @@ module.exports = {
                 })
                }
            })   
-          }
+          },
+        
+            getDeleteTimetableModal : (req,res) =>{
+              Promise.all([timetable.getAcadSessionList(res.locals.slug,res.locals.biddingId,req.body.programId)]).then(result =>{
+                res.json({
+                  stats:'200',
+                  message:'Result Fetched',
+                  acadSessionList:result[0].recordset
+                })
+              })
+            },
+
+            delete: (req, res) => {
+
+              timetable.delete(req.body.deleteTimetable,req.body.deleteRadioButton, res.locals.slug, res.locals.userId,res.locals.biddingId)
+                  .then(result => {
+                      res.status(200).json(JSON.parse(result.output.output_json));
+                  })
+                  .catch(error => {
+                      if ((isJsonString.isJsonString(error.originalError.info.message))) {
+                          res.status(500).json(JSON.parse(error.originalError.info.message));
+                      } else {
+                          res.status(500).json({
+                              status: 500,
+                              description: error.originalError.info.message,
+                              data: []
+                          });
+                      }
+                  });
+          },
 }   
