@@ -43,12 +43,12 @@
             <table class="table custom_row table-bordered mt-4" id="pre-requisite-table">
                 <thead>
                   <tr>
-                    <th>id</th>
+                    <th>#</th>
                     <th>Program Name</th>
                     <th>Acad Session</th>
                     <th>Course Name</th>
                     <th>Type</th>
-                    <th>Pre Req Course Name</th>
+                    <th>Pre-Requisite Course Name</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -188,7 +188,7 @@
       
       $('#pre-requisite-table').on('click','.delete-pre-requisite',function(){
         let id = $(this).attr('data-id');
-        $(this).closest('tr').remove();
+        
         let ApiObj = {
           type:'POST',
           url:'/admin/pre-requisites/delete',
@@ -198,9 +198,10 @@
           datatype:'JSON'
         }
         ajaxApi(ApiObj).then(result=>{
+          $(this).closest('tr').remove();
           showSuccess(result);
         }).catch(error =>{
-          showError(error.responseJSON);
+          showError(JSON.stringify(error.responseJSON));
         })
       })  
 

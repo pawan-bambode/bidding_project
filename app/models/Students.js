@@ -94,12 +94,12 @@ module.exports = class Students {
 
     static getSlotForShowTimetable(){
         return poolConnection.then(pool => {
-          return pool.request().query(`SELECT MIN(slot_lid) AS start_time_lid, MAX(slot_lid) AS end_time_lid FROM [dbo].event_bookings`)
+          return pool.request().query(`SELECT MIN(slot_lid) AS start_time_lid, MAX(slot_lid) AS end_time_lid FROM [sbm-mum].event_bookings`)
         })
     }
     static getDistintRoomList(){
         return poolConnection.then(pool =>{
-            return pool.request().query(`SELECT DISTINCT eb.room_lid,r.room_number FROM [dbo].event_bookings eb INNER JOIN [dbo].rooms r ON eb.room_lid = r.room_lid`)
+            return pool.request().query(`SELECT DISTINCT eb.room_lid,r.room_number FROM [sbm-mum].event_bookings eb INNER JOIN [sbm-mum].rooms r ON eb.room_lid = r.room_lid`)
         })
     }
     static getTimeslot(){
@@ -131,21 +131,21 @@ module.exports = class Students {
         return poolConnection.then(pool =>{
                 return pool.request()
                 .input('student_id',sql.NVarChar,student_lid)
-                .query(`SELECT * FROM [dbo].subject_selected_by_stud WHERE student_id = @student_id AND active = 1`);
+                .query(`SELECT * FROM [sbm-mum].subject_selected_by_stud WHERE student_id = @student_id AND active = 1`);
             })
     }
     static getTimetableByDayId(day_lid){
         return poolConnection.then(pool =>{
             return pool.request().
             input('day_lid',sql.Int,day_lid)
-            .query(`SELECT * FROM [dbo].timetableSubject_testing where day_lid = @day_lid`);     
+            .query(`SELECT * FROM [sbm-mum].timetableSubject_testing where day_lid = @day_lid`);     
         })
     }
     static getSlotDayId(day_lid){
         return poolConnection.then(pool =>{
             return pool.request().
             input('day_lid',sql.Int,day_lid)
-            .query(`SELECT DISTINCT end_slot,CONCAT(start_slot, '-',end_slot) as slot_value,start_slot FROM [dbo].timetableSubject_testing where day_lid = @day_lid order by end_slot`);     
+            .query(`SELECT DISTINCT end_slot,CONCAT(start_slot, '-',end_slot) as slot_value,start_slot FROM [sbm-mum].timetableSubject_testing where day_lid = @day_lid order by end_slot`);     
         })
     }
 

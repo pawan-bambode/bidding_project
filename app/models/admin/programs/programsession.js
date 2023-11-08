@@ -8,10 +8,10 @@ module.exports = class ProgramSession{
         return poolConnection.then(pool =>{
             return pool.request()
             .input('biddingId',sql.Int,biddingId)
-            .query(`SELECT TOP ${showEntry}  ps.id ,p.program_name,ad.acad_session,bs.year, IIF(ps.min_credits IS NULL, 0, ps.min_credits) AS min_credits,IIF(ps.max_credits IS NULL, 0, ps.max_credits) AS max_credits FROM [${slug}].program_sessions ps 
+            .query(`SELECT DISTINCT  ps.id ,p.program_name,ad.acad_session,bs.year, IIF(ps.min_credits IS NULL, 0, ps.min_credits) AS min_credits,IIF(ps.max_credits IS NULL, 0, ps.max_credits) AS max_credits FROM [${slug}].program_sessions ps 
             INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = @biddingId
             INNER JOIN [${slug}].bidding_session bs ON ps.bidding_session_lid = bs.id
-            INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = @biddingId
+            INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = @biddingId  AND ps.active = 1
             `);
         })
     }

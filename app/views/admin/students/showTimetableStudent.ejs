@@ -125,7 +125,7 @@
       var dataObj = {};
       let subjects = [];
       let day_li = ''; 
-   
+       console.log('values of roomList',roomList);
       let days = [
             JSON.parse(`<%- slot_lid_monday %>`),
             JSON.parse(`<%- slot_lid_tuesday %>`),
@@ -222,8 +222,7 @@
         subjects.forEach(function (course, index) {
          let eleTr  =  $(`.selected_course #selected_course_table_data tbody tr[data-batch-lid = "${course.batch}"][data-day-lid = "${course.day_lid}"]`)
          let eleSameslot = $(`.selected_course #selected_course_table_data tbody tr[data-start-id = "${course.start}"][data-end-id = "${course.end}"]`)
-         console.log('values of eleTr',eleTr);
-         console.log('values of eleSameSlot',eleSameslot);
+      
          if(eleTr.length == 0){
           let courseSelectedRecord =
             `<tr data-program-name="${course.program_name}" data-module-name="${course.module_name}" data-room-no="${course.room}" data-division="${course.division}" data-faculty-name="${course.faculty_name}" data-day="${course.day}" data-start-id="${course.start}" data-end-id="${course.end}" data-acad-session="${course.acad_session}" data-lec-type="${course.lec_type}" data-batch-lid ="${course.batch}" data-day-lid = "${course.day_lid}">

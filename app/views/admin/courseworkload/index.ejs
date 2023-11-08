@@ -59,14 +59,14 @@
             <table class="table custom_row table-bordered mt-4" id="course-table">
                 <thead>
                   <tr>
-                    <th>id</th>
+                    <th>#</th>
                     <th>Course Name</th>
-                    <th>Credit</th>
+                    <th>Credits</th>
                     <th>Program Id</th>
                     <th>Acad Session</th>
                     <th>Area</th>
-                    <th>Year Of Introduction</th>
-                    <th>Min Demand Criteria</th>
+                    <th>Year of Introduction</th>
+                    <th>Minimum Demand Criteria</th>
                     <th>Action <input type="checkbox" name="courses-checkbox" id="course-checkbox"></th>
                   </tr>
                 </thead>
@@ -248,7 +248,7 @@
                   showSuccess(result);
              }).catch(error =>{
               console.log('values of error',error);
-              showError(error.responseJSON);
+              showError(JSON.stringify(error.responseJSON));
              })
         }
     });
@@ -515,7 +515,7 @@ $(document).on('change', '#course-name-filter', function() {
         ajaxApi(ApiObj).then(result=>{
           showSuccess(result);
         }).catch(error =>{
-          showError(error.responseJSON);
+          showError(JSON.stringify(error.responseJSON));
         })
       })
       $('#edit-course-modal').on('click','#update-course',function(){

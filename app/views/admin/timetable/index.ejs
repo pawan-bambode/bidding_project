@@ -8,7 +8,7 @@
 
 
 <div class="main-content">
-  <div class="card card-custom">
+  <div class="card card-custom card">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2">Elective Timetable</h3>
         <div>
@@ -19,32 +19,37 @@
                 </button>  
        </div> 
     </div>
+ 
     <div class="card-body table-responsive">
         <div class="d-flex justify-content-between">
-            <div>
-                <label>Show Entries</label>
-               
+            <div class="col-md-3">
+                <label class="form-label mb-1" for="day-select">Select Day:</label>
+                <select class="form-select form-control select2" id="day-select">
+                    <option selected disabled>--Select Day--</option>
+                    <option value="1">Monday</option>
+                    <option value="2">Tuesday</option>
+                    <option value="3">Wednesday</option>
+                    <option value="4">Thursday</option>
+                    <option value="5">Friday</option>
+                    <option value="6">Saturday</option>
+                    <option value="7">Sunday</option>
+                </select>
             </div>
-           
-            <div>
-                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+    
+            <div class="table-searchbar-container d-flex align-item-center search-button-timetable">
+                <button type="button">
+                    <i class="fas fa-search"></i> 
+                </button>
+                <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar">
             </div>
         </div>
-
-     
-        <div class="d-flex justify-content-between">
-            <div>
-                
-                </p>
-            </div>
-            <div>
-                <p id="pagination" class="pagination-search"></p>
+    
+        <div class="card-body table-responsive">
+            <div class="timetable-container">
             </div>
         </div>
     </div>
-  </div>  
-</div>
+    
 
 
 
@@ -60,7 +65,7 @@
             <div class="modal-body">
                     <div class="d-flex">
                     <label class="form-label me-3">Import Elective Timetable :</label>
-                    <form enctype="multipart/form-data"  action="/admin/timetable/upload" method="post" id="upload-elective-timetable-form">
+                    <form enctype="multipart/form-data"   method="post" action="/admin/timetable/upload" id="upload-elective-timetable-form">
                     <input type="file" name="import-elective-timetable" id="import-elective-timetable" accept=".xlsx">
                     </div>
                     <div class="d-flex justify-content-between align-item-center mt-5">
@@ -117,6 +122,80 @@
       </div>
 <%- include('../partials/footer.ejs') %>
 <script>
+    $(document).ready(function(){
+        let minMaxSlotId = JSON.parse(`<%-minMaxTimetableSlot%>`);
+        let roomList = JSON.parse(`<%- roomList %>`);
+        let timeJson = JSON.parse(`<%- timeSlotList%>`);
+        let roomslot = ``;
+       
+        let timetableProp = {
+        totalSlots: minMaxSlotId.end_slot_lid - minMaxSlotId.start_slot_lid + 1,
+        pxPerSlot: 13,
+        roomNoWidth: 50,
+      }
+      for (let room of roomList) {
+        roomslot += `<div class ="d-flex room "  data-room-no ="${room.room_no}">
+                      <div class ="room-no" data-room-no = "${room.room_no}"> 
+                            ${room.room_no}
+                      </div>
+                      <div class = "room-slots position-relative" data-room-no = "${room.room_no}">
+                      </div>
+                    </div>`
+      }
+      let timetable_width = (Number(minMaxSlotId.end_slot_lid) - Number(minMaxSlotId.start_slot_lid) + 1) * timetableProp.pxPerSlot;
+
+      $('.timetable-container').html(roomslot);
+      $(':root').css('--roomSlotWidth', timetable_width + 'px');
+      $(':root').css('--timetableWidth', timetable_width + 56 + 'px');
+      $('#day-select').on('change',function(){
+        let dayValue = $(this).val();
+        $('.room-slots').empty();
+        let ApiObj = {
+            url:'/admin/timetable/by-day',
+            type:'POST',
+            data:{id:dayValue},
+            dataType:'JSON'
+        }
+        ajaxApi(ApiObj).then(result =>{
+            console.log('values of result',result);
+            let courseList = result.courseList;
+ 
+      courseList.forEach(function(course,index){
+          
+        let room_slot = document.querySelector(`.room-slots[data-room-no = "${course.room_no}"]`);
+      //  $(`.room-slots[data-room-no = "${course.room_no}"]`).empty();
+            
+            const widthOfEvent = (Number(course.end_slot_lid) - Number(course.start_slot_lid)+1) * timetableProp.pxPerSlot;
+            const leftsidemargin = (Number(course.start_slot_lid) - Number(minMaxSlotId.start_slot_lid))*timetableProp.pxPerSlot;
+       
+            let roomSlotItem = document.createElement('div');
+        
+            roomSlotItem.setAttribute("class", "room-slot-item") ;  
+            roomSlotItem.setAttribute("data-program_name", `${course.program_name}`)
+            roomSlotItem.setAttribute("data-left", `${leftsidemargin}`);
+            roomSlotItem.setAttribute("data-acad-session", `${course.acad_session}`)
+            roomSlotItem.setAttribute("data-course-name", `${course.course_name}`)
+            roomSlotItem.setAttribute("data-division", `${course.division}`)
+            roomSlotItem.setAttribute("data-batch", `${course.batch}`)
+            roomSlotItem.setAttribute("data-faculty-name", `${course.faculty_name}`)
+            roomSlotItem.setAttribute('data-start-time', `${timeJson[course.start_slot_lid - 1].start_time}`);
+            roomSlotItem.setAttribute('data-end-time', `${timeJson[course.end_slot_lid - 1].end_time}`);
+            roomSlotItem.setAttribute('data-faculty-type-abbr', `${course.faculty_type_abbr}`);
+            roomSlotItem.setAttribute('data-start-lid',`${course.start_slot_lid}`);
+            roomSlotItem.setAttribute('data-end-lid',`${course.end_slot_lid}`);
+
+            roomSlotItem.setAttribute("style", `position:absolute;left: ${leftsidemargin}px ;top: 0; text-align:center; width:${widthOfEvent}px;height:100%;background-color:#ffffff;font-size:14px;padding:5px 2px 0px 2px;border-left:1px solid black;`)
+          
+              roomSlotItem.innerHTML =  
+              ` <button type="button" class="close btn_close_custom d-none" aria-label="Close"></button>${course.program_name} - ${course.acad_session} <hr> ${course.course_name} <hr>${course.division}-${course.batch} <hr>${course.faculty_name} - (${course.faculty_type_abbr})<hr>
+                  <span class="badge bg-info start-time d-flex justify-content-center align-items-center">${timeJson[course.start_slot_lid - 1].start_time}</span>  
+          <i class="fa-solid fa-arrows-left-right" style="right:${(widthOfEvent/ 2) - 7}px;position:absolute;bottom:0;"></i><span class="badge bg-info end-time d-flex justify-content-center align-items-center">
+              ${timeJson[course.end_slot_lid - 1].end_time} </span>`;
+
+            room_slot.append(roomSlotItem);        
+      });
+    });
+}); 
       $('#timetable-delete-modal').on('change','.delete-timetable',function(){
         let id = $(this).attr('data-id');
         if(id=='1'){
@@ -129,7 +208,7 @@
             $('#session-filter').removeAttr('disabled');
         }
     })
-
+})
     $('#import-elective-timetable').on('change',function(){
         let electiveTimetable = $(this).val();
         if(electiveTimetable != ''){
@@ -203,7 +282,7 @@
                 showError(error);
             })
         })
-    $('#upload-elective-timetable-button').on('submit',function(event){
+    $('#upload-elective-timetable-form').on('submit',function(event){
         event.preventDefault();
         let formData = new FormData(this);
 
@@ -225,6 +304,29 @@
         $('#timetable-delete-modal').modal('show');
     })
 
+    function showError(errors) {
+        let simpleAlert = new SimpleAlert();
+        let obj = {
+            title : errors,
+            message: "",
+            type: 'alert-danger',
+            buttons: {
+                positive:{
+                    text: "OK",
+                    action: function(){
+                        document.querySelector('.simple-alert').remove();
+                    }
+                },
+                negative: {
+                    text: "Cancle",
+                    action: function () {
+                    alert('Negative')
+                    }
+                }
+            }
+        }
+        simpleAlert.alert(obj);
+    }
 </script>
   
 <%- include('../partials/footerEnd.ejs') %>

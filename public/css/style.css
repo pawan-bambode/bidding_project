@@ -1909,9 +1909,7 @@ margin: auto;
 .custom-table tbody tr:nth-child(odd){
     background-color:var(--primary-table-bg);   
 }
-.custum-imp-program{
-    padding: 0 !important;
-}
+
 .custm-padd{
     padding: 1em;
 }
@@ -2040,4 +2038,11 @@ margin: auto;
 #edit-bidding-session-modal .select2-dropdown{
  min-height: 200px;
  max-height: 200px;
+}
+.search-button-timetable{
+    height:38px;
+}
+.timetable-slot{
+    min-height: 215px;
+    max-height: 215px;
 }

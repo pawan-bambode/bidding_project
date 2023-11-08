@@ -28,6 +28,7 @@ module.exports = class divisionBatches {
      })
    } 
  static getProgramList(slug,biddingId){
+    console.log('values')
       return poolConnection.then(pool =>{
         return pool.request()
          .input('bidding_session_lid',sql.Int,biddingId)
@@ -47,6 +48,7 @@ module.exports = class divisionBatches {
      })
     }
   static update(inputJson,biddingId,userid,slug){
+    console.log('values ofr of',inputJson);
       return poolConnection.then(pool=>{
             return pool.request()
              .input('last_modified_by',sql.Int,userid)

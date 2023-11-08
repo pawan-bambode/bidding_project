@@ -78,12 +78,13 @@ module.exports = {
         });
       },
       update: (req, res) => {
+        console.log('values of req.body',req.body);
         divisionBatch.update(req.body.editDivisionBatches, req.body.biddingSessionId, res.locals.userId, res.locals.slug)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
             .catch(error => {
-
+                console.log('values of error',error);
                 if (isJsonString.isJsonString(error.originalError.info.message)) {
                     res.status(500).json(JSON.parse(error.originalError.info.message));
                 } else {

@@ -13,7 +13,7 @@ function AdminRoute(app) {
     const studentInfo = require('../../routers/admin/student');
     const acadsessionInfo = require('../../routers/admin/acad_session');
     const academicYearInfo = require('../../routers/admin/academicYear');
-    const timetableShowToStudent = require('../../routers/admin/student');
+    //const timetableShowToStudent = require('../../routers/admin/student');
 
     const program = require('../../routers/admin/programs/programs')
     const biddingSession = require('../../routers/admin/biddingsession/biddingsession')
@@ -25,13 +25,14 @@ function AdminRoute(app) {
     const completeCourse = require('../../routers/admin/completeCourses/completecourses')
     const preRequisites = require('../../routers/admin/preRequisite/prerequisite')
     const timetable = require('../../routers/admin/timetable/timetable')
+    const student = require('../../routers/student/student');
     
     app.use('/admin/', isLoggedIn, checkPermission, adminDashboard);
     app.use('/admin/', courseWorkload);
     app.use('/admin/', studentInfo);
     app.use('/admin/', acadsessionInfo)
     app.use('/admin/', academicYearInfo)
-    app.use('/student/', timetableShowToStudent)
+    app.use('/student/', student)
     app.use('/admin/', program);
     app.use('/admin/', biddingSession);
     app.use('/admin/',generateExcel);

@@ -44,7 +44,7 @@
             <table class="table custom_row table-bordered mt-4" id="complete-courses-table">
                 <thead>
                   <tr>
-                    <th>id</th>
+                    <th>#</th>
                     <th>Student Name</th>
                     <th>Course Name</th>
                     <th>Action <input class="d-none" type="checkbox" name="complete-courses-checkbox" id="complete-courses-checkbox"></th>
@@ -122,6 +122,14 @@
            $('#delete-all-complete-coures').removeClass('disabled');
         } else {
           $('.checkbox-complete-course').prop('checked',false);
+           $('#delete-all-complete-coures').addClass('disabled');  
+        }
+    });
+    $('#complete-courses-table').on('change','.checkbox-complete-course', function() {
+      console.log('values of complete',$(this));
+        if (this.checked) {
+           $('#delete-all-complete-coures').removeClass('disabled');
+        } else {
            $('#delete-all-complete-coures').addClass('disabled');  
         }
     });

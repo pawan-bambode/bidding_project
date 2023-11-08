@@ -5,9 +5,12 @@ const xlsx = require('xlsx');
 
 module.exports = {
     getTimetablePage : (req, res) => {
-       Promise.all([timetable.getProgramList(res.locals.slug,res.locals.biddingId)]).then(result =>{
-             res.render('admin/timetable/index.ejs',{
-             programList:result[0].recordset
+       Promise.all([timetable.getProgramList(res.locals.slug,res.locals.biddingId),timetable.getMinAndMaxTimetableTime(res.locals.slug,res.locals.biddingId),timetable.getRoomList(res.locals.slug,res.locals.biddingId),timetable.getTimeslot()]).then(result =>{    
+        res.render('admin/timetable/index.ejs',{
+             programList:result[0].recordset,
+             minMaxTimetableSlot:JSON.stringify(result[1].recordset[0]),
+             roomList:JSON.stringify(result[2].recordset),
+             timeSlotList:JSON.stringify(result[3].recordset)   
             })   
           })
     },
@@ -64,7 +67,6 @@ module.exports = {
             const sheet = excelFileDataWorkbook.Sheets[sheetName];
             const timetableJsonData = xlsx.utils.sheet_to_json(sheet);
             const timetableDataWithColumnHypen = timetableJsonData.map(item =>{
-                
                             return {
                               program_id: item.programId,
                               acad_session: item.acadSession.replace(/\s+/g,' ').trim(),
@@ -72,8 +74,8 @@ module.exports = {
                               division: item.division.replace(/\s+/g,' ').trim(),
                               batch: item.batch,
                               day: item.day,
-                              start_time : isJsonString.convertExcelTimeToHHMM(item.startTime),
-                              end_time : isJsonString.convertExcelTimeToHHMM(item.endTime),
+                              start_time : isJsonString.convertExcelTimeToHHMMSS(item.startTime),
+                              end_time : isJsonString.convertExcelTimeToHHMMSS(item.endTime),
                               room_no :item.roomNo.toString(),
                               faculty_id :item.facultyId.toString(),
                               faculty_name:item.facultyName.replace(/\s+/g,' ').trim(),
@@ -82,8 +84,7 @@ module.exports = {
                           })
                           
             let timetableDataValue = {timetable: timetableDataWithColumnHypen}
-    
-            timetable.uploadTimetable(res.locals.slug,JSON.stringify(timetableDataValue),res.locals.userId,biddingId).then(result =>{
+            timetable.uploadTimetable(res.locals.slug,timetableDataValue,res.locals.userId,biddingId).then(result =>{
             res.status(200).json(JSON.parse(result.output.output_json));
            }).catch(error =>{
                if(isJsonString.isJsonString(error.originalError.info.message)){
@@ -127,4 +128,30 @@ module.exports = {
                       }
                   });
           },
+          
+          getTimetableByDay: (req, res) => {
+
+            timetable.getTimetableByDayId(req.body.id, res.locals.slug,res.locals.biddingId)
+                .then(result => {
+                  console.log('values of result');
+                  res.json({
+                    courseList:result.recordset,
+                    data:{},
+                    status:'200',
+                  })
+                })
+                .catch(error => {
+                  console.log('values of error',error);
+                    if ((isJsonString.isJsonString(error.originalError.info.message))) {
+                        res.status(500).json(JSON.parse(error.originalError.info.message));
+                    } else {
+                        res.status(500).json({
+                            status: 500,
+                            description: error.originalError.info.message,
+                            data: []
+                        });
+                    }
+                });
+        }
+          
 }   

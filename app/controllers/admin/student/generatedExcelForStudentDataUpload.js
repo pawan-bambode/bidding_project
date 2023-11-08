@@ -50,7 +50,7 @@ module.exports = {
     const studentDataWithColumnHypen = studentJsonData.map(item =>{
                     return {
                       sap_id: item.studentSapId,
-                      roll_no: item.rollNo.replace(/\s+/g,' ').trim(),
+                      roll_no: item.rollNo.toString(),
                       student_name: item.studentName.replace(/\s+/g,' ').trim(),
                       email: item.email.replace(/\s+/g,' ').trim(),
                       program_id: item.programId,

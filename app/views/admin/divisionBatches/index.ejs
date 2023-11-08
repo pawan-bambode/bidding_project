@@ -55,14 +55,13 @@
             <table class="table custom_row table-bordered mt-4" id="division-batches-table">
                 <thead>
                   <tr>
-                    <th>id</th>
+                    <th>#</th>
                     <th>Program Name</th>
-                    <th>Term Name</th>
+                    <th>Acad Session</th>
                     <th>Course Name</th>
                     <th>Division</th>
                     <th>Batch</th>
-                    <th>Max Seats</th>
-                    <th>Input Batch Count</th>
+                    <th>Maximum Seats</th>
                     <th>Action <input class="d-none" type="checkbox" name="all-division-batches-checkbox" id="all-division-batches-checkbox"></th>
                   </tr>
                 </thead>
@@ -215,10 +214,12 @@
       $('#edit-division-batches-modal').on('click','#update-division-batches',function(){
 
             let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
-            let divisionId = $('#division-id').val();
+            let divisionId = $('#max-seats').data('id');
             let maxSeats   = $('#max-seats').val();
-            let isMaxSeats =  IsNumber(maxSeats);
   
+            console.log('values of divisionId',divisionId);
+            let isMaxSeats =  IsNumber(maxSeats);
+               console.log('values of ',divisionId);
               if (!isMaxSeats) {
                 $('#error-max-seats').removeClass('d-none');
                 return;
@@ -255,7 +256,7 @@
           let inputBatchCount =  $(this).attr('data-input-batch-count');
           let id = $(this).attr('data-id');
 
-          $('#edit-division-batches-modal #division-id').val(id);
+          $('#edit-division-batches-modal #max-seats').attr('data-id',id);
           $('#edit-division-batches-modal #division').val(division);
           $('#edit-division-batches-modal #batch').val(batch);
           $('#edit-division-batches-modal #max-seats').val(maxSeats);
@@ -316,7 +317,7 @@
                       showSuccess(result);
                 }).catch(error =>{
                   console.log('values of error',error);
-                  showError(error.responseJSON);
+                  showError(JSON.stringify(error.responseJSON));
                 })
             }
          });

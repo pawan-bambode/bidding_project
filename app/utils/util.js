@@ -30,22 +30,23 @@ if (array.length > 0){
 
 }
 }
-function convertExcelTimeToHHMM (excelTime)  {
-    if(typeof excelTime === 'number'){
-    const hours = Math.floor(excelTime * 24);
-    const minutes = Math.round((excelTime * 24 - hours) * 60);
-  
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-    }
-    else{
+function convertExcelTimeToHHMMSS(excelTime) {
+    if (typeof excelTime === 'number') {
+        const hours = Math.floor(excelTime * 24);
+        const minutes = Math.floor((excelTime * 24 - hours) * 60);
+        const seconds = Math.floor(((excelTime * 24 - hours) * 60 - minutes) * 60);
+
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    } else {
         return excelTime;
     }
-  }
+}
+
 
   
 module.exports = {
     isJsonString,
     currentAcadYear,
     isArray,
-    convertExcelTimeToHHMM
+    convertExcelTimeToHHMMSS
 }

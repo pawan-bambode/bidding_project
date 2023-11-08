@@ -20,7 +20,7 @@ static getPreRequities(slug,biddingId,showEntry){
       return poolConnection.then(pool=>{
         return pool.request() 
         .input('biddingId',sql.Int,biddingId)
-        .query(`SELECT pr.id, p.program_name,pr.acad_session,pr.id,pr.course_name,pr.course_id,type,pre_req_course_name,pre_req_course_id FROM [${slug}].pre_requisites pr
+        .query(`SELECT pr.id, p.program_name,pr.acad_session,pr.course_name,pr.course_id,type,pre_req_course_name,pre_req_course_id FROM [${slug}].pre_requisites pr
         INNER JOIN [${slug}].courses c ON  pr.course_id = c.course_id AND c.bidding_session_lid = @biddingId
         INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId
         WHERE pr.active = 1 AND pr.bidding_session_lid = @biddingId `)

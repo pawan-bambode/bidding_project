@@ -42,14 +42,14 @@
             <table class="table custom_row table-bordered mt-4 custom-table" id="concentration-settings-table">
                 <thead>
                   <tr>
-                    <th>id</th>
+                    <th>#</th>
                     <th>Concentration</th>
                     <th>Total Elective Credits</th>
-                    <th>Max Credits Per Area</th>
-                    <th>No of Area to Cover</th>
-                    <th>Min Credits Per Area</th>
+                    <th>Maximum Credits per Area</th>
+                    <th>No. of Areas to Cover</th>
+                    <th>Minimum Credits per Area</th>
                     <th>Primary Area</th>
-                    <th>Min Credits In Primary Area</th>
+                    <th>Minimum Credits in Primary Area</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -294,8 +294,7 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
       let minCreditsPerArea   = $(this).attr('data-concen-settings-min-credits-per-area');
       let minCreditsInPrimaryArea   = $(this).attr('data-concen-settings-min-credits-in-primary-area');
 
-
-      if(editConcentration.toLowerCase() == 'general managment'){
+      if(editConcentration.toLowerCase() == 'general management'){
        $('#primary-area-minimum').addClass('d-none');
        $('#primary-area-form').addClass('d-none');
       
@@ -324,12 +323,14 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
   let minCreditsPerArea = $('#min-credits-per-area').val();
   let totalElectiveCredits = $('#total-elective-credits').val();
   let numberOfAreasToCover = $('#number-of-areas-to-cover').val();
-  let primaryAreaOption = $('#primary-area option:selected').text();
+  let primaryAreaOption =  $('#primary-area option:selected').text() === '--Select Primary Area--' ? 'NA' : $('#primary-area option:selected').text();
+;
 
-  if(primaryAreaOption === '--Select Primary Area--'){
+  if((primaryAreaOption === '--Select Primary Area--') && (editConcentration.toLowerCase() != 'general management')){
     alert('Select Primary Area');
   }
  else{
+    
   let editConcentrationsettings = {
     id:id,
     total_elective_credits: totalElectiveCredits,
@@ -357,7 +358,7 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
     });
 }
 });
-
+   
     });
     
     function showError(errors) {

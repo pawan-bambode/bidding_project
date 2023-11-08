@@ -52,12 +52,12 @@
             <thead>
                 <th>#</th>
                 <th>Student Code</th>
-                <th>Roll No</th>
+                <th>Roll No.</th>
                 <th>Student Name</th>
                 <th>Email</th>
                 <th>Program Name</th>
                 <th>Bid Points</th>
-                <th>Year Of Joining</th>
+                <th>Year of Joining</th>
                 <th>Action <input class="d-none" type="checkbox" name="student-data-checkbox" id="student-data-checkbox"></th>
             </thead>
             <tbody>
@@ -502,7 +502,7 @@ function AjaxtTable(studentDataList) {
                 showSuccess(result)
             }).catch(error =>{
                 console.log('error:::::',error.responseJSON);
-                showError(error.responseJSON)
+                showError(JSON.stringify(error.responseJSON))
             })
 
         })
