@@ -74,11 +74,12 @@ module.exports = class BiddingSession{
         .query(`SELECT id, bidding_name ,active, status FROM [${slug}].bidding_session WHERE active = 1`);
       })
     }
-    static updateBiddingSession(slug,inputJSON){
+    static updateBiddingSession(slug,inputJSON,userId){
       
       return poolConnection.then(pool =>{
         return pool.request()
         .input('input_json', sql.NVarChar(sql.MAX),inputJSON)
+        .input('last_modified_by',sql.Int,userId)
         .output('output_json', sql.NVarChar(sql.MAX))
         .output('output_flag', sql.Bit)
         .execute(`[${slug}].sp_activate_bidding_session`)

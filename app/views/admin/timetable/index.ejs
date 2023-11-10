@@ -25,8 +25,7 @@
             <div class="col-md-3">
                 <label class="form-label mb-1" for="day-select">Select Day:</label>
                 <select class="form-select form-control select2" id="day-select">
-                    <option selected disabled>--Select Day--</option>
-                    <option value="1">Monday</option>
+                    <option value="1" selected>Monday</option>
                     <option value="2">Tuesday</option>
                     <option value="3">Wednesday</option>
                     <option value="4">Thursday</option>
@@ -126,6 +125,7 @@
         let minMaxSlotId = JSON.parse(`<%-minMaxTimetableSlot%>`);
         let roomList = JSON.parse(`<%- roomList %>`);
         let timeJson = JSON.parse(`<%- timeSlotList%>`);
+        let timetableList = JSON.parse(`<%- timetableList %>`)
         let roomslot = ``;
        
         let timetableProp = {
@@ -147,6 +147,7 @@
       $('.timetable-container').html(roomslot);
       $(':root').css('--roomSlotWidth', timetable_width + 'px');
       $(':root').css('--timetableWidth', timetable_width + 56 + 'px');
+      addRoomSlotItemsToDOM(timetableList, minMaxSlotId, timetableProp, timeJson);
       $('#day-select').on('change',function(){
         let dayValue = $(this).val();
         $('.room-slots').empty();
@@ -156,44 +157,8 @@
             data:{id:dayValue},
             dataType:'JSON'
         }
-        ajaxApi(ApiObj).then(result =>{
-            console.log('values of result',result);
-            let courseList = result.courseList;
- 
-      courseList.forEach(function(course,index){
-          
-        let room_slot = document.querySelector(`.room-slots[data-room-no = "${course.room_no}"]`);
-      //  $(`.room-slots[data-room-no = "${course.room_no}"]`).empty();
-            
-            const widthOfEvent = (Number(course.end_slot_lid) - Number(course.start_slot_lid)+1) * timetableProp.pxPerSlot;
-            const leftsidemargin = (Number(course.start_slot_lid) - Number(minMaxSlotId.start_slot_lid))*timetableProp.pxPerSlot;
-       
-            let roomSlotItem = document.createElement('div');
-        
-            roomSlotItem.setAttribute("class", "room-slot-item") ;  
-            roomSlotItem.setAttribute("data-program_name", `${course.program_name}`)
-            roomSlotItem.setAttribute("data-left", `${leftsidemargin}`);
-            roomSlotItem.setAttribute("data-acad-session", `${course.acad_session}`)
-            roomSlotItem.setAttribute("data-course-name", `${course.course_name}`)
-            roomSlotItem.setAttribute("data-division", `${course.division}`)
-            roomSlotItem.setAttribute("data-batch", `${course.batch}`)
-            roomSlotItem.setAttribute("data-faculty-name", `${course.faculty_name}`)
-            roomSlotItem.setAttribute('data-start-time', `${timeJson[course.start_slot_lid - 1].start_time}`);
-            roomSlotItem.setAttribute('data-end-time', `${timeJson[course.end_slot_lid - 1].end_time}`);
-            roomSlotItem.setAttribute('data-faculty-type-abbr', `${course.faculty_type_abbr}`);
-            roomSlotItem.setAttribute('data-start-lid',`${course.start_slot_lid}`);
-            roomSlotItem.setAttribute('data-end-lid',`${course.end_slot_lid}`);
-
-            roomSlotItem.setAttribute("style", `position:absolute;left: ${leftsidemargin}px ;top: 0; text-align:center; width:${widthOfEvent}px;height:100%;background-color:#ffffff;font-size:14px;padding:5px 2px 0px 2px;border-left:1px solid black;`)
-          
-              roomSlotItem.innerHTML =  
-              ` <button type="button" class="close btn_close_custom d-none" aria-label="Close"></button>${course.program_name} - ${course.acad_session} <hr> ${course.course_name} <hr>${course.division}-${course.batch} <hr>${course.faculty_name} - (${course.faculty_type_abbr})<hr>
-                  <span class="badge bg-info start-time d-flex justify-content-center align-items-center">${timeJson[course.start_slot_lid - 1].start_time}</span>  
-          <i class="fa-solid fa-arrows-left-right" style="right:${(widthOfEvent/ 2) - 7}px;position:absolute;bottom:0;"></i><span class="badge bg-info end-time d-flex justify-content-center align-items-center">
-              ${timeJson[course.end_slot_lid - 1].end_time} </span>`;
-
-            room_slot.append(roomSlotItem);        
-      });
+        ajaxApi(ApiObj).then(result =>{          
+            addRoomSlotItemsToDOM(result.courseList, minMaxSlotId, timetableProp, timeJson);
     });
 }); 
       $('#timetable-delete-modal').on('change','.delete-timetable',function(){
@@ -327,6 +292,47 @@
         }
         simpleAlert.alert(obj);
     }
+    function createRoomSlotItem(course, minMaxSlotId, timetableProp, timeJson) {
+            const widthOfEvent = (Number(course.end_slot_lid) - Number(course.start_slot_lid) + 1) * timetableProp.pxPerSlot;
+            const leftsidemargin = (Number(course.start_slot_lid) - Number(minMaxSlotId.start_slot_lid)) * timetableProp.pxPerSlot;
+
+            let roomSlotItem = document.createElement('div');
+
+            roomSlotItem.setAttribute("class", "room-slot-item");
+            roomSlotItem.setAttribute("data-program_name", `${course.program_name}`)
+            roomSlotItem.setAttribute("data-left", `${leftsidemargin}`);
+            roomSlotItem.setAttribute("data-acad-session", `${course.acad_session}`)
+            roomSlotItem.setAttribute("data-course-name", `${course.course_name}`)
+            roomSlotItem.setAttribute("data-division", `${course.division}`)
+            roomSlotItem.setAttribute("data-batch", `${course.batch}`)
+            roomSlotItem.setAttribute("data-faculty-name", `${course.faculty_name}`)
+            roomSlotItem.setAttribute('data-start-time', `${timeJson[course.start_slot_lid - 1].start_time}`);
+            roomSlotItem.setAttribute('data-end-time', `${timeJson[course.end_slot_lid - 1].end_time}`);
+            roomSlotItem.setAttribute('data-faculty-type-abbr', `${course.faculty_type_abbr}`);
+            roomSlotItem.setAttribute('data-start-lid',`${course.start_slot_lid}`);
+            roomSlotItem.setAttribute('data-end-lid',`${course.end_slot_lid}`);
+   
+            roomSlotItem.setAttribute("style", `position:absolute;left: ${leftsidemargin}px ;top: 0; text-align:center; width:${widthOfEvent}px;height:100%;background-color:#ffffff;font-size:14px;padding:5px 2px 0px 2px;border-left:1px solid black;`)
+
+            roomSlotItem.innerHTML =
+                `<button type="button" class="close btn_close_custom d-none" aria-label="Close"></button>${course.program_name} - ${course.acad_session} <hr> ${course.course_name} <hr>${course.division}-${course.batch} <hr>${course.faculty_name} - (${course.faculty_type_abbr})<hr>
+                <span class="badge bg-info start-time d-flex justify-content-center align-items-center">${timeJson[course.start_slot_lid - 1].start_time}</span>  
+                <i class="fa-solid fa-arrows-left-right" style="right:${(widthOfEvent / 2) - 7}px;position:absolute;bottom:0;"></i><span class="badge bg-info end-time d-flex justify-content-center align-items-center">
+                    ${timeJson[course.end_slot_lid - 1].end_time} </span>`;
+
+            return roomSlotItem;
+}
+
+function addRoomSlotItemsToDOM(courseList, minMaxSlotId, timetableProp, timeJson) {
+    courseList.forEach(function (course, index) {
+        let room_slot = document.querySelector(`.room-slots[data-room-no = "${course.room_no}"]`);
+        let roomSlotItem = createRoomSlotItem(course, minMaxSlotId, timetableProp, timeJson);
+        room_slot.append(roomSlotItem);
+    });
+}
+
+
+
 </script>
   
 <%- include('../partials/footerEnd.ejs') %>

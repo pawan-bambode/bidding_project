@@ -5,12 +5,14 @@ const xlsx = require('xlsx');
 
 module.exports = {
     getTimetablePage : (req, res) => {
-       Promise.all([timetable.getProgramList(res.locals.slug,res.locals.biddingId),timetable.getMinAndMaxTimetableTime(res.locals.slug,res.locals.biddingId),timetable.getRoomList(res.locals.slug,res.locals.biddingId),timetable.getTimeslot()]).then(result =>{    
+      let day = 1;
+       Promise.all([timetable.getProgramList(res.locals.slug,res.locals.biddingId),timetable.getMinAndMaxTimetableTime(res.locals.slug,res.locals.biddingId),timetable.getRoomList(res.locals.slug,res.locals.biddingId),timetable.getTimeslot(),timetable.getTimetableByDayId(day,res.locals.slug,res.locals.biddingId)]).then(result =>{    
         res.render('admin/timetable/index.ejs',{
              programList:result[0].recordset,
              minMaxTimetableSlot:JSON.stringify(result[1].recordset[0]),
              roomList:JSON.stringify(result[2].recordset),
-             timeSlotList:JSON.stringify(result[3].recordset)   
+             timeSlotList:JSON.stringify(result[3].recordset),
+             timetableList:JSON.stringify(result[4].recordset)    
             })   
           })
     },
