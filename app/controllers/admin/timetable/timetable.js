@@ -69,7 +69,7 @@ module.exports = {
             const timetableDataWithColumnHypen = timetableJsonData.map(item =>{
                             return {
                               program_id: item.programId,
-                              acad_session: item.acadSession.replace(/\s+/g,' ').trim(),
+                              acad_session: item.acadSession.replace(/\s+/g, ' ').trim(),
                               course_name: item.courseName.replace(/\s+/g,' ').trim(),
                               division: item.division.replace(/\s+/g,' ').trim(),
                               batch: item.batch,
@@ -83,7 +83,7 @@ module.exports = {
                             };
                           })
                           
-            let timetableDataValue = {timetable: timetableDataWithColumnHypen}
+            let timetableDataValue = JSON.stringify({timetable: timetableDataWithColumnHypen})
             timetable.uploadTimetable(res.locals.slug,timetableDataValue,res.locals.userId,biddingId).then(result =>{
             res.status(200).json(JSON.parse(result.output.output_json));
            }).catch(error =>{

@@ -72,7 +72,8 @@ module.exports = {
                 req.session.firstName = userData.recordset[0].firstname;
                 req.session.lastName = userData.recordset[0].lastname;
                 req.session.email = userData.recordset[0].email;
-                req.session.subDomain = 'asmsoc-mum';
+                console.log('values of req.headers',req.headers.host.split('.')[0]);
+                req.session.subDomain = req.headers.host.split('.')[0];
             
                 req.session.permissions = 'admin';
                 req.session.modules = 'admin';

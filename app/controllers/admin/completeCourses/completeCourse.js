@@ -2,6 +2,8 @@ const completeCourses = require('../../../models/admin/completeCourses/completec
 const isJsonString = require('../../../utils/util');
 const excel = require('excel4node');
 const xlsx = require('xlsx');
+const path = require('path');
+const acadSession = require('../../../controllers/admin/acadsession/acadsession')
 
 module.exports = {
 
@@ -13,32 +15,49 @@ module.exports = {
             })
         })
         },
-        generateExcel: (req, res) => {
-         const workbook = new excel.Workbook();
-         const worksheet = workbook.addWorksheet('Sheet1');
+        generateExcel:  (req, res) => {
+     
+const workbook = new excel.Workbook();
+const worksheet = workbook.addWorksheet('Sheet1');
+const acadsessionList =  acadSession.getAcadSessionList(req,res);
+console.log('values of acadSession ON RETURN VALUES',acadsessionList);
+const dropdownOptions = ['Option 1', 'Option 2', 'Option 3'];
+
+worksheet.addDataValidation({
+  type: 'list',
+  allowBlank: true,
+  sqref: 'B2', 
+  formulas: [dropdownOptions.join(',')]
+});
+
+worksheet.column(1).setWidth(15); 
+worksheet.column(2).setWidth(20); 
+worksheet.column(3).setWidth(20);
+worksheet.column(4).setWidth(40);
+
+const headerStyle = workbook.createStyle({
+  font: {
+    bold: true
+  }
+});
+
+worksheet.cell(1, 1).string('studentSapId').style(headerStyle);
+worksheet.cell(1, 2).string('acadSession').style(headerStyle);
+worksheet.cell(1, 3).string('courseId').style(headerStyle);
+worksheet.cell(1, 4).string('courseName').style(headerStyle);
+
+  worksheet.cell(i, 2).string('').style({ dataValidation: { showDropDown: true } });
+  
+workbook.write(path.join(__dirname, '../../../../excelFile/'+'sampleForImportCompleteCourses.xlsx'), (err, stats) => {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log('Excel file with dropdown created successfully');
+  }
+});
+
         
-         worksheet.column(1).setWidth(15);
-         worksheet.column(2).setWidth(15);
-         worksheet.column(3).setWidth(15);
-         worksheet.column(4).setWidth(30);
 
-         worksheet.cell(1, 1).string('studentSapId').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-         worksheet.cell(1, 2).string('trimester').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-         worksheet.cell(1, 3).string('courseId').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-         worksheet.cell(1, 4).string('courseName').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-              
-         const filePath = __dirname + '/sampleForImportCompleteCourses.xlsx';
-
-            workbook.write(filePath, (err, stats) => {
-              if (err) {
-                return res.status(500).send('Error generating Excel file');
-              }
-              res.sendFile(filePath, (err) => {
-                if (err) {
-                  return res.status(500).send('Error sending Excel file');
-                }
-              });
-            });
           },
 
           readExcelFile :(req,res) =>{
@@ -115,6 +134,10 @@ module.exports = {
                }).catch(error => {
                    throw error
                })
+       },
+       download: (req,res) =>{      
+        const filePath = path.join(__dirname, '../../../../excelFile/sampleForImportCompleteCourses.xlsx');
+        res.download(filePath);
        }
         }      
           

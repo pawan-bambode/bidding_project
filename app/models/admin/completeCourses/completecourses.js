@@ -237,4 +237,6 @@ static getCountFilterByCourseId(slug,biddingId,programId,sessionId,courseId,show
         WHERE c.active = 1 AND c.bidding_session_lid =  @biddingId AND program_id = @programId AND c.sap_acad_session_id = @sessionId AND c.course_id = @courseId`)
       })
 }
+
+
 }

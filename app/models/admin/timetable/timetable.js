@@ -7,6 +7,8 @@ const { use } = require('../../../routers/admin/timetable/timetable');
 module.exports = class timetable {
 
     static uploadTimetable(slug,electiveTimetable,userId,biddingId){
+        electiveTimetable = JSON.parse(electiveTimetable);
+        console.log('values of electiveTimetableTAble',JSON.stringify(electiveTimetable));
         return poolConnection.then(pool =>{
             return pool.request()
             .input('input_json', sql.NVarChar(sql.MAX),JSON.stringify(electiveTimetable))
