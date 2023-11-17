@@ -90,21 +90,29 @@ module.exports = class timetable {
             return pool.request().query(`SELECT CONVERT(NVARCHAR,start_time, 0) as start_time,CONVERT(NVARCHAR,end_time, 0)end_time FROM [dbo].slot_interval_timings`)
         })
     }
-    static getTimetableByDayId(dayId,slug,biddingId){
+    static getTimetableByDayId(dayId,acadSession,slug,biddingId){ 
         return poolConnection.then(pool =>{
-            console.log('values of dayId',dayId);
-            console.log('values of biddingId',biddingId);
-            console.log('values of slug',slug);
             return pool.request()
             .input('biddingId',sql.Int,biddingId)
             .input('dayId',sql.Int,dayId)
+            .input('acadSession',sql.Int,acadSession)
             .query(`SELECT t.faculty_name,p.program_name,c.acad_session,c.course_name,db.division,db.batch,t.faculty_type_abbr ,
             start_slot_lid,end_slot_lid,t.room_no 
             from [${slug}].timetable t 
             INNER JOIN [${slug}].programs p ON t.program_lid = p.id
             INNER JOIN [${slug}].division_batches db ON t.division_batch_lid = db.id
             INNER JOIN [${slug}].courses c ON c.id = db.course_lid
-            WHERE t.active = 1 AND t.bidding_session_lid = @biddingId AND t.day_lid = @dayId`)
+            INNER JOIN [dbo].acad_sessions ad ON c.sap_acad_session_id = ad.sap_acad_session_id
+            WHERE t.active = 1 AND t.bidding_session_lid = @biddingId AND t.day_lid = @dayId AND ad.sap_acad_session_id = @acadSession`)
+        })
+    }
+
+    static getDropdownAcadSessionList(slug,biddingId){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`SELECT ad.acad_session ,ps.sap_acad_session_id FROM  [${slug}].program_sessions ps
+            INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id WHERE ps.bidding_session_lid = @biddingId`)
         })
     }
     }

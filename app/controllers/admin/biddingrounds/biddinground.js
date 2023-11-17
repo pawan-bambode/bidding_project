@@ -1,0 +1,52 @@
+const biddingRound = require('../../../models/admin/biddinground/biddinground')
+const isJsonString = require('../../../utils/util')
+module.exports = {
+    getPage : (req,res) =>{
+        Promise.all([biddingRound.getBiddingRounds(res.locals.slug,res.locals.biddingId),biddingRound.getPredefineBiddingRounds(res.locals.slug,res.locals.biddingId),biddingRound.getStudentsBiddingRounds(res.locals.slug,res.locals.biddingId),biddingRound.getCouresBiddingRounds(res.locals.slug,res.locals.biddingId)]).then(result =>{
+            res.render('admin/biddingrounds/index.ejs',{
+        
+             biddingRoundList:result[0].recordset,
+             pageCount:result[0].recordset.length,
+             biddingPredefineRounds:result[1].recordset,
+             biddingRoundsStudents : result[2].recordset,
+             biddingRoundCourseList : result[3].recordset
+            })
+        })
+    },
+    create: (req, res) => {
+        biddingRound.save(req.body.inputJSON,res.locals.slug, res.locals.userId,req.body.biddingSessionId)
+            .then(result => {
+                res.status(200).json(JSON.parse(result.output.output_json));
+            })
+            .catch(error => {
+               console.log('values of error',error);
+                if (isJsonString.isJsonString(error.originalError.info.message)) {
+                    res.status(500).json(JSON.parse(error.originalError.info.message));
+                } else {
+                    res.status(500).json({
+                        status: 500,
+                        description: error.originalError.info.message,
+                        data: []
+                    });
+                }
+            });
+    },
+
+    delete: (req, res) => {
+        biddingRound.delete(req.body.biddingRoundId, res.locals.slug, res.locals.userId,req.body.biddingSessionId)
+            .then(result => {
+                res.status(200).json(JSON.parse(result.output.output_json));
+            })
+            .catch(error => {
+                if ((isJsonString.isJsonString(error.originalError.info.message))) {
+                    res.status(500).json(JSON.parse(error.originalError.info.message));
+                } else {
+                    res.status(500).json({
+                        status: 500,
+                        description: error.originalError.info.message,
+                        data: []
+                    });
+                }
+            });
+    },
+}

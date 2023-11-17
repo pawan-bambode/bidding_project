@@ -78,7 +78,6 @@ module.exports = {
         });
       },
       update: (req, res) => {
-        console.log('values of req.body',req.body);
         divisionBatch.update(req.body.editDivisionBatches, req.body.biddingSessionId, res.locals.userId, res.locals.slug)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));

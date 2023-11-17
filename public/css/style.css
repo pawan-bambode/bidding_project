@@ -2046,3 +2046,29 @@ margin: auto;
     min-height: 215px;
     max-height: 215px;
 }
+#total-student-bidding-rounds{
+    z-index: 2050;
+}
+
+#total-student-bidding-rounds .modal-body{
+    overflow-y: scroll; 
+    max-height: 300px; 
+}
+#total-courses-bidding-rounds{
+    z-index: 2050;
+}
+
+#total-courses-bidding-rounds .modal-body {
+    overflow-y: scroll;
+    max-height: 300px;
+}
+#bidding-rounds-add-date-time {
+    z-index: 2051;
+}
+
+.import-bidding-rounds-table  thead th{
+    background-color: var(--primary-table-bg);
+}
+.import-bidding-rounds-table  tbody tr:nth-child(odd){
+ background-color: var(--primary-table-bg);
+}

@@ -22,10 +22,21 @@
  
     <div class="card-body table-responsive">
         <div class="d-flex justify-content-between">
-            <div class="col-md-3">
+            <div class="col-md-3 ms-5">
+                <label class="form-label mb-1" for="timetable-acad-session">Select Acad Session:</label>
+                <select class="form-select form-control select2" id="timetable-acad-session">
+                    <option selected disabled>--Select Acad Session-- </option>
+                     <%for(let acadSession of dropdownAcadSessionList) { %>
+                        <option value="<%- acadSession.sap_acad_session_id %>"><%- acadSession.acad_session %></option>
+                    <% } %>
+                    
+                </select>
+            </div>
+            <div class="col-md-3 ms-5">
                 <label class="form-label mb-1" for="day-select">Select Day:</label>
                 <select class="form-select form-control select2" id="day-select">
-                    <option value="1" selected>Monday</option>
+                    <option selected disabled>--Select Day--</option>
+                    <option value="1">Monday</option>
                     <option value="2">Tuesday</option>
                     <option value="3">Wednesday</option>
                     <option value="4">Thursday</option>
@@ -125,7 +136,7 @@
         let minMaxSlotId = JSON.parse(`<%-minMaxTimetableSlot%>`);
         let roomList = JSON.parse(`<%- roomList %>`);
         let timeJson = JSON.parse(`<%- timeSlotList%>`);
-        let timetableList = JSON.parse(`<%- timetableList %>`)
+
         let roomslot = ``;
        
         let timetableProp = {
@@ -147,14 +158,21 @@
       $('.timetable-container').html(roomslot);
       $(':root').css('--roomSlotWidth', timetable_width + 'px');
       $(':root').css('--timetableWidth', timetable_width + 56 + 'px');
-      addRoomSlotItemsToDOM(timetableList, minMaxSlotId, timetableProp, timeJson);
+    
       $('#day-select').on('change',function(){
         let dayValue = $(this).val();
+        let acadSession = $('#timetable-acad-session').val();
+
+      
         $('.room-slots').empty();
+         
         let ApiObj = {
             url:'/admin/timetable/by-day',
             type:'POST',
-            data:{id:dayValue},
+            data:{
+               id:dayValue,
+               acadSessionId:acadSession 
+            },
             dataType:'JSON'
         }
         ajaxApi(ApiObj).then(result =>{          

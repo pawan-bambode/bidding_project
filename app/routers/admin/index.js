@@ -26,6 +26,7 @@ function AdminRoute(app) {
     const preRequisites = require('../../routers/admin/preRequisite/prerequisite')
     const timetable = require('../../routers/admin/timetable/timetable')
     const student = require('../../routers/student/student');
+    const binddingRound = require('../../routers/admin/biddingrounds/biddingrounds');
     
     app.use('/admin/', isLoggedIn, checkPermission, adminDashboard);
     app.use('/admin/', courseWorkload);
@@ -43,6 +44,7 @@ function AdminRoute(app) {
     app.use('/admin/',completeCourse);
     app.use('/admin/',preRequisites);
     app.use('/admin/',timetable);
+    app.use('/admin/',binddingRound);
 }
 
 module.exports = AdminRoute;

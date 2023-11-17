@@ -81,7 +81,6 @@ module.exports = {
            })   
           },
           delete :(req,res) =>{
-            console.log('values of req.body',req.body);
             preRequisites.delete(req.body.id,res.locals.slug,res.locals.biddingId,res.locals.userId).then(result =>{
                res.status(200).json(JSON.parse(result.output.output_json));
             }).catch(error =>{
