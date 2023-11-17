@@ -112,6 +112,45 @@
         </div>
     </div>
   </div>
+
+  <div class="modal" id="update-total-student-bidding-rounds" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update Bidding Rounds </h3>
+                <div class="d-flex justify-content-between">
+                <h4 class="px-3">Total Selected Students  :<span id="update-total-selected-students">0</span></h4>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+            </div>
+            <div class="modal-body">
+                
+                <table class="table table-responsive custom_row table-bordered mt-4 custom-table">
+                    <thead>
+                        <th>Id <input type="checkbox" name="bidding-rounds-checkbox" id="update-bidding-rounds-checkbox"></th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Program</th>
+                    </thead>
+                <tbody>
+              <% for(let student of biddingRoundsStudents) { %>
+                  <tr>
+                    <td><input type="checkbox" class="d-none update-student-sap-id-bidding-rounds"><%- student.sap_id %></td>
+                    <td><%- student.student_name %></td>
+                    <td><%- student.email %></td>
+                    <td><%- student.program_name %></td>
+                  </tr>
+                <% } %>
+                </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success disabled" data-bs-dismiss="modal" id="update-total-student">Update</button>
+            </div>
+        </div>
+    </div>
+  </div>
+  
   <div class="modal" id="total-courses-bidding-rounds" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -143,6 +182,42 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-success disabled" id="total-course-bidding-rounds" data-bs-dismiss="modal">Save</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="modal" id="update-total-courses-bidding-rounds" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update  Bidding Rounds</h3>
+                <div class="d-flex justify-content-between">
+                  <h4>Total Selected Courses :<span id="update-total-selected-courses">0</span></h4>
+                  <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>  
+            </div>
+            <div class="modal-body">
+                <table class="table table-responsive custom_row table-bordered mt-4 custom-table">
+                    <thead>
+                        <th>Name</th>
+                        <th>Credits</th>
+                        <th>Action <input type="checkbox" name="update-bidding-rounds-checkbox" id="update-bidding-rounds-course-checkbox"></th>
+                    </thead>
+                <tbody>
+              <% for(let biddingRoundCourse of biddingRoundCourseList) { %>
+                  <tr>
+                    <td class="d-none"><%-biddingRoundCourse.id %></td>
+                    <td><%- biddingRoundCourse.course_name %></td>
+                    <td><%- biddingRoundCourse.credits %></td>
+                    <td><input type="checkbox" class="update-bidding-round-courses"> </td>
+                  </tr>
+                <% } %>
+                </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success disabled" id="update-course-bidding-rounds" data-bs-dismiss="modal">Update</button>
             </div>
         </div>
     </div>
@@ -236,21 +311,21 @@
                         <div class="col-md-6 d-flex">          
                           
                                 <div class="input-group  mb-3">
-                                    <button class="btn btn-danger text-white" type="button"  data-bs-target="#total-student-bidding-rounds" data-bs-toggle="modal" >Total Students</button>
-                                    <input type="text" class="form-control" placeholder="total students"  disabled>
+                                    <button class="btn btn-danger text-white" type="button"  data-bs-target="#update-total-student-bidding-rounds" data-bs-toggle="modal" >Total Students</button>
+                                    <input type="text" class="form-control" placeholder="total students" id="total-students"  disabled>
                                 </div>
                          </div>
                         <div class="col-md-6">
                             <div class="input-group mb-3">
-                                <button class="btn btn-danger text-white" type="button" data-bs-target="#total-courses-bidding-rounds" data-bs-toggle="modal" >Total Courses</button>
-                                <input type="text" class="form-control" placeholder="total courses"   disabled>
+                                <button class="btn btn-danger text-white" type="button" data-bs-target="#update-total-courses-bidding-rounds" data-bs-toggle="modal" >Total Courses</button>
+                                <input type="text" class="form-control" placeholder="total courses" id="total-courses"  disabled>
                             </div>
                         </div>
                   </div>   
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-primary" id="updateProgram">Update</button>
+                    <button class="btn btn-primary" id="update-bidding-rounds">Update</button>
                 </div>
             </div>
         </div>
@@ -259,6 +334,25 @@
     $(document).ready(function() {
         let pageCount = `<%- pageCount %>`;
         $('#page-no').html(pageCount);
+        $('#update-total-courses-bidding-rounds').on('change','#update-bidding-rounds-course-checkbox',function(){
+           if(this.checked){
+             $('.update-bidding-round-courses').attr('checked','checked');
+             $('#update-course-bidding-rounds').removeClass('disabled');
+             let totalCourseBiddingRounds =  $('#update-total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length; 
+            $('#update-total-selected-courses').html(totalCourseBiddingRounds);
+           }
+        })
+        $('#update-total-student-bidding-rounds').on('change','#update-bidding-rounds-checkbox',function(){
+           if(this.checked){
+             $('.update-student-sap-id-bidding-rounds').removeClass('d-none');
+             $('.update-student-sap-id-bidding-rounds').attr('checked','checked');
+             $('#update-total-student').removeClass('disabled');
+             let totalStudentBiddingRounds =  $('#update-total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length; 
+            $('#update-total-selected-students').html(totalStudentBiddingRounds);
+           }else{
+            $('.update-student-sap-id-bidding-rounds').addClass('d-none');
+           }
+        })
         $('#total-student-bidding-rounds').on('change','#bidding-rounds-checkbox', function() {
         if (this.checked) {
            $('.student-sap-id-bidding-rounds').removeClass('d-none');
@@ -277,6 +371,19 @@
         let count = $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
            $('#total-selected-students').html(count);
     })
+
+    
+    $('#update-total-student-bidding-rounds').on('change','.update-student-sap-id-bidding-rounds',function(){
+        let count = $('#update-total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+           $('#update-total-selected-students').html(count);
+    })
+
+        
+    $('#update-total-courses-bidding-rounds').on('change','.update-bidding-round-courses',function(){
+        let count = $('#update-total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+           $('#update-total-selected-courses').html(count);
+    })
+
     $('#total-courses-bidding-rounds').on('change','#bidding-rounds-course-checkbox', function() {
         if (this.checked) {
            $('.bidding-round-courses').attr('checked','checked');
@@ -335,8 +442,7 @@
 
             $(this).remove();
             });
-         $('#total-student-bidding-rounds').on('show.bs.modal',function(event){
-            
+         $('#total-student-bidding-rounds').on('show.bs.modal',function(event){ 
             let dataBiddingRoundId = $(event.relatedTarget).closest('tr').attr('data-bidding-round-id');
             $(this).attr('data-bidding-round-id',dataBiddingRoundId);
             $('#bidding-rounds-checkbox').prop('checked', false);
@@ -360,7 +466,19 @@
                 }
             });   
        })
-
+       $('#update-total-student-bidding-rounds').on('click','#update-total-student-bidding-rounds',function(){
+        let totalStudentBiddingRoundsCounts =  $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length; 
+        let dataBiddingRoundId =  $('#total-student-bidding-rounds').attr('data-bidding-round-id');
+      
+         $('#add-bidding-rounds-modal .modal-body .table-responsive tbody tr').each(function(index,element) {
+                let biddingRoundId = $(element).attr('data-bidding-round-id');
+                if(($(element).attr('data-bidding-round-id')) == dataBiddingRoundId){
+                $(this).attr('data-total-student-counts', totalStudentBiddingRoundsCounts);
+                $(element).children('td.total-course-count').removeClass('disabled');
+                $(this).children('td.total-students-count').html(totalStudentBiddingRoundsCounts)        
+                }
+            });   
+       })
        $('#total-courses-bidding-rounds').on('click','#total-course-bidding-rounds',function(){
         let totalCoursesBiddingRoundsCounts =  $('#total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length; 
         let dataBiddingRoundId =  $('#total-student-bidding-rounds').attr('data-bidding-round-id');
@@ -426,7 +544,17 @@
             }
            
         });
+        $('#update-total-student-bidding-rounds').on('click','#update-total-student',function(){
+            let totalStudentBiddingRounds =  $('#update-total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length; 
+            $('#total-students').val(totalStudentBiddingRounds);
+            $('#update-total-selected-students').html(totalStudentBiddingRounds);
+        });
 
+        $('#update-total-courses-bidding-rounds').on('click','#update-course-bidding-rounds',function(){
+            let totalCoursesBiddingRounds =  $('#update-total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length; 
+            $('#total-courses').val(totalCoursesBiddingRounds);
+            $('#update-total-selected-courses').html(totalCoursesBiddingRounds);
+        });
         $(document).on('click','#import-bidding-rounds',function(){
             let importBiddingRoundsArray = [];
           let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
@@ -503,6 +631,35 @@
             })
 
         })
+        $('#edit-bidding-rounds').on('click','#update-bidding-rounds',function(){
+            let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
+            let edit_program  = {};
+            let program_name = $('#program_name').val().replace(/\s+/g, ' ').trim();
+            let program_code = $('#program_code').val();
+            let program_abbr = $('#program_abbr').val().replace(/\s+/g, ' ').trim();
+            let program_id   = $('#program_id').val();
+
+            edit_program.program_name = program_name;
+            edit_program.id = program_id;
+            edit_program.program_code = program_code;
+            edit_program.program_abbr = program_abbr;
+            edit_program.bidding_session_lid = biddingSessionId;
+        
+            let ApiObj = {
+                type:'POST',
+                url:'/admin/program/update',
+                data: edit_program,
+                dataType: 'JSON' 
+                }
+                ajaxApi(ApiObj).then(result => {
+                    console.log('response::::::::::',result)
+                    showSuccess(result)
+                }).catch(error => {
+                    console.log('ERROR::::::::::',error.responseJSON)
+                    console.log('error',error);
+                    showError(error.responseJSON)
+                })
+        });
     })
    
 </script>

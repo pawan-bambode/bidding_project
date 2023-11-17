@@ -2072,3 +2072,17 @@ margin: auto;
 .import-bidding-rounds-table  tbody tr:nth-child(odd){
  background-color: var(--primary-table-bg);
 }
+#update-total-student-bidding-rounds .modal-body  {
+    overflow-y: scroll;
+    max-height: 300px;
+}
+#update-total-student-bidding-rounds{
+    z-index: 2052;
+}
+#update-total-courses-bidding-rounds {
+    z-index: 2052;
+}
+#update-total-courses-bidding-rounds .modal-body{
+    overflow-y: scroll;
+    max-height: 300px;
+}
