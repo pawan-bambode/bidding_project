@@ -13,8 +13,10 @@ module.exports = class BiddingRound
  static getPredefineBiddingRounds(slug){
     return poolConnection.then(pool =>{
         return pool.request()
-        .query(`SELECT pbr.id,pbr.bidding_round_name FROM [${slug}].predefine_bidding_rounds pbr
-        LEFT JOIN [${slug}].round_settings rs ON rs.bidding_round_lid = pbr.id WHERE  (rs.round_name IS NULL  OR rs.active = 0)`)
+        .query(`SELECT esr.id,esr.round_name FROM [${slug}].elective_selection_rounds esr  WHERE esr.id NOT IN( SELECT rs.round_lid
+            FROM [${slug}].round_settings rs
+            INNER JOIN [sbm-mum].bidding_session bs ON bs.id = rs.bidding_session_lid
+            WHERE rs.active = 1 AND bs.status =1 )`)
     })
  }
  static getStudentsBiddingRounds(slug,biddingId){
@@ -49,6 +51,17 @@ static delete(programlid,slug,userId,biddingSessionId){
         .input('bidding_session_lid',sql.Int,biddingSessionId)
         .output('output_json', sql.NVarChar(sql.MAX))
         .execute(`[${slug}].[sp_delete_round_settings]`)
+    })
+}
+static update(inputJSON,slug,userid,biddingSessionId){
+    
+    return poolConnection.then(pool =>{
+        return pool.request().input('input_json',sql.NVarChar(sql.MAX),JSON.stringify(inputJSON))
+        .input('last_modified_by', sql.Int, userid)
+        .input('bidding_session_lid',sql.Int,biddingSessionId)
+        .output('output_json', sql.NVarChar(sql.MAX))
+        .execute(`[${slug}].[sp_update_round_settings]`)
+        
     })
 }
 }

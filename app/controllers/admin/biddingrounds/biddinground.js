@@ -14,7 +14,7 @@ module.exports = {
         })
     },
     create: (req, res) => {
-        biddingRound.save(req.body.inputJSON,res.locals.slug, res.locals.userId,req.body.biddingSessionId)
+        biddingRound.save(req.body.inputJSON,res.locals.slug, res.locals.userId,res.locals.biddingId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
@@ -49,4 +49,23 @@ module.exports = {
                 }
             });
     },
+    update: (req, res) => {
+        
+        biddingRound.update(req.body,res.locals.slug, res.locals.userId,res.locals.biddingId)
+            .then(result => {
+                res.status(200).json(JSON.parse(result.output.output_json));
+            })
+            .catch(error => {
+                console.log('values of error ',error);
+                if (isJsonString.isJsonString(error.originalError.info.message)) {
+                    res.status(500).json(JSON.parse(error.originalError.info.message));
+                } else {
+                    res.status(500).json({
+                        status: 500,
+                        description: error.originalError.info.message,
+                        data: []
+                    });
+                }
+            });
+    }
 }
