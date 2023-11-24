@@ -3,6 +3,7 @@ const xlsxPopulate = require('xlsx-populate');
 const xlsx = require('xlsx');
 const studentRawData = require('../../../models/admin/student/student');
 const isJsonString = require('../../../utils/util');
+const hash = require('../../../utils/hash');
 
 module.exports = {
   generateExcelStudent: (req, res) => {
@@ -18,6 +19,7 @@ module.exports = {
     worksheet.column(7).setWidth(20);
     worksheet.column(8).setWidth(20);
     worksheet.column(9).setWidth(25);
+    worksheet.column(10).setWidth(20);
 
     worksheet.cell(1, 1).string('studentSapId').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
     worksheet.cell(1, 2).string('rollNo').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
@@ -28,6 +30,7 @@ module.exports = {
     worksheet.cell(1, 7).string('yearOfJoining').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
     worksheet.cell(1, 8).string('SpecilizationName').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
     worksheet.cell(1, 9).string('previousElectiveCredits').style({font:{bold:true},alignment:{horizontal:'center',vertical:'center'}});
+    worksheet.cell(1,10).string('dateofBirthDate').style({font:{bold:true},alignment:{horizontal:'center',vertical:'center'}});
     const filePath = __dirname + '/sampleForImportStudent.xlsx';
     workbook.write(filePath, (err, stats) => {
       if (err) {
@@ -40,30 +43,70 @@ module.exports = {
       });
     });
   },
-  readExcelFile :(req,res) =>{
+  readExcelFile : async (req,res) =>{
     let excelFileBufferData = req.file.buffer;
     let biddingId = res.locals.biddingId;
     let excelFileDataWorkbook = xlsx.read(excelFileBufferData);
     const sheetName = excelFileDataWorkbook.SheetNames[0];
     const sheet = excelFileDataWorkbook.Sheets[sheetName];
     const studentJsonData = xlsx.utils.sheet_to_json(sheet);
-    const studentDataWithColumnHypen = studentJsonData.map(item =>{
-                    return {
-                      sap_id: item.studentSapId,
-                      roll_no: item.rollNo.toString(),
-                      student_name: item.studentName.replace(/\s+/g,' ').trim(),
-                      email: item.email.replace(/\s+/g,' ').trim(),
-                      program_id: item.programId,
-                      bid_points: item.bidPoints,
-                      year_of_joining: item.yearOfJoining,
-                      concentration_name: item.SpecilizationName.replace(/\s+/g,' ').trim(),
-                      previous_elective_credits:item.previousElectiveCredits
-                    };
-                  })
+    let jsonArr = [];
+    const hashPasswords = async (data) => {
+      const hashedPasswords = await Promise.all(
+        data.map(async (item) => {
+          let hashedPassword = '';
+          if(item.dateofBirthDate){
+           hashedPassword = await hash.hashPassword(convertExcelDateToJSDate(item.dateofBirthDate.toString()));
+          }
+          else{
+            hashedPassword = await hash.hashPassword('pass@123');
+          }
+          return {
+            sap_id: item.studentSapId,
+            roll_no: item.rollNo.toString(),
+            student_name: item.studentName.replace(/\s+/g,' ').trim(),
+            email: item.email.replace(/\s+/g,' ').trim(),
+            program_id: item.programId,
+            bid_points: item.bidPoints,
+            year_of_joining: item.yearOfJoining,
+            concentration_name: item.SpecilizationName.replace(/\s+/g,' ').trim(),
+            previous_elective_credits:item.previousElectiveCredits,
+            password: hashedPassword
+          };
+        })
+      );
+      return hashedPasswords;
+    };
+    const convertExcelDateToJSDate = (excelDate) => {
+      const millisecondsPerDay = 24 * 60 * 60 * 1000; 
+      const epoch = new Date(Date.UTC(1900, 0, 1)); 
+      const daysSinceEpoch = excelDate -2; 
+      const millisecondsSinceEpoch = daysSinceEpoch * millisecondsPerDay;
+      return  formatJSDate(new Date(epoch.getTime() + millisecondsSinceEpoch));
+  };
+  const formatJSDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-based
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${day}${month}${year}`;
+};
+
+// Usage example
+const jsDate = new Date('Tue Oct 20 1998 05:30:00 GMT+0530 (India Standard Time)');
+const formattedDate = formatJSDate(jsDate);
+console.log(formattedDate); // Output: 20101998
+
+    const studentDataWithColumnHypen = await hashPasswords(studentJsonData);
     let studentRawDataValue = {student_data: studentDataWithColumnHypen}
+    console.log('values of studenta',studentDataWithColumnHypen);
+    
     studentRawData.uploadStudentRawData(res.locals.slug,JSON.stringify(studentRawDataValue),res.locals.userId,biddingId).then(result =>{
-    res.status(200).json(JSON.parse(result.output.output_json));
+      console.log('values of ',result);
+      res.status(200).json(JSON.parse(result.output.output_json));
+    
    }).catch(error =>{
+    console.log('values of error',error);
        if(isJsonString.isJsonString(error.originalError.info.message)){
         res.status(500).json(JSON.parse(error.originalError.info.message));
        }

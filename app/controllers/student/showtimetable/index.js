@@ -1,9 +1,22 @@
 const { Result } = require('express-validator');
 const student = require('../../../models/Students');
 const studentUtil = require('../../../utils/timetableforstudent');
+const programSession = require('../../../models/admin/programs/programsession')
+
 
 module.exports = {
-  showtimetable: (req, res) => {
+
+  getDashBoard : (req ,res) =>{
+    Promise.all([programSession.getProgramSessionCreditsPoint(res.locals.slug,res.locals.biddingId),student.getStudentDetail(res.locals.slug,res.locals.biddingId,res.locals.username),student.getConcentrationList(res.locals.slug,res.locals.biddingId)]).then(result =>{
+      res.render('student/dashboard/index', {
+        currentFormStep: 0,
+        maxYearlyCredits:result[0].recordset[0].max_yearly_credits,
+        bidPoints:result[1].recordset,
+        concentrationList :result[2].recordset
+    })
+    })
+},
+    showtimetable: (req, res) => {
     Promise.all([student.getSlotForShowTimetable(), student.getDistintRoomList(), student.getTimeslot(),student.fetchAllCourseSelByStudent('15048'),student.getSlotDayId('1'),student.getSlotDayId(2),student.getSlotDayId(3),student.getSlotDayId(4),student.getSlotDayId(5),student.getSlotDayId(6)]).then(result => {
       res.render('admin/students/showTimetableStudent.ejs', {
         minMaxSlotId: JSON.stringify(result[0].recordsets[0]),

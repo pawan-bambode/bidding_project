@@ -51,32 +51,41 @@ module.exports = {
 
         try {
             const sess = req.session;
-                let userData = await User.getUserDetails(req.body.username);
-
-                if (req.body.username == '') {
+                let userData = await User.getUserDetails(req.body.username,res.locals.slug);
+        
+                  if( userData.recordset.length === 0 ){
+                    console.log('inside the lengh',userData.recordset.length);
+                    return res.render('login', {
+                        message: "Login failed. Your account is inactive. Please contact an administrator."
+                    })
+                  }
+                  else{
+                if (req.body.username == '' ) {
+                    console.log('inside teh req.body.username',req.body.username);
                     return res.render('login', {
                         message: "Invalid username or password"
                     })
                 }
 
                 if (req.body.password == '') {
+                    console.log('values of password',req.body.password);
                     return res.render('login', {
                         message: "Invalid username or password"
                     })
                 }
-
+            }
                 let isVerified = await hash.verifyPassword(req.body.password, userData.recordset[0].password)
-            
+
                 req.session.userId = userData.recordset[0].id;
                 req.session.username = userData.recordset[0].username;
-                req.session.firstName = userData.recordset[0].firstname;
-                req.session.lastName = userData.recordset[0].lastname;
+                req.session.firstName = userData.recordset[0].first_name;
+                req.session.lastName = userData.recordset[0].last_name;
+                req.session.fullName =  userData.recordset[0].first_name + ' ' +userData.recordset[0].last_name;
                 req.session.email = userData.recordset[0].email;
-                console.log('values of req.headers',req.headers.host.split('.')[0]);
                 req.session.subDomain = req.headers.host.split('.')[0];
             
-                req.session.permissions = 'admin';
-                req.session.modules = 'admin';
+                req.session.permissions = userData.recordset[0].role_name;
+                req.session.modules = userData.recordset[0].role_name;
 
                 if (req.body.is_trusted == "on") {
                     req.session.usersecretkey = encrypt(uuidv4())
@@ -86,10 +95,14 @@ module.exports = {
                         };
                     
                 }
-
-                if (req.body.username === userData.recordset[0].username && isVerified == true) {
+        
+                if (req.body.username === userData.recordset[0].username && isVerified == true && userData.recordset[0].role_name === 'admin') {
                     res.redirect('/admin/dashboard');
-                } else {
+                }
+                else if(req.body.username === userData.recordset[0].username && isVerified == true && userData.recordset[0].role_name === 'student'){
+                    res.redirect('/student/dashboard');
+                }
+                 else {
                     res.send('This user has no permissions.');
                 }
             //}

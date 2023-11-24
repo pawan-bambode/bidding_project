@@ -17,6 +17,23 @@ module.exports = class Students {
             INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1  AND  p.bidding_session_lid= @biddingId  AND sd.bidding_session_lid = @biddingId`)
         })
     }
+
+    static getStudentDetail(slug,biddingId,username){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .input('username',sql.NVarChar,username)
+            .query(`SELECT id ,sap_id,roll_no,student_name,email,bid_points,year_of_joining ,previous_elective_credits
+            FROM [${slug}].student_data  WHERE email = @username`)
+        })
+    }
+    static getConcentrationList(slug,biddingId){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`SELECT id ,concentration_name FROM [${slug}].concentration WHERE bidding_session_lid = @biddingId`)
+        })
+    }
     static getCount(slug,biddingId) {
         return poolConnection.then(pool => {
             return pool.request()

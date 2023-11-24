@@ -14,6 +14,13 @@ module.exports = class ProgramSession{
             INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = @biddingId  AND ps.active = 1
             `);
         })
+    }   static getProgramSessionCreditsPoint(slug,biddingId){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`SELECT SUM(IIF(max_credits IS NULL, 0, max_credits)) AS max_yearly_credits FROM [${slug}].program_sessions
+            WHERE bidding_session_lid = @biddingId AND active = 1`)
+        })
     }
     static getCount(slug,biddingId){
         return poolConnection.then(pool =>{
@@ -45,13 +52,7 @@ module.exports = class ProgramSession{
     static search(pageNo,letterSearch,showEntry,slug,biddingId,userId){
         console.log('values of showEntry in search',showEntry);
         showEntry = showEntry?showEntry:10;
-        console.log('values of showEntry',showEntry);
-        console.log('values of pageNOd',pageNo);
-        console.log('values of letter SEarch',letterSearch);
-        console.log('values of showEntry',showEntry);
-        console.log('values of slug',slug);
-        console.log('values of bidding',biddingId);
-        console.log('values of userId',userId);
+       
         if(pageNo){
          return poolConnection.then(pool =>{
              return pool.request()

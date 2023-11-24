@@ -33,7 +33,7 @@ function AdminRoute(app) {
     app.use('/admin/', studentInfo);
     app.use('/admin/', acadsessionInfo)
     app.use('/admin/', academicYearInfo)
-    app.use('/student/', student)
+    app.use('/student/',isLoggedIn,checkPermission, student)
     app.use('/admin/', program);
     app.use('/admin/', biddingSession);
     app.use('/admin/',generateExcel);

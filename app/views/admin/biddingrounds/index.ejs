@@ -554,6 +554,7 @@
          $(document).on('click', '.delete-bidding-rounds', function(event) {
             let parent = $(this).closest('tr');
             $('#add-date-time').addClass('d-none');
+            $('#import-bidding-rounds').addClass('disabled');
             let biddingRoundsName = parent.data('bidding-rounds-name');
             let biddingRoundsId = parent.data('bidding-round-id');
             let totalStudentCounts = parent.data('total-student-counts');
