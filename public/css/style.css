@@ -2086,3 +2086,20 @@ margin: auto;
     overflow-y: scroll;
     max-height: 300px;
 }
+
+.confirm-coures-table thead th{
+    background-color: var(--primary-table-bg)
+}
+.student-complete-courses-list-table thead th{
+    background-color: var(--primary-table-bg);
+}
+.student-course-status {
+ height: 130px;
+}
+
+.card-custom-student {
+    border-radius: 15px !important;
+  }
+  .custom-width{
+    width: 96%;
+  }

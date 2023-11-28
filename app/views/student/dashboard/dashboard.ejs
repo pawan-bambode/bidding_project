@@ -6,7 +6,7 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
-  <div class="card card-custom">
+  <div class="card card-custom-student">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2"> Student Time</h3>
     </div>
@@ -36,7 +36,7 @@
     </div>
   </div>  
 
-  <div class="card card-custom mt-5">
+  <div class="card card-custom-student mt-5">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2"> MBA Concentration</h3>
     </div>
@@ -44,63 +44,193 @@
         <div class="row w-75 m-auto d-flex">
             <% for(let concentration of concentrationList){ %>
                 <div class="col-md-4 d-flex align-items-center">
-                    <input type="radio" name="concentration-name" data-value="<%- concentration.id %>">
-                    <p class="fw-bold mb-0 ms-2"><%- concentration.concentration_name %></p>
+                    <input type="radio" name="concentration-name" data-value="<%- concentration.id %>" id="concentration<%- concentration.id %>">
+                    <label class="fw-bold mb-0 ms-2" for="concentration<%- concentration.id %>"><%- concentration.concentration_name %></label>
                 </div>
             <% } %>
         </div>
     </div>
 </div>
 
-<div class="mt-5 d-flex justify-content-between">
-    <div class="card card-custom col-md-5 ms-5">
-        <div class="card-header-custom d-flex justify-content-between p-1">
-            <h3 class="ms-2"> Confirmed Courses</h3>
-        </div>
-        <div class="card-body table-responsive">
-            <div class="row m-auto d-flex">
-               <h3>There are no Confirmed courses</h3>
-            </div>
-        </div>
+<div class="card card-custom-student mt-5">
+    <div class="card-header-custom d-flex justify-content-between p-1">
+        <h3 class="ms-2">Student Courses Details</h3>
+        <button class="btn btn-success me-3  showAllCouresTable">Show All Course Table</button>
     </div>
 
-    <div class="card card-custom col-md-5 me-5">
-        <div class="card-header-custom d-flex justify-content-between p-1">
-            <h3 class="ms-2"> Dropped Courses</h3>
+    <div class="card-body table-responsive">
+        <div class="custom-width m-auto d-flex">
+            <div class="col-md-5 col-sm-6" id="courseChart" style="height: 370px;"></div>
+                <div class="d-flex">
+                    <div class="card card-custom-student mt-5 me-3 confirmed d-none">
+                        <div class="d-flex justify-content-center p-1">
+                            <h3 class="ms-2"> Confirmed Courses</h3>
+                        </div>
+                        <div class="card-body table-responsive" id="confirm-course-table">
+                            <div class="row m-auto d-flex">
+                                <% if(confirmCourseList.length > 0) { %>
+                                    <table class="table-responsive table-bordered table confirm-coures-table">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Course</th>
+                                                <th>Credits</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% let count = 1; %>
+                                            <% for(let confirmCourse of confirmCourseList) { %>
+                                                <tr>
+                                                    <td><%- count++ %></td>
+                                                    <td><%- confirmCourse.course_name %></td>
+                                                    <td><%- confirmCourse.credits %></td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
+                                <% } else { %>
+                                    <h3>There are no Confirmed courses</h3>
+                                <% } %>
+                            </div>
+                        </div>       
+                    </div>
+                
+                    <div class="card card-custom-student mt-5 dropped d-none">
+                        <div class="d-flex justify-content-center p-1">
+                            <h3 class="ms-2"> Dropped Courses</h3>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <div class="row m-auto d-flex">
+                                <% if(dropCourseList.length > 0) { %>
+                                    <table class="table-responsive table-bordered table confirm-coures-table">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Course</th>
+                                                <th>Credits</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% let count = 1; %>
+                                            <% for(let dropCourse of dropCourseList) { %>
+                                                <tr>
+                                                    <td><%- count++ %></td>
+                                                    <td><%- dropCourse.course_name %></td>
+                                                    <td><%- dropCourse.credits %></td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
+                                <% } else { %>
+                                    <h3>There are no Dropped Courses</h3>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="card card-custom-student col-md-6 mt-5 me-3 waitlist d-none">
+                        <div class="d-flex justify-content-center p-1">
+                            <h3 class="ms-2">Waitlist Courses</h3>
+                        </div>
+                        <div class="card-body table-responsive">
+                            
+                            <div class="row m-auto d-flex">
+                                <% if(waitListCourseList.length > 0) { %>
+                                    <table class="table-responsive table-bordered table confirm-coures-table">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Course</th>
+                                                <th>Credits</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% let count = 1; %>
+                                            <% for(let waitListCourse of waitListCourseList) { %>
+                                                <tr>
+                                                    <td><%- count++ %></td>
+                                                    <td><%- waitListCourse.course_name %></td>
+                                                    <td><%- waitListCourse.credits %></td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
+                                <% } else { %>
+                                    <h3>There are no Waitlist Courses</h3>
+                                <% } %>
+                            </div>
+                        
+                        </div>
+                    </div>
+                
+                    <div class="card card-custom-student col-md-6 mt-5 winning d-none">
+                        <div class="d-flex justify-content-center p-1">
+                            <h3 class="ms-2">Winning Courses</h3>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <div class="row m-auto d-flex">
+                                <% if(winningCourseList.length > 0) { %>
+                                    <table class="table-responsive table-bordered table confirm-coures-table">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Course</th>
+                                                <th>Credits</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% let count = 1; %>
+                                            <% for(let winningCourse of winningCourseList) { %>
+                                                <tr>
+                                                    <td><%- count++ %></td>
+                                                    <td><%- winningCourse.course_name %></td>
+                                                    <td><%- winningCourse.credits %></td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
+                                <% } else { %>
+                                    <h3>There are not Winning Courses</h3>
+                                <% } %>
+                            </div>
+                        
+                        </div>
+                    </div>
+            </div>    
         </div>
-        <div class="card-body table-responsive">
-          <h3>There are no Dropped Courses</h3>
-        </div>
-    </div>
+    </div>    
 </div>
-<div class="mt-5 d-flex justify-content-between">
-    <div class="card card-custom col-md-5 ms-5">
-        <div class="card-header-custom d-flex justify-content-between p-1">
-            <h3 class="ms-2">Waitlist Courses</h3>
-        </div>
-        <div class="card-body table-responsive">
-            <h3>There are no Waitlist Courses</h3>
-        </div>
-    </div>
 
-    <div class="card card-custom col-md-5 me-5">
-        <div class="card-header-custom d-flex justify-content-between p-1">
-            <h3 class="ms-2">Winning Courses</h3>
-        </div>
-        <div class="card-body table-responsive">
-          <h3>There are not Winning Courses
-          </h3>
-        </div>
-    </div>
-</div>
-
-
-
-    
     
    
-
-
-
-
-
+<div class="card card-custom-student mt-5">
+    <div class="card-header-custom d-flex justify-content-between p-1">
+        <h3 class="ms-2"> Completed Courses</h3>
+    </div>
+    <div class="card-body table-responsive">
+        <div class="row d-flex">
+            <% if(completeCoureseList.length > 0) { %>
+                <table class="table-responsive table-bordered table student-complete-courses-list-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Course Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% let count = 1; %>
+                        <% for(let competedCourse of completeCoureseList) { %>
+                            <tr>
+                                <td><%- count++ %></td>
+                                <td><%- competedCourse.course_name %></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <h3>There are no Completed Courses</h3>
+            <% } %>
+        </div>
+    </div>
+</div>

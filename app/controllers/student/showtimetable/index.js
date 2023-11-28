@@ -7,12 +7,18 @@ const programSession = require('../../../models/admin/programs/programsession')
 module.exports = {
 
   getDashBoard : (req ,res) =>{
-    Promise.all([programSession.getProgramSessionCreditsPoint(res.locals.slug,res.locals.biddingId),student.getStudentDetail(res.locals.slug,res.locals.biddingId,res.locals.username),student.getConcentrationList(res.locals.slug,res.locals.biddingId)]).then(result =>{
+    Promise.all([programSession.getProgramSessionCreditsPoint(res.locals.slug,res.locals.biddingId),student.getStudentDetail(res.locals.slug,res.locals.biddingId,res.locals.username),student.getConcentrationList(res.locals.slug,res.locals.biddingId),student.getConfirmaCourseList(res.locals.slug,res.locals.biddingId,res.locals),student.getDropCourseList(res.locals.slug,res.locals.biddingId,res.locals),student.getWinningCourseList(res.locals.slug,res.locals.biddingId),student.getWaitListCouresList(res.locals.slug,res.locals.biddingId),student.getConfirmCreditsCounts(res.locals.slug,res.locals.biddingId),student.getCompleteCourese(res.locals.slug,res.locals.biddingId,res.locals.useSapId)]).then(result =>{
       res.render('student/dashboard/index', {
         currentFormStep: 0,
         maxYearlyCredits:result[0].recordset[0].max_yearly_credits,
         bidPoints:result[1].recordset,
-        concentrationList :result[2].recordset
+        concentrationList :result[2].recordset,
+        confirmCourseList:result[3].recordset,
+        dropCourseList:result[4].recordset,
+        winningCourseList:result[5].recordset,
+        waitListCourseList:result[6].recordset,
+        confirmCreditsCount:result[7].recordset[0].total_confirm_credits,
+        completeCoureseList:result[8].recordset
     })
     })
 },

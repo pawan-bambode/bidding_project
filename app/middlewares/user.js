@@ -17,7 +17,6 @@ module.exports = {
 
         if (req.sessionID) {
             store.get(req.sessionID, async (err, result) => {
-                // console.log('isLoggedIn::::::::::::::::::>> ', result)
                 if (!result) {
                     res.redirect('/user/login')
                 } else {
@@ -25,6 +24,7 @@ module.exports = {
                     res.locals.firstName = result.firstName
                     res.locals.username = result.username
                     res.locals.fullName = result.fullName
+                    res.locals.useSapId = result.studentSapId
                     next();
                 }
             })

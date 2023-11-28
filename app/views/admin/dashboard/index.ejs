@@ -49,34 +49,18 @@
     }
 </style>
 <% } %>
-<!-- PAGE LEVEL CSSS END -->
+
 <% if (!currentFormStep) { %> 
     <%- include ('../partials/leftSidebar') %>
 <% } %>
 
 <%- include ('../partials/header') %>
 
-
-<!-- MAIN-CONTENT -->
 <div class="main-content">
-
-    <!-- <% if (currentFormStep) { %> 
-    <%- include('./stepform.ejs') %>
-    <% } else { %> -->
     <%- include('./dashboard.ejs') %>
-    <!-- <% } %> -->
-  
 </div>
 </main>
 
 <%- include('../partials/footer') %>
- 
 
-<!-- PAGE LEVEL JS START -->
-
-<!-- <script src="/js/adminDashboardscript.js"></script> -->
-
-<script></script>
-
-<!-- PAGE LEVEL JS END -->
 <%- include('../partials/footerEnd') %>

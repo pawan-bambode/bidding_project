@@ -1,22 +1,101 @@
 <%- include('../partials/head') %>
-
-
-
-
-   
-
-
 <%- include ('../partials/header') %>
 
-
-<!-- MAIN-CONTENT -->
-
-<div class="main-content">
-
-   
+<div class="main-content">  
     <%- include('./dashboard.ejs') %>
- 
-  
-</div>
+ </div>
 </main>
+<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+<script>
+ $(document).ready(function(){
+     let confirmCourseList = `<%- JSON.stringify(confirmCourseList.length) %>`;
+     let dropCouresList = `<%- JSON.stringify(dropCourseList.length) %>`;
+     let winningCourseList = `<%- JSON.stringify(winningCourseList.length) %>`;
+     let waitListCourseList = `<%- JSON.stringify(waitListCourseList.length) %>`;
+                                 
+let courseList = [];
+
+const coursesData = [
+    { count: confirmCourseList, label: "Confirmed Courses" },
+    { count: dropCouresList, label: "Dropped Coures" },
+    { count: winningCourseList, label: "Winning Courses" },
+    { count: waitListCourseList, label: "WaitList Courses" }
+];
+
+coursesData.forEach(course => {
+    if (course.count > 0) {
+        courseList.push({
+            y: course.count,
+            label: course.label
+        });
+    }
+});
+
+
+var chart = new CanvasJS.Chart("courseChart", {
+	animationEnabled: true,
+	title: {
+		text: "Course Details  of student"
+	},
+	data: [{
+		type: "pie",
+		startAngle: 0,
+		indexLabel: "{label} {y}",
+		dataPoints: courseList
+	}]
+});
+chart.render();
+
+chart.options.data[0].click = function(e) {
+    console.log('inside the function');
+   
+    $('.waitlist, .winning, .dropped, .confirmed').addClass('d-none');
+
+    let className = e.dataPoint.label.split(' ')[0].toLowerCase();
+
+    let target = $('.'+className).parent();
+    console.log('values of target', target);
+
+    $(target).addClass('justify-content-end align-items-start');
+       console.log('values of ',$('.'+className).parent());
+    $(document).find('.' + className).removeClass('d-none');
+};
+
+$('#courseChart .canvasjs-chart-credit').addClass('d-none');
+
+$(document).on('click','.hideAllCourseTable', function () {
+    $('#courseChart').parent().removeClass('row');
+    $('#courseChart').removeClass('d-none');
+
+    $('.confirmed').addClass('d-none');
+    $('.waitlist').addClass('d-none');
+    $('.winning').addClass('d-none');
+    $('.dropped').addClass('d-none');
+
+    
+    $(this).html('Show All Course Table').removeClass('btn-danger').addClass('btn-success');
+    $(this).addClass('showAllCouresTable');
+});
+
+$(document).on('click', '.showAllCouresTable', function () {
+    $('#courseChart').parent().addClass('row');
+    $('.dropped').addClass('col-md-6');
+    $('.confirmed').addClass('col-md-6');
+    $('#courseChart').addClass('d-none');
+
+    $('.confirmed').removeClass('d-none');
+    $('.waitlist').removeClass('d-none');
+    $('.winning').removeClass('d-none');
+    $('.dropped').removeClass('d-none');
+    $(this).html('Hide All Course Table').addClass('btn-danger').addClass('btn-danger');
+    $(this).removeClass('showAllCouresTable');
+    $(this).addClass('hideAllCourseTable');
+});
+ });
+
+
+</script>
+<%- include('../partials/footer') %>
+
+<%- include('../partials/footerEnd') %>
 

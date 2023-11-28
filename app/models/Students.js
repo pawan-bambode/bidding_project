@@ -34,6 +34,64 @@ module.exports = class Students {
             .query(`SELECT id ,concentration_name FROM [${slug}].concentration WHERE bidding_session_lid = @biddingId`)
         })
     }
+    static getConfirmaCourseList(slug,biddingId){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`SELECT c.course_name ,c.credits  FROM [${slug}].student_elective_bidding seb 
+            INNER JOIN [${slug}].division_batches db ON db.id = seb.div_batch_lid
+            INNER JOIN [${slug}].courses c ON db.course_lid = c.id  WHERE seb.bidding_session_lid = @biddingId AND seb.is_confirmed = 1`)
+        })
+    }
+    static getConfirmCreditsCounts(slug,biddingId){
+        return poolConnection.then(pool =>{
+            return pool.request().
+            input('biddingId',sql.Int,biddingId)
+            .query(`SELECT IIF(SUM(c.credits) IS NULL, 0, SUM(c.credits)) AS total_confirm_credits FROM [${slug}].student_elective_bidding seb 
+            INNER JOIN [${slug}].division_batches db ON db.id = seb.div_batch_lid
+            INNER JOIN [${slug}].courses c ON db.course_lid = c.id  WHERE seb.bidding_session_lid = @biddingId AND seb.is_confirmed = 1`)
+        })
+    }  
+    
+    static getCompleteCourese(slug,biddingId,username){
+      return poolConnection.then(pool =>{
+        return pool.request()
+        .input('biddingId',sql.Int,biddingId)
+        .input('sapId',sql.NVarChar,username.sap_id)
+        .query(`SELECT  cc.id , cc.course_name FROM [${slug}].completed_courses cc 
+         WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND cc.sap_id = @sapId  ORDER BY cc.id`)
+      })
+    }
+     static getDropCourseList(slug,biddingId){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`SELECT c.course_name ,c.credits FROM [${slug}].student_elective_bidding seb 
+            INNER JOIN [${slug}].division_batches db ON db.id = seb.div_batch_lid
+            INNER JOIN [${slug}].courses c ON db.course_lid = c.id  WHERE seb.bidding_session_lid = @biddingId AND seb.is_dropped = 1`)
+        })
+    }
+
+    static getWinningCourseList(slug,biddingId){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`SELECT c.course_name ,c.credits FROM [${slug}].student_elective_bidding seb 
+            INNER JOIN [${slug}].division_batches db ON db.id = seb.div_batch_lid
+            INNER JOIN [${slug}].courses c ON db.course_lid = c.id where seb.bidding_session_lid = @biddingId AND  
+            (seb.is_winning = 1 AND seb.is_confirmed  = 0) or (seb.is_winning = 1 and seb.is_dropped = 0 And seb.is_confirmed = 0)`)
+        })
+    }
+    static getWaitListCouresList(slug,biddingId){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`SELECT c.course_name ,c.credits FROM [${slug}].student_elective_bidding seb 
+            INNER JOIN [${slug}].division_batches db ON db.id = seb.div_batch_lid
+            INNER JOIN [${slug}].courses c ON db.course_lid = c.id where seb.bidding_session_lid = @biddingId AND seb.is_waitlisted = 1`)
+        })
+    }
+    
     static getCount(slug,biddingId) {
         return poolConnection.then(pool => {
             return pool.request()

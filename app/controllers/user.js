@@ -55,9 +55,9 @@ module.exports = {
         
                   if( userData.recordset.length === 0 ){
                     console.log('inside the lengh',userData.recordset.length);
-                    return res.render('login', {
-                        message: "Login failed. Your account is inactive. Please contact an administrator."
-                    })
+                    // return res.render('login', {
+                    //     message: "Login failed. Your account is inactive. Please contact an administrator."
+                    // })
                   }
                   else{
                 if (req.body.username == '' ) {
@@ -75,7 +75,6 @@ module.exports = {
                 }
             }
                 let isVerified = await hash.verifyPassword(req.body.password, userData.recordset[0].password)
-
                 req.session.userId = userData.recordset[0].id;
                 req.session.username = userData.recordset[0].username;
                 req.session.firstName = userData.recordset[0].first_name;
@@ -83,7 +82,7 @@ module.exports = {
                 req.session.fullName =  userData.recordset[0].first_name + ' ' +userData.recordset[0].last_name;
                 req.session.email = userData.recordset[0].email;
                 req.session.subDomain = req.headers.host.split('.')[0];
-            
+                req.session.studentSapId = userData.recordset[0].sap_id;
                 req.session.permissions = userData.recordset[0].role_name;
                 req.session.modules = userData.recordset[0].role_name;
 
