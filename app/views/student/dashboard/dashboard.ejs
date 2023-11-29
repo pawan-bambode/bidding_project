@@ -5,7 +5,6 @@
   integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
   <div class="card card-custom-student">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2"> Student Time</h3>
@@ -35,7 +34,36 @@
         </div>  
     </div>
   </div>  
-
+  <div class="card card-custom-student mt-5">
+    <div class="card-header-custom d-flex justify-content-between p-1">
+        <h3 class="ms-2"> Completed Courses</h3>
+    </div>
+    <div class="card-body table-responsive">
+        <div class="row d-flex">
+            <% if(completeCoureseList.length > 0) { %>
+                <table class="table-responsive table-bordered table student-complete-courses-list-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Course Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% let count = 1; %>
+                        <% for(let competedCourse of completeCoureseList) { %>
+                            <tr>
+                                <td><%- count++ %></td>
+                                <td><%- competedCourse.course_name %></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <h3>There are no Completed Courses</h3>
+            <% } %>
+        </div>
+    </div>
+</div>
   <div class="card card-custom-student mt-5">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2"> MBA Concentration</h3>
@@ -52,20 +80,23 @@
     </div>
 </div>
 
+
 <div class="card card-custom-student mt-5">
-    <div class="card-header-custom d-flex justify-content-between p-1">
+    <div class="card-header-custom d-flex justify-content-between">
         <h3 class="ms-2">Student Courses Details</h3>
         <button class="btn btn-success me-3  showAllCouresTable">Show All Course Table</button>
     </div>
 
     <div class="card-body table-responsive">
-        <div class="custom-width m-auto d-flex">
-            <div class="col-md-5 col-sm-6" id="courseChart" style="height: 370px;"></div>
-                <div class="d-flex">
-                    <div class="card card-custom-student mt-5 me-3 confirmed d-none">
-                        <div class="d-flex justify-content-center p-1">
-                            <h3 class="ms-2"> Confirmed Courses</h3>
-                        </div>
+        <div class="d-flex flex-column flex-sm-row">
+            <div class="col-md-5" id="courseChart" style="height: 370px;"></div>
+            <div class="container">
+                <div class="row gx-3 gy-5 d-none course-list">
+                  <div class="d-flex">
+                    <div class="flex-fill col-md-6 card card-custom-student me-5 confirmed">
+                        <div class="d-flex justify-content-center mt-2">
+                            <h5 class="ms-2"> Confirmed Courses</h5>
+                        </div>   
                         <div class="card-body table-responsive" id="confirm-course-table">
                             <div class="row m-auto d-flex">
                                 <% if(confirmCourseList.length > 0) { %>
@@ -92,10 +123,9 @@
                                     <h3>There are no Confirmed courses</h3>
                                 <% } %>
                             </div>
-                        </div>       
+                        </div>
                     </div>
-                
-                    <div class="card card-custom-student mt-5 dropped d-none">
+                    <div class="flex-fill col-md-6 card card-custom-student dropped">
                         <div class="d-flex justify-content-center p-1">
                             <h3 class="ms-2"> Dropped Courses</h3>
                         </div>
@@ -127,9 +157,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="d-flex">
-                    <div class="card card-custom-student col-md-6 mt-5 me-3 waitlist d-none">
+                  </div>
+                  <div class="d-flex">
+                    <div class="flex-fill col-md-6 card card-custom-student me-5 waitlist">
                         <div class="d-flex justify-content-center p-1">
                             <h3 class="ms-2">Waitlist Courses</h3>
                         </div>
@@ -159,12 +189,10 @@
                                 <% } else { %>
                                     <h3>There are no Waitlist Courses</h3>
                                 <% } %>
-                            </div>
-                        
+                            </div>  
                         </div>
                     </div>
-                
-                    <div class="card card-custom-student col-md-6 mt-5 winning d-none">
+                    <div class="flex-fill col-md-6 card card-custom-student winning">
                         <div class="d-flex justify-content-center p-1">
                             <h3 class="ms-2">Winning Courses</h3>
                         </div>
@@ -194,9 +222,12 @@
                                     <h3>There are not Winning Courses</h3>
                                 <% } %>
                             </div>
-                        
                         </div>
                     </div>
+                  </div>
+                </div>
+              </div>
+              
             </div>    
         </div>
     </div>    
@@ -204,33 +235,4 @@
 
     
    
-<div class="card card-custom-student mt-5">
-    <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-2"> Completed Courses</h3>
-    </div>
-    <div class="card-body table-responsive">
-        <div class="row d-flex">
-            <% if(completeCoureseList.length > 0) { %>
-                <table class="table-responsive table-bordered table student-complete-courses-list-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Course Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% let count = 1; %>
-                        <% for(let competedCourse of completeCoureseList) { %>
-                            <tr>
-                                <td><%- count++ %></td>
-                                <td><%- competedCourse.course_name %></td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-            <% } else { %>
-                <h3>There are no Completed Courses</h3>
-            <% } %>
-        </div>
-    </div>
-</div>
+

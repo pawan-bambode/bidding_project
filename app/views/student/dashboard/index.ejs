@@ -47,46 +47,37 @@ var chart = new CanvasJS.Chart("courseChart", {
 chart.render();
 
 chart.options.data[0].click = function(e) {
-    console.log('inside the function');
-   
     $('.waitlist, .winning, .dropped, .confirmed').addClass('d-none');
-
+    $('.course-list').removeClass('d-none');
+    console.log('values of e.dataPoint.exploded',e.dataPoint.exploded);
+    if(e.dataPoint.exploded){
     let className = e.dataPoint.label.split(' ')[0].toLowerCase();
-
-    let target = $('.'+className).parent();
-    console.log('values of target', target);
-
-    $(target).addClass('justify-content-end align-items-start');
-       console.log('values of ',$('.'+className).parent());
+  
+  
+      if ($(window).width() < 576) { 
+        $('#courseChart').parent().removeClass('d-flex');
+      } else {
+        $('#courseChart').parent().addClass('d-flex');
+      }
+    
+    let target = $('.'+className);
+    
     $(document).find('.' + className).removeClass('d-none');
-};
+}};
 
 $('#courseChart .canvasjs-chart-credit').addClass('d-none');
 
 $(document).on('click','.hideAllCourseTable', function () {
-    $('#courseChart').parent().removeClass('row');
     $('#courseChart').removeClass('d-none');
-
-    $('.confirmed').addClass('d-none');
-    $('.waitlist').addClass('d-none');
-    $('.winning').addClass('d-none');
-    $('.dropped').addClass('d-none');
-
-    
+    $('.course-list').addClass('d-none');
     $(this).html('Show All Course Table').removeClass('btn-danger').addClass('btn-success');
     $(this).addClass('showAllCouresTable');
 });
 
 $(document).on('click', '.showAllCouresTable', function () {
-    $('#courseChart').parent().addClass('row');
-    $('.dropped').addClass('col-md-6');
-    $('.confirmed').addClass('col-md-6');
     $('#courseChart').addClass('d-none');
-
-    $('.confirmed').removeClass('d-none');
-    $('.waitlist').removeClass('d-none');
-    $('.winning').removeClass('d-none');
-    $('.dropped').removeClass('d-none');
+    $('.course-list').removeClass('d-none');
+    $('.waitlist, .winning, .dropped, .confirmed').removeClass('d-none');
     $(this).html('Hide All Course Table').addClass('btn-danger').addClass('btn-danger');
     $(this).removeClass('showAllCouresTable');
     $(this).addClass('hideAllCourseTable');
