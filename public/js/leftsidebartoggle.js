@@ -1,12 +1,15 @@
+const { all } = require("axios");
 
 $('.custom-element').on('click', function(){
    $(this).toggleClass('active')
 })
 
 
+
 $('.left-sidebar-toggle').click(function () {
     console.log('check on click')
-    
+    $('.left-sidebar').toggleClass('d-none');
+    $('.left-sidebar-only-img').toggleClass('d-none');
     $('.accordion-button').toggleClass('active')
     $('.left-sidebar-logo').toggleClass('left-sidebar-logo-side')
     $('.close-menu').toggleClass('close-menu-side')
@@ -100,9 +103,13 @@ $('body').on('mouseover', '.left-sidebar-side', function(){
     $('.main').toggleClass('main-side')
     $('.left-sidebar-mini-logo').toggleClass('left-sidebar-mini-logo-hide')
 })
-
+$('#sidebar .left-sidebar').click(function() {
+    console.log('inside the button left sidebar')
+    $('#sidebar .left-sidebar').removeClass('active');
+    $(this).addClass('active');
+});
 $('body').on('mouseout', '.left-sidebar', function(){
-   console.log('when mouse out')
+   console.log('inside the left side bar');
 })
 
 

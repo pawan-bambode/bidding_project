@@ -166,7 +166,9 @@ module.exports = class Students {
             return pool.request().query(`UPDATE users SET password = '${newPassword}' WHERE username = '${userName}'`)
         })
     }
-
+    static multipleHit(){
+        console.log('inside the multiple hit');
+    }
     static getSlotForShowTimetable(){
         return poolConnection.then(pool => {
           return pool.request().query(`SELECT MIN(slot_lid) AS start_time_lid, MAX(slot_lid) AS end_time_lid FROM [sbm-mum].event_bookings`)

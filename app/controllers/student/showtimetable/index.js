@@ -22,6 +22,24 @@ module.exports = {
     })
     })
 },
+getDemandEstimation :(req ,res) =>{
+     res.render('student/demandEstimation/index');
+},
+multipleHit: (req, res) => {
+  console.log('inside the multiple hit',req);
+  Promise.all([student.multipleHit()]).then(result => {
+      console.log('req.body:::::::::::::',result)
+    res.json({
+      status: "200",
+      message: "Sucessfull",
+      timetablelist: 0,
+    })
+  }).catch(error => {
+    console.log(error)
+    res.status(500).json(error.originalError.info.message)
+  })
+},
+
     showtimetable: (req, res) => {
     Promise.all([student.getSlotForShowTimetable(), student.getDistintRoomList(), student.getTimeslot(),student.fetchAllCourseSelByStudent('15048'),student.getSlotDayId('1'),student.getSlotDayId(2),student.getSlotDayId(3),student.getSlotDayId(4),student.getSlotDayId(5),student.getSlotDayId(6)]).then(result => {
       res.render('admin/students/showTimetableStudent.ejs', {

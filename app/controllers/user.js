@@ -51,7 +51,7 @@ module.exports = {
 
         try {
             const sess = req.session;
-                let userData = await User.getUserDetails(req.body.username,res.locals.slug);
+                let userData = await User.getUserDetails(req.body,res.locals.slug);
         
                   if( userData.recordset.length === 0 ){
                     console.log('inside the lengh',userData.recordset.length);
