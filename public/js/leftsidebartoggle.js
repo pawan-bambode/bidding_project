@@ -6,8 +6,8 @@ $('.custom-element').on('click', function(){
 
 
 
-$('.left-sidebar-toggle').click(function () {
-    console.log('check on click')
+$('.left-sidebar-toggle').on('click',function () {
+    console.log('left sidebar toggle is click now');
     $('.left-sidebar').toggleClass('d-none');
     $('.left-sidebar-only-img').toggleClass('d-none');
     $('.accordion-button').toggleClass('active')

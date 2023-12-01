@@ -7,8 +7,11 @@ const programSession = require('../../../models/admin/programs/programsession')
 module.exports = {
 
   getDashBoard : (req ,res) =>{
+    let studentHomePageUrl = req.route.path.split('/');
+    let studentHomePage = studentHomePageUrl[studentHomePageUrl.length - 1]
     Promise.all([programSession.getProgramSessionCreditsPoint(res.locals.slug,res.locals.biddingId),student.getStudentDetail(res.locals.slug,res.locals.biddingId,res.locals.username),student.getConcentrationList(res.locals.slug,res.locals.biddingId),student.getConfirmaCourseList(res.locals.slug,res.locals.biddingId,res.locals),student.getDropCourseList(res.locals.slug,res.locals.biddingId,res.locals),student.getWinningCourseList(res.locals.slug,res.locals.biddingId),student.getWaitListCouresList(res.locals.slug,res.locals.biddingId),student.getConfirmCreditsCounts(res.locals.slug,res.locals.biddingId),student.getCompleteCourese(res.locals.slug,res.locals.biddingId,res.locals.useSapId)]).then(result =>{
       res.render('student/dashboard/index', {
+        active:studentHomePage,
         currentFormStep: 0,
         maxYearlyCredits:result[0].recordset[0].max_yearly_credits,
         bidPoints:result[1].recordset,
@@ -23,8 +26,28 @@ module.exports = {
     })
 },
 getDemandEstimation :(req ,res) =>{
-     res.render('student/demandEstimation/index');
+  let demandEstimationUrl = req.route.path.split('/');
+  let demandEstimation = demandEstimationUrl[demandEstimationUrl.length - 1]
+     res.render('student/demandEstimation/index',{
+      active:demandEstimation
+     });
 },
+ getBidding : (req , res) =>{
+  let biddingUrl = req.route.path.split('/');
+  let bidding = biddingUrl[biddingUrl.length - 1]
+  res.render('student/bidding/index',{
+    active :bidding
+  });
+},
+
+getConfirmation :(req ,res) =>{
+  let confirmationUrl = req.route.path.split('/');
+  let confirmation = confirmationUrl[confirmationUrl.length-1]
+  res.render('student/confirmation/index',{
+    active : confirmation
+  })
+},
+
 multipleHit: (req, res) => {
   console.log('inside the multiple hit',req);
   Promise.all([student.multipleHit()]).then(result => {

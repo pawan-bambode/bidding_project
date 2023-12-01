@@ -1,5 +1,6 @@
 <%- include('../partials/head') %>
-<%- include('../partials/leftSidebar.ejs') %>
+
+<%- include('../partials/leftSidebarForStudent.ejs') %>
 <%- include('../partials/header.ejs') %>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -10,7 +11,7 @@
 <div class="main-content">
   <div class="card card-custom">
     <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-2"> Multiple URL HIT</h3>
+        <h3 class="ms-5"> Multiple URL HIT</h3>
         <button type="button" class="btn btn-danger ms-auto me-3"  id="multiple-url-hit">
             Multiple Url hit
         </button>  
@@ -22,10 +23,32 @@
 </div>
 <script>
 $(document).ready(function() {
+    
+    let active = `<%- active %>`;
+    $('#sidebar .side-menu li.' + active).addClass('active');
+
+    $(document).on('click', '.fa-angles-left', function() {
+    $('.left-sidebar').addClass('hide');
+    $('.main').css('left', '80px');
+    $('.top-navbar').css('left', '80px');
+    $('.nmims-logo').addClass('d-none');
+    $('.nmims-logo-only').removeClass('d-none');
+    $(this).removeClass('fa-angles-left').addClass('fa-angles-right');
+    $('.left-sidebar .side-menu li img').css('margin-left','-2px');
+});
+
+$(document).on('click', '.fa-angles-right', function() {
+    $('.left-sidebar').removeClass('hide');
+    $('.main').css('left', '260px');
+    $('.top-navbar').css('left', '260px');
+    $('.nmims-logo').removeClass('d-none');
+    $('.nmims-logo-only').addClass('d-none');
+    $(this).addClass('fa-angles-left').removeClass('fa-angles-right');
+});
 
     $('#multiple-url-hit').on('click', async function() {
     const url = '/student/multiple-hit';
-    const batchSize = 100; // Adjust batch size as needed
+    const batchSize = 100; 
     const totalRequests = 1250;
     const batches = Math.ceil(totalRequests / batchSize);
 

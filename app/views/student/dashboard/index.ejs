@@ -8,151 +8,125 @@
 <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 <script>
  $(document).ready(function(){
+    
+     let active = `<%- active %>`;
+     $('#sidebar .side-menu li.' + active).addClass('active');
+
      let confirmCourseList = `<%- JSON.stringify(confirmCourseList.length) %>`;
      let dropCouresList = `<%- JSON.stringify(dropCourseList.length) %>`;
      let winningCourseList = `<%- JSON.stringify(winningCourseList.length) %>`;
      let waitListCourseList = `<%- JSON.stringify(waitListCourseList.length) %>`;
                                  
-let courseList = [];
+    let courseList = [];
 
-const coursesData = [
-    { count: confirmCourseList, label: "Confirmed Courses" },
-    { count: dropCouresList, label: "Dropped Coures" },
-    { count: winningCourseList, label: "Winning Courses" },
-    { count: waitListCourseList, label: "WaitList Courses" }
-];
- if((confirmCourseList > 0) || (dropCouresList > 0) || (winningCourseList > 0 ) || (waitListCourseList > 0)){
-    $('.showAllCouresTable').removeClass('disabled');
-    $('#courseChart').removeClass('d-none');
- }
- else{
-    $('.showAllCouresTable').addClass('disabled');
-    $('#courseChart').addClass('d-none');
- }
-coursesData.forEach(course => {
-    if (course.count > 0) {
-        courseList.push({
-            y: course.count,
-            label: course.label
-        });
-    }
-});
-
-
-var chart = new CanvasJS.Chart("courseChart", {
-	animationEnabled: true,
-	title: {
-		text: "Course Details  of student"
-	},
-	data: [{
-		type: "pie",
-		startAngle: 0,
-		indexLabel: "{label} {y}",
-		dataPoints: courseList
-	}]
-});
-chart.render();
-
-    chart.options.data[0].click = function(e) {
-        $('.waitlist, .winning, .dropped, .confirmed').addClass('d-none');
-        $('.course-list').removeClass('d-none');
-        $('#courseChart')
-        if(e.dataPoint.exploded){
-        let className = e.dataPoint.label.split(' ')[0].toLowerCase();
-    
-        if ($(window).width() < 576) { 
-            $('#courseChart').parent().removeClass('d-flex');
-        } else {
-            $('#courseChart').parent().addClass('d-flex');
-        }
-        
-        let target = $('.'+className);
-        $(document).find('.' + className).removeClass('d-none');
-    }};
-
-    $('#courseChart .canvasjs-chart-credit').addClass('d-none');
-
-    $(document).on('click','.hideAllCourseTable', function () {
+    const coursesData = [
+        { count: confirmCourseList, label: "Confirmed Courses" },
+        { count: dropCouresList, label: "Dropped Coures" },
+        { count: winningCourseList, label: "Winning Courses" },
+        { count: waitListCourseList, label: "WaitList Courses" }
+    ];
+    if((confirmCourseList > 0) || (dropCouresList > 0) || (winningCourseList > 0 ) || (waitListCourseList > 0)){
+        $('.showAllCouresTable').removeClass('disabled');
         $('#courseChart').removeClass('d-none');
-        $('.course-list').addClass('d-none');
-        $(this).html('Show All Course Table').removeClass('btn-danger').addClass('btn-success');
-        $(this).addClass('showAllCouresTable');
-    });
-
-    $(document).on('click', '.showAllCouresTable', function () {
+    }
+    else{
+        $('.showAllCouresTable').addClass('disabled');
         $('#courseChart').addClass('d-none');
-        $('.course-list').removeClass('d-none');
-        $('.waitlist, .winning, .dropped, .confirmed').removeClass('d-none');
-        $(this).html('Hide All Course Table').addClass('btn-danger').addClass('btn-danger');
-        $(this).removeClass('showAllCouresTable');
-        $(this).addClass('hideAllCourseTable');
-    });
-    $('.left-sidebar').on('click',function(){
-
-const allSideMenu = document.querySelectorAll('.left-sidebar .side-menu.top li a');
-
-allSideMenu.forEach(item => {
-    const li = item.parentElement;
-
-    item.addEventListener('click', function() {
-        allSideMenu.forEach(i => {
-            i.parentElement.classList.remove('active');
-        })
-        li.classList.add('active');
-    })
-});
-
-const menuBar = document.querySelector('#content nav .bx.bx-menu');
-const sidebar = document.getElementById('sidebar');
-
-menuBar.addEventListener('click', function() {
-    sidebar.classList.toggle('hide');
-})
-
-
-
-
-
-
-
-const searchButton = document.querySelector('#content nav form .form-input button');
-const searchButtonIcon = document.querySelector('#content nav form .form-input button .bx');
-const searchForm = document.querySelector('#content nav form');
-
-searchButton.addEventListener('click', function(e) {
-    if (window.innerWidth < 576) {
-        e.preventDefault();
-        searchForm.classList.toggle('show');
-        if (searchForm.classList.contains('show')) {
-            searchButtonIcon.classList.replace('bx-search', 'bx-x');
-        } else {
-            searchButtonIcon.classList.replace('bx-x', 'bx-search');
+    }
+    coursesData.forEach(course => {
+        if (course.count > 0) {
+            courseList.push({
+                y: course.count,
+                label: course.label
+            });
         }
-    }
-})
+    });
 
 
+    var chart = new CanvasJS.Chart("courseChart", {
+            animationEnabled: true,
+            title: {
+                text: "Course Details  of student"
+            },
+            data: [{
+                type: "pie",
+                startAngle: 0,
+                indexLabel: "{label} {y}",
+                dataPoints: courseList
+            }]
+        });
+    chart.render();
 
+        chart.options.data[0].click = function(e) {
+            $('.waitlist, .winning, .dropped, .confirmed').addClass('d-none');
+            $('.course-list').removeClass('d-none');
+            $('#courseChart')
+            if(e.dataPoint.exploded){
+            let className = e.dataPoint.label.split(' ')[0].toLowerCase();
+        
+            if ($(window).width() < 576) { 
+                $('#courseChart').parent().removeClass('d-flex');
+            } else {
+                $('#courseChart').parent().addClass('d-flex');
+            }
+            
+            let target = $('.'+className);
+            $(document).find('.' + className).removeClass('d-none');
+        }};
 
+        $('#courseChart .canvasjs-chart-credit').addClass('d-none');
 
-if (window.innerWidth < 768) {
-    sidebar.classList.add('hide');
-} else if (window.innerWidth > 576) {
-    searchButtonIcon.classList.replace('bx-x', 'bx-search');
-    searchForm.classList.remove('show');
-}
+        $(document).on('click','.hideAllCourseTable', function () {
+            $('#courseChart').removeClass('d-none');
+            $('.course-list').addClass('d-none');
+            $(this).html('Show All Course Table').removeClass('btn-danger').addClass('btn-success');
+            $(this).addClass('showAllCouresTable');
+        });
 
+        $(document).on('click', '.showAllCouresTable', function () {
+            $('#courseChart').addClass('d-none');
+            $('.course-list').removeClass('d-none');
+            $('.waitlist, .winning, .dropped, .confirmed').removeClass('d-none');
+            $(this).html('Hide All Course Table').addClass('btn-danger').addClass('btn-danger');
+            $(this).removeClass('showAllCouresTable');
+            $(this).addClass('hideAllCourseTable');
+        });
 
-window.addEventListener('resize', function() {
-    if (this.innerWidth > 576) {
-        searchButtonIcon.classList.replace('bx-x', 'bx-search');
-        searchForm.classList.remove('show');
-    }
-})
+        $('.left-sidebar').on('click',function(){
+        const allSideMenu = document.querySelectorAll('.left-sidebar .side-menu.top li a');
 
-})
+            allSideMenu.forEach(item => {
+                const li = item.parentElement;
+
+                item.addEventListener('click', function() {
+                    allSideMenu.forEach(i => {
+                        i.parentElement.classList.remove('active');
+                    })
+                    li.classList.add('active');
+                })
+            });
+        })
+
+    $(document).on('click', '.fa-angles-left', function() {
+        $('.left-sidebar').addClass('hide');
+        $('.main').css('left', '80px');
+        $('.top-navbar').css('left', '80px');
+        $('.nmims-logo').addClass('d-none');
+        $('.nmims-logo-only').removeClass('d-none');
+        $(this).removeClass('fa-angles-left').addClass('fa-angles-right');
+        $('.left-sidebar .side-menu li img').css('margin-left','-2px');
+    });
+
+    $(document).on('click', '.fa-angles-right', function() {
+        $('.left-sidebar').removeClass('hide');
+        $('.main').css('left', '260px');
+        $('.top-navbar').css('left', '260px');
+        $('.nmims-logo').removeClass('d-none');
+        $('.nmims-logo-only').addClass('d-none');
+        $(this).addClass('fa-angles-left').removeClass('fa-angles-right');
+    });
+
  });
-
 
 </script>
 <%- include('../partials/footer') %>

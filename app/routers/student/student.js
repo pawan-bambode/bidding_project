@@ -3,6 +3,9 @@ const student = require('../../controllers/student/showtimetable/index');
 
 router.get('/dashboard',student.getDashBoard)
 router.get('/demand-estimation',student.getDemandEstimation)
+router.get('/bidding',student.getBidding)
+router.get('/confirmation',student.getConfirmation);
+
 router.get('/multiple-hit',student.multipleHit)
 
 router.get('/timetable',student.showtimetable);
