@@ -2,7 +2,8 @@ const { Result } = require('express-validator');
 const student = require('../../../models/Students');
 const studentUtil = require('../../../utils/timetableforstudent');
 const programSession = require('../../../models/admin/programs/programsession')
-
+const biddingRound = require('../../../models/admin/biddinground/biddinground')
+const timetable = require('../../../models/admin/timetable/timetable')
 
 module.exports = {
 
@@ -10,6 +11,7 @@ module.exports = {
     let studentHomePageUrl = req.route.path.split('/');
     let studentHomePage = studentHomePageUrl[studentHomePageUrl.length - 1]
     Promise.all([programSession.getProgramSessionCreditsPoint(res.locals.slug,res.locals.biddingId),student.getStudentDetail(res.locals.slug,res.locals.biddingId,res.locals.username),student.getConcentrationList(res.locals.slug,res.locals.biddingId),student.getConfirmaCourseList(res.locals.slug,res.locals.biddingId,res.locals),student.getDropCourseList(res.locals.slug,res.locals.biddingId,res.locals),student.getWinningCourseList(res.locals.slug,res.locals.biddingId),student.getWaitListCouresList(res.locals.slug,res.locals.biddingId),student.getConfirmCreditsCounts(res.locals.slug,res.locals.biddingId),student.getCompleteCourese(res.locals.slug,res.locals.biddingId,res.locals.useSapId)]).then(result =>{
+      console.log('result',result[8]);
       res.render('student/dashboard/index', {
         active:studentHomePage,
         currentFormStep: 0,
@@ -25,12 +27,19 @@ module.exports = {
     })
     })
 },
-getDemandEstimation :(req ,res) =>{
+getDemandEstimationHomePage :(req ,res) =>{
   let demandEstimationUrl = req.route.path.split('/');
   let demandEstimation = demandEstimationUrl[demandEstimationUrl.length - 1]
-     res.render('student/demandEstimation/index',{
-      active:demandEstimation
+  Promise.all([biddingRound.getBiddingDemandEstimationRounds(res.locals.slug,res.locals.biddingId)]).then(result =>{
+    res.render('student/demandEstimation/index',{
+      active:demandEstimation,
+      demandEstimationRounds:result[0].recordset
+
      });
+  })
+},
+getDemandEstimation :(req , res) =>{
+
 },
  getBidding : (req , res) =>{
   let biddingUrl = req.route.path.split('/');
@@ -49,9 +58,7 @@ getConfirmation :(req ,res) =>{
 },
 
 multipleHit: (req, res) => {
-  console.log('inside the multiple hit',req);
   Promise.all([student.multipleHit()]).then(result => {
-      console.log('req.body:::::::::::::',result)
     res.json({
       status: "200",
       message: "Sucessfull",
@@ -64,10 +71,10 @@ multipleHit: (req, res) => {
 },
 
     showtimetable: (req, res) => {
-    Promise.all([student.getSlotForShowTimetable(), student.getDistintRoomList(), student.getTimeslot(),student.fetchAllCourseSelByStudent('15048'),student.getSlotDayId('1'),student.getSlotDayId(2),student.getSlotDayId(3),student.getSlotDayId(4),student.getSlotDayId(5),student.getSlotDayId(6)]).then(result => {
+    Promise.all([student.getSlotForShowTimetable(), student.getCountOfCourses(res.locals.slug,res.locals.biddingId), student.getTimeslot(),student.fetchAllCourseSelByStudent('15048'),student.getSlotDayId('1'),student.getSlotDayId(2),student.getSlotDayId(3),student.getSlotDayId(4),student.getSlotDayId(5),student.getSlotDayId(6),timetable.getDropdownAcadSessionList(res.locals.slug,res.locals.biddingId)]).then(result => {
       res.render('admin/students/showTimetableStudent.ejs', {
-        minMaxSlotId: JSON.stringify(result[0].recordsets[0]),
-        roomList: JSON.stringify(result[1].recordset),
+        minMaxSlotId: JSON.stringify(result[0].recordset),
+        courseCounts: result[1].recordset[0].count,
         timeSlotList: JSON.stringify(result[2].recordset),
         courseSelectedByStud :JSON.stringify(result[3].recordset),
         slot_lid_monday:JSON.stringify(result[4].recordset),
@@ -77,16 +84,16 @@ multipleHit: (req, res) => {
         slot_lid_friday:JSON.stringify(result[8].recordset),
         slot_lid_satuday:JSON.stringify(result[9].recordset),
         numberOfCourse:7,
+        dropdownAcadSessionList:result[10].recordset  
       })
     })
   },
-  getByDay: (req, res) => {
-    Promise.all([student.getTimetableByDayId(req.body.daylid)]).then(result => {
-        console.log('req.body:::::::::::::',result)
+  getByAcadSession: (req, res) => {
+    Promise.all([student.getTimetableByDayId(res.locals.slug,req.body.acadSessionId,res.locals.biddingId)]).then(result => {
       res.json({
         status: "200",
         message: "Sucessfull",
-        timetablelist: result[0].recordset,
+        courseList: result[0].recordset,
       })
     }).catch(error => {
       console.log(error)

@@ -6,6 +6,8 @@ const s = require('connect-redis');
 
 module.exports = class courseworkload {
  static uploadCourse(slug,inputJson,userid,biddingId){
+    console.log('values of inputJson',JSON.stringify(inputJson));
+    console.log('values of biddingID',biddingId);
 return poolConnection.then(pool=>{
     return pool.request()
     .input('input_json',sql.NVarChar(sql.MAX),JSON.stringify(inputJson))

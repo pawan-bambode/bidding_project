@@ -11,13 +11,46 @@
 <div class="main-content">
   <div class="card card-custom">
     <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-5"> Multiple URL HIT</h3>
+        <h4 class="ms-2">Demand Estimation Round</h4>
         <button type="button" class="btn btn-danger ms-auto me-3"  id="multiple-url-hit">
-            Multiple Url hit
+           Demand Estimation Round
         </button>  
     </div>
     <div class="card-body table-responsive">
-     
+        <h3 class="text-center">Demand Estimation Round</h3>
+        <div class="row ps-5 pe-5 d-flex justify-content-between">
+            <div class="col-md-4">
+                <h6>Minimum Yearly Credits :</h6>
+            </div>
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <h6>Maximum Yearly Credits :</h6>
+            </div>
+        </div>
+        <div class="row ps-5 pe-5">
+            <div class="col-md-4">
+                <h6>Trim IV Selected Credits :</h6>
+            </div>    
+            <div class="col-md-4">
+                <h6>Trim V Selected Credits :</h6>
+            </div>
+            <div class="col-md-4">
+                <h6>Trim VI Selected Credits :</h6>
+            </div>
+        </div>
+        <div class="row ps-5 pe-5">
+            <div class="col-md-4">
+                <h6>Start Time :</h6>
+            </div>    
+            <div class="col-md-4">
+                <h6>End Time :</h6>
+            </div>
+            <div class="col-md-4">
+                <h6>Current Time :</h6>
+            </div>
+        </div>
+    </div>
+    
     </div>
   </div>  
 </div>
@@ -49,7 +82,7 @@ $(document).on('click', '.fa-angles-right', function() {
     $('#multiple-url-hit').on('click', async function() {
     const url = '/student/multiple-hit';
     const batchSize = 100; 
-    const totalRequests = 1250;
+    const totalRequests = 2;
     const batches = Math.ceil(totalRequests / batchSize);
 
     try {

@@ -322,6 +322,9 @@
               })
 
            }); 
+           $('#add-bidding-session').on('show.bs.modal', function () {
+        $('.left-sidebar').addClass('d-none');
+     });
 
            $('#bidding-sesssion-table').on('click','#edit-bidding-session',function(){
               let biddingRow = $(event.target).closest('tr');

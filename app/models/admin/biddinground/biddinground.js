@@ -53,15 +53,26 @@ static delete(programlid,slug,userId,biddingSessionId){
         .execute(`[${slug}].[sp_delete_round_settings]`)
     })
 }
+
 static update(inputJSON,slug,userid,biddingSessionId){
-    
     return poolConnection.then(pool =>{
         return pool.request().input('input_json',sql.NVarChar(sql.MAX),JSON.stringify(inputJSON))
         .input('last_modified_by', sql.Int, userid)
         .input('bidding_session_lid',sql.Int,biddingSessionId)
         .output('output_json', sql.NVarChar(sql.MAX))
         .execute(`[${slug}].[sp_update_round_settings]`)
-        
-    })
+            })
 }
+
+static getBiddingDemandEstimationRounds(slug, biddingId) {
+    console.log('values of slug',slug);
+    console.log('values of biddingId',biddingId);
+    return poolConnection.then(pool => {
+        return pool.request()
+            .input('biddingId', sql.Int, biddingId)
+            .input('demand', sql.NChar, 'DEMAND_ESTIMATION_ROUND')
+            .query(`SELECT  SUBSTRING(round_name, CHARINDEX('-', round_name) + 1, LEN(round_name)) AS DemandEstimation,id FROM [${slug}].round_settings WHERE active = 1 AND bidding_session_lid = @biddingId AND round_name LIKE '%' + @demand + '%';`);
+    });
+}
+
 }

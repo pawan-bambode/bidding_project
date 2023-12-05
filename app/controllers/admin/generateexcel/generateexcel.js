@@ -52,7 +52,7 @@ module.exports = {
                       course_id: item.courseId,
                       credits: item.credits,
                       program_id: item.programId,
-                      acad_session: item.acadSession,
+                      acad_session: item.acadSession.replace(/\s+/g, ' ').trim(),
                       area_name: item.areaName.replace(/\s+/g, ' ').trim(),
                       year_of_introduction: item.yearOfIntroduction,
                       min_demand_criteria: item.minDemandCriteria

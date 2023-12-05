@@ -1,186 +1,174 @@
 <%- include('../partials/head') %>
 <%- include('../partials/leftSidebar.ejs') %>
 <%- include('../partials/header.ejs') %>
-<link rel="stylesheet" href="/css/simpleAlert.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
   integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 
 <div class="main-content">
-  <div class="card card-custom">
-    <div class="row mb-3 mt-4 ms-3">
-      <div class="col-md-3">
-        <label class="form-label mb-1" for="day_select">Select Day:</label>
-        <select class="form-select form-control select2" id="day_select">
-          <option selected disabled>--Select Day--</option>
-          <option value="1">Monday</option>
-          <option value="2">Tuesday</option>
-          <option value="3">Wednesday</option>
-          <option value="4">Thursday</option>
-          <option value="5">Friday</option>
-          <option value="6">Saturday</option>
-          <option value="7">Sunday</option>
-        </select>
-      </div>
+  <div class="card card-custom card">
+    <div class="card-header-custom d-flex justify-content-between p-1">
+        <h3 class="ms-2">Timetable</h3>
+        <div>
+          <button class="btn btn-success d-none" id="show_student_readOnly" data-bs-toggle="modal"
+            data-bs-target="#show_student_course_readOnly" type="button">Previous Entry</button>
+          <button class="btn btn-success" id="show_student_sel_event" data-bs-toggle="modal"
+            data-bs-target="#modal_for_stud_sel_course" type="button">Show Course Selected</button>
+          <button class="btn btn-success d-none" id="event_count" >Number of Course select: <%- numberOfCourse %></button> 
+        </div>
     </div>
-    <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
-      <h5>TIME TABLE</h5>
-      <div>
-        <button class="btn btn-success d-none" id="show_student_readOnly" data-bs-toggle="modal"
-          data-bs-target="#show_student_course_readOnly" type="button">Previous Entry</button>
-        <button class="btn btn-success" id="show_student_sel_event" data-bs-toggle="modal"
-          data-bs-target="#modal_for_stud_sel_course" type="button">Show Course Selected</button>
-        <button class="btn btn-success d-none" id="event_count" >Number of Course select: <%- numberOfCourse %></button>
-        
-      </div>
-    </div>
+ 
     <div class="card-body table-responsive">
-      <div class="timetable-container">
-      </div>
-    </div>
-  </div>
-  <div class="modal" data-bs-backdrop="static" data-bs-keyboard="false" id="modal_for_stud_sel_course">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">
-            Selected Coures
-          </h5>
-          <button class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="d-flex">
+            <div class="col-md-3 ms-5">
+                <label class="form-label mb-1" for="timetable-acad-session">Select Acad Session:</label>
+                <select class="form-select form-control select2" id="timetable-acad-session">
+                    <option selected disabled>--Select Acad Session-- </option>
+                     <%for(let acadSession of dropdownAcadSessionList) { %>
+                        <option value="<%- acadSession.sap_acad_session_id %>"><%- acadSession.acad_session %></option>
+                    <% } %>
+                    
+                </select>
+            </div>
         </div>
-        <div class="modal-body d-flex flex-column justify-content-between">
-          <div class='selected_course table-responsive py-1'>
-            <table class="table table-bordered custom_table table-hover" id="selected_course_table_data">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Program</th>
-                  <th>Module</th>
-                  <th>Room</th>
-                  <th>Division</th>
-                  <th>Faculty</th>
-                  <th>Day</th>
-                  <th>Start Time</th>
-                  <th>End Time</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-success" data-bs-dismiss="modal" id="okconfirm">OK</button>
-          <button class="btn btn-info" id="student_submit_button">Submit</button>
-          <button class="btn btn-secondary d-none" id="student_update_button">Update</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="modal" data-bs-backdrop="static" data-bs-keyboard="false" id="show_student_course_readOnly">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">
-            Selected Coures
-          </h5>
-          <button class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body d-flex flex-column justify-content-between">
-          <div class='selected_cour_readonly table-responsive'>
-            <table class="table table-bordered custom_table table-hover py-1" id="selected_course_table_data">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Program</th>
-                  <th>Module</th>
-                  <th>Room</th>
-                  <th>Division</th>
-                  <th>Faculty</th>
-                  <th>Day</th>
-                  <th>Start Time</th>
-                  <th>End Time</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-success" data-bs-dismiss="modal">Cancel</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  </div>
-</div>
-
-<script>
-  $(document).ready(function () {
-
-      let minMaxSlotId = JSON.parse(`<%-minMaxSlotId %>`);
-      let roomList = JSON.parse(`<%- roomList %>`);
-      let timeJson = JSON.parse(`<%- timeSlotList%>`);
-      let courseSelected = JSON.parse(`<%- courseSelectedByStud%>`);
-      let roomslot = '';
-      var dataObj = {};
-      let subjects = [];
-      let day_li = ''; 
-       console.log('values of roomList',roomList);
-      let days = [
-            JSON.parse(`<%- slot_lid_monday %>`),
-            JSON.parse(`<%- slot_lid_tuesday %>`),
-            JSON.parse(`<%- slot_lid_wednesday %>`),
-            JSON.parse(`<%- slot_lid_thirdsday %>`),
-            JSON.parse(`<%- slot_lid_friday %>`),
-            JSON.parse(`<%- slot_lid_satuday %>`)
-          ];
     
-      let timetableProp = {
+        <div class="card-body table-responsive">
+            <div class="timetable-container">
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" data-bs-backdrop="static" data-bs-keyboard="false" id="modal_for_stud_sel_course">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              Selected Coures
+            </h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body d-flex flex-column justify-content-between">
+            <div class='selected_course table-responsive py-1'>
+              <table class="table table-bordered custom_table table-hover" id="selected_course_table_data">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Program</th>
+                    <th>Module</th>
+                    <th>Room</th>
+                    <th>Division</th>
+                    <th>Faculty</th>
+                    <th>Day</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-success" data-bs-dismiss="modal" id="okconfirm">OK</button>
+            <button class="btn btn-info" id="student_submit_button">Submit</button>
+            <button class="btn btn-secondary d-none" id="student_update_button">Update</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal" data-bs-backdrop="static" data-bs-keyboard="false" id="show_student_course_readOnly">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              Selected Coures
+            </h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body d-flex flex-column justify-content-between">
+            <div class='selected_cour_readonly table-responsive'>
+              <table class="table table-bordered custom_table table-hover py-1" id="selected_course_table_data">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Program</th>
+                    <th>Module</th>
+                    <th>Room</th>
+                    <th>Division</th>
+                    <th>Faculty</th>
+                    <th>Day</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-success" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+
+
+
+<%- include('../partials/footer.ejs') %>
+<script>
+    $(document).ready(function(){
+        let minMaxSlotId = JSON.parse(`<%-minMaxSlotId%>`);
+        let courseCount = `<%- courseCounts %>`;
+    
+        let timetableProp = {
         totalSlots: minMaxSlotId[0].end_time_lid - minMaxSlotId[0].start_time_lid + 1,
         pxPerSlot: 13,
         roomNoWidth: 50,
-      }
-
-      for (let room of roomList) {
-        roomslot += `<div class ="d-flex room" data-room-lid = "${room.room_lid}" data-room-no ="${room.room_number}">
-                      <div class ="room-no" data-room-lid = "${room.room_lid}" data-room-type-lid = "${room.room_lid}"> 
-                            ${room.room_number}
-                      </div>
-                      <div class = "room-slots">
-                      </div>
-                    </div>`
-      }
-
-      let timetable_width = (Number(minMaxSlotId[0].end_time_lid) - Number(minMaxSlotId[0].start_time_lid) + 1) * timetableProp.pxPerSlot;
-
-      $('.timetable-container').html(roomslot);
-      $(':root').css('--roomSlotWidth', timetable_width + 'px');
-      $(':root').css('--timetableWidth', timetable_width + 56 + 'px');
-     
-      const selectedCourse = $('.selected_cour_readonly .table tbody');
-
-      if (courseSelected.length > 0) {
-        $('#show_student_readOnly').removeClass('d-none');
+        widthOfEvent:182,
+        startingLeft:0,
+        widthOfTable:1561,
       }
      
-  
-      courseSelected.forEach(function (course, index) {
-        let student_subject_al_recods = `<tr>
-          <td>${index + 1}</td>
-          <td>${course.programName}</td>
-          <td>${course.moduleName}</td>
-          <td>${course.room}</td>
-          <td>${course.division}</td>
-          <td>${course.facultyName}</td>
-          <td>${course.dayNameSelected}</td>
-          <td>${course.startTime}</td>
-          <td>${course.endTime}</td>
-        </tr>`;
+      $('#timetable-acad-session').on('change',function(){
+        let acadSessionId = $(this).val();
+       
+        $('.room-slots').empty();
+         
+        let ApiObj = {
+            url:'/student/timetable/by-acad-session-id',
+            type:'POST',
+            data:{
+               acadSessionId:acadSessionId 
+            },
+            dataType:'JSON'
+        }
+        ajaxApi(ApiObj).then(result =>{ 
+           courseCount = result.courseList.length;
+          let noOfRoomCount = courseCount / ((timetableProp.widthOfTable) / (timetableProp.widthOfEvent + timetableProp.pxPerSlot));
+          let roomCount = Math.ceil(noOfRoomCount);  
+          let roomslot = '';
+          let rowCount = 0;
 
-        selectedCourse.append(student_subject_al_recods);
-      });
+          for (let room = 0; room < roomCount; room++) {
+              roomslot += `<div class="d-flex room">
+                              <div class="room-no${rowCount++} room-no"></div>
+                              <div class="room-slots position-relative">
+                              </div>
+                          </div>`
+          }
+          let eventCount = -1;
+      $('.timetable-container').html(roomslot);     
+            addRoomSlotItemsToDOM(result.courseList, minMaxSlotId, timetableProp,eventCount);
+    });
+}); 
+   
+})
 
-      $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
+$('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
         let dataStudentSelected = document.querySelectorAll('.room_slot_selected');
         let days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -254,9 +242,7 @@
         $(this).parents('tr').remove();
       });
 
-    
       document.addEventListener('click', function(element){
-        
         if(element.target.classList.contains('room-slot-item')){
           addEvent(element);
         }
@@ -264,51 +250,14 @@
           closeButton(element);
         }
       })
+      $(document).on('click', '.btn_close_custom', function() {
+           console.log('inside the document', $(this).closest('.room-slot'));
+             $(this).parent().removeClass('room_slot_selected');
+             $(this).addClass('d-none');
+      });
 
-      function dayOnload(event) {
-        let event_val = event.target;               
-        let data_start_lid = event_val.getAttribute('data-start-lid');
-        let data_end_lid = event_val.getAttribute('data-end-lid');
-        let room_slot_list = $('.room-slot-item');
 
-        room_slot_list.each(function(index, element) {
-          if (Number(element.getAttribute('data-start-lid')) >= Number(data_start_lid) && 
-              Number(element.getAttribute('data-end-lid')) <= Number(data_end_lid)) {
-              if (!element.classList.contains('room_slot_selected')) {
-                  element.classList.add('custom_disabled');
-              }
-              else {
-                  $('.room_slot_selected').removeClass('room_slot_selected');
-              }
-          }
-        });
-
-        event_val.classList.remove('custom_disabled');
-        event_val.classList.add('room_slot_selected');
-        event_val.firstElementChild.classList.remove('d-none');
-      }
-
-      function closeButton(event){
-        let event_val = event.target;
-        let columnValue = event_val.parentElement.getAttribute('data-column');
-        let data_batch  = event_val.parentElement.getAttribute('data-batch-lid');
-       
-         selected_event.forEach(function(ele,index){
-           if(data_batch == ele.batch){
-           selected_event = removeIdentifyItem(selected_event,data_batch);
-           updateEventCount(false);
-           }
-       })
-        
-        document.querySelectorAll(`.room-slot-item[data-column="${columnValue}"]`).forEach((ele, ind)=> {
-          ele.classList.remove('custom_disabled');  
-        })
-
-        event_val.parentElement.classList.remove('room_slot_selected');
-        event_val.classList.add('d-none');
-      }
-
-      let selected_event = [];
+    let selected_event = [];
       let dataColumnValue = 1;
       function addEvent(event) {
         let event_val = event.target;
@@ -361,123 +310,8 @@
         updateEventCount(true);
         dataColumnValue++;
       }
-
-      function eventSlot(day_select_val){ 
-        let ranges;
-            if (day_select_val >= 1 && day_select_val <= 6) {
-              ranges = days[day_select_val - 1];
-            }
-            return ranges;
-       }      
-       $('#day_select').on('change', function () {
-        $('.room .room-slots').empty();
-        let day_select_val = $(this).val();
-        let eventSlotVal = eventSlot(day_select_val);  
-        if ($('#event_count').hasClass('d-none')) {
-          $('#event_count').removeClass('d-none')
-         }
-       
-        ApiObj = {
-          url: '/student/timetable/byDayLid',
-          type: 'POST',
-          data: {
-            daylid: day_select_val
-          },
-          dataType: 'JSON'
-        }
-
-        ajaxApi(ApiObj).then(result => {
-          
-          result.timetablelist.forEach(function (indivualdata, index) {
-            let room_slot = document.querySelector(`.room[data-room-lid = "${indivualdata.room_lid}"] .room-slots`);
-            const widthOfEvent = (indivualdata.end_slot - indivualdata.start_slot + 1) * timetableProp.pxPerSlot;
-            const leftsidemargin = ((indivualdata.start_slot) - Number(minMaxSlotId[0].start_time_lid)) * timetableProp.pxPerSlot;
-            let roomSlotItem = document.createElement('div');
-            let facultyList = '';
-            let iLoop = 1;
-
-            for (let faculty of JSON.parse(indivualdata.faculty_list)) {
-              if (iLoop == JSON.parse(indivualdata.faculty_list).length) {
-                facultyList += `${faculty.faculty_name} - (${faculty.abbr})`
-                roomSlotItem.setAttribute("data-faculty-lid", `${faculty.faculty_lid ? faculty.faculty_lid : ''}`)
-                roomSlotItem.setAttribute("data-faculty-name", `${faculty.faculty_name ? faculty.faculty_name : ''}`)
-                roomSlotItem.setAttribute("data-faculty-type", `${faculty.abbr}`)
-              }
-              else {
-                facultyList += `${faculty.faculty_name} || `
-              }
-              iLoop += 1
-            }
-
-            roomSlotItem.setAttribute("class", "room-slot-item") ;
-            eventSlotVal.forEach(function(selectEventSlot,index){
-              
-              if(selectEventSlot.start_slot == indivualdata.start_slot && selectEventSlot.end_slot == indivualdata.end_slot){
-                roomSlotItem.setAttribute('data-column',index+1);
-              }
-             })
-            selected_event.forEach(function(selected_event_item, index) {
-            
-               if (selected_event_item.batch == indivualdata.batch_lid){
-                   roomSlotItem.classList.add('room_slot_selected');
-                   
-               }
-               
-            
-            });
-            
-
-            roomSlotItem.setAttribute("data-faculty-name", `${facultyList}`)
-            roomSlotItem.setAttribute("data-left", `${leftsidemargin}`);
-            roomSlotItem.setAttribute("data-program-name", `${indivualdata.program_name}`)
-            roomSlotItem.setAttribute("data-acad-session", `${indivualdata.acad_session}`)
-            roomSlotItem.setAttribute("data-module-name", `${indivualdata.module_name}`)
-            roomSlotItem.setAttribute("data-lec-type", `${indivualdata.event_type}`)
-            roomSlotItem.setAttribute("data-division", `${indivualdata.division}`)
-            roomSlotItem.setAttribute("data-day", `${indivualdata.day_lid}`)
-            roomSlotItem.setAttribute('data-start-time', `${timeJson[indivualdata.start_slot - 1].start_time}`);
-            roomSlotItem.setAttribute('data-end-time', `${timeJson[indivualdata.end_slot - 1].end_time}`);
-            roomSlotItem.setAttribute('data-batch-lid', `${indivualdata.batch_lid}`);
-            roomSlotItem.setAttribute('data-start-lid',`${indivualdata.start_slot}`);
-            roomSlotItem.setAttribute('data-end-lid',`${indivualdata.end_slot}`);
-
-            roomSlotItem.setAttribute("style", `position:absolute;left: ${leftsidemargin}px ;top: 0; text-align:center; width:${widthOfEvent}px;height:100%;background-color:#ffffff;font-size:14px;padding:5px 2px 0px 2px;border-left:1px solid black;`)
-          
-              roomSlotItem.innerHTML =  
-              ` <button type="button" class="close btn_close_custom d-none" aria-label="Close"></button>${indivualdata.program_name} - ${indivualdata.acad_session} <hr> ${indivualdata.module_name} <hr>${indivualdata.division_lid}-${indivualdata.batch} (${indivualdata.event_type})<hr> 
-                    ${facultyList}<hr>
-                  <span class="badge bg-info start-time d-flex justify-content-center align-items-center">${timeJson[indivualdata.start_slot - 1].start_time}</span>  
-          <i class="fa-solid fa-arrows-left-right" style="right:${(widthOfEvent/ 2) - 7}px;position:absolute;bottom:0;"></i><span class="badge bg-info end-time d-flex justify-content-center align-items-center">
-              ${timeJson[indivualdata.end_slot - 1].end_time} </span>`;
-
-            room_slot.append(roomSlotItem);
-
-            const room_slot_items = document.querySelectorAll('.room-slot-item');
-            const room_slot_items_for_submit = document.querySelectorAll('.room_slot_selected');
-
-            room_slot_items.forEach(ele =>{
-              room_slot_items_for_submit.forEach(eleSel =>{
-                if (eleSel.getAttribute('data-column') == ele.getAttribute('data-column') && ele != eleSel){
-                  ele.classList.add('custom_disabled');
-                }
-              
-                if (ele.classList.contains('room_slot_selected')) {
-                 ele.firstElementChild.classList.remove('d-none');
-                }
-     
-              })
-            })
-
-            const update_button_present = document.querySelector('#student_update_button').classList.contains('d-none');
-
-            if (room_slot_items_for_submit.length == 4 && update_button_present) {
-              $('#student_submit_button').removeClass('d-none');
-            }
-          });
-        });
-      });
-
       function removeIdentifyItem(selectedArray,elementToRemove){
+        console.log('inside the remove IdentifyItem',elementToRemove,selectedArray);
         return selectedArray.filter(item => item.batch[0] !== elementToRemove);
       }
       function updateEventCount(isAdd) {
@@ -486,13 +320,84 @@
             $('#event_count').html(`Number of Course select: ${event_count}`);
         }
       }
+      function closeButton(event){
+        let event_val = event.target;
+        let columnValue = event_val.parentElement.getAttribute('data-column');
+        let data_batch  = event_val.parentElement.getAttribute('data-batch-lid');
+         selected_event.forEach(function(ele,index){
+           if(data_batch == ele.batch){
+            console.log('inside the data_batch',ele.batch);
+           selected_event = removeIdentifyItem(selected_event,data_batch);
+           updateEventCount(false);
+           }
+       })
+      }
+    function showError(errors) {
+        let simpleAlert = new SimpleAlert();
+        let obj = {
+            title : errors,
+            message: "",
+            type: 'alert-danger',
+            buttons: {
+                positive:{
+                    text: "OK",
+                    action: function(){
+                        document.querySelector('.simple-alert').remove();
+                    }
+                },
+                negative: {
+                    text: "Cancle",
+                    action: function () {
+                    alert('Negative')
+                    }
+                }
+            }
+        }
+        simpleAlert.alert(obj);
+    }
+   
+    function createRoomSlotItem(course, minMaxSlotId, timetableProp,eventCount) {
+            const widthOfEvent = timetableProp.widthOfEvent;
+            const widthOfTable = timetableProp.widthOfTable;
+            const leftsidemargin  = (eventCount *(timetableProp.widthOfEvent+timetableProp.pxPerSlot));
             
-});
-</script>
+            let roomSlotItem = document.createElement('div');
 
+            roomSlotItem.setAttribute("class", "room-slot-item");
+            roomSlotItem.setAttribute("data-program_name", `${course.program_name}`)
+            roomSlotItem.setAttribute("data-left", `${leftsidemargin}`);
+            roomSlotItem.setAttribute("data-acad-session", `${course.acad_session}`)
+            roomSlotItem.setAttribute("data-course-name", `${course.course_name}`)
+            roomSlotItem.setAttribute("data-division", `${course.division}`)
+            roomSlotItem.setAttribute("data-batch", `${course.batch}`)
+            roomSlotItem.setAttribute("data-faculty-name", `${course.faculty_name}`)
+            roomSlotItem.setAttribute('data-faculty-type-abbr', `${course.faculty_type_abbr}`);
+            roomSlotItem.setAttribute('data-start-lid',`${course.start_slot_lid}`);
+            roomSlotItem.setAttribute('data-end-lid',`${course.end_slot_lid}`);
+   
+            roomSlotItem.setAttribute("style", `position:absolute;left: ${leftsidemargin}px ;top: 0; text-align:center; width:${widthOfEvent}px;height:100%;background-color:#ffffff;font-size:14px;padding:5px 2px 0px 2px;border-left:1px solid black;`)
+
+            roomSlotItem.innerHTML =
+                `<button type="button" class="close btn_close_custom d-none" aria-label="Close"></button>${course.program_name} - ${course.acad_session} <hr> ${course.course_name}-(${course.credits}) <hr>${course.area_name}<hr>`;
+
+            return roomSlotItem;
+}
+
+function addRoomSlotItemsToDOM(courseList, minMaxSlotId, timetableProp, eventCount) {
+    let room_slots = document.querySelectorAll('.room-slots');
+  
+    courseList.forEach(function (course, index) {
+        eventCount++;
+        let room_slot_index = Math.floor((eventCount) / 7);
+        let room_slot = room_slots[room_slot_index];
+        let roomSlotItem = createRoomSlotItem(course, minMaxSlotId, timetableProp, eventCount % 7);
+        room_slot.append(roomSlotItem);
+    });
+}
+
+
+
+
+</script>
+  
 <%- include('../partials/footerEnd.ejs') %>
-<script src="/js/timetable_for_student/index.js"></script>
-<script src="/js/simpleAlert/simpleAlert.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-  crossorigin="anonymous"></script>

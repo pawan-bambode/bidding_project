@@ -373,7 +373,8 @@
         ajaxApi(ApiObj).then(result=>{
             showSuccess(result);
         }).catch(error =>{
-            showError(error.responseJson);
+            console.log('values of error',error);
+            showError(JSON.stringify(error.responseJson));
         })
      })
       $('#upload-student-data-form').on('submit', function(event) {

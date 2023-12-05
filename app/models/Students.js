@@ -52,16 +52,35 @@ module.exports = class Students {
             INNER JOIN [${slug}].courses c ON db.course_lid = c.id  WHERE seb.bidding_session_lid = @biddingId AND seb.is_confirmed = 1`)
         })
     }  
-    
-    static getCompleteCourese(slug,biddingId,username){
-      return poolConnection.then(pool =>{
-        return pool.request()
-        .input('biddingId',sql.Int,biddingId)
-        .input('sapId',sql.NVarChar,username.sap_id)
-        .query(`SELECT  cc.id , cc.course_name FROM [${slug}].completed_courses cc 
-         WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND cc.sap_id = @sapId  ORDER BY cc.id`)
-      })
+    static getCompleteCourese(slug, biddingId, username) {
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .input('sapId', sql.NVarChar, username)
+                .query(`SELECT cc.id, cc.course_name FROM [${slug}].completed_courses cc 
+                        WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND cc.sap_id = @sapId`)
+                .then(result => {
+                    return result.recordset; 
+                })
+                .catch(err => {
+                    console.error('Database error:', err);
+                    throw err; 
+                });
+        });
     }
+    
+    // static getCompleteCourese(slug,biddingId,username){
+    //     console.log('values username',username);
+    //     console.log('value sof slug',slug);
+    //     console.log('values biddingId',biddingId);
+    //   return poolConnection.then(pool =>{
+    //     return pool.request()
+    //     .input('biddingId',sql.Int,biddingId)
+    //     .input('sapId',sql.NVarChar,username.sap_id)
+    //     .query(`SELECT  cc.id , cc.course_name FROM [${slug}].completed_courses cc 
+    //      WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND cc.sap_id = @sapId  ORDER BY cc.id`)
+    //   })
+    // }
      static getDropCourseList(slug,biddingId){
         return poolConnection.then(pool =>{
             return pool.request()
@@ -171,12 +190,12 @@ module.exports = class Students {
     }
     static getSlotForShowTimetable(){
         return poolConnection.then(pool => {
-          return pool.request().query(`SELECT MIN(slot_lid) AS start_time_lid, MAX(slot_lid) AS end_time_lid FROM [sbm-mum].event_bookings`)
+          return pool.request().query(`SELECT MIN(start_slot_lid) AS start_time_lid, MAX(end_slot_lid) AS end_time_lid FROM [sbm-mum].timetable`)
         })
     }
     static getDistintRoomList(){
         return poolConnection.then(pool =>{
-            return pool.request().query(`SELECT DISTINCT eb.room_lid,r.room_number FROM [sbm-mum].event_bookings eb INNER JOIN [sbm-mum].rooms r ON eb.room_lid = r.room_lid`)
+            return pool.request().query(`SELECT DISTINCT room_no FROM [sbm-mum].timetable `)
         })
     }
     static getTimeslot(){
@@ -208,21 +227,30 @@ module.exports = class Students {
         return poolConnection.then(pool =>{
                 return pool.request()
                 .input('student_id',sql.NVarChar,student_lid)
-                .query(`SELECT * FROM [sbm-mum].subject_selected_by_stud WHERE student_id = @student_id AND active = 1`);
+                .query(`SELECT * FROM [sbm-mum].student_elective_mapping sem 
+                INNER JOIN [sbm-mum].student_data sd ON sem.student_lid = sd.id WHERE sap_id = @student_id AND sd.active = 1`);
             })
     }
-    static getTimetableByDayId(day_lid){
+    static getTimetableByDayId(slug,sapId,biddingId){
         return poolConnection.then(pool =>{
             return pool.request().
-            input('day_lid',sql.Int,day_lid)
-            .query(`SELECT * FROM [sbm-mum].timetableSubject_testing where day_lid = @day_lid`);     
+             input('sapId',sql.Int,sapId)
+            .input('biddingId',sql.Int,biddingId)
+            .query(`SELECT c.*,p.program_name FROM [${slug}].courses c INNER JOIN [${slug}].programs p  ON c.program_id = p.program_id WHERE c.sap_acad_session_id = @sapId AND c.active = 1 AND c.bidding_session_lid = @biddingId`)     
+        })
+    }
+    static getCountOfCourses(slug,biddingId){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`SELECT COUNT(*) AS count FROM [${slug}].courses c INNER JOIN [${slug}].programs p  ON c.program_id = p.program_id WHERE c.active = 1 AND c.bidding_session_lid = @biddingId`)     
         })
     }
     static getSlotDayId(day_lid){
         return poolConnection.then(pool =>{
             return pool.request().
             input('day_lid',sql.Int,day_lid)
-            .query(`SELECT DISTINCT end_slot,CONCAT(start_slot, '-',end_slot) as slot_value,start_slot FROM [sbm-mum].timetableSubject_testing where day_lid = @day_lid order by end_slot`);     
+            .query(`SELECT DISTINCT end_slot_lid,CONCAT(start_slot_lid, '-',end_slot_lid) as slot_value,start_slot_lid FROM [sbm-mum].timetable where day_lid = @day_lid order by end_slot_lid`);     
         })
     }
 

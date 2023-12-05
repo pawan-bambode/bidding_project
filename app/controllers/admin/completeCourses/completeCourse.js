@@ -20,15 +20,15 @@ module.exports = {
 const workbook = new excel.Workbook();
 const worksheet = workbook.addWorksheet('Sheet1');
 const acadsessionList =  acadSession.getAcadSessionList(req,res);
-console.log('values of acadSession ON RETURN VALUES',acadsessionList);
-const dropdownOptions = ['Option 1', 'Option 2', 'Option 3'];
+// console.log('values of acadSession ON RETURN VALUES',acadsessionList);
+// const dropdownOptions = ['Option 1', 'Option 2', 'Option 3'];
 
-worksheet.addDataValidation({
-  type: 'list',
-  allowBlank: true,
-  sqref: 'B2', 
-  formulas: [dropdownOptions.join(',')]
-});
+// worksheet.addDataValidation({
+//   type: 'list',
+//   allowBlank: true,
+//   sqref: 'B2', 
+//   formulas: [dropdownOptions.join(',')]
+// });
 
 worksheet.column(1).setWidth(15); 
 worksheet.column(2).setWidth(20); 
@@ -46,14 +46,27 @@ worksheet.cell(1, 2).string('acadSession').style(headerStyle);
 worksheet.cell(1, 3).string('courseId').style(headerStyle);
 worksheet.cell(1, 4).string('courseName').style(headerStyle);
 
-  worksheet.cell(i, 2).string('').style({ dataValidation: { showDropDown: true } });
+  // worksheet.cell(i, 2).string('').style({ dataValidation: { showDropDown: true } });
   
-workbook.write(path.join(__dirname, '../../../../excelFile/'+'sampleForImportCompleteCourses.xlsx'), (err, stats) => {
+//workbook.write(path.join(__dirname, '../../../../excelFile/'+'sampleForImportCompleteCourses.xlsx'))
+//   if (err) {
+//     console.error(err);
+//   } else {
+//     console.log('Excel file with dropdown created successfully');
+//   }
+// });
+        
+const filePath = __dirname + '/sampleForImportCompleteCourses.xlsx';
+
+workbook.write(filePath, (err, stats) => {
   if (err) {
-    console.error(err);
-  } else {
-    console.log('Excel file with dropdown created successfully');
+    return res.status(500).send('Error generating Excel file');
   }
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      return res.status(500).send('Error sending Excel file');
+    }
+  });
 });
 
         
@@ -67,10 +80,12 @@ workbook.write(path.join(__dirname, '../../../../excelFile/'+'sampleForImportCom
             const sheetName = excelFileDataWorkbook.SheetNames[0];
             const sheet = excelFileDataWorkbook.Sheets[sheetName];
             const completeCoursesJsonData = xlsx.utils.sheet_to_json(sheet);
+            console.log('values of complete',completeCoursesJsonData);
             const completeCoursesWithColumnHypen = completeCoursesJsonData.map(item =>{
+              console.log('values of ',item);
                             return {
                               sap_id: item.studentSapId,
-                              acad_session: item.trimester.replace(/\s+/g,' ').trim(),
+                              acad_session: item.acadSession.replace(/\s+/g,' ').trim(),
                               course_id: item.courseId,
                               course_name: item.courseName.replace(/\s+/g,' ').trim()
                             };
