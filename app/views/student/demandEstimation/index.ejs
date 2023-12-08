@@ -9,105 +9,586 @@
 
 
 <div class="main-content">
-  <div class="card card-custom">
-    <div class="card-header-custom d-flex justify-content-between p-1">
-        <h4 class="ms-2">Demand Estimation Round</h4>
-        <button type="button" class="btn btn-danger ms-auto me-3"  id="multiple-url-hit">
-           Demand Estimation Round
-        </button>  
-    </div>
-    <div class="card-body table-responsive">
-        <h3 class="text-center">Demand Estimation Round</h3>
-        <div class="row ps-5 pe-5 d-flex justify-content-between">
-            <div class="col-md-4">
-                <h6>Minimum Yearly Credits :</h6>
+   <div class="card card-custom">
+        <div class="card-header-custom d-flex justify-content-between p-1">
+            <h4 class="ms-2">Demand Estimation Round</h4>
+            <button class="btn btn-danger time-remaing me-5"></button> 
+        </div>
+        <div class="card-body table-responsive">
+            <h3 class="text-center bidding-round">Demand Estimation Round</h3>
+            <div class="row ps-5 pe-5 d-flex justify-content-between">
+                <div class="col-md-4">
+                    <h6>Minimum Yearly Credits :&nbsp;<span><%- yearlyCredit.min_yearly_credits %></span></h6>
+                </div>
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    <h6>Maximum Yearly Credits :&nbsp;<span><%- yearlyCredit.max_yearly_credits %></span></h6>
+                </div>
             </div>
-            <div class="col-md-4"></div>
-            <div class="col-md-4">
-                <h6>Maximum Yearly Credits :</h6>
+           
+            <div class="row ps-5 pe-5">
+                <%for(let credit of creditList) { %>
+                    <div class="col-md-4">
+                        <h6><%- credit.acad_session %> Credits :&nbsp;<span class="credits-point-target" id="credits-points-target-<%- credit.sap_acad_session_id %>"><%- credit.min_credits %></span></h6>
+                    </div>
+                <% } %>
+            </div>
+            <div class="row ps-5 pe-5">
+                    <%for(let acadSession of dropdownAcadSessionList) { %>
+                        <div class="col-md-4">
+                            <h6><%- acadSession.acad_session %> Selected Credits :&nbsp;<span class="credit-points" id="credits-points-<%- acadSession.sap_acad_session_id %>">0</span></h6>
+                        </div>
+                    <% } %>
+            </div>
+            <div class="row ps-5 pe-5">
+                <div class="col-md-4">
+                    <h6>Start Time :&nbsp;<span id="start-time"><%- startTime %></span></h6>
+                </div>    
+                <div class="col-md-4">
+                    <h6>End Time :&nbsp;<span id="end-time"><%- endTime %></span></h6>
+                </div>
+                <div class="col-md-4">
+                    <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
+                </div>
             </div>
         </div>
-        <div class="row ps-5 pe-5">
-            <div class="col-md-4">
-                <h6>Trim IV Selected Credits :</h6>
-            </div>    
-            <div class="col-md-4">
-                <h6>Trim V Selected Credits :</h6>
-            </div>
-            <div class="col-md-4">
-                <h6>Trim VI Selected Credits :</h6>
+    </div> 
+  
+    <div class="card card-custom card mt-5">
+        <div class="card-header-custom d-flex justify-content-between p-1">
+            <h3 class="ms-2">Selected Courses</h3>
+              <button class="btn btn-success save-select-course disabled me-5">Save</button>
+        </div>
+     
+        <div class="card-body table-responsive">
+            <div class="card-body table-responsive">
+                <table class="table custom_row table-bordered mt-4 custom-table" id="selected-course-table">
+                  <thead>
+                      <th>#</th>
+                      <th>Area</th>
+                      <th>Course</th>
+                      <th>Acad Session</th>
+                      <th>Credits</th>
+                      <th>Action</th>
+                  </thead>
+                  <tbody>
+                    <tbody>
+                        <% let selectedCourseIndex = 1 %>
+                        <% if (selectCourse.length > 0) { %>
+                          <% for (let selectedCourse of selectCourse) { %>
+                            <tr data-course-id = "<%- selectedCourse.id %>" data-area="<%-selectedCourse.area_name %>" data-course-name="<%- selectedCourse.course_name %>" data-acad-session="<%-selectedCourse.acad_session %>" data-credits="<%-selectedCourse.credits %>" data-acad-session-id="<%-selectedCourse.sap_acad_session_id %>">
+
+                              <td><%- selectedCourseIndex++ %></td>
+                              <td><%- selectedCourse.area_name %></td>
+                              <td><%- selectedCourse.course_name %></td>
+                              <td><%- selectedCourse.acad_session %></td>
+                              <td><%- selectedCourse.credits %></td>
+                              <td><a class="delete-selected-course" data-id="<%- selectedCourse.id %>"><i class="fa fa-trash text-danger"></i></a></td>
+                            
+                            </tr>
+                          <% } %>
+                        <% } %>                  
+                  </tbody>
+                </table>
             </div>
         </div>
-        <div class="row ps-5 pe-5">
-            <div class="col-md-4">
-                <h6>Start Time :</h6>
-            </div>    
-            <div class="col-md-4">
-                <h6>End Time :</h6>
+    </div>    
+
+    <div class="card card-custom card mt-5 available-course">
+      <div class="card-header-custom d-flex justify-content-between p-1">
+          <h3 class="ms-2">Available Courses</h3>
+      </div>
+   
+      <div class="card-body table-responsive">
+          <div class="d-flex">
+            <div>
+                <label>Show Entries</label>
+                <select class="form-select" id="changeEntry">
+                    <%for(let page of locals.page_filter){%>
+                       <option value="<%-page%>"><%-page%></option>
+                    <%}%>
+                </select>
             </div>
-            <div class="col-md-4">
-                <h6>Current Time :</h6>
+              <div class="col-md-3 ms-5">
+                  <label class="form-label mb-1" for="acad-session-change">Select Acad Session:</label>
+                  <select class="form-select form-control select2" id="acad-session-change">
+                      <option selected disabled>--Select Acad Session-- </option>
+                       <%for(let acadSession of dropdownAcadSessionList) { %>
+                          <option value="<%- acadSession.sap_acad_session_id %>"><%- acadSession.acad_session %></option>
+                      <% } %>    
+                  </select>
+               </div>   
+                  <div class="col-md-3 ms-5">
+                    <label class="form-label mb-1" for="area-change">Select Area:</label>
+                  <select class="form-select form-control select2" id="area-change">
+                    <option selected disabled>--Select Area-- </option>   
+                </select>
+              </div>
+          </div>
+          <div class="card-body table-responsive">
+              <table class="table custom_row table-bordered mt-4 custom-table" id="available-course-table">
+                <thead>
+                    <th>#</th>
+                    <th>Area</th>
+                    <th>Course</th>
+                    <th>Acad Session</th>
+                    <th>Credits</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    <% let count = 1 %>
+                    <%for(let course of courseList) {%>
+                        <tr data-course-id="<%- course.id %>" data-area="<%- course.area_name %>" data-course-name="<%-course.course_name %>" data-acad-session="<%-course.acad_session %>"
+                            data-credits ="<%- course.credits %>" data-acad-session-id ="<%-course.sap_acad_session_id %>"
+                            >
+                            <td><%- count++ %></td>
+                            <td><%-course.area_name %></td> 
+                            <td><%-course.course_name %></td> 
+                            <td><%-course.acad_session %></td> 
+                            <td><%-course.credits %></td> 
+                            <td><button class="btn btn-secondary add-course">Add</button></td>
+                        </tr>
+                    <%}%>
+                </tbody>
+              </table>
+              <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries :&nbsp;<span id="page-no"></span>
+                    </p>
+                </div>
+                <div>
+                    <p id="pagination" class="pagination-search"></p>
+                </div>
             </div>
-        </div>
-    </div>
-    
-    </div>
-  </div>  
+          </div>
+      </div>
+      
 </div>
+
 <script>
 $(document).ready(function() {
-    
+    updateCurrentTime();
+    demandEstimationTimeCountDown();
+    setInterval(updateCurrentTime, 1000);
+    setInterval(demandEstimationTimeCountDown, 1000);
+
+    let rowCount = $('#changeEntry').val();
+    let pageCount = '<%- pageCount %>';
+    let acadSessionCount = '<%- dropdownAcadSessionList.length %>';
+    let completedCreditsCount = 0;
+    let selectedCourseList = ('<%- selectCourse.length %>')
+
+    if(selectedCourseList > 0){
+     $('.available-course').addClass('d-none');
+    }
+
+    let roundId = '<%- roundLid %>';
+    paginationData(rowCount, parseInt(pageCount));
+  
     let active = `<%- active %>`;
     $('#sidebar .side-menu li.' + active).addClass('active');
 
     $(document).on('click', '.fa-angles-left', function() {
-    $('.left-sidebar').addClass('hide');
-    $('.main').css('left', '80px');
-    $('.top-navbar').css('left', '80px');
-    $('.nmims-logo').addClass('d-none');
-    $('.nmims-logo-only').removeClass('d-none');
-    $(this).removeClass('fa-angles-left').addClass('fa-angles-right');
-    $('.left-sidebar .side-menu li img').css('margin-left','-2px');
-});
+        $('.left-sidebar').addClass('hide');
+        $('.main').css('left', '80px');
+        $('.top-navbar').css('left', '80px');
+        $('.nmims-logo').addClass('d-none');
+        $('.nmims-logo-only').removeClass('d-none');
+        $(this).removeClass('fa-angles-left').addClass('fa-angles-right');
+        $('.left-sidebar .side-menu li img').css('margin-left','-2px');
+    });
 
-$(document).on('click', '.fa-angles-right', function() {
-    $('.left-sidebar').removeClass('hide');
-    $('.main').css('left', '260px');
-    $('.top-navbar').css('left', '260px');
-    $('.nmims-logo').removeClass('d-none');
-    $('.nmims-logo-only').addClass('d-none');
-    $(this).addClass('fa-angles-left').removeClass('fa-angles-right');
-});
+    $(document).on('click', '.fa-angles-right', function() {
+        $('.left-sidebar').removeClass('hide');
+        $('.main').css('left', '260px');
+        $('.top-navbar').css('left', '260px');
+        $('.nmims-logo').removeClass('d-none');
+        $('.nmims-logo-only').addClass('d-none');
+        $(this).addClass('fa-angles-left').removeClass('fa-angles-right');
+    });
 
-    $('#multiple-url-hit').on('click', async function() {
-    const url = '/student/multiple-hit';
-    const batchSize = 100; 
-    const totalRequests = 2;
-    const batches = Math.ceil(totalRequests / batchSize);
+        $('#acad-session-change').on('change',function(){
+            let showEntry = $('#changeEntry').val();
+            let acadSessionId = $(this).val();
+            
+            let ApiObj = {
+                url:'/student/demand-estimation/courses-by-acad-session-id',
+                type:'POST',
+                data:{
+                    showEntry:showEntry,    
+                    acadSessionId:acadSessionId
+                },
+                dataType:'JSON'
+            }
 
-    try {
-        const promises = Array.from({ length: batches }, (_, batchIndex) => {
-            const start = batchIndex * batchSize;
-            const end = Math.min(start + batchSize, totalRequests);
-            const batchUrls = Array.from({ length: end - start }, () => fetch(url));
-            return Promise.allSettled(batchUrls)
-                .then(batchResponses => {
-                    batchResponses.forEach((response, index) => {
-                        const currentRequestIndex = start + index + 1;
-                        console.log(`Response ${currentRequestIndex}:`, response.status === 'fulfilled' ? response.value : 'Error');
+            ajaxApi(ApiObj).then(result => { 
+              let areaName = `<option selected disabled >Select Area</option>`;
+                if (result.areaList.length > 0) {
+                    result.areaList.forEach(area => {
+                        areaName += `<option value="${area.area_name}">${area.area_name}</option>`;
                     });
-                });
+                    
+                } else {
+                    areaName += `<option value="">No Area Found!</option>`;
+                }
+
+                $("#area-change").html(areaName);
+                ajaxTable(result.courseList);
+                $('#page-no').html(result.courseCount);
+                paginationData(rowCount,result.courseCount)
+            });
+
+        }); 
+
+        $('#area-change').on('change',function(){
+           let showEntry = $('#changeEntry').val();
+           let acadSessionId = $('#acad-session-change').val();
+           let areaName = $(this).val();
+        
+           let ApiObj = {
+            url:'/student/demand-estimation/courses-by-area-name',
+            type:'POST',
+            data:{
+                showEntry:showEntry,
+                acadSessionId:acadSessionId,
+                areaName:areaName
+            },
+            dataType:'JSON'
+           }
+           ajaxApi(ApiObj).then(result =>{
+             ajaxTable(result.courseList);
+             $('#page-no').html(result.courseCount);
+             paginationData(rowCount,result.courseCount);
+             
+           })
+        })
+
+    function updateCurrentTime() {
+        let currentDate = new Date();
+        let formattedDateTime = currentDate.toLocaleString();
+        $('#current-date-time').text(convertDateFormat(formattedDateTime)); 
+    }
+
+    function demandEstimationTimeCountDown(){
+        let endTime = $('#end-time').text();
+
+        let endDateTime = new Date(endTime);
+        let currentDateTime = new Date();
+        if(endDateTime > currentDateTime){
+        let dateSubtraction = endDateTime - currentDateTime;
+        let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
+        $('.time-remaing').text(`Rounds End In ${dateSubtractionValue}`);
+        }
+        if(endDateTime == currentDateTime){
+            let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
+        $('.time-remaing').text(`Rounds End In ${dateSubtractionValue}`);
+        }
+        if(endDateTime < currentDateTime){
+            $('.time-remaing').text(`Rounds Ended`);
+            $('.time-remaing').attr('data-round-status','end');
+            $('.save-select-course').addClass('disabled');
+        }
+    } 
+
+    function convertDateFormat(inputDate) {
+        let [datePart, timePart] = inputDate.split(',');
+        let [day, month, year] = datePart.split('/');
+
+        let monthNames = [
+            'January', 'February', 'March', 'April',
+            'May', 'June', 'July', 'August',
+            'September', 'October', 'November', 'December'
+        ];
+        let monthName = monthNames[parseInt(month) - 1];
+        let formattedDate = `${day}-${monthName} ${year}`;
+        let formattedDateTime = `${formattedDate} ${timePart}`;
+
+        return formattedDateTime;
+    } 
+
+    function convertMillisecondsToReadableTime(milliseconds) {
+        if(milliseconds == 0){
+            return `0 h:0 M:0 S`
+        }
+        let seconds = Math.floor(milliseconds / 1000);
+        let minutes = Math.floor(seconds / 60);
+        let hours = Math.floor(minutes / 60);
+
+        let remainingMinutes = minutes % 60;
+        let remainingSeconds = seconds % 60;
+
+        return `${hours} h:${remainingMinutes}M:${remainingSeconds}S`;
+        }
+
+        $('#selected-course-table').on('click', '.delete-selected-course', function () {
+                let acadSessionId = $(this).closest('tr').data('acad-session-id');
+                console.log('value sof acadSessionId',acadSessionId);
+                let notSupport =  $(`#available-course-table tbody tr[data-acad-session-id="${acadSessionId}"]`);
+                console.log('values of not support',notSupport);
+                $(this).closest('tr').remove();
+                $('.available-course').removeClass('d-none');
+            });
+
+
+    function ajaxTable(courseList) {
+       
+        $("#available-course-table tbody").empty();
+        let ajaxTable = ``;
+        if (courseList.length > 0) {
+            let count = 1;
+            for (const course of courseList) {
+            let creditsComplete = $('#selected-course-table tbody').attr(`credit-complete-${course.sap_acad_session_id}`);
+            
+            let addToTable = true;
+            $('#selected-course-table tbody tr').each((index, selectedCourse) => {
+                let selectedCourseId = $(selectedCourse).data('course-id');
+                if (selectedCourseId == course.id) {
+                addToTable = false; 
+                }
+            });
+
+            if (addToTable) {
+                let disabledAddButton = creditsComplete === 'true'?'disabled':'';
+                ajaxTable +=
+                `<tr data-course-id="${course.id}" data-area="${course.area_name}" data-course-name="${course.course_name}" data-acad-session="${course.acad_session}" data-credits="${course.credits}" data-acad-session-id="${course.sap_acad_session_id}">
+                    <td>${count++}</td>
+                    <td>${course.area_name}</td>
+                    <td>${course.course_name}</td>
+                    <td>${course.acad_session}</td>
+                    <td>${course.credits}</td>
+                    <td><button class="btn btn-secondary add-course ${disabledAddButton}">Add</button></td>
+                </tr>`;
+            }
+            }
+        }
+        $("#available-course-table tbody").html(ajaxTable);
+    }
+    let count = 1; 
+    $('#available-course-table').on('click','.add-course',function(){
+      let addCouresRow = $(this).closest('tr');
+      let courseId = addCouresRow.data('course-id');
+      let areaName = addCouresRow.data('area');
+      let courseName = addCouresRow.data('course-name');
+      let acadSession = addCouresRow.data('acad-session');
+      let credits = addCouresRow.data('credits');
+      let acadSessionId = addCouresRow.data('acad-session-id');
+
+      let creditsPointsElement = $(`#credits-points-${acadSessionId}`);
+      let currentCredits = Number(creditsPointsElement.text());
+      creditsPointsElement.text(currentCredits + Number(credits));
+      let targetCreditsPoints = Number($(`#credits-points-target-${acadSessionId}`).text());
+      
+      if(targetCreditsPoints == Number($(`#credits-points-${acadSessionId}`).text())){
+        $('#available-course-table tbody tr').each((index,avaliableCours) =>{
+            if($(avaliableCours).data('acad-session-id') == acadSessionId){
+                $(avaliableCours).find('.add-course').addClass('disabled');
+                $('#selected-course-table tbody').attr(`credit-complete-${acadSessionId}`,'true');           
+            } 
+        })
+        completedCreditsCount++;
+      }
+        let ajaxTable =
+            `<tr data-course-id="${courseId}" data-area="${areaName}" data-course-name="${courseName}" data-acad-session="${acadSession}" data-credits="${credits}" data-acad-session-id="${acadSessionId}">
+                <td>${count++}</td>
+                <td>${areaName}</td>
+                <td>${courseName}</td>
+                <td>${acadSession}</td>
+                <td>${credits}</td>
+                <td><button class="btn btn-danger cancel-course">Cancel</button></td>
+            </tr>`;
+
+            $("#selected-course-table tbody").append(ajaxTable);
+            $(this).closest('tr').remove();
+          if(completedCreditsCount == acadSessionCount){
+                let demandEstimationStatus = $('.time-remaing').attr('data-round-status');
+                if(demandEstimationStatus == undefined){
+                $('.save-select-course').removeClass('disabled');
+                }
+           }
+    });
+
+    $('#selected-course-table').on('click','.cancel-course',function(){
+      let addCouresRow = $(this).closest('tr');
+      let courseId = addCouresRow.data('course-id');
+      let areaName = addCouresRow.data('area');
+      let courseName = addCouresRow.data('course-name');
+      let acadSession = addCouresRow.data('acad-session');
+      let credits = addCouresRow.data('credits');
+      let acadSessionId = addCouresRow.data('acad-session-id');
+
+      let creditsPointsElement = $(`#credits-points-${acadSessionId}`);
+      let currentCredits = Number(creditsPointsElement.text());
+      creditsPointsElement.text(currentCredits - Number(credits));
+
+      if($(this).closest('tbody').attr(`credit-complete-${acadSessionId}`) !== undefined){
+      $(this).closest('tbody').removeAttr(`credit-complete-${acadSessionId}`)}
+
+      let sameAcadSessionList = $(`#available-course-table tbody tr[data-acad-session-id="${acadSessionId}"] td  button`);
+    
+        if (sameAcadSessionList.hasClass('disabled')) {
+            sameAcadSessionList.removeClass('disabled');
+        }
+
+        let count = 1; 
+        let ajaxTable =
+            `<tr data-course-id="${courseId}" data-area="${areaName}" data-course-name="${courseName}" data-acad-session="${acadSession}" data-credits="${credits}">
+                <td>${count++}</td>
+                <td>${areaName}</td>
+                <td>${courseName}</td>
+                <td>${acadSession}</td>
+                <td>${credits}</td>
+                <td><button class="btn btn-secondary add-course">Add</button></td>
+            </tr>`;
+
+            $("#available-course-table tbody").append(ajaxTable);
+            $(this).closest('tr').remove();
+    });
+
+    $(".pagination-search").on('click', '.pagination li', function () {
+                let pageNo = $(this).attr('data-lp')
+                let searchValue = $(this).val();
+                let showEntry = $('#changeEntry').val();
+                let acadSession = $('#acad-session-change').val();
+                let area = $('#area-change').val();
+
+                  $.ajax({
+                      type:'POST',
+                      url:'/student/demand-estimation/search-by-letter',
+                      data:{
+                        searchLetter:searchValue,
+                        pageNo:pageNo,
+                        showEntry:showEntry,
+                        acadSessionId:acadSession,
+                        area:area
+                      },
+                 success:function(result){
+                    ajaxTable(result.courseList)                 
+                }
+            })
+        })
+
+     $('#changeEntry').on('change',function(){
+             let showEntry = $(this).val();
+             let ApiObj = {
+                type:'POST',
+                url:'/student/demand-estimation/showEntryCouresList',
+                data:{
+                    showEntry:showEntry
+                },
+                datatype:'JSON'
+                }
+                ajaxApi(ApiObj).then(result=>{
+                paginationData(showEntry,result.length)
+                ajaxTable(result.data)
+                }).catch(error =>{
+                showError(error.responseJSON);
+                })    
+            })
+    
+        $(document).on('click', '.save-select-course', function () {
+            let selectedCourseArray = [];
+        $('#selected-course-table tbody tr').each((index, selectedCourse) => {
+            let selectedCourses = {};
+            let courseLid = $(selectedCourse).data('course-id');
+            let studentLid = $('.student-id').text();
+    
+            selectedCourses.courseLid = courseLid,
+            selectedCourses.studentLid = studentLid,
+            selectedCourses.roundLid = roundId
+            selectedCourseArray.push(selectedCourses);
+        });
+       
+        let studentLid = $('.student-id').text(); 
+
+        let ApiObj = {
+            url: '/student/demand-estimation/selected-course/save',
+            type: 'POST',
+            data:{ inputJSON:JSON.stringify(selectedCourseArray)},
+            dataType: 'JSON'
+        };
+        console.log('values of ApiObj',ApiObj);
+        ajaxApi(ApiObj).then(result => {
+            console.log('values of result', result);
+        });
         });
 
-        await Promise.all(promises);
-    } catch (error) {
-        console.error('Error in one or more batches:', error);
+  
+})
+    function paginationData(rowCount, totalCount) {
+        $('#page-no').html(totalCount);
+                let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
+                console.log("Page Numbers", pageNos);
+                $('#pagination').bootpag({
+                    total: pageNos,
+                    page: 1,
+                    maxVisible: 10,
+                    leaps: true,
+                    firstLastUse: true,
+                    first: '←',
+                    last: '→',
+                    wrapClass: 'pagination',
+                    activeClass: 'active', 
+                    disabledClass: 'disabled',
+                    nextClass: 'next',
+                    prevClass: 'prev',
+                    lastClass: 'last',
+                    firstClass: 'first'
+                }).on("page", function (event, num) {
+                
+                });
+            }
+
+    function showError(errors) {
+        let simpleAlert = new SimpleAlert();
+        let obj = {
+            title : errors,
+            message: "",
+            type: 'alert-danger',
+            buttons: {
+                positive:{
+                    text: "OK",
+                    action: function(){
+                        document.querySelector('.simple-alert').remove();
+                    }
+                },
+                negative: {
+                    text: "Cancle",
+                    action: function () {
+                    alert('Negative')
+                    }
+                }
+            }
+        }
+        simpleAlert.alert(obj);
     }
-});
+   
 
 
-});
+    $('#multiple-url-hit').on('click', async function() {
+            const url = '/student/multiple-hit';
+            const batchSize = 100; 
+            const totalRequests = 2;
+            const batches = Math.ceil(totalRequests / batchSize);
 
+            try {
+                const promises = Array.from({ length: batches }, (_, batchIndex) => {
+                    const start = batchIndex * batchSize;
+                    const end = Math.min(start + batchSize, totalRequests);
+                    const batchUrls = Array.from({ length: end - start }, () => fetch(url));
+                    return Promise.allSettled(batchUrls)
+                        .then(batchResponses => {
+                            batchResponses.forEach((response, index) => {
+                                const currentRequestIndex = start + index + 1;
+                                console.log(`Response ${currentRequestIndex}:`, response.status === 'fulfilled' ? response.value : 'Error');
+                            });
+                        });
+                });
+
+                await Promise.all(promises);
+            } catch (error) {
+                console.error('Error in one or more batches:', error);
+            }
+     });
 </script>
 
 <%- include('../partials/footer.ejs') %>

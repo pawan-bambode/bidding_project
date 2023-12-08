@@ -64,15 +64,5 @@ static update(inputJSON,slug,userid,biddingSessionId){
             })
 }
 
-static getBiddingDemandEstimationRounds(slug, biddingId) {
-    console.log('values of slug',slug);
-    console.log('values of biddingId',biddingId);
-    return poolConnection.then(pool => {
-        return pool.request()
-            .input('biddingId', sql.Int, biddingId)
-            .input('demand', sql.NChar, 'DEMAND_ESTIMATION_ROUND')
-            .query(`SELECT  SUBSTRING(round_name, CHARINDEX('-', round_name) + 1, LEN(round_name)) AS DemandEstimation,id FROM [${slug}].round_settings WHERE active = 1 AND bidding_session_lid = @biddingId AND round_name LIKE '%' + @demand + '%';`);
-    });
-}
 
 }

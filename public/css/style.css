@@ -1634,6 +1634,7 @@ margin: auto;
     border-top-left-radius: 15px;
     border-top-right-radius: 15px;
     box-sizing: border-box !important;
+    background-color:var(--primary-bg) !important;
 }
 .creatCustom {
     background: rgb(18, 120, 209);
@@ -1806,6 +1807,9 @@ margin: auto;
 }
 .disbaled_whole_div{
     pointer-events: none;
+}
+.disbaled_whole_div .btn_close_custom{
+    pointer-events: all;
 }
 .selected_course{
     max-height: 400px;

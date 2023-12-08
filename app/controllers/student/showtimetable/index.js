@@ -3,7 +3,7 @@ const student = require('../../../models/Students');
 const studentUtil = require('../../../utils/timetableforstudent');
 const programSession = require('../../../models/admin/programs/programsession')
 const biddingRound = require('../../../models/admin/biddinground/biddinground')
-const timetable = require('../../../models/admin/timetable/timetable')
+const course = require('../../../models/admin/courseworkload/courseworkload')
 
 module.exports = {
 
@@ -27,20 +27,9 @@ module.exports = {
     })
     })
 },
-getDemandEstimationHomePage :(req ,res) =>{
-  let demandEstimationUrl = req.route.path.split('/');
-  let demandEstimation = demandEstimationUrl[demandEstimationUrl.length - 1]
-  Promise.all([biddingRound.getBiddingDemandEstimationRounds(res.locals.slug,res.locals.biddingId)]).then(result =>{
-    res.render('student/demandEstimation/index',{
-      active:demandEstimation,
-      demandEstimationRounds:result[0].recordset
 
-     });
-  })
-},
-getDemandEstimation :(req , res) =>{
 
-},
+
  getBidding : (req , res) =>{
   let biddingUrl = req.route.path.split('/');
   let bidding = biddingUrl[biddingUrl.length - 1]
@@ -71,20 +60,12 @@ multipleHit: (req, res) => {
 },
 
     showtimetable: (req, res) => {
-    Promise.all([student.getSlotForShowTimetable(), student.getCountOfCourses(res.locals.slug,res.locals.biddingId), student.getTimeslot(),student.fetchAllCourseSelByStudent('15048'),student.getSlotDayId('1'),student.getSlotDayId(2),student.getSlotDayId(3),student.getSlotDayId(4),student.getSlotDayId(5),student.getSlotDayId(6),timetable.getDropdownAcadSessionList(res.locals.slug,res.locals.biddingId)]).then(result => {
+    Promise.all([student.getSlotForShowTimetable(), student.getCountOfCourses(res.locals.slug,res.locals.biddingId),student.fetchAllCourseSelByStudent('15048'),course.getDropdownAcadSessionList(res.locals.slug,res.locals.biddingId)]).then(result => {
       res.render('admin/students/showTimetableStudent.ejs', {
         minMaxSlotId: JSON.stringify(result[0].recordset),
         courseCounts: result[1].recordset[0].count,
-        timeSlotList: JSON.stringify(result[2].recordset),
-        courseSelectedByStud :JSON.stringify(result[3].recordset),
-        slot_lid_monday:JSON.stringify(result[4].recordset),
-        slot_lid_tuesday:JSON.stringify(result[5].recordset),
-        slot_lid_wednesday:JSON.stringify(result[6].recordset),
-        slot_lid_thirdsday:JSON.stringify(result[7].recordset),
-        slot_lid_friday:JSON.stringify(result[8].recordset),
-        slot_lid_satuday:JSON.stringify(result[9].recordset),
-        numberOfCourse:7,
-        dropdownAcadSessionList:result[10].recordset  
+        courseSelectedByStud :JSON.stringify(result[2].recordset),
+        dropdownAcadSessionList:result[3].recordset  
       })
     })
   },

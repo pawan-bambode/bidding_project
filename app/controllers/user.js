@@ -73,8 +73,11 @@ module.exports = {
                         message: "Invalid username or password"
                     })
                 }
-            }
+            }    
+                
                 let isVerified = await hash.verifyPassword(req.body.password, userData.recordset[0].password)
+                console.log('values of is',isVerified);
+                console.log('values of userData.recordset[0].id',userData.recordset[0].id);
                 req.session.userId = userData.recordset[0].id;
                 req.session.username = userData.recordset[0].username;
                 req.session.firstName = userData.recordset[0].first_name;
@@ -83,6 +86,7 @@ module.exports = {
                 req.session.email = userData.recordset[0].email;
                 req.session.subDomain = req.headers.host.split('.')[0];
                 req.session.studentSapId = userData.recordset[0].sap_id;
+                req.session.studentId = userData.recordset[0].student_lid;
                 req.session.permissions = userData.recordset[0].role_name;
                 req.session.modules = userData.recordset[0].role_name;
 

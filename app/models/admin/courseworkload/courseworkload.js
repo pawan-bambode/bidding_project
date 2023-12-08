@@ -269,5 +269,31 @@ static getCountFilterByCourseId(slug,biddingId,programId,sessionId,courseId,show
         WHERE c.active = 1 AND c.bidding_session_lid =  @biddingId AND program_id = @programId AND c.sap_acad_session_id = @sessionId AND c.course_id = @courseId`)
       })
 }
-
+static getDropdownAcadSessionList(slug,biddingId){
+    return poolConnection.then(pool =>{
+        return pool.request()
+        .input('biddingId',sql.Int,biddingId)
+        .query(`SELECT DISTINCT sap_acad_session_id,acad_session FROM  [${slug}].courses  WHERE bidding_session_lid = @biddingId`)
+    })
+}
+static getAvailableCourseList(slug,biddingId){
+    let showEntry = 10;
+    return poolConnection.then(pool=>{
+      return pool.request() 
+      .input('biddingId',sql.Int,biddingId)
+      .query(`SELECT TOP ${showEntry} c.id, course_name, credits, program_id, ad.acad_session, area_name, min_demand_criteria, year_of_introduction ,c.sap_acad_session_id
+      FROM [${slug}].courses c
+      INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
+      WHERE c.active = 1 AND c.bidding_session_lid = @biddingId
+      ORDER BY c.id`)
+    })
+}
+static getAvailableCourseCount(slug,biddingId){
+    return poolConnection.then(pool =>{
+    return pool.request() 
+      .input('biddingId',sql.Int,biddingId)
+      .query(`SELECT COUNT(*) AS count FROM [${slug}].courses c INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
+      WHERE c.active = 1 AND c.bidding_session_lid = @biddingId`);
+    });  
+}
 }

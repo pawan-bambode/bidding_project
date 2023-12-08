@@ -231,12 +231,15 @@ module.exports = class Students {
                 INNER JOIN [sbm-mum].student_data sd ON sem.student_lid = sd.id WHERE sap_id = @student_id AND sd.active = 1`);
             })
     }
-    static getTimetableByDayId(slug,sapId,biddingId){
+
+
+    static getDemandEstimationAreaList(slug,acadSessionId,biddingId){
+        console.log('values of acad',acadSessionId);
         return poolConnection.then(pool =>{
             return pool.request().
-             input('sapId',sql.Int,sapId)
+             input('acadSessionId',sql.Int,acadSessionId)
             .input('biddingId',sql.Int,biddingId)
-            .query(`SELECT c.*,p.program_name FROM [${slug}].courses c INNER JOIN [${slug}].programs p  ON c.program_id = p.program_id WHERE c.sap_acad_session_id = @sapId AND c.active = 1 AND c.bidding_session_lid = @biddingId`)     
+            .query(`SELECT DISTINCT area_name FROM [${slug}].courses  WHERE sap_acad_session_id = @acadSessionId AND active = 1 AND bidding_session_lid = @biddingId`)   
         })
     }
     static getCountOfCourses(slug,biddingId){

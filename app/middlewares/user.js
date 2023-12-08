@@ -25,6 +25,7 @@ module.exports = {
                     res.locals.username = result.username
                     res.locals.fullName = result.fullName
                     res.locals.useSapId = result.studentSapId
+                    res.locals.studentId = result.studentId
                     next();
                 }
             })
