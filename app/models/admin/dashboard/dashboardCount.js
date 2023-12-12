@@ -103,4 +103,66 @@ module.exports = class DashboardCount{
             throw error;
         }
     }
+    static async getPrequisitesCounts(slug,biddingId){
+        try{
+            let  preRequisiteCount  = 0;
+            const pool = await poolConnection;
+            const result = await pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`SELECT COUNT(*) FROM [${slug}].pre_requisites WHERE active = 1 AND bidding_session_lid = @biddingId`);
+            preRequisiteCount  = result.recordset[0][''];
+            return preRequisiteCount;
+        }catch(error) {
+            console.log('Error::',error);
+            throw error;
+        }
+    }
+
+    static async getCompleteCourseCount(slug,biddingId){
+        try{
+            let  completeCouresCount  = 0;
+            const pool = await poolConnection;
+            const result = await pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`SELECT COUNT(*) FROM [${slug}].completed_courses WHERE active = 1 AND bidding_session_lid = @biddingId`);
+            completeCouresCount  = result.recordset[0][''];
+            return completeCouresCount;
+        }catch(error) {
+            console.log('Error::',error);
+            throw error;
+        }
+    }
+    
+
+    
+    static async getDivisionBatchCount(slug,biddingId){
+        try{
+            let  divisionBatchCount  = 0;
+            const pool = await poolConnection;
+            const result = await pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`SELECT COUNT(*) FROM [${slug}].division_batches WHERE active = 1 AND bidding_session_lid = @biddingId`);
+            divisionBatchCount  = result.recordset[0][''];
+            return divisionBatchCount;
+        }catch(error) {
+            console.log('Error::',error);
+            throw error;
+        }
+    }
+
+    
+    static async getRoundSettingCount(slug,biddingId){
+        try{
+            let  roundSettingCount  = 0;
+            const pool = await poolConnection;
+            const result = await pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`SELECT COUNT(*) FROM [${slug}].round_settings WHERE active = 1 AND bidding_session_lid = @biddingId`);
+            roundSettingCount  = result.recordset[0][''];
+            return roundSettingCount;
+        }catch(error) {
+            console.log('Error::',error);
+            throw error;
+        }
+    }
 }

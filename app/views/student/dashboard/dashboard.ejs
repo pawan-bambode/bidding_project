@@ -29,7 +29,7 @@
                 <p class="fw-bold">Bidding Name : </p>&nbsp;<%- locals.biddingName.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %>
             </div>
             <div class="col-md-4 d-flex">
-                <p class="fw-bold">Total Bid Points :</p>&nbsp;<%- bidPoints[0].bid_points %>
+                <p class="fw-bold">Total Bid Points :</p>
             </div>
             <div class="col-md-4">
                <h4>Remaining Bid Points :</h4>
@@ -43,9 +43,9 @@
         <h3 class="ms-2"> MBA Concentration</h3>
     </div>
     <div class="card-body table-responsive">
-        <div class="row w-75 m-auto d-flex">
+        <div class="row  ms-5 d-flex justify-content-between">
             <% for(let concentration of concentrationList){ %>
-                <div class="col-md-4 d-flex align-items-center">
+                <div class="col-md-3 d-flex ">
                     <input type="radio" name="concentration-name" data-value="<%- concentration.id %>" id="concentration<%- concentration.id %>">
                     <label class="fw-bold mb-0 ms-2" for="concentration<%- concentration.id %>"><%- concentration.concentration_name %></label>
                 </div>

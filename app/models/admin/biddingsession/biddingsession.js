@@ -39,7 +39,7 @@ module.exports = class BiddingSession{
       return poolConnection.then(pool =>{
         return pool.request()
         .input('biddingSessionId',sql.Int,biddingId)
-        .query(`SELECT id,acad_session FROM [dbo].acad_sessions`);
+        .query(`SELECT sap_acad_session_id,acad_session FROM [dbo].acad_sessions`);
       })
     }
     static save(inputJSON, slug, userid) {

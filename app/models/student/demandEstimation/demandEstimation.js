@@ -162,4 +162,23 @@ module.exports = class DemandEstimation
             .query(`SELECT c.id, c.area_name,c.course_name ,c.acad_session , c.credits ,c.sap_acad_session_id FROM [${slug}].demand_estimation de INNER JOIN [${slug}].courses c ON c.id = de.course_lid WHERE de.student_lid = @studentId`)
         })
     }
+
+    static saveSelectedCourse(slug,biddingId,userid,student_lid,round_lid,selectedCourseJson){
+        console.log('values of slug',slug);
+        console.log('values of biddingSessionId',biddingId)
+        console.log('values of useId',userid);
+        console.log('value sos studentLid',student_lid);
+        console.log('values of round_lid',round_lid);
+        console.log('values of selectedCourse',(selectedCourseJson));
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('input_json', sql.NVarChar(sql.MAX),JSON.stringify(selectedCourseJson))
+            .input('student_lid',sql.Int,student_lid)
+            .input('round_lid',sql.Int,round_lid)
+            .input('last_modified_by', sql.Int, userid)
+            .input('bidding_session_lid',sql.Int,biddingId)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .execute(`[${slug}].[sp_add_demand]`)
+    })
+    } 
 }

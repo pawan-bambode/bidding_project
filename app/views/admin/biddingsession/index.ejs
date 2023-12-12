@@ -84,9 +84,9 @@
                             <div class="d-flex flex-column">
                             <select class="form-select select2" id="selected-acad-session">
                                 <option selected disabled>--Select Acad Session-- </option>
-                                <option value="16">Trimester IV</option>
-                                <option value="17">Trimester V</option>
-                                <option value="18">Trimester VI</option>
+                                <% for(let acadSession of acadSessionList) { %>  
+                                    <option value="<%- acadSession.sap_acad_session_id %>"><%- acadSession.acad_session %></option>
+                                <% } %>                          
                             </select>
                             <button class="btn btn-primary w-50 mt-5 align-self-end" id="add-acad-session-in-bidding-details">Add AcadSession</button>
                             </div>

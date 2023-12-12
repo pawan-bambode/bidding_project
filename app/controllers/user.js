@@ -77,7 +77,7 @@ module.exports = {
                 
                 let isVerified = await hash.verifyPassword(req.body.password, userData.recordset[0].password)
                 console.log('values of is',isVerified);
-                console.log('values of userData.recordset[0].id',userData.recordset[0].id);
+                console.log('values of userData.recordset[0].id',userData.recordset[0].student_lid);
                 req.session.userId = userData.recordset[0].id;
                 req.session.username = userData.recordset[0].username;
                 req.session.firstName = userData.recordset[0].first_name;

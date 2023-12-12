@@ -3,6 +3,7 @@ const demandEstimation = require('../../../models/student/demandEstimation/deman
 const course = require('../../../models/admin/courseworkload/courseworkload')
 const programSession = require('../../../models/admin/programs/programsession');
 const roundSetting = require('../../../models/admin/roundSettings/roundSettings');
+const isJsonString = require('../../../utils/util');
 
 module.exports = {
     getHomePage : (req ,res) => {
@@ -83,9 +84,23 @@ module.exports = {
  },
 
  selectedCourseSave : (req, res) =>{
-    let object = {
-        import_selected_course: JSON.parse(req.body.inputJSON)
-    };
-   console.log('values of req.body',JSON.stringify(object));
- }
+  let object = {
+    import_selected_courses: JSON.parse(req.body.inputJSON)
+  };
+  demandEstimation.saveSelectedCourse(res.locals.slug,res.locals.biddingId,res.locals.userId,req.body.studentLid,req.body.roundLid,object).then(result =>{
+    res.status(200).json(JSON.parse(result.output.output_json));
+  })
+  .catch(error => {
+        console.log('value of error',error);
+      if (isJsonString.isJsonString(error.originalError.info.message)) {
+          res.status(500).json(JSON.parse(error.originalError.info.message));
+      } else {
+          res.status(500).json({
+              status: 500,
+              description: error.originalError.info.message,
+              data: []
+          });
+      }
+  });
+}
 }

@@ -72,10 +72,10 @@
                       <th>Action</th>
                   </thead>
                   <tbody>
-                    <tbody>
                         <% let selectedCourseIndex = 1 %>
                         <% if (selectCourse.length > 0) { %>
                           <% for (let selectedCourse of selectCourse) { %>
+                    
                             <tr data-course-id = "<%- selectedCourse.id %>" data-area="<%-selectedCourse.area_name %>" data-course-name="<%- selectedCourse.course_name %>" data-acad-session="<%-selectedCourse.acad_session %>" data-credits="<%-selectedCourse.credits %>" data-acad-session-id="<%-selectedCourse.sap_acad_session_id %>">
 
                               <td><%- selectedCourseIndex++ %></td>
@@ -177,6 +177,7 @@ $(document).ready(function() {
     let acadSessionCount = '<%- dropdownAcadSessionList.length %>';
     let completedCreditsCount = 0;
     let selectedCourseList = ('<%- selectCourse.length %>')
+    let count = 1; 
 
     if(selectedCourseList > 0){
      $('.available-course').addClass('d-none');
@@ -184,7 +185,7 @@ $(document).ready(function() {
 
     let roundId = '<%- roundLid %>';
     paginationData(rowCount, parseInt(pageCount));
-  
+    
     let active = `<%- active %>`;
     $('#sidebar .side-menu li.' + active).addClass('active');
 
@@ -263,6 +264,83 @@ $(document).ready(function() {
            })
         })
 
+        // $('#selected-course-table').on('click', '.delete-selected-course', function () {
+        //         let acadSessionId = $(this).closest('tr').data('acad-session-id');
+        //         let credits = Number($(this).closest('tr').data('credits'));
+        //         let previousCredits = Number($(`#credits-points-${acadSessionId}`).text());
+        //         let updateCredits = previousCredits - credits;
+        //         $(`#credits-points-${acadSessionId}`).text(updateCredits);
+        //         $(this).closest('tr').remove();
+
+        //         $('.available-course').removeClass('d-none');
+        //         let creditPoint   = $(`#credits-points-${acadSessionId}`).text();
+        //         let targetCreditsPoint = $(`#credits-points-target-${acadSessionId}`).text();
+
+        //         console.log('values of creditsPoint',creditPoint);
+        //         console.log('values of targetCreditPoint',targetCreditsPoint);
+        //         if(Number(creditPoint)< Number(targetCreditsPoint)){
+        //             console.log('inside the if block');
+        //             $('#available-course-table tbody tr').not(`[data-acad-session-id ="${acadSessionId}"]`).each(function() {
+        //                  $(this).find('.add-course').addClass('disabled');
+        //               });
+
+        //         }
+        //     });
+
+        $('#selected-course-table').on('click', '.delete-selected-course', function () {
+            let acadSessionId = $(this).closest('tr').data('acad-session-id');
+            let credits = Number($(this).closest('tr').data('credits'));
+            let previousCredits = Number($(`#credits-points-${acadSessionId}`).text());
+            let updateCredits = previousCredits - credits;
+            $(`#credits-points-${acadSessionId}`).text(updateCredits);
+            $(this).closest('tr').remove();
+            let idColumn = Number($(this).closest('tr').children(':first-child').text());
+            $('.available-course').removeClass('d-none');
+            deleteSelectedCourse(idColumn);
+            count = $('#selected-course-table tbody tr').length + 1;
+
+        });
+
+        function deleteSelectedCourse(deleteColumnId) {
+
+            $('#selected-course-table tbody tr').each(function (){
+                let columnId = Number($(this).children(':first-child').text());
+            
+                if (columnId > deleteColumnId) {
+                    $(this).children(':first-child').text(columnId - 1);
+                }  
+            })
+
+            $('#available-course-table tbody tr').each(function() {
+                let currentAcadSessionId = $(this).data('acad-session-id');
+                let creditPoint = Number($(`#credits-points-${currentAcadSessionId}`).text());
+                let targetCreditsPoint = Number($(`#credits-points-target-${currentAcadSessionId}`).text());
+
+                if (creditPoint < targetCreditsPoint) {
+                    $(this).find('.add-course').removeClass('disabled');
+                } else {
+                    $(this).find('.add-course').addClass('disabled');
+                }
+            });
+        }
+
+        $('#selected-course-table tbody tr').each(function(index, selectedCourse) {
+            // let cancleCount = Number($(selectedCourse).find('.cancel-course').length);
+            // let deleteCount = Number($(selectedCourse).find('.fa-trash').length);
+
+            // console.log('values of cancelCount',cancleCount);
+            // console.log('values of deleteCount',deleteCount);
+            // if(cancleCount > 0){
+            //     console.log('inside the if block',cancleCount);
+            // if((cancleCount + deleteCount) == selectedCourseList ){
+            //     console.log('values of cancelCount + deleteCount',(cancleCount + deleteCount));
+            //     console.log('values of selecteCoursList',selectedCourseList);
+            //     $('.save-select-course').removeClass('disabled');
+            // }
+            // }
+        });
+
+
     function updateCurrentTime() {
         let currentDate = new Date();
         let formattedDateTime = currentDate.toLocaleString();
@@ -320,16 +398,6 @@ $(document).ready(function() {
         return `${hours} h:${remainingMinutes}M:${remainingSeconds}S`;
         }
 
-        $('#selected-course-table').on('click', '.delete-selected-course', function () {
-                let acadSessionId = $(this).closest('tr').data('acad-session-id');
-                console.log('value sof acadSessionId',acadSessionId);
-                let notSupport =  $(`#available-course-table tbody tr[data-acad-session-id="${acadSessionId}"]`);
-                console.log('values of not support',notSupport);
-                $(this).closest('tr').remove();
-                $('.available-course').removeClass('d-none');
-            });
-
-
     function ajaxTable(courseList) {
        
         $("#available-course-table tbody").empty();
@@ -362,9 +430,11 @@ $(document).ready(function() {
             }
         }
         $("#available-course-table tbody").html(ajaxTable);
+        deleteSelectedCourse();
     }
-    let count = 1; 
+    
     $('#available-course-table').on('click','.add-course',function(){
+      
       let addCouresRow = $(this).closest('tr');
       let courseId = addCouresRow.data('course-id');
       let areaName = addCouresRow.data('area');
@@ -405,6 +475,15 @@ $(document).ready(function() {
                 $('.save-select-course').removeClass('disabled');
                 }
            }
+           if(selectedCourseList > 0){
+            let cancleCount = Number($('#selected-course-table tbody tr').find('.cancel-course').length);
+            let deleteCount = Number($('#selected-course-table tbody tr').find('.fa-trash').length);
+            if(cancleCount > 0){
+            if((cancleCount + deleteCount) == selectedCourseList ){
+                $('.save-select-course').removeClass('disabled');
+            }
+            }
+        }
     });
 
     $('#selected-course-table').on('click','.cancel-course',function(){
@@ -431,7 +510,9 @@ $(document).ready(function() {
 
         let count = 1; 
         let ajaxTable =
-            `<tr data-course-id="${courseId}" data-area="${areaName}" data-course-name="${courseName}" data-acad-session="${acadSession}" data-credits="${credits}">
+            `<tr data-course-id="${courseId}" data-area="${areaName}" data-course-name="${courseName}" data-acad-session="${acadSession}" data-credits="${credits} 
+              data-acad-session-id="${acadSessionId}"
+             ">
                 <td>${count++}</td>
                 <td>${areaName}</td>
                 <td>${courseName}</td>
@@ -492,28 +573,45 @@ $(document).ready(function() {
             let courseLid = $(selectedCourse).data('course-id');
             let studentLid = $('.student-id').text();
     
-            selectedCourses.courseLid = courseLid,
-            selectedCourses.studentLid = studentLid,
-            selectedCourses.roundLid = roundId
+            selectedCourses.course_lid = courseLid
             selectedCourseArray.push(selectedCourses);
         });
        
         let studentLid = $('.student-id').text(); 
+        console.log('values of ,',studentLid);
 
         let ApiObj = {
             url: '/student/demand-estimation/selected-course/save',
             type: 'POST',
-            data:{ inputJSON:JSON.stringify(selectedCourseArray)},
+            data:{ inputJSON:JSON.stringify(selectedCourseArray),studentLid:studentLid,roundLid:roundId},
             dataType: 'JSON'
         };
         console.log('values of ApiObj',ApiObj);
         ajaxApi(ApiObj).then(result => {
             console.log('values of result', result);
-        });
+            showSuccess(result)
+        }).catch(error =>{
+            console.log('values of error',error.responseJSON);
+            showError(JSON.stringify(error.responseJSON));
+        })
         });
 
   
 })
+
+    $('#selected-course-table tr[data-acad-session-id]').each(function() {
+    const acadSessionId = $(this).data('acad-session-id');
+    const element = $(`#credits-points-${acadSessionId}`);
+
+    if (element.length) {
+        const creditsValue = parseInt($(this).data('credits'), 10);
+        const elementValue = parseInt(element.text(), 10) || 0;
+        element.text(elementValue + creditsValue);
+    }
+    });
+
+
+
     function paginationData(rowCount, totalCount) {
         $('#page-no').html(totalCount);
                 let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
@@ -539,6 +637,7 @@ $(document).ready(function() {
             }
 
     function showError(errors) {
+        console.log('values of errors',errors);
         let simpleAlert = new SimpleAlert();
         let obj = {
             title : errors,
