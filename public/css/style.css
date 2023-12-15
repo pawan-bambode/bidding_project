@@ -1764,15 +1764,6 @@ margin: auto;
     color: #fff;
   }
 
-  .card-custom {
-    border-top-left-radius: 15px !important;
-    border-top-right-radius: 15px !important;
-    
-  }
-  /* .modal-content{
-    border-top-left-radius: 15px !important;
-    border-top-right-radius: 15px !important;
-  } */
   hr {
     margin: 0 !important;
   }
@@ -2018,7 +2009,7 @@ margin: auto;
  height: 130px;
 }
 
-.card-custom-student {
+.card-custom-border-curv {
     border-radius: 15px !important;
   }
   .custom-width{
@@ -2094,7 +2085,7 @@ margin: auto;
   
  
   
-  .icons-img {
+  .student-left-side-image {
       width: 21px;
       height: 21px;
       margin-left: 10px;
@@ -2257,4 +2248,40 @@ margin: auto;
     border: 0.25px solid black;
     width: 80%;
     box-shadow: 0.25px 0.25px #5ca4ea;
+}
+.top-navbar::before
+{
+content: '';
+position: absolute;
+width: 60px;
+height: 60px;
+bottom: -60px;
+left: 0;
+border-radius: 50%;
+box-shadow: -30px -30px 0 var(--primary-white);
+}
+
+.logo-img .nmims-logo-only{
+    width: 70px;
+    height: 60px;
+}
+.logo-img .nmims-logo{
+    background-color: white;
+    border-radius: 5px;
+}
+
+.student-add-drop-image{
+    width: 38px;
+    height: 38px;
+}
+
+.student-icon-image{
+    width: 35px;
+    height: 35px;
+}
+
+.top-navbar .left-sidebar-toggle{
+    border: none; 
+    outline: none; 
+    background-color: white;
 }

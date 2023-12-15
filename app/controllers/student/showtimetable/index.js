@@ -10,13 +10,21 @@ module.exports = {
   getDashBoard : (req ,res) =>{
     let studentHomePageUrl = req.route.path.split('/');
     let studentHomePage = studentHomePageUrl[studentHomePageUrl.length - 1]
-    Promise.all([programSession.getProgramSessionCreditsPoint(res.locals.slug,res.locals.biddingId),student.getStudentDetail(res.locals.slug,res.locals.biddingId,res.locals.username),student.getConcentrationList(res.locals.slug,res.locals.biddingId),student.getConfirmaCourseList(res.locals.slug,res.locals.biddingId,res.locals),student.getDropCourseList(res.locals.slug,res.locals.biddingId,res.locals),student.getWinningCourseList(res.locals.slug,res.locals.biddingId),student.getWaitListCouresList(res.locals.slug,res.locals.biddingId),student.getConfirmCreditsCounts(res.locals.slug,res.locals.biddingId),student.getCompleteCourese(res.locals.slug,res.locals.biddingId,res.locals.useSapId)]).then(result =>{
-      console.log('result',result[8]);
+    Promise.all([programSession.getProgramSessionCreditsPoint(res.locals.slug,res.locals.biddingId),
+      student.getStudentDetail(res.locals.slug,res.locals.biddingId,res.locals.username),
+      student.getConcentrationList(res.locals.slug,res.locals.biddingId),
+      student.getConfirmaCourseList(res.locals.slug,res.locals.biddingId,res.locals),
+      student.getDropCourseList(res.locals.slug,res.locals.biddingId,res.locals),
+      student.getWinningCourseList(res.locals.slug,res.locals.biddingId),
+      student.getWaitListCouresList(res.locals.slug,res.locals.biddingId),
+      student.getConfirmCreditsCounts(res.locals.slug,res.locals.biddingId),
+      student.getCompleteCourese(res.locals.slug,res.locals.biddingId,res.locals.useSapId),]).then(result =>{
       res.render('student/dashboard/index', {
         active:studentHomePage,
         currentFormStep: 0,
         maxYearlyCredits:result[0].recordset[0].max_yearly_credits,
         bidPoints:result[1].recordset,
+        // concentration:result[1].recordset[0].concentration ? result[1].recordset[0].concentration : 0,
         concentrationList :result[2].recordset,
         confirmCourseList:result[3].recordset,
         dropCourseList:result[4].recordset,

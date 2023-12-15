@@ -2,23 +2,22 @@
     <!-- NAVBAR -->
     <header>
         <nav class="top-navbar d-flex justify-content-xl-end justify-content-between align-items-center">
-            <a href="/management/dashboard"><img src="/image/logo-nmims.png" alt="NMIMS LOGO" class="nmims-logo-smalldevices me-auto"></a>
+            <a href="/student/dashboard"><img src="/image/logo-nmims.png" alt="NMIMS LOGO" class="nmims-logo-smalldevices me-auto"></a>
             <div class="navbar-logo d-none me-auto">
-                <a href="/management/dashboard"> <img src="/image/logo-nmims.png" class="nmims-logo"> </a>
+                <a href="/student/dashboard"> <img src="/image/logo-nmims.png" class="nmims-logo"> </a>
              </div>
-            <button class="me-auto left-sidebar-toggle" style="border: none; outline: none; background-color: white;">
+            <button class="me-auto left-sidebar-toggle">
                 <i class="fa-solid fa-angles-left"></i></button>
             <ul class="top-navbar__list">
-                <button type="button" class="btn btn-danger ms-auto me-3"  id="refresh-areas">
+                <button type="button" class="btn btn-danger ms-auto me-3" id="refresh-areas">
                     <i class="fa-solid fa-rotate p-1"></i>Refresh
                 </button>  
-                <li><a href="" class="text-dark"><img src="/icons/notification.png" alt=""> Notification</a></li>
+                <li><a href="" class="text-dark"><img src="/image/student/nav-bar-header/notification.png" alt=""> Notification</a></li>
                 <li><a onclick="toggle_full_screen()" style="cursor: pointer;"><img src="/icons/expand.png" alt=""></a></li>
-               
-                    <img src="/icons/user.png" alt=""> Hi! <%- locals.fullName %><span class="d-none student-id"><%- locals.studentId %></span>
-                    </button>
+                </li>
+                    <img class="student-icon-image" src="/image/student/nav-bar-header/student.png" alt="student-image"><span class="ms-2">Hi! <%- locals.fullName %></span><span class="d-none student-id"><%- locals.studentId %></span>
                     <button class="btn"><a class="dropdown-item" href="/user/logout"><i class="fas fa-sign-out-alt"></i> Signout</a></button>
-              
+                </li>
             </ul>
             <div class="hamburger-smalldevices"><img src="/icons/HamburgerIcon.png" alt="" width="24px" height="20px">
             </div>

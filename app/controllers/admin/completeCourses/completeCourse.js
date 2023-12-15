@@ -80,9 +80,7 @@ workbook.write(filePath, (err, stats) => {
             const sheetName = excelFileDataWorkbook.SheetNames[0];
             const sheet = excelFileDataWorkbook.Sheets[sheetName];
             const completeCoursesJsonData = xlsx.utils.sheet_to_json(sheet);
-            console.log('values of complete',completeCoursesJsonData);
             const completeCoursesWithColumnHypen = completeCoursesJsonData.map(item =>{
-              console.log('values of ',item);
                             return {
                               sap_id: item.studentSapId,
                               acad_session: item.acadSession.replace(/\s+/g,' ').trim(),
@@ -95,7 +93,6 @@ workbook.write(filePath, (err, stats) => {
             completeCourses.uploadCompleteCoursesData(res.locals.slug,completeCourseDataValue,res.locals.userId,biddingId).then(result =>{
             res.status(200).json(JSON.parse(result.output.output_json));
            }).catch(error =>{
-             console.log('values of error',error);
                if(isJsonString.isJsonString(error.originalError.info.message)){
                 res.status(500).json(JSON.parse(error.originalError.info.message));
                }

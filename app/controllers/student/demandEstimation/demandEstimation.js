@@ -4,13 +4,14 @@ const course = require('../../../models/admin/courseworkload/courseworkload')
 const programSession = require('../../../models/admin/programs/programsession');
 const roundSetting = require('../../../models/admin/roundSettings/roundSettings');
 const isJsonString = require('../../../utils/util');
+const concentrationSetting = require('../../../models/admin/concentrationsettings/concentrationsettings');
+const student = require('../../../models/Students')
 
 module.exports = {
     getHomePage : (req ,res) => {
       let demandEstimationUrl = req.route.path.split('/');
       let demandEstimationActive = demandEstimationUrl[demandEstimationUrl.length - 1]
-      Promise.all([demandEstimation.getDemandEstimationRoundList(res.locals.slug,res.locals.biddingId),course.getAvailableCourseList(res.locals.slug,res.locals.biddingId),course.getAvailableCourseCount(res.locals.slug,res.locals.biddingId),course.getDropdownAcadSessionList(res.locals.slug,res.locals.biddingId),programSession.getCredits(res.locals.slug,res.locals.biddingId),programSession.getProgramSessionCreditsPoint(res.locals.slug,res.locals.biddingId),roundSetting.getRoundLid(res.locals.slug,res.locals.biddingId),roundSetting.getStartEndTime(res.locals.slug,res.locals.biddingId),demandEstimation.getSelectedCourses(res.locals.slug,res.locals.biddingId,res.locals.studentId)]).then(result =>{
-    
+      Promise.all([demandEstimation.getDemandEstimationRoundList(res.locals.slug,res.locals.biddingId),course.getAvailableCourseList(res.locals.slug,res.locals.biddingId),course.getAvailableCourseCount(res.locals.slug,res.locals.biddingId),course.getDropdownAcadSessionList(res.locals.slug,res.locals.biddingId),programSession.getCredits(res.locals.slug,res.locals.biddingId),roundSetting.getRoundLid(res.locals.slug,res.locals.biddingId),roundSetting.getStartEndTime(res.locals.slug,res.locals.biddingId),demandEstimation.getSelectedCourses(res.locals.slug,res.locals.biddingId,res.locals.studentId),concentrationSetting.getStudentConcentrationSettings(res.locals.slug,res.locals.biddingId,res.locals.username)]).then(result =>{
         res.render('student/demandEstimation/index',{
           active:demandEstimationActive,
           demandEstimationRounds:result[0].recordset,
@@ -18,11 +19,10 @@ module.exports = {
           pageCount : result[2].recordset[0].count,
           dropdownAcadSessionList:result[3].recordset,
           creditList:result[4].recordset,
-          yearlyCredit:result[5].recordset[0],
-          roundLid:result[6].recordset[0].round_lid,
-          startTime:result[7].recordset[0].startTime,
-          endTime:result[7].recordset[0].endTime,
-          selectCourse:result[8].recordset 
+          roundLid:result[5].recordset[0].round_lid,
+          startAndEndTime:result[6].recordset[0],
+          selectCourse:result[7].recordset,
+          concentrationSettings:result[8].recordset[0], 
         });
       })
    },
@@ -87,6 +87,7 @@ module.exports = {
   let object = {
     import_selected_courses: JSON.parse(req.body.inputJSON)
   };
+  console.log('value sof res.o',res.locals);
   demandEstimation.saveSelectedCourse(res.locals.slug,res.locals.biddingId,res.locals.userId,req.body.studentLid,req.body.roundLid,object).then(result =>{
     res.status(200).json(JSON.parse(result.output.output_json));
   })

@@ -125,7 +125,7 @@ filterByProgramId  :(req,res) =>{
     })
 },
 filterBySessionId:(req,res) =>{
-    Promise.all([courseworkload.filterBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.showEntry),courseworkload.moduleBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.showEntry),courseworkload.getCountFilterBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.showEntr)]).then(result =>{
+    Promise.all([courseworkload.filterBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.showEntry),courseworkload.moduleBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.showEntry),courseworkload.getCountFilterBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId)]).then(result =>{
           res.json({
            status: "200",
            message: "Sucessfull",
@@ -146,7 +146,7 @@ filterBySessionId:(req,res) =>{
        })
    },
    filterByCourseId:(req,res) =>{
-    Promise.all([courseworkload.filterByCourseId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.courseId,req.body.showEntry),courseworkload.getCountFilterByCourseId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.courseId,req.body.showEntry)]).then(result =>{
+    Promise.all([courseworkload.filterByCourseId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.courseId,req.body.showEntry),courseworkload.getCountFilterByCourseId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.courseId)]).then(result =>{
           res.json({
            status: "200",
            message: "Sucessfull",

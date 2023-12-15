@@ -3,7 +3,7 @@ const isJsonString = require('../../../utils/util')
 
 module.exports = {
     getBiddingSessionPage :(req , res) => {
-        Promise.all([biddingSession.getAllBiddingSession(res.locals.slug,res.locals.status),biddingSession.getAcadSessionList(res.locals.slug,res.locals.biddingId)]).then(result =>{
+        Promise.all([biddingSession.getAllBiddingSession(res.locals.slug,res.locals.status),biddingSession.getAcadSessionList(res.locals.biddingId)]).then(result =>{
             res.render('admin/biddingsession/index.ejs',{
               biddingSessionList: result[0].recordset,
               acadSessionList:result[1].recordset

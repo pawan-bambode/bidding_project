@@ -8,7 +8,7 @@
 
 
 <div class="main-content">
-  <div class="card card-custom card">
+  <div class="card card-custom-border-curv card">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2">Elective Timetable</h3>
         <div>
@@ -231,7 +231,6 @@
                     $("#session-filter").html(acadSession);
                 })
                 .catch(error => {
-                    console.log('values of error', error);
                     showError(error.responseJSON);
                 });
                 

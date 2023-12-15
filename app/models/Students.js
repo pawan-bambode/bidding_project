@@ -23,8 +23,9 @@ module.exports = class Students {
             return pool.request()
             .input('biddingId',sql.Int,biddingId)
             .input('username',sql.NVarChar,username)
-            .query(`SELECT id ,sap_id,roll_no,student_name,email,bid_points,year_of_joining ,previous_elective_credits
-            FROM [${slug}].student_data  WHERE email = @username`)
+            .query(`SELECT sd.id ,sd.sap_id,roll_no,sd.student_name,email,sd.bid_points,year_of_joining ,sd.previous_elective_credits  ,IIF(sd.concentration_lid IS NULL,0,sd.concentration_lid) AS concentration ,c.concentration_name AS concentrationName
+            FROM [${slug}].student_data  sd
+			INNER JOIN [${slug}].concentration c ON c.id = sd.concentration_lid WHERE email = @username AND sd.active = 1`)
         })
     }
     static getConcentrationList(slug,biddingId){

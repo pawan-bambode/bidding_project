@@ -86,23 +86,16 @@ module.exports = {
   };
   const formatJSDate = (date) => {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is zero-based
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const day = String(date.getDate()).padStart(2, '0');
 
     return `${day}${month}${year}`;
 };
 
-// Usage example
-const jsDate = new Date('Tue Oct 20 1998 05:30:00 GMT+0530 (India Standard Time)');
-const formattedDate = formatJSDate(jsDate);
-console.log(formattedDate); // Output: 20101998
-
     const studentDataWithColumnHypen = await hashPasswords(studentJsonData);
     let studentRawDataValue = {student_data: studentDataWithColumnHypen}
-    console.log('values of studenta',studentDataWithColumnHypen);
     
     studentRawData.uploadStudentRawData(res.locals.slug,JSON.stringify(studentRawDataValue),res.locals.userId,biddingId).then(result =>{
-      console.log('values of ',result);
       res.status(200).json(JSON.parse(result.output.output_json));
     
    }).catch(error =>{

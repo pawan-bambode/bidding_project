@@ -66,12 +66,10 @@ module.exports = {
         const filePath = __dirname + '/sampleForImportDivisionBatches.xlsx';
         workbook.write(filePath, (err, stats) => {
           if (err) {
-            console.log('values of error',err);
             return res.status(500).send('Error generating Excel file');
           }
           res.sendFile(filePath, (err) => {
             if (err) {
-                console.log('values of error inf if block',err);
               return res.status(500).send('Error sending Excel file');
             }
           });
