@@ -12,9 +12,9 @@ module.exports = class Students {
             return pool.request()
             .input('biddingId',sql.Int,biddingId)
             .query(`
-            SELECT TOP ${showEntry}  sd.id ,sd.sap_id, sd.roll_no,sd.student_name,sd.email,p.program_name,sd.bid_points,sd.year_of_joining ,sd.previous_elective_credits
+            SELECT TOP ${showEntry} sd.id, sd.sap_id, sd.roll_no, sd.student_name, sd.email, p.program_name, sd.bid_points, sd.year_of_joining, sd.previous_elective_credits
             FROM [${slug}].student_data sd 
-            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1  AND  p.bidding_session_lid= @biddingId  AND sd.bidding_session_lid = @biddingId`)
+            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1  AND p.bidding_session_lid= @biddingId  AND sd.bidding_session_lid = @biddingId`)
         })
     }
 
@@ -23,8 +23,8 @@ module.exports = class Students {
             return pool.request()
             .input('biddingId',sql.Int,biddingId)
             .input('username',sql.NVarChar,username)
-            .query(`SELECT sd.id ,sd.sap_id,roll_no,sd.student_name,email,sd.bid_points,year_of_joining ,sd.previous_elective_credits  ,IIF(sd.concentration_lid IS NULL,0,sd.concentration_lid) AS concentration ,c.concentration_name AS concentrationName
-            FROM [${slug}].student_data  sd
+            .query(`SELECT sd.id, sd.sap_id, roll_no, sd.student_name, email, sd.bid_points,year_of_joining, sd.previous_elective_credits, IIF(sd.concentration_lid IS NULL,0,sd.concentration_lid) AS concentration, LOWER(c.concentration_name) AS concentrationName
+            FROM [${slug}].student_data sd
 			INNER JOIN [${slug}].concentration c ON c.id = sd.concentration_lid WHERE email = @username AND sd.active = 1`)
         })
     }

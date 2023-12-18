@@ -1,0 +1,14 @@
+<%- include('../partials/head') %>
+<%- include ('../partials/leftSidebar') %>
+<%- include ('../partials/header') %>
+<div class="main-content">  
+</div>
+</main>
+<%- include('../partials/footer') %>
+<script>
+     $(document).ready(function(){
+        let active = `<%- active %>`;
+        $('#sidebar .side-menu li.' + active).addClass('active');
+});
+</script>
+<%- include('../partials/footerEnd') %>

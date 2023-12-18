@@ -1,8 +1,5 @@
-const { Result } = require('express-validator');
 const student = require('../../../models/Students');
-const studentUtil = require('../../../utils/timetableforstudent');
 const programSession = require('../../../models/admin/programs/programsession')
-const biddingRound = require('../../../models/admin/biddinground/biddinground')
 const course = require('../../../models/admin/courseworkload/courseworkload')
 
 module.exports = {
@@ -22,9 +19,8 @@ module.exports = {
       res.render('student/dashboard/index', {
         active:studentHomePage,
         currentFormStep: 0,
-        maxYearlyCredits:result[0].recordset[0].max_yearly_credits,
-        bidPoints:result[1].recordset,
-        // concentration:result[1].recordset[0].concentration ? result[1].recordset[0].concentration : 0,
+        maxYearlyCredits:result[0].recordset[0].annually_credits_count,
+        studentDetails:result[1].recordset,
         concentrationList :result[2].recordset,
         confirmCourseList:result[3].recordset,
         dropCourseList:result[4].recordset,

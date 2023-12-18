@@ -30,7 +30,7 @@ module.exports = class ProgramSession{
         return poolConnection.then(pool =>{
             return pool.request()
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT SUM(IIF(max_credits IS NULL, 0, max_credits)) AS max_yearly_credits , 
+            .query(`SELECT SUM(IIF(max_credits IS NULL, 0, max_credits)) AS annually_credits_count, 
                     SUM(IIF(min_credits IS NULL, 0, min_credits)) AS min_yearly_credits 
                     FROM [${slug}].program_sessions WHERE bidding_session_lid = @biddingId AND active = 1`)
         })

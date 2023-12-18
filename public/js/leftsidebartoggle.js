@@ -1,26 +1,31 @@
-const { all } = require("axios");
+
 
 $('.custom-element').on('click', function(){
    $(this).toggleClass('active')
 })
 
 
+$(document).on('click', '.fa-angles-left', function() {
+    $('.left-sidebar').addClass('hide');
+    $('.main').css('left', '80px');
+    $('.top-navbar').css('left', '80px');
+    $('.nmims-logo').addClass('d-none');
+    $('.nmims-logo-small').removeClass('d-none');
+    $(this).removeClass('fa-angles-left').addClass('fa-angles-right');
+    $('.left-sidebar .side-menu li img').css('margin-left','0px');
+});
 
-$('.left-sidebar-toggle').on('click',function () {
-    console.log('left sidebar toggle is click now');
-    $('.left-sidebar').toggleClass('d-none');
-    $('.left-sidebar-only-img').toggleClass('d-none');
-    $('.accordion-button').toggleClass('active')
-    $('.left-sidebar-logo').toggleClass('left-sidebar-logo-side')
-    $('.close-menu').toggleClass('close-menu-side')
-    $('.left-sidebar').toggleClass('left-sidebar-side')
-    $('.top-navbar').toggleClass('top-navbar-side')
-    $('.main').toggleClass('main-side')
-    $('.left-sidebar-mini-logo').toggleClass('left-sidebar-mini-logo-hide')
-
-    let btn = $('.left-sidebar-toggle');
-    btn.toggleClass('left-sidebar-toggle-turn')
+$(document).on('click', '.fa-angles-right', function() {
+    $('.left-sidebar').removeClass('hide');
+    $('.main').css('left', '260px');
+    $('.top-navbar').css('left', '260px');
+    $('.nmims-logo').removeClass('d-none');
+    $('.nmims-logo-small').addClass('d-none');
+    $(this).addClass('fa-angles-left').removeClass('fa-angles-right');
+    $('.left-sidebar .side-menu li img').css('margin-left','5px');
 })
+
+
 
 //NOTIFICATION
 var notification = $(".notification-content");

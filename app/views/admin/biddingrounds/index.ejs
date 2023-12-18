@@ -410,6 +410,7 @@
             })
 
             $(document).on('click', '.bidding-rounds-div', function(event) {
+                studentList = [];
             let canProceed = true;
             $('#add-bidding-rounds-modal #import-bidding-rounds').addClass('disabled');
             let biddingRoundName = $(this).attr('data-bidding-name');
@@ -631,17 +632,16 @@
             importBiddingRounds.start_date_time = startDateTime;
             importBiddingRounds.end_date_time = endDateTime;
             importBiddingRounds.round_id = roundId
-
+            importBiddingRounds.studentList = studentList
+            importBiddingRounds.course_list = courseList
             importBiddingRoundsArray.push(importBiddingRounds);
           });
          
           const biddingRoundsIdArray = importBiddingRoundsArray.map(item => item.id );
           const duplicateBiddingRoundsInsert = biddingRoundsIdArray.filter((value,index) => biddingRoundsIdArray.indexOf(value) !== index);
-          
+          let roundId = $('#import-bidding-rounds-table tbody tr:last').data('bidding-round-id');
           let importBiddingDetails = {
              round_setting: importBiddingRoundsArray,
-             student_list: studentList, 
-             course_list: courseList
             };
              console.log('values of importBiddingDetails',JSON.stringify(importBiddingDetails));
            let ApiObj = {
