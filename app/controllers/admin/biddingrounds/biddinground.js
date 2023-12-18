@@ -14,6 +14,8 @@ module.exports = {
         })
     },
     create: (req, res) => {
+
+        console.log('value of inputJSON:',req.body.inputJSON);
         biddingRound.save(req.body.inputJSON,res.locals.slug, res.locals.userId,res.locals.biddingId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));

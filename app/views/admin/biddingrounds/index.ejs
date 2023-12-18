@@ -96,7 +96,7 @@
                     </thead>
                 <tbody>
               <% for(let student of biddingRoundsStudents) { %>
-                  <tr>
+                  <tr data-student-id="<%- student.student_lid %>">
                     <td><input type="checkbox" class="d-none student-sap-id-bidding-rounds"><%- student.sap_id %></td>
                     <td><%- student.student_name %></td>
                     <td><%- student.email %></td>
@@ -170,7 +170,7 @@
                     </thead>
                 <tbody>
               <% for(let biddingRoundCourse of biddingRoundCourseList) { %>
-                  <tr>
+                  <tr data-course-id="<%- biddingRoundCourse.id %>">
                     <td class="d-none"><%-biddingRoundCourse.id %></td>
                     <td><%- biddingRoundCourse.course_name %></td>
                     <td><%- biddingRoundCourse.credits %></td>
@@ -335,6 +335,9 @@
 <script>
     $(document).ready(function() {
         let pageCount = `<%- pageCount %>`;
+        let studentList = [];
+        let courseList = [];
+
         $('#page-no').html(pageCount);
         $('#update-total-courses-bidding-rounds').on('change','#update-bidding-rounds-course-checkbox',function(){
            if(this.checked){
@@ -495,9 +498,15 @@
 
        $('#total-student-bidding-rounds').on('click','#import-total-student-bidding-rounds',function(){
         let totalStudentBiddingRoundsCounts =  $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+        $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
+            
+          studentList.push($(selectedElement).closest('tr').data('student-id'));
+        });
+       
         let dataBiddingRoundId =  $('#total-student-bidding-rounds').attr('data-bidding-round-id');
-     
-         $('#add-bidding-rounds-modal .modal-body .table-responsive tbody tr').each(function(index,element) {
+               
+         $('#add-bidding-rounds-modal .modal-body .table-responsive tbody tr').each(function(index,element) {      
+          
                 let biddingRoundId = $(element).attr('data-bidding-round-id');
                 if(($(element).attr('data-bidding-round-id')) == dataBiddingRoundId){
                 $(this).attr('data-total-student-counts', totalStudentBiddingRoundsCounts);
@@ -521,6 +530,10 @@
        })
        $('#total-courses-bidding-rounds').on('click','#total-course-bidding-rounds',function(){
         let totalCoursesBiddingRoundsCounts =  $('#total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+        $('#total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
+          courseList.push($(selectedElement).closest('tr').data('course-id'));
+        });
+       
         let dataBiddingRoundId =  $('#total-student-bidding-rounds').attr('data-bidding-round-id');
          $('#add-bidding-rounds-modal .modal-body .table-responsive tbody tr').each(function(index,element) {
                
@@ -597,6 +610,8 @@
         });
         $(document).on('click','#import-bidding-rounds',function(){
             let importBiddingRoundsArray = [];
+            console.log('values of studentList',studentList);
+            console.log('values of courseList',courseList);
           let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
        
           $('.import-bidding-rounds-table tbody tr').each((index,element) => {
@@ -622,12 +637,18 @@
          
           const biddingRoundsIdArray = importBiddingRoundsArray.map(item => item.id );
           const duplicateBiddingRoundsInsert = biddingRoundsIdArray.filter((value,index) => biddingRoundsIdArray.indexOf(value) !== index);
-
+          
+          let importBiddingDetails = {
+             round_setting: importBiddingRoundsArray,
+             student_list: studentList, 
+             course_list: courseList
+            };
+             console.log('values of importBiddingDetails',JSON.stringify(importBiddingDetails));
            let ApiObj = {
                 type: 'POST',
                 url: '/admin/bidding-rounds/create',
                 data: {
-                    inputJSON: JSON.stringify(importBiddingRoundsArray),
+                    inputJSON: JSON.stringify(importBiddingDetails),
                     biddingSessionId:biddingSessionId
                 },
                 dataType: 'JSON' 
