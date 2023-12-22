@@ -6,7 +6,9 @@ module.exports = {
        Promise.all([specialization.getAllSpecialization(res.locals.slug,res.locals.biddingId,req.body.showEntry),specialization.getCount(res.locals.slug,res.locals.biddingId)]).then( result => {
             res.render('admin/specialization/index.ejs',{
                specializationList : result[0].recordset,
-               pageCount: result[1].recordset[0]['']
+               pageCount: result[1].recordset[0][''],
+               active:'dashboard',
+               breadcrumbs: req.breadcrumbs
             })
      })
     },

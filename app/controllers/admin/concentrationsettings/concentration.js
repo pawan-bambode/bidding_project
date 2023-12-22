@@ -9,6 +9,8 @@ module.exports = {
                 concentrationSettingList : result[0].recordset,
                 pageCount: result[1].recordset[0][''],
                 areaList:result[2].recordset,
+                active:'dashboard',
+                breadcrumbs: req.breadcrumbs
             })
         })
     },

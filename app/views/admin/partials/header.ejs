@@ -30,8 +30,6 @@
                         <input type="hidden" value= "<%- locals.userId %>" >
                     </button>
                     <ul class="dropdown-menu userprofile-dropdown-menu" aria-labelledby="defaultDropdown">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog"></i> Settings</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user-circle"></i> Manage account</a></li>
                         <li class="update-password"><a href="javascript:void(0)" class="dropdown-item"><i class="fa fa-unlock-alt"></i> Update Password</a></li>
                         <li><a class="dropdown-item" href="/user/logout"><i class="fas fa-sign-out-alt"></i></i> Signout</a></li>
                     </ul>
@@ -90,7 +88,7 @@
                         </ul>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" id="update_status">Update Status</button>
+                        <button type="button" class="btn btn-success" id="update-status">Update Status</button>
                     </div>
                 </div>
             </div>
@@ -109,19 +107,19 @@
                         <form action="">
                             <div class="form-group old-pass">
                                 <label for="" class="col-form-label">Old Password</label>
-                                <input class="form-control" type="password" name="student-old-password" id="student-old-password">
+                                <input class="form-control" type="password" name="student-old-password" id="student-old-password" autocomplete="on">
                             </div>
                             
                             <input type="hidden" name="student-user-id" id="student-user-id" value="<%- locals.username %>">
 
                             <div class="form-group new-pass" style="display: none;">
                                 <label for="" class="col-form-label">New Password</label>
-                                <input class="form-control" type="password" name="student-new-password" id="student-new-password">
+                                <input class="form-control" type="password" name="student-new-password" id="student-new-password" autocomplete="on">
                             </div>
 
                             <div class="form-group confirm-pass" style="display: none;">
                                 <label for="" class="col-form-label">Confirm New Password</label>
-                                <input class="form-control" type="password" name="student-confirm-password" id="student-confirm-password">
+                                <input class="form-control" type="password" name="student-confirm-password" id="student-confirm-password" autocomplete="on">
                             </div>
                         </form>
                        

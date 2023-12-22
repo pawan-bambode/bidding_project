@@ -69,7 +69,9 @@ multipleHit: (req, res) => {
         minMaxSlotId: JSON.stringify(result[0].recordset),
         courseCounts: result[1].recordset[0].count,
         courseSelectedByStud :JSON.stringify(result[2].recordset),
-        dropdownAcadSessionList:result[3].recordset  
+        dropdownAcadSessionList:result[3].recordset,
+        active:'dashboard',
+        breadcrumbs: req.breadcrumbs   
       })
     })
   },
@@ -98,7 +100,16 @@ multipleHit: (req, res) => {
   }).catch(err => {
     res.status(500).json((err.message))
    });
-  }
+  },
+
+    saveSpecialization : (req, res) =>{
+      student.saveSpecialization(res.locals.slug, req.body.inputJSON, res.locals.biddingId, res.locals.userId).then(result =>{
+        res.status(200).json(JSON.parse(result.output.output_json))
+      }).catch(error =>{
+        console.log('values of error',error.message);
+        res.status(500).json(JSON.parse(error.originalError.info.message));
+      })
+    } 
 }
 
 

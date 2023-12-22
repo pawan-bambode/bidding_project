@@ -6,8 +6,19 @@
   integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
 <div class="main-content">
+  <div class="breadcrumbs-container">
+    <ul class="breadcrumb">
+      <% if (breadcrumbs) { %>
+          <% for (let crumbs of breadcrumbs) { %>
+              <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
+               %>
+              <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
+          <% } %>
+      <% } %>
+  </ul>
+  </div>
+
   <div class="card card-custom-border-curv card">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2">Timetable</h3>
@@ -123,6 +134,9 @@
     $(document).ready(function(){
         let minMaxSlotId = JSON.parse(`<%-minMaxSlotId%>`);
         let courseCount = `<%- courseCounts %>`;
+
+        let active = `<%- active %>`;
+        $('#sidebar .side-menu li.' + active).addClass('active');
     
         let timetableProp = {
         totalSlots: minMaxSlotId[0].end_time_lid - minMaxSlotId[0].start_time_lid + 1,

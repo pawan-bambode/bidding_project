@@ -9,7 +9,9 @@ module.exports = {
             res.render('admin/divisionBatches/index.ejs',{
              divisionBatchList:result[0].recordset,
              pageCount: result[1].recordset[0][''],
-             programList: result[2].recordset
+             programList: result[2].recordset,
+             active:'dashboard',
+             breadcrumbs: req.breadcrumbs
             });
         })     
     },
@@ -55,13 +57,12 @@ module.exports = {
         worksheet.column(2).setWidth(10);
         worksheet.column(3).setWidth(10);
         worksheet.column(4).setWidth(10);
-        worksheet.column(5).setWidth(20);
-       
+        
         worksheet.cell(1, 1).string('courseId').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
         worksheet.cell(1, 2).string('division').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
         worksheet.cell(1, 3).string('batch').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
         worksheet.cell(1, 4).string('maxSeats').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-        worksheet.cell(1, 5).string('inputBatchCount').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
+      
        
         const filePath = __dirname + '/sampleForImportDivisionBatches.xlsx';
         workbook.write(filePath, (err, stats) => {

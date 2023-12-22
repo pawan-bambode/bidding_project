@@ -6,6 +6,13 @@
   integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
 <div class="main-content">
+  <div class="breadcrumbs-container">
+    <ul class="breadcrumb">
+        <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+            <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+        <%} }%>
+    </ul>
+  </div>
   <div class="card card-custom-border-curv">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2">Student List</h3>
@@ -172,6 +179,9 @@
 <script>
     $(document).ready(function() {
         $('.select2').select2();
+          
+        let active = `<%- active %>`;
+        $('#sidebar .side-menu li.' + active).addClass('active');
 
          if($('#student-data-table tbody tr').length > 0){ 
            $('#student-data-checkbox').removeClass('d-none');

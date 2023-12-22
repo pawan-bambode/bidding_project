@@ -235,7 +235,6 @@ module.exports = class Students {
 
 
     static getDemandEstimationAreaList(slug,acadSessionId,biddingId){
-        console.log('values of acad',acadSessionId);
         return poolConnection.then(pool =>{
             return pool.request().
              input('acadSessionId',sql.Int,acadSessionId)
@@ -255,6 +254,17 @@ module.exports = class Students {
             return pool.request().
             input('day_lid',sql.Int,day_lid)
             .query(`SELECT DISTINCT end_slot_lid,CONCAT(start_slot_lid, '-',end_slot_lid) as slot_value,start_slot_lid FROM [sbm-mum].timetable where day_lid = @day_lid order by end_slot_lid`);     
+        })
+    }
+
+    static saveSpecialization(slug, selectConcentration, biddingId, UserId){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('input_json', sql.NVarChar(sql.MAX), selectConcentration)
+            .input('bidding_session_lid', sql.Int, biddingId)
+            .input('last_modified_by', sql.Int, UserId)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .execute(`[${slug}].sp_select_specialization`);
         })
     }
 

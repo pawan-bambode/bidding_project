@@ -3,12 +3,16 @@
 <%- include('../partials/header.ejs') %>
 
 <div class="main-content">
-    <div class="col-12">
-        <div class="breadcrumb" style="margin: 10px 0;">
-            <a style="text-decoration: none; color: #007bff; font-weight: bold;" href="javascript:void(0)">Courseworkload</a>
-            <i class="fa fa-home" aria-hidden="true" style="margin: 0 5px;"></i>
-            <a href="javascript:void(0)" style="text-decoration: none;">Academic Year</a>
-        </div>
+    <div class="breadcrumbs-container">
+        <ul class="breadcrumb">
+            <% if (breadcrumbs) { %>
+                <% for (let crumbs of breadcrumbs) { %>
+                    <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
+                     %>
+                    <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
+                <% } %>
+            <% } %>
+        </ul>
     </div>
 
     <div class="card course-card">

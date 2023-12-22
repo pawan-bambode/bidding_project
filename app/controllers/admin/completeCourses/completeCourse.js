@@ -11,7 +11,9 @@ module.exports = {
         Promise.all([completeCourses.getCompleteCourseList(res.locals.slug,res.locals.biddingId,req.body.showEntry),completeCourses.getCount(res.locals.slug,res.locals.biddingId)]).then(result =>{
             res.render('admin/completeCourses/index.ejs',{
             completeCouseList : result[0].recordset,
-            pageCount:result[1].recordset[0]['']
+            pageCount:result[1].recordset[0][''],
+            active:'dashboard',
+            breadcrumbs: req.breadcrumbs
             })
         })
         },

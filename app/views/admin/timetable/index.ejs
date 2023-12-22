@@ -8,6 +8,17 @@
 
 
 <div class="main-content">
+   <div class="breadcrumbs-container">
+    <ul class="breadcrumb">
+        <% if (breadcrumbs) { %>
+            <% for (let crumbs of breadcrumbs) { %>
+                <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
+                 %>
+                <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
+            <% } %>
+        <% } %>
+    </ul>
+  </div>
   <div class="card card-custom-border-curv card">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2">Elective Timetable</h3>
@@ -136,6 +147,9 @@
         let minMaxSlotId = JSON.parse(`<%-minMaxTimetableSlot%>`);
         let roomList = JSON.parse(`<%- roomList %>`);
         let timeJson = JSON.parse(`<%- timeSlotList%>`);
+
+        let active = `<%- active %>`;
+        $('#sidebar .side-menu li.' + active).addClass('active');
 
         let roomslot = ``;
        

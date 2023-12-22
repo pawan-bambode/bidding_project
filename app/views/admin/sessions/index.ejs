@@ -7,11 +7,14 @@
 <div class="main-content">
     <!--DASHBOARD CONTENT START-->
     <div class="breadcrumbs-container">
-    
         <ul class="breadcrumb">
-            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
-                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
-                <%} }%>
+            <% if (breadcrumbs) { %>
+                <% for (let crumbs of breadcrumbs) { %>
+                    <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
+                     %>
+                    <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
+                <% } %>
+            <% } %>
         </ul>
     </div>
     

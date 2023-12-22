@@ -39,11 +39,12 @@ module.exports = class BiddingSession{
         return poolConnection.then(pool =>{
           return pool.request()
           .input('biddingSessionId', sql.Int, biddingId)
-          .query(`SELECT sap_acad_session_id, acad_session FROM [dbo].acad_sessions`);
+          .query(`SELECT id, sap_acad_session_id, acad_session FROM [dbo].acad_sessions`);
         })
       }
 
      static save(inputJSON, slug, userid) {
+      console.log('values of inputJson',inputJSON);
         return poolConnection.then(pool => { 
               return pool.request()
               .input('input_json', sql.NVarChar(sql.MAX),inputJSON)
@@ -63,6 +64,7 @@ module.exports = class BiddingSession{
       }
 
       static update(inputJSON, biddingSessionId, slug, userid){
+        console.log('value of inputJson', inputJSON);
         return poolConnection.then(pool =>{
           return pool.request().input('input_json', sql.NVarChar(sql.MAX), inputJSON)
           .input('last_modified_by', sql.Int, userid)

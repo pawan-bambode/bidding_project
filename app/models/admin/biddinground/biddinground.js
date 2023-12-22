@@ -6,7 +6,7 @@ module.exports = class BiddingRound
         return poolConnection.then(pool =>{
             return pool.request()
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT id, round_name, total_students, total_courses, 
+            .query(`SELECT id, round_lid, round_name, total_students, total_courses, 
                     FORMAT(end_date_time, 'dd MMM  yyyy, hh:mm tt') AS end_date_time, FORMAT(start_date_time, 'dd MMM yyyy, hh:mm tt') AS start_date_time 
                     FROM [${slug}].round_settings WHERE bidding_session_lid = @biddingId AND active = 1`);     
         })
@@ -15,7 +15,7 @@ module.exports = class BiddingRound
     static getPredefineBiddingRounds(slug){
         return poolConnection.then(pool =>{
             return pool.request()
-            .query(`SELECT esr.id, esr.round_name FROM [${slug}].elective_selection_rounds esr 
+            .query(`SELECT esr.id, esr.round_name FROM [dbo].elective_selection_rounds esr 
                     WHERE esr.id NOT IN( SELECT rs.round_lid
                     FROM [${slug}].round_settings rs
                     INNER JOIN [${slug}].bidding_session bs ON bs.id = rs.bidding_session_lid
@@ -52,10 +52,10 @@ module.exports = class BiddingRound
         })
     }
 
-    static delete(programlid, slug, userId, biddingSessionId){
+    static delete(roundId, slug, userId, biddingSessionId){
         return poolConnection.then(pool =>{
             return pool.request()
-            .input('input_round_lid', sql.Int, programlid)
+            .input('input_round_lid', sql.Int, roundId)
             .input('last_modified_by', sql.Int, userId)
             .input('bidding_session_lid', sql.Int, biddingSessionId)
             .output('output_json', sql.NVarChar(sql.MAX))
@@ -66,12 +66,13 @@ module.exports = class BiddingRound
     static update(inputJSON, slug, userid, biddingSessionId){
         return poolConnection.then(pool =>{
             return pool.request()
-            .input('input_json',sql.NVarChar(sql.MAX),JSON.stringify(inputJSON))
+            .input('input_json', sql.NVarChar(sql.MAX), inputJSON)
             .input('last_modified_by', sql.Int, userid)
-            .input('bidding_session_lid', sql.Int, biddingSessionId)
+            .input('bidding_session_lid',sql.Int, biddingSessionId)
             .output('output_json', sql.NVarChar(sql.MAX))
             .execute(`[${slug}].[sp_update_round_settings]`)
-        })
+    })
+            
     }
     
 }

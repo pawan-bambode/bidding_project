@@ -8,6 +8,18 @@
 
 
 <div class="main-content">
+    <div class="breadcrumbs-container">
+        <ul class="breadcrumb">
+            <% if (breadcrumbs) { %>
+                <% for (let crumbs of breadcrumbs) { %>
+                    <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
+                     %>
+                    <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
+                <% } %>
+            <% } %>
+        </ul>
+        
+    </div>
   <div class="card card-custom-border-curv">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2"> Specialization </h3>
@@ -118,7 +130,9 @@
         $('#page-no').html(test);
         paginationData(rowCount, parseInt(test));
 
-        
+        let active = `<%- active %>`;
+        $('#sidebar .side-menu li.' + active).addClass('active');
+
         $('#searchkeyword').on('input',function(){
 
          let specializationValue = $(this).val();

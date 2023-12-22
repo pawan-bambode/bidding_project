@@ -34,16 +34,13 @@
 <%- include ('../partials/header') %>
 
 <div class="main-content">
-    <div class="row gx-3 gy-3 mb-3 row1-data">
-
-        <div class="col-12">
-            <div class="breadcrumb" style="margin: 10px 0;">
-                <a style="text-decoration: none; color: #007bff; font-weight: bold;" href="javascript:void(0)">Dashboard</a>
-                <i class="fa fa-home" aria-hidden="true" style="margin: 0 5px;"></i>
-                <a href="javascript:void(0)">Dashboard</a>
-            </div>
-        </div>
-        
+    <div class="breadcrumbs-container">
+        <ul class="breadcrumb">
+                    <li>Dashboard</li>
+        </ul>
+    </div>
+    
+    <div class="row gx-3 gy-3 mb-3 row1-data"> 
         <div class="col-xl-3 col-lg-4 col-md-12">
             <a href="javascript:void(0)" class="tab-expand">
                 <div class="card row1-data-card" >
@@ -60,7 +57,7 @@
         </div>
     
         <div class="col-xl-3 col-lg-4 col-md-12">
-            <a href="/admin/bidding_session" class="tab-expand">
+            <a href="/admin/bidding-session" class="tab-expand">
                 <div class="card row1-data-card">
                     <div class="card-body d-flex justify-content-between">
                         <img src="/image/admin/dashboard/biddingSessions.png" alt="bidding-sessions">
@@ -89,7 +86,7 @@
         </div>
     
         <div class="col-xl-3 col-lg-4 col-md-12">
-            <a href="/admin/courseworkload" class="tab-expand">
+            <a href="/admin/course" class="tab-expand">
                 <div class="card row1-data-card" >
                     <div class="card-body d-flex justify-content-between">
                         <div>
@@ -105,7 +102,7 @@
         </div>
     
         <div class="col-xl-3 col-lg-4 col-md-12">
-            <a href="/admin/program/program-session" class="tab-expand">
+            <a href="/admin/program-session" class="tab-expand">
                 <div class="card row1-data-card">
                     <div class="card-body d-flex justify-content-between">
                         <img src="/image/admin/dashboard/room-type.PNG" alt="program-sessions">
@@ -295,28 +292,7 @@
 <script>
     $(document).ready(function(){
         let active = `<%- active %>`;
-        $('#sidebar .side-menu li.' + active).addClass('active');
-
-        $(document).on('click', '.fa-angles-left', function() {
-        $('.left-sidebar').addClass('hide');
-        $('.main').css('left', '80px');
-        $('.top-navbar').css('left', '80px');
-        $('.nmims-logo').addClass('d-none');
-        $('.nmims-logo-small').removeClass('d-none');
-        $(this).removeClass('fa-angles-left').addClass('fa-angles-right');
-        $('.left-sidebar .side-menu li img').css('margin-left','0px');
-    });
-
-    $(document).on('click', '.fa-angles-right', function() {
-        $('.left-sidebar').removeClass('hide');
-        $('.main').css('left', '260px');
-        $('.top-navbar').css('left', '260px');
-        $('.nmims-logo').removeClass('d-none');
-        $('.nmims-logo-small').addClass('d-none');
-        $(this).addClass('fa-angles-left').removeClass('fa-angles-right');
-        $('.left-sidebar .side-menu li img').css('margin-left','5px');
-    });
-    
+        $('#sidebar .side-menu li.' + active).addClass('active'); 
     });
 </script>
 <%- include('../partials/footerEnd') %>

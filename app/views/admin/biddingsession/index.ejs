@@ -4,6 +4,18 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 
 <div class="main-content">
+    <div class="breadcrumbs-container">
+        <ul class="breadcrumb">
+            <% if (breadcrumbs) { %>
+                <% for (let crumbs of breadcrumbs) { %>
+                    <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
+                     %>
+                    <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
+                <% } %>
+            <% } %>
+        </ul>
+    </div>
+
     <div class="card card-custom-border-curv">
        <div class="card-header-custom d-flex justify-content-between p-1">
           <h3 class="ms-2">Bidding Sessions</h3>
@@ -64,7 +76,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">Add Bidding Session</h3>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
+                <button class="btn-close full-modal-left-sidebar" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body row custum-imp-program">
                 
@@ -85,7 +97,7 @@
                             <select class="form-select select2" id="selected-acad-session">
                                 <option selected disabled>--Select Acad Session-- </option>
                                 <% for(let acadSession of acadSessionList) { %>  
-                                    <option value="<%- acadSession.sap_acad_session_id %>"><%- acadSession.acad_session %></option>
+                                    <option value="<%- acadSession.id %>"><%- acadSession.acad_session %></option>
                                 <% } %>                          
                             </select>
                             <button class="btn btn-primary w-50 mt-5 align-self-end" id="add-acad-session-in-bidding-details">Add AcadSession</button>
@@ -128,7 +140,7 @@
              <div class="mb-3">
                  <label for="exampleFormControlInput1" class="form-label">Bidding Name</label>
                  <input type="hidden" name="bidding-id" id="bidding-id">
-                 <input type="text" class="form-control" name="bidding-session-name" id="bidding-name">
+                 <input type="text" class="form-control" name="bidding-session-name" id="bidding-name-val">
                  <span class="text-danger d-none valid-bidding-session-name">Enter the Bidding Name</span>
              </div>
              <div class="row">
@@ -166,7 +178,7 @@
              <div class="edit-bidding-session-acad-seession d-none d-flex">
                  <div class="col-md-8">
                      <label class="form-label">Academic Session </label>
-                     <select class="form-select form-control select2"
+                     <select class="form-select select2"
                          id="edit-academic-session-add">
                          <option class="disabled" selected >Select Acad Session </option>
                         <% for(let acadSession of acadSessionList) {  %>
@@ -192,7 +204,16 @@
 <script>
         $(document).ready(function() {
             $('.select2').select2();
+        
+
+            $('#edit-academic-session-add').select2({
+            dropdownParent: $('#edit-bidding-session-modal') 
+            });
+
             formatDate(new Date(),false,6)
+
+            let active = `<%- active %>`;
+            $('#sidebar .side-menu li.' + active).addClass('active');
 
           $('#add-bidding-session').on('change','#start-date',function(){
                 formatDate(new Date($(this).val()),true,15);
@@ -215,6 +236,7 @@
                 showError(error.responseJSON)
             })
             });
+
           $('#add-bidding-details').on('click',function(){
                 
                 let countRow = 1;
@@ -323,8 +345,12 @@
 
            }); 
            $('#add-bidding-session').on('show.bs.modal', function () {
-        $('.left-sidebar').addClass('d-none');
-     });
+               $('.left-sidebar').addClass('d-none');
+            });
+
+            $('#add-bidding-session').on('click','.full-modal-left-sidebar', function () {
+               $('.left-sidebar').removeClass('d-none');
+            });
 
            $('#bidding-sesssion-table').on('click','#edit-bidding-session',function(){
               let biddingRow = $(event.target).closest('tr');
@@ -347,7 +373,7 @@
             });
          
               $('#edit-bidding-session-modal .add-bidding-session-val').append(biddingSessionList);
-              $('#edit-bidding-session-modal #bidding-name').val(biddingName);
+              $('#edit-bidding-session-modal #bidding-name-val').val(biddingName);
               $('#edit-bidding-session-modal #start-date').val(startDate);
               $('#edit-bidding-session-modal #end-date').val(endDate);
               $('#edit-bidding-session-modal #bidding-id').val(id);
@@ -391,7 +417,7 @@
            })
            $('#edit-bidding-session-modal').on('click','#update-bidding-session',function(){
             let biddingId = $('#edit-bidding-session-modal #bidding-id').val();
-            let biddingName = $('#edit-bidding-session-modal #bidding-name').val().replace(/\s+/g, ' ').trim();
+            let biddingName = $('#edit-bidding-session-modal #bidding-name-val').val().replace(/\s+/g, ' ').trim();
             let startDate = $('#edit-bidding-session-modal #start-date').val();
             let endDate = $('#edit-bidding-session-modal #end-date').val();
             let biddingSessionAcadId = [];

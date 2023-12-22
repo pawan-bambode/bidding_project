@@ -8,15 +8,19 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
 
 <div class="main-content">
-    <div class="col-12">
-        <div class="breadcrumb" style="margin: 10px 0;">
-            <a style="text-decoration: none; color: #007bff; font-weight: bold;" href="javascript:void(0)">Dashboard</a>
-            <i class="fa fa-home" aria-hidden="true" style="margin: 0 5px;"></i>
-            <a href="javascript:void(0)" style="text-decoration: none;">Division Batches</a>
-        </div>
+    <div class="breadcrumbs-container">
+      <ul class="breadcrumb">
+        <% if (breadcrumbs) { %>
+            <% for (let crumbs of breadcrumbs) { %>
+                <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
+                 %>
+                <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
+            <% } %>
+        <% } %>
+    </ul>
     </div>
 
-    <div class="card card-custom-border-curv-border-curv" >
+    <div class="card card-custom-border-curv">
         <div class="card-header-custom d-flex justify-content-between p-2">
             <h4 class="ms-2">Division Batches Data</h4>
             <div>
@@ -179,6 +183,9 @@
    $(document).ready(function(){
 
       $('.select2').select2();
+
+      let active = `<%- active %>`;
+      $('#sidebar .side-menu li.' + active).addClass('active');
 
       if($('#division-batches-table tbody tr').length > 0){
       $('#all-division-batches-checkbox').removeClass('d-none');

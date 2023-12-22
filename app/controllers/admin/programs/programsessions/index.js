@@ -10,6 +10,8 @@ module.exports = {
                 res.render('admin/programs/programsession/index.ejs', {
                     programSessionList: result[0].recordset,
                     pageCount: result[1].recordset[0][''],
+                    active:'dashboard',
+                    breadcrumbs: req.breadcrumbs
                 });
             });
     },

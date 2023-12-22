@@ -6,7 +6,9 @@ module.exports = {
             res.render('admin/courseworkload/index.ejs',{
              courseList:result[0].recordset,
              pageCount: result[1].recordset[0][''],
-             programList:result[2].recordset
+             programList:result[2].recordset,
+             active:'dashboard',
+             breadcrumbs: req.breadcrumbs
             });
         })     
     },

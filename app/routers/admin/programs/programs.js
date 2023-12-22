@@ -8,9 +8,9 @@ router.post('/program/delete',program.delete);
 router.post('/program/search',program.programSearch);
 router.post('/program/showEntryProgramList',program.showEntryProgramList)
 
-router.get('/program/program-session',programSessions.getPage);
-router.post('/program/program-session/refresh',programSessions.refresh);
-router.post('/program/program-session/update-credits',programSessions.update)
+router.get('/program-session',programSessions.getPage);
+router.post('/program-session/refresh',programSessions.refresh);
+router.post('/program-session/update-credits',programSessions.update)
 router.post('/program-sessions/search',programSessions.search)
 router.post('/program-sessions/showEntryProgramList',programSessions.showEntryProgramSessionList)
 

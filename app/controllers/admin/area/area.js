@@ -6,7 +6,9 @@ module.exports = {
         Promise.all([biddingSession.getAreaList(res.locals.slug,res.locals.biddingId),biddingSession.getCount(res.locals.slug,res.locals.biddingId)]).then(result =>{
             res.render('admin/areas/index.ejs',{
              areaList:result[0].recordset,
-             pageCount: result[1].recordset[0]['']
+             pageCount: result[1].recordset[0][''],
+             active:'dashboard',
+             breadcrumbs: req.breadcrumbs
             });
         })
     },

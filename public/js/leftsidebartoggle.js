@@ -1,10 +1,3 @@
-
-
-$('.custom-element').on('click', function(){
-   $(this).toggleClass('active')
-})
-
-
 $(document).on('click', '.fa-angles-left', function() {
     $('.left-sidebar').addClass('hide');
     $('.main').css('left', '80px');
@@ -24,25 +17,6 @@ $(document).on('click', '.fa-angles-right', function() {
     $(this).addClass('fa-angles-left').removeClass('fa-angles-right');
     $('.left-sidebar .side-menu li img').css('margin-left','5px');
 })
-
-
-
-//NOTIFICATION
-var notification = $(".notification-content");
-
-var close = $(".notification-close");
-
-function notify() {
-    notification.addClass('notification-active');
-    $('.notification-content').css('display', 'flex');
-}
-
-$(".notification-close").on('click', function () {
-    notification.removeClass('notification-active')
-    location.reload();
-})
-
-
 
 $('.session-name').on('click', function(){
 
@@ -76,12 +50,11 @@ $('#bidding-session-popup-modal .list-group').on('click', '.list-group-item', fu
 
 })
 
-$('#update_status').on('click', function(){
+$('#update-status').on('click', function(){
     let jsonArr = [];
     let biddingSessionLid = $('#bidding-session-popup-modal .list-group').find('li.active').attr('data-bidding-session-id');
     let biddingName = $('#bidding-session-popup-modal .list-group').find('li.active').attr('data-bidding-session-name');
     
-
     let apiObj = {
         type: 'POST',
         url: '/admin/bidding-session/update-bidding-session-status',
@@ -99,30 +72,10 @@ $('#update_status').on('click', function(){
     })
 })
 
-$('body').on('mouseover', '.left-sidebar-side', function(){
-    $('.accordion-button').toggleClass('active')
-    $('.left-sidebar-logo').toggleClass('left-sidebar-logo-side')
-    $('.close-menu').toggleClass('close-menu-side')
-    $('.left-sidebar').toggleClass('left-sidebar-side')
-    $('.top-navbar').toggleClass('top-navbar-side')
-    $('.main').toggleClass('main-side')
-    $('.left-sidebar-mini-logo').toggleClass('left-sidebar-mini-logo-hide')
-})
-$('#sidebar .left-sidebar').click(function() {
-    console.log('inside the button left sidebar')
-    $('#sidebar .left-sidebar').removeClass('active');
-    $(this).addClass('active');
-});
-$('body').on('mouseout', '.left-sidebar', function(){
-   console.log('inside the left side bar');
-})
-
-
 $('body').on('click', '.update-password', function(e) {
     e.preventDefault();
     $('#update-password-modal').modal('show')
 });
-
 
 $('body').on('click', '#check-password-btn', function() {
 
@@ -176,7 +129,6 @@ $('body').on('click', '#update-password-btn', function() {
                 $('#update-password-modal').modal('hide')
                 $('#student-new-password').val('');
                 $('#student-confirm-password').val('');
-                //$('.old-pass').css('display', 'none')
             } else {
                 alert('Something went wrong ..')
             }
@@ -215,18 +167,18 @@ function showSuccess(errors) {
     simpleAlert.alert(obj);
 }
 
+//NOTIFICATION
+var notification = $(".notification-content");
 
-$(document).ready(function(){
-    $('.toggle-plus-minus').on('click',function(){
-        
-        if($(this).find('i').hasClass('fa-minus')){
-            $(this).find('i').addClass('fa-plus');
-            $(this).next().find('.sub-menu').removeClass('d-none');
-        }
-        else{
-            $(this).find('i').addClass('fa-minus');
-            $(this).next().find('.sub-menu').addClass('d-none');
-        }
-       });
-  })
+var close = $(".notification-close");
+
+function notify() {
+    notification.addClass('notification-active');
+    $('.notification-content').css('display', 'flex');
+}
+
+$(".notification-close").on('click', function () {
+    notification.removeClass('notification-active')
+    location.reload();
+})
   

@@ -12,13 +12,13 @@
             <button class="btn btn-danger time-remaing me-5"></button> 
         </div>
         <div class="card-body table-responsive">
-            <h3 class="text-center bidding-round">Demand Estimation Round</h3>
+            <h3 class="text-center bidding-round" data-id="<%- roundLid %>">Demand Estimation Round</h3>
             <div class="row ps-5 pe-5 d-flex justify-content-between">
                 <div class="col-md-4">
-                    <h6>Minimum / Maximum Yearly Credits :&nbsp;<span id="yearly-credits"><%- concentrationSettings.total_elective_credits %></span></h6>
+                    <h6>Minimum / Maximum Yearly Credits :&nbsp;<span id="yearly-credits"><%- totalCreditsCounts %></span></h6>
                 </div>
                 <div class="col-md-4">
-                    <h6>Concentraion Name :&nbsp;<span id="concentration-name"><%- concentrationSettings.concentration_name %></span></h6>
+                    <h6>Concentraion Name :&nbsp;<span class="d-none" id="concentration-name"><%- concentrationSettings.concentration_name %></span><span class="concentration-not-selected d-none">Select Concentration</span></h6>
                 </div>
             </div>
            
@@ -40,10 +40,10 @@
 
             <div class="row ps-5 pe-5">
                 <div class="col-md-4">
-                    <h6>Start Time :&nbsp;<span id="start-time"><%- startAndEndTime.startTime %></span></h6>
+                    <h6>Start Time :&nbsp;<span id="start-time"><%-startAndEndTime.startTime %></span><span class="demand-estimation-not-created d-none">Demand Estimation Not Created Yet</span></h6>
                 </div>    
                 <div class="col-md-4">
-                    <h6>End Time :&nbsp;<span id="end-time"><%- startAndEndTime.endTime %></span></h6>
+                    <h6>End Time :&nbsp;<span id="end-time"><%-startAndEndTime.endTime %></span><span class="demand-estimation-not-created d-none">Demand Estimation Not Created Yet</span></h6>
                 </div>
                 <div class="col-md-4">
                     <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
@@ -188,6 +188,29 @@ $(document).ready(function() {
     setInterval(updateCurrentTime, 1000);
     setInterval(demandEstimationTimeCountDown, 1000);
 
+    let concentrationSettings = '<%- concentrationSettings%>';
+    console.log('values of concentrationSettings', concentrationSettings);
+    let startTime = '<%- startAndEndTime %>';
+     console.log('values of stat',startTime === '');
+       if (startTime.trim() === '') {
+         console.log('inside the if block');
+         $('.demand-estimation-not-created').removeClass('d-none');
+         $('.time-remaing').addClass('d-none');
+       } else {
+        
+         $('.demand-estimation-not-created').addClass('d-none');
+        $('.time-remaing').removeClass('d-none');
+      }
+ 
+     if(concentrationSettings == 0){
+        $('.concentration-not-selected').removeClass('d-none');
+        $('#concentration-name').addClass('d-none');
+     }
+     else{
+        $('.concentration-not-selected').addClass('d-none');
+        $('#concentration-name').removeClass('d-none');
+     }
+
     let rowCount = $('#changeEntry').val();
     let pageCount = '<%- pageCount %>';
     let acadSessionCount = '<%- dropdownAcadSessionList.length %>';
@@ -200,30 +223,13 @@ $(document).ready(function() {
      $('.demand-estimation-status').addClass('d-none');
     }
 
-    let roundId = '<%- roundLid %>';
+
+    
+   
     paginationData(rowCount, parseInt(pageCount));
     
     let active = `<%- active %>`;
     $('#sidebar .side-menu li.' + active).addClass('active');
-
-    $(document).on('click', '.fa-angles-left', function() {
-        $('.left-sidebar').addClass('hide');
-        $('.main').css('left', '80px');
-        $('.top-navbar').css('left', '80px');
-        $('.nmims-logo').addClass('d-none');
-        $('.nmims-logo-small').removeClass('d-none');
-        $(this).removeClass('fa-angles-left').addClass('fa-angles-right');
-        $('.left-sidebar .side-menu li img').css('margin-left','-2px');
-    });
-
-    $(document).on('click', '.fa-angles-right', function() {
-        $('.left-sidebar').removeClass('hide');
-        $('.main').css('left', '260px');
-        $('.top-navbar').css('left', '260px');
-        $('.nmims-logo').removeClass('d-none');
-        $('.nmims-logo-small').addClass('d-none');
-        $(this).addClass('fa-angles-left').removeClass('fa-angles-right');
-    });
 
         $('#acad-session-change').on('change',function(){
             let showEntry = $('#changeEntry').val();
@@ -362,14 +368,19 @@ $(document).ready(function() {
 
     function demandEstimationTimeCountDown(){
         let endTime = $('#end-time').text();
+        let startTime = $('#start-time').text();
+
 
         let endDateTime = new Date(endTime);
+        let startDateTime = new Date(startTime);
         let currentDateTime = new Date();
         if(endDateTime > currentDateTime){
         let dateSubtraction = endDateTime - currentDateTime;
         let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
         $('.time-remaing').text(`Rounds Ended In ${dateSubtractionValue}`);
         }
+
+        console.log('values of startTime12',startDateTime);
         if(endDateTime == currentDateTime){
             let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
         $('.time-remaing').text(`Rounds Ended In ${dateSubtractionValue}`);
@@ -379,6 +390,16 @@ $(document).ready(function() {
             $('.time-remaing').attr('data-round-status','end');
             $('.save-select-course').addClass('d-none');
             $('.demand-estimation-status').addClass('d-none');
+        }
+        
+        if(startDateTime > currentDateTime){
+        
+            $('.time-remaing').text(`Rounds Not Started Yet`);
+            $('.time-remaing').attr('data-round-status','not-started');
+            $('.save-select-course').addClass('d-none');
+            $('.demand-estimation-status').addClass('d-none');
+            $('.time-remaing').removeClass('btn-danger');
+            $('.time-remaing').addClass('btn-success');
         }
     } 
 
@@ -521,6 +542,9 @@ $(document).ready(function() {
             areaAddedArray.push(CourseNameAndCredits);  
            
             let areaCount = calculateAreaFrequency(areaAddedArray);
+
+            console.log('values of adding areaCount', areaCount);
+            
             let areaCountValue = (areaCount[areaName]);
             let minCreditsPerArea = $('#min-credits-per-area').text();
             let concentrationName = $('#concentration-name').text();
@@ -529,7 +553,7 @@ $(document).ready(function() {
             let selectedCredit = $('#selected-course-credits-count').text();
             let yearlyCredit = $('#yearly-credits').text();
             
-           
+            console.log('values of adding concentrationName', areaCountValue.totalCredits);
             
             if(areaCountValue.totalCredits == minCreditsPerArea){
                 console.log('values of ',areaCountValue.totalCredits)
@@ -546,7 +570,9 @@ $(document).ready(function() {
             let areasCountCredit = $('#areas-count').text();
 
             if(concentrationName.toLocaleLowerCase() !== 'general management'){
+              if(areaCount[concentrationName] != undefined){  
               let areaCountValue =   areaCount[concentrationName].totalCredits;
+              }
               if((areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) &&( selectedCredit == yearlyCredit ) &&(areasCountCredit == '0')  ){
                 $('.criteria-status').text('Criteria Met');
                 $('.criteria-status').removeClass('btn-danger');
@@ -594,7 +620,7 @@ $(document).ready(function() {
 
         let count = 1; 
         let ajaxTable =
-            `<tr data-course-id="${courseId}" data-area="${areaName}" data-course-name="${courseName}" data-acad-session="${acadSession}" data-credits="${credits} 
+            `<tr data-course-id="${courseId}" data-area="${areaName}" data-course-name="${courseName}" data-acad-session="${acadSession}" data-credits="${credits}" 
               data-acad-session-id="${acadSessionId}"
              ">
                 <td>${count++}</td>
@@ -621,10 +647,11 @@ $(document).ready(function() {
                     });
                     
                     let concentrationSettingAreaCount = '<%= concentrationSettings.no_of_areas_to_cover %>';
+                    console.log('values of areaFrequencyCount[areaName].totalCredits',areaFrequencyCount[areaName].totalCredits)
                     let minCreditsPerArea = $('#min-credits-per-area').text();
                     let areaFrequencyCount = calculateAreaFrequency(areaAddedArray);
-
-                   if(areaFrequencyCount[areaName].totalCredits < minCreditsPerArea){
+                    
+                   if(areaFrequencyCount[areaName] != undefined? areaFrequencyCount[areaName].totalCredits:0 < minCreditsPerArea){
                     let areaCount = Number($('#areas-count').text());
                  
                     if(areaCount <= concentrationSettingAreaCount){
@@ -679,6 +706,7 @@ $(document).ready(function() {
         $(document).on('click', '.save-select-course', function () {
             let selectedCourseArray = [];
         $('#selected-course-table tbody tr').each((index, selectedCourse) => {
+            
             let selectedCourses = {};
             let courseLid = $(selectedCourse).data('course-id');
             let studentLid = $('.student-id').text();
@@ -687,8 +715,9 @@ $(document).ready(function() {
             selectedCourseArray.push(selectedCourses);
         });
        
-        let studentLid = $('.student-id').text(); 
-    
+        let studentLid = $('#student-data').data('student-lid'); 
+        let roundId = $('.bidding-round').data('id');
+         console.log('values of studentLid',studentLid);
         let ApiObj = {
             url: '/student/demand-estimation/selected-course/save',
             type: 'POST',
@@ -719,7 +748,7 @@ $(document).ready(function() {
 
     function calculateAreaFrequency(arr) {
         let areaFrequency = {};
-
+          console.log('inside the area',arr);
         arr.forEach((obj) => {
             let area = obj.areaName;
             if (areaFrequency[area]) {
@@ -732,6 +761,7 @@ $(document).ready(function() {
                 };
             }
         });
+        console.log('inside the area',areaFrequency);
         return areaFrequency;
    }
 

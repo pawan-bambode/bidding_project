@@ -8,6 +8,17 @@
 
 
 <div class="main-content">
+    <div class="breadcrumbs-container">
+        <ul class="breadcrumb">
+            <% if (breadcrumbs) { %>
+                <% for (let crumbs of breadcrumbs) { %>
+                    <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
+                     %>
+                    <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
+                <% } %>
+            <% } %>
+        </ul>
+    </div>
   <div class="card card-custom-border-curv">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2">Program Sessions List</h3>
@@ -104,6 +115,10 @@
         let test = '<%- pageCount %>';
         let rowCount = $('#changeEntry').val();
         $('#page-no').html(test);
+        
+        let active = `<%- active %>`;
+        $('#sidebar .side-menu li.' + active).addClass('active');
+
         paginationData(rowCount, parseInt(test));
         function paginationData(rowCount, totalCount) {
             let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
@@ -129,7 +144,7 @@
         }  
      $('#refresh-program-sessions').on('click',function(){
         let ApiObj = {
-            url:'/admin/program/program-session/refresh',
+            url:'/admin/program-session/refresh',
             type:'POST',
             data:{},
             datatype:'JSON'
@@ -163,7 +178,7 @@
         }
         
         let ApiObj = {
-            url:'/admin/program/program-session/update-credits',
+            url:'/admin/program-session/update-credits',
             type:'POST',
             data:{
                 id:programSessionId,

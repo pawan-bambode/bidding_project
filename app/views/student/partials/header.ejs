@@ -12,12 +12,21 @@
                 <button type="button" class="btn btn-danger ms-auto me-3" id="refresh-areas">
                     <i class="fa-solid fa-rotate p-1"></i>Refresh
                 </button>  
+
                 <li><a href="" class="text-dark"><img src="/image/student/nav-bar-header/notification.png" alt=""> Notification</a></li>
-                <li><a onclick="toggle_full_screen()" style="cursor: pointer;"><img src="/icons/expand.png" alt=""></a></li>
-                </li>
-                    <img class="student-icon-image" src="/image/student/nav-bar-header/student.png" alt="student-image"><span class="ms-2">Hi! <%- locals.fullName %></span><span class="d-none student-id"><%- locals.studentId %></span>
-                    <button class="btn"><a class="dropdown-item" href="/user/logout"><i class="fas fa-sign-out-alt"></i> Signout</a></button>
-                </li>
+                <li><a onclick="toggle_full_screen()" style="cursor: pointer;"><img class="expand-image" src="/image/student/nav-bar-header/expand.png" alt=""></a></li>
+            
+                <div class="btn-group">
+                    <button class="btn btn-white dropdown-toggle" type="button" id="defaultDropdown"
+                        data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false"> 
+                        <img src="/image/student/nav-bar-header/student.png" class="student-icon-image" alt=""> Hi! <%-locals.fullName%> 
+                        <input type="hidden" id="student-data" value= "<%- locals.userId %>" data-student-lid ="<%- locals.studentId%>" >
+                    </button>
+                    <ul class="dropdown-menu userprofile-dropdown-menu" aria-labelledby="defaultDropdown">
+                        <li class="update-password"><a href="javascript:void(0)" class="dropdown-item"><i class="fa fa-unlock-alt"></i> Update Password</a></li>
+                        <li><a class="dropdown-item" href="/user/logout"><i class="fas fa-sign-out-alt"></i></i> Signout</a></li>
+                    </ul>
+                </div>
             </ul>
     
             <div class="hamburger-smalldevices"><img src="/image/student/nav-bar-header/nav-bar-header-small-size-window/HamburgerIcon.png" alt="" width="24px" height="20px">

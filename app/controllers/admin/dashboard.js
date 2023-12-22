@@ -21,7 +21,8 @@ module.exports = {
             completedCourseCount:result[8],
             divisionBatchCount:result[9],
             roundSettingCount:result[10],
-            path:'/admin'
+            path:'/admin',
+            breadcrumbs: req.breadcrumbs[0]
          })     
         })
     },

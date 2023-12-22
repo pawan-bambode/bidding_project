@@ -8,6 +8,18 @@
 
 
 <div class="main-content">
+    <div class="breadcrumbs-container">
+        <ul class="breadcrumb">
+            <% if (breadcrumbs) { %>
+                <% for (let crumbs of breadcrumbs) { %>
+                    <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
+                     %>
+                    <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
+                <% } %>
+            <% } %>
+        </ul>
+    </div>
+
   <div class="card card-custom-border-curv">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2">Program List</h3>
@@ -72,7 +84,7 @@
         <div class="modal-content">
             <div class="modal-header">
               <h3>Select Program</h3>
-              <button class="btn-close" data-bs-dismiss="modal"></button>
+              <button class="btn-close full-modal-left-sidebar" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body row custum-imp-program">
                
@@ -137,6 +149,10 @@
         let rowCount = $('#changeEntry').val();
         $('#page-no').html(test);
         paginationData(rowCount, parseInt(test));
+
+        let active = `<%- active %>`;
+        $('#sidebar .side-menu li.' + active).addClass('active');
+
         $('#searchkeyword').on('input',function(){
 
         let searchValue = $(this).val();
@@ -157,8 +173,12 @@
      })       
      $('#import-program-modal').on('show.bs.modal', function () {
         $('.left-sidebar').addClass('d-none');
-
     });
+    
+    $('#import-program-modal').on('click','.full-modal-left-sidebar', function () {
+           $('.left-sidebar').removeClass('d-none');
+          });
+
 $(".pagination-search").on('click','.pagination li',function(){
             let keyword = $("#searchkeyword").val();
             let showEntry = $('#changeEntry').val();

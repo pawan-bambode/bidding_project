@@ -50,7 +50,7 @@
                     <% for (let concentration of concentrationList) { %>
                         <% const concentrationNameLower = concentration.concentration_name.toLowerCase() %>
                         <div class="col-md-3 d-flex">
-                            <input type="radio" name="concentration-name" data-value="<%- concentration.id %>" id="concentration<%- concentration.id %>"
+                            <input type="radio" name="concentration-name" data-concentration-id="<%- concentration.id %>" id="concentration<%- concentration.id %>" data-concentration-name = "<%-concentration.concentration_name %>"
                                 <% if (concentrationNameLower === specializationName) { %> checked <% } %>>
                             <label class="fw-bold mb-0 ms-2" for="concentration<%- concentration.id %>"><%- concentration.concentration_name %></label>
                         </div>
@@ -325,6 +325,36 @@
             $(this).addClass('hideAllCourseTable');
         });
 
+        $(document).on('click','input[name ="concentration-name"]',function(){
+            let id = $('#student-data').data('student-lid');
+            let concentrationName = $(this).data('concentration-name');
+            let concentration_lid = $(this).data('concentration-id');
+            let selectedConcentration = {
+                id: id,
+                concentration_lid: concentration_lid,
+                concentration_name: concentrationName
+            }
+
+            let SelectedConcentrationDetails  = {
+                select_specialization: selectedConcentration,
+            };
+
+            let ApiObj = {
+                url:'/student/specialization/save',
+                type:'POST',
+                data:{inputJSON:JSON.stringify(SelectedConcentrationDetails)
+                },
+                datatype:'JSON'
+            }
+            ajaxApi(ApiObj).then(result=>{
+                console.log('vlaues of result', result);
+                showSuccess(result)   
+            }).catch(error =>{
+            showError(error.responseJSON);
+            }) 
+            })
+    
+
         $('.left-sidebar').on('click',function(){
         const allSideMenu = document.querySelectorAll('.left-sidebar .side-menu.top li a');
 
@@ -340,27 +370,32 @@
             });
         })
 
-    $(document).on('click', '.fa-angles-left', function() {
-        $('.left-sidebar').addClass('hide');
-        $('.main').css('left', '80px');
-        $('.top-navbar').css('left', '80px');
-        $('.nmims-logo').addClass('d-none');
-        $('.nmims-logo-small').removeClass('d-none');
-        $(this).removeClass('fa-angles-left').addClass('fa-angles-right');
-        $('.left-sidebar .side-menu li img').css('margin-left','-2px');
-    });
-
-    $(document).on('click', '.fa-angles-right', function() {
-        $('.left-sidebar').removeClass('hide');
-        $('.main').css('left', '260px');
-        $('.top-navbar').css('left', '260px');
-        $('.nmims-logo').removeClass('d-none');
-        $('.nmims-logo-small').addClass('d-none');
-        $(this).addClass('fa-angles-left').removeClass('fa-angles-right');
-    });
-
  });
-
+ function showError(errors) {
+            console.log(errors);
+            console.log('values of description',errors.description)
+            let simpleAlert = new SimpleAlert();
+            let obj = {
+                title : errors.description,
+                message: "",
+                type: 'alert-danger',
+                buttons: {
+                    positive:{
+                        text: "Okay",
+                        action: function(){
+                            document.querySelector('.simple-alert').remove();
+                        }
+                    },
+                    negative: {
+                        text: "Cancel",
+                        action: function () {
+                        alert('Negative')
+                        }
+                    }
+                }
+            }
+            simpleAlert.alert(obj);
+            }
 </script>
 
 <%- include('../partials/footerEnd') %>

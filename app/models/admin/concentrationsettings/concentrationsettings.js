@@ -155,4 +155,14 @@ module.exports =  class ConcentrationSettigs{
                     INNER JOIN [${slug}].concentration_settings cs ON cs.concentration_lid = sd.concentration_lid WHERE email = @studentEmail AND sd.active = 1`)
         })
     }
+
+    static getTotalCreditsCounts(slug, biddingId){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('biddingId', sql.Int, biddingId)
+            .query(`SELECT TOP 1 total_elective_credits AS totalCount 
+                    FROM [${slug}].concentration_settings WHERE active = 1 
+                    AND bidding_session_lid = @biddingId`)
+        })
+    }
 }

@@ -96,8 +96,8 @@ module.exports = class timetable {
      static getTimeslot(){
         return poolConnection.then(pool =>{
             return pool.request()
-            .query(`SELECT CONVERT(NVARCHAR,start_time, 0) as start_time,
-                    CONVERT(NVARCHAR,end_time, end_time 
+            .query(`SELECT CONVERT(NVARCHAR,start_time, 0) AS start_time,
+                    CONVERT(NVARCHAR,end_time,0) AS end_time 
                     FROM [dbo].slot_interval_timings`)
         })
     }

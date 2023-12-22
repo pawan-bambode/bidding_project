@@ -8,7 +8,9 @@ module.exports = {
                 res.render('admin/programs/program/index.ejs', {
                     programList: result[0].recordset,
                     pageCount: result[1].recordset[0][''],
-                    programListFromDbo: result[2].recordset
+                    programListFromDbo: result[2].recordset,
+                    active:'dashboard',
+                    breadcrumbs: req.breadcrumbs
                 });
             });
     },
