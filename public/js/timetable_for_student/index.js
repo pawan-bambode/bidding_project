@@ -1,6 +1,6 @@
     $('#student_submit_button').on('click',function(){
        $(this).attr('disabled','disabled');
-       let subjects = updateOrSaveStudentSubject('#modal_for_stud_sel_course .modal-body .selected_course tbody tr')
+       let subjects = updateOrSaveStudentSubject('#modal_for_stud_sel_course .modal-body .selected-course tbody tr')
         let ApiObj = {
             url: '/student/subjectAdded',
             type: 'POST',
@@ -17,7 +17,7 @@
     })
 
     $('#student_update_button').on('click',function(){
-       let subjects = updateOrSaveStudentSubject('#modal_for_stud_sel_course .modal-body .selected_course tbody')
+       let subjects = updateOrSaveStudentSubject('#modal_for_stud_sel_course .modal-body .selected-course tbody')
            let ApiObj = {
             url: '/student/updateSubject',
             type: 'POST',
@@ -57,29 +57,7 @@
         simpleAlert.alert(obj);
     }
 
-    function showError(errors) {
-        let simpleAlert = new SimpleAlert();
-        let obj = {
-            title : errors,
-            message: "",
-            type: 'alert-danger',
-            buttons: {
-                positive:{
-                    text: "Yes",
-                    action: function(){
-                        document.querySelector('.simple-alert').remove();
-                    }
-                },
-                negative: {
-                    text: "NO",
-                    action: function () {
-                    alert('Negative')
-                    }
-                }
-            }
-        }
-        simpleAlert.alert(obj);
-    }
+
 
     function ajaxApi(obj) {
         return $.ajax({
@@ -168,7 +146,7 @@
             $('#student_submit_button').addClass('d-none');
             $('#student_update_button').removeClass('d-none');
             $('#modal_for_stud_sel_course').modal('hide');
-            $('#modal_for_stud_sel_course .selected_course .table tbody').empty();
+            $('#modal_for_stud_sel_course .selected-course .table tbody').empty();
         }
     }
      

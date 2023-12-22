@@ -1,7 +1,7 @@
 const excel = require('excel4node');
-const xlsxPopulate = require('xlsx-populate');
+
 const xlsx = require('xlsx');
-const courseworkload = require('../../../models/admin/courseworkload/courseworkload');
+const course = require('../../../models/admin/course/course');
 const isJsonString = require('../../../utils/util');
 
 module.exports = {
@@ -59,7 +59,7 @@ module.exports = {
                     };
                   })
     let course = {courses: courseDataWithColumnHypen}
-    courseworkload.uploadCourse(res.locals.slug,course,res.locals.userId,biddingId).then(result =>{
+    course.uploadCourse(res.locals.slug,course,res.locals.userId,biddingId).then(result =>{
     res.status(200).json(JSON.parse(result.output.output_json));
    }).catch(error =>{
        if(isJsonString.isJsonString(error.originalError.info.message)){

@@ -245,7 +245,7 @@
                     $("#session-filter").html(acadSession);
                 })
                 .catch(error => {
-                    showError(error.responseJSON);
+                    showError(JSON.stringify(error.responseJSON))
                 });
                 
             }else{
@@ -300,29 +300,7 @@
         $('#timetable-delete-modal').modal('show');
     })
 
-    function showError(errors) {
-        let simpleAlert = new SimpleAlert();
-        let obj = {
-            title : errors,
-            message: "",
-            type: 'alert-danger',
-            buttons: {
-                positive:{
-                    text: "OK",
-                    action: function(){
-                        document.querySelector('.simple-alert').remove();
-                    }
-                },
-                negative: {
-                    text: "Cancle",
-                    action: function () {
-                    alert('Negative')
-                    }
-                }
-            }
-        }
-        simpleAlert.alert(obj);
-    }
+
     function createRoomSlotItem(course, minMaxSlotId, timetableProp, timeJson) {
             const widthOfEvent = (Number(course.end_slot_lid) - Number(course.start_slot_lid) + 1) * timetableProp.pxPerSlot;
             const leftsidemargin = (Number(course.start_slot_lid) - Number(minMaxSlotId.start_slot_lid)) * timetableProp.pxPerSlot;
@@ -346,7 +324,7 @@
             roomSlotItem.setAttribute("style", `position:absolute;left: ${leftsidemargin}px ;top: 0; text-align:center; width:${widthOfEvent}px;height:100%;background-color:#ffffff;font-size:14px;padding:5px 2px 0px 2px;border-left:1px solid black;`)
 
             roomSlotItem.innerHTML =
-                `<button type="button" class="close btn_close_custom d-none" aria-label="Close"></button>${course.program_name} - ${course.acad_session} <hr> ${course.course_name} <hr>${course.division}-${course.batch} <hr>${course.faculty_name} - (${course.faculty_type_abbr})<hr>
+                `<button type="button" class="close btn-close-custom d-none" aria-label="Close"></button>${course.program_name} - ${course.acad_session} <hr> ${course.course_name} <hr>${course.division}-${course.batch} <hr>${course.faculty_name} - (${course.faculty_type_abbr})<hr>
                 <span class="badge bg-info start-time d-flex justify-content-center align-items-center">${timeJson[course.start_slot_lid - 1].start_time}</span>  
                 <i class="fa-solid fa-arrows-left-right" style="right:${(widthOfEvent / 2) - 7}px;position:absolute;bottom:0;"></i><span class="badge bg-info end-time d-flex justify-content-center align-items-center">
                     ${timeJson[course.end_slot_lid - 1].end_time} </span>`;

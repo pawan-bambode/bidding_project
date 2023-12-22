@@ -1,5 +1,5 @@
 const demandEstimation = require('../../../models/student/demandEstimation/demandEstimation')
-const course = require('../../../models/admin/courseworkload/courseworkload')
+const course = require('../../../models/admin/course/course')
 const programSession = require('../../../models/admin/programs/programsession');
 const roundSetting = require('../../../models/admin/roundSettings/roundSettings');
 const isJsonString = require('../../../utils/util');

@@ -350,7 +350,7 @@
                 console.log('vlaues of result', result);
                 showSuccess(result)   
             }).catch(error =>{
-            showError(error.responseJSON);
+                showError(JSON.stringify(error.responseJSON))
             }) 
             })
     
@@ -371,31 +371,7 @@
         })
 
  });
- function showError(errors) {
-            console.log(errors);
-            console.log('values of description',errors.description)
-            let simpleAlert = new SimpleAlert();
-            let obj = {
-                title : errors.description,
-                message: "",
-                type: 'alert-danger',
-                buttons: {
-                    positive:{
-                        text: "Okay",
-                        action: function(){
-                            document.querySelector('.simple-alert').remove();
-                        }
-                    },
-                    negative: {
-                        text: "Cancel",
-                        action: function () {
-                        alert('Negative')
-                        }
-                    }
-                }
-            }
-            simpleAlert.alert(obj);
-            }
+
 </script>
 
 <%- include('../partials/footerEnd') %>

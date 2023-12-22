@@ -3,32 +3,15 @@ const app = express();
 require('dotenv').config()
 const http = require('http');
 const https = require("https");
-const path = require('path');
-const soap = require('soap');
-const axios = require('axios');
-
-//const timetablesocket = require("../17JulyInfra_Project/infra_v2/app/controllers/admin/timeTableSimulation/timetablesocket");
 
 const setRouter = require("./router")
-//test
+
 const {
     verifySubdomain
 } = require('./app/middlewares/domain')
 const {
     v4: uuidv4
 } = require('uuid');
-
-const {
-    existsSync,
-    mkdirSync,
-    accessSync,
-    readFileSync,
-    constants,
-    appendFile,
-    writeFile
-} = require('fs');
-
-
 
 
 //redis
@@ -52,7 +35,6 @@ app.use(
 app.use(express.static('./public'));
 app.set('views', './app/views');
 app.set('view engine', 'ejs');
-
 
 app.use(
     session({
@@ -106,7 +88,6 @@ get_breadcrumbs = function (url) {
             acc = '/admin'
         }
     }
-    // console.log('rtnnnn', rtn)
     return rtn;
 };
 
@@ -119,9 +100,9 @@ app.use(function (req, res, next) {
 
 app.use((req, res, next) => {
     if (!req.session) {
-        return next(new Error('No session found!')) // handle error
+        return next(new Error('No session found!')) 
     }
-    next() // otherwise continue
+    next() 
 })
 
 app.use(verifySubdomain);
@@ -129,10 +110,7 @@ app.use(device.capture());
 
 setRouter(app)
 
-const sql = require('mssql')
-const {
-    poolConnection
-} = require('./config/db');
+
 require('dotenv').config();
 
 if (process.env.APP_ENV === 'PRODUCTION' || process.env.APP_ENV === 'DEV') {
@@ -141,14 +119,5 @@ if (process.env.APP_ENV === 'PRODUCTION' || process.env.APP_ENV === 'DEV') {
 
 else {
       const server = http.createServer(app).listen(process.env.APP_PORT);
-//       const io = require('socket.io-client');
-//       const socket = io('http://asmsoc-mum.localhost:3000');
-     
-//       socket.on('connection', socket => {
-//       console.log('Client connected');
-//       socket.emit('InfraProjectSocket', 'Hello from Project A');
-//       socket.on('disconnect', () => {
-//       console.log('Client disconnected');
-//   });
-// });
+
 }

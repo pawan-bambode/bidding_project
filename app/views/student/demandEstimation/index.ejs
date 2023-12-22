@@ -85,13 +85,12 @@
                       <th>Course</th>
                       <th>Acad Session</th>
                       <th>Credits</th>
-                      <th>Action</th>
+                      <th class="hide-column-after-round-over">Action</th>
                   </thead>
                   <tbody>
                         <% let selectedCourseIndex = 1 %>
                         <% if (selectCourse.length > 0) { %>
                           <% for (let selectedCourse of selectCourse) { %>
-                    
                             <tr data-course-id = "<%- selectedCourse.id %>" data-area="<%-selectedCourse.area_name %>" data-course-name="<%- selectedCourse.course_name %>" data-acad-session="<%-selectedCourse.acad_session %>" data-credits="<%-selectedCourse.credits %>" data-acad-session-id="<%-selectedCourse.sap_acad_session_id %>">
 
                               <td><%- selectedCourseIndex++ %></td>
@@ -99,7 +98,7 @@
                               <td><%- selectedCourse.course_name %></td>
                               <td><%- selectedCourse.acad_session %></td>
                               <td><%- selectedCourse.credits %></td>
-                              <td><a class="delete-selected-course" data-id="<%- selectedCourse.id %>"><i class="fa fa-trash text-danger"></i></a></td>
+                              <td class="hide-column-after-round-over"><a class="delete-selected-course" data-id="<%- selectedCourse.id %>"><i class="fa fa-trash text-danger"></i></a></td>
                             
                             </tr>
                           <% } %>
@@ -189,11 +188,15 @@ $(document).ready(function() {
     setInterval(demandEstimationTimeCountDown, 1000);
 
     let concentrationSettings = '<%- concentrationSettings%>';
-    console.log('values of concentrationSettings', concentrationSettings);
     let startTime = '<%- startAndEndTime %>';
-     console.log('values of stat',startTime === '');
+     
+    let timeRemaing = $('.time-remaing').text();
+
+if (timeRemaing.trim() == 'Rounds Ended') {
+     $('.hide-column-after-round-over').addClass('d-none');
+}
+
        if (startTime.trim() === '') {
-         console.log('inside the if block');
          $('.demand-estimation-not-created').removeClass('d-none');
          $('.time-remaing').addClass('d-none');
        } else {
@@ -380,7 +383,6 @@ $(document).ready(function() {
         $('.time-remaing').text(`Rounds Ended In ${dateSubtractionValue}`);
         }
 
-        console.log('values of startTime12',startDateTime);
         if(endDateTime == currentDateTime){
             let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
         $('.time-remaing').text(`Rounds Ended In ${dateSubtractionValue}`);
@@ -543,8 +545,6 @@ $(document).ready(function() {
            
             let areaCount = calculateAreaFrequency(areaAddedArray);
 
-            console.log('values of adding areaCount', areaCount);
-            
             let areaCountValue = (areaCount[areaName]);
             let minCreditsPerArea = $('#min-credits-per-area').text();
             let concentrationName = $('#concentration-name').text();
@@ -553,10 +553,7 @@ $(document).ready(function() {
             let selectedCredit = $('#selected-course-credits-count').text();
             let yearlyCredit = $('#yearly-credits').text();
             
-            console.log('values of adding concentrationName', areaCountValue.totalCredits);
-            
             if(areaCountValue.totalCredits == minCreditsPerArea){
-                console.log('values of ',areaCountValue.totalCredits)
                let areaCountElement = Number($('#areas-count').text());
                if(areaCountValue.totalCredits == minCreditsPerArea){
                 if(areaCountElement > 0){
@@ -570,9 +567,23 @@ $(document).ready(function() {
             let areasCountCredit = $('#areas-count').text();
 
             if(concentrationName.toLocaleLowerCase() !== 'general management'){
+                console.log('inside the if block',concentrationName);
+              let areaCountValue = 0
               if(areaCount[concentrationName] != undefined){  
-              let areaCountValue =   areaCount[concentrationName].totalCredits;
+              areaCountValue =   areaCount[concentrationName].totalCredits;
               }
+              console.log('values of areaCountValue', areaCountValue);
+              console.log('vlaues of minCreditPrimaryArea', minCreditPrimaryArea);
+              console.log('values of maxCreditsPerArea', maxCreditPerArea);
+              console.log('values of (areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) ',(areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) );
+              console.log('values of selectedCredit', selectedCredit);
+              console.log('values of yearlyCredit', yearlyCredit);
+              console.log('values of areasCountCredit', areasCountCredit);
+              console.log('values of selectedCredit == yearlyCredit', selectedCredit == yearlyCredit);
+              console.log('values of (areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) &&( selectedCredit == yearlyCredit )',(areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) &&( selectedCredit == yearlyCredit ))
+              console.log('values of areasCountCredit == 0',areasCountCredit == '0');
+              console.log('values of areasCountCredit == 00',(areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) &&( selectedCredit == yearlyCredit ) &&(areasCountCredit == '0'));
+
               if((areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) &&( selectedCredit == yearlyCredit ) &&(areasCountCredit == '0')  ){
                 $('.criteria-status').text('Criteria Met');
                 $('.criteria-status').removeClass('btn-danger');
@@ -647,7 +658,7 @@ $(document).ready(function() {
                     });
                     
                     let concentrationSettingAreaCount = '<%= concentrationSettings.no_of_areas_to_cover %>';
-                    console.log('values of areaFrequencyCount[areaName].totalCredits',areaFrequencyCount[areaName].totalCredits)
+                  
                     let minCreditsPerArea = $('#min-credits-per-area').text();
                     let areaFrequencyCount = calculateAreaFrequency(areaAddedArray);
                     
@@ -699,7 +710,7 @@ $(document).ready(function() {
                 paginationData(showEntry,result.length)
                 ajaxTable(result.data)
                 }).catch(error =>{
-                showError(error.responseJSON);
+                    showError(JSON.stringify(error.responseJSON))
                 })    
             })
     
@@ -717,7 +728,6 @@ $(document).ready(function() {
        
         let studentLid = $('#student-data').data('student-lid'); 
         let roundId = $('.bidding-round').data('id');
-         console.log('values of studentLid',studentLid);
         let ApiObj = {
             url: '/student/demand-estimation/selected-course/save',
             type: 'POST',
@@ -748,7 +758,6 @@ $(document).ready(function() {
 
     function calculateAreaFrequency(arr) {
         let areaFrequency = {};
-          console.log('inside the area',arr);
         arr.forEach((obj) => {
             let area = obj.areaName;
             if (areaFrequency[area]) {
@@ -761,7 +770,6 @@ $(document).ready(function() {
                 };
             }
         });
-        console.log('inside the area',areaFrequency);
         return areaFrequency;
    }
 
@@ -803,30 +811,6 @@ $(document).ready(function() {
                 
                 });
             }
-
-    function showError(errors) {
-        let simpleAlert = new SimpleAlert();
-        let obj = {
-            title : errors,
-            message: "",
-            type: 'alert-danger',
-            buttons: {
-                positive:{
-                    text: "OK",
-                    action: function(){
-                        document.querySelector('.simple-alert').remove();
-                    }
-                },
-                negative: {
-                    text: "Cancle",
-                    action: function () {
-                    alert('Negative')
-                    }
-                }
-            }
-        }
-        simpleAlert.alert(obj);
-    }
    
 </script>
 

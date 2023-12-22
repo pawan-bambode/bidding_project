@@ -347,7 +347,7 @@
             AjaxtTable(result.data)
             $('#page-no').html();
         }).catch(error =>{
-          showError(error.responseJSON);
+          showError(JSON.stringify(error.responseJSON));
         })    
     })
  
@@ -511,43 +511,6 @@
 
       })
    
-     function showError(errors) {
-        let simpleAlert = new SimpleAlert();
-        let obj = {
-            title : errors,
-            message: "",
-            type: 'alert-danger',
-            buttons: {
-                positive:{
-                    text: "Yes",
-                    action: function(){
-                        document.querySelector('.simple-alert').remove();
-                    }
-                },
-                negative: {
-                    text: "NO",
-                    action: function () {
-                    alert('Negative')
-                    }
-                }
-            }
-        }
-        simpleAlert.alert(obj);
-     }
-
-     function IsNumber(inputString) {
-        let isNumber = false;
-        for (let i = 0; i < inputString.length; i++) {
-        const charCode = inputString.charCodeAt(i);
-        if (charCode >= 48 && charCode <= 57) {
-            isNumber = true;
-        }else{
-            isNumber = false;
-        }
-      }
-      return isNumber;
-    }
-
      function ConfirmationForAllDelete(message) {
         return new Promise((success, failed) => {
         let dialog = document.createElement('div');

@@ -1,6 +1,6 @@
 const student = require('../../../models/Students');
 const programSession = require('../../../models/admin/programs/programsession')
-const course = require('../../../models/admin/courseworkload/courseworkload')
+const course = require('../../../models/admin/course/course');
 
 module.exports = {
 

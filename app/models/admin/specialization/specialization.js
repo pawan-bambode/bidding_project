@@ -1,6 +1,39 @@
 const {sql,poolConnection} = require('../../../../config/db')
 
 module.exports = class Specialization {
+  
+  static add(specializationName, biddingId, userId, slug) {
+    return poolConnection.then(pool => {
+      return pool.request()
+        .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(specializationName))
+        .input('last_modified_by', sql.Int, userId)
+        .input('bidding_session_lid', sql.Int, biddingId)
+        .output('output_json', sql.NVarChar(sql.MAX))
+        .execute(`[${slug}].[sp_add_specialization]`);
+    });
+  }
+  
+  static delete(specializationId, biddingId, userId, slug) {
+    return poolConnection.then(pool => {
+      return pool.request()
+        .input('input_concentration_lid', sql.Int, specializationId)
+        .input('last_modified_by', sql.Int, userId)
+        .input('bidding_session_lid', sql.Int, biddingId)
+        .output('output_json', sql.NVarChar(sql.MAX))
+        .execute(`[${slug}].[sp_delete_specialization]`);
+    });
+  }
+
+  static update(inputJson, biddingId, userId, slug) {
+    return poolConnection.then(pool => {
+      return pool.request()
+        .input('input_json', sql.NVarChar, JSON.stringify(inputJson))
+        .input('last_modified_by', sql.Int, userId)
+        .input('bidding_session_lid', sql.Int, biddingId)
+        .output('output_json', sql.NVarChar(sql.MAX))
+        .execute(`[${slug}].[sp_update_specialization]`);
+    });
+  }
 
     static getAllSpecialization(slug, biddingId, showEntry) {
       showEntry = showEntry ? showEntry : 10;
@@ -20,40 +53,7 @@ module.exports = class Specialization {
                   FROM [${slug}].concentration WHERE active = 1 AND bidding_session_lid = @biddingId`);
       });
     }
-    
-    static add(specializationName, biddingId, userId, slug) {
-      return poolConnection.then(pool => {
-        return pool.request()
-          .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(specializationName))
-          .input('last_modified_by', sql.Int, userId)
-          .input('bidding_session_lid', sql.Int, biddingId)
-          .output('output_json', sql.NVarChar(sql.MAX))
-          .execute(`[${slug}].[sp_add_specialization]`);
-      });
-    }
-    
-    static delete(specializationId, biddingId, userId, slug) {
-      return poolConnection.then(pool => {
-        return pool.request()
-          .input('input_concentration_lid', sql.Int, specializationId)
-          .input('last_modified_by', sql.Int, userId)
-          .input('bidding_session_lid', sql.Int, biddingId)
-          .output('output_json', sql.NVarChar(sql.MAX))
-          .execute(`[${slug}].[sp_delete_specialization]`);
-      });
-    }
-
-    static update(inputJson, biddingId, userId, slug) {
-      return poolConnection.then(pool => {
-        return pool.request()
-          .input('input_json', sql.NVarChar, JSON.stringify(inputJson))
-          .input('last_modified_by', sql.Int, userId)
-          .input('bidding_session_lid', sql.Int, biddingId)
-          .output('output_json', sql.NVarChar(sql.MAX))
-          .execute(`[${slug}].[sp_update_specialization]`);
-      });
-    }
-    
+       
     static search(slug, biddingId, pageNo, letterSearch, showEntry) {
       showEntry = showEntry ? showEntry : 10;
       if (pageNo) {

@@ -65,7 +65,7 @@ module.exports = class Area {
                 .input('pageNo', sql.Int, pageNo)
                 .input('bidding_session_lid', sql.Int, biddingId)
                 .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
-                .query(`SELECT a.id, a.area_name  FROM [${slug}].areas a
+                .query(`SELECT a.id, a.area_name FROM [${slug}].areas a
                         WHERE a.active = 1 AND a.bidding_session_lid = @bidding_session_lid AND (a.area_name LIKE @letterSearch) ORDER BY p.id DESC  OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`)
             })
         } else{
@@ -74,7 +74,7 @@ module.exports = class Area {
                 .input('pageNo', sql.Int, pageNo)
                 .input('bidding_session_lid', sql.Int, biddingId)
                 .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
-                .query(`SELECT TOP ${showEntry}  a.id, a.area_name FROM [${slug}].areas a WHERE a.active = 1
+                .query(`SELECT TOP ${showEntry} a.id, a.area_name FROM [${slug}].areas a WHERE a.active =1
                         AND a.bidding_session_lid = @bidding_session_lid AND (a.area_name LIKE @letterSearch)`)
             })
         }

@@ -167,18 +167,42 @@ function showSuccess(errors) {
     simpleAlert.alert(obj);
 }
 
-//NOTIFICATION
-var notification = $(".notification-content");
-
-var close = $(".notification-close");
-
-function notify() {
-    notification.addClass('notification-active');
-    $('.notification-content').css('display', 'flex');
+function showError(errors) {
+    let simpleAlert = new SimpleAlert();
+    let obj = {
+        title : errors,
+        message: "",
+        type: 'alert-danger',
+        buttons: {
+            positive:{
+                text: "Yes",
+                action: function(){
+                    document.querySelector('.simple-alert').remove();
+                }
+            },
+            negative: {
+                text: "NO",
+                action: function () {
+                alert('Negative')
+                }
+            }
+        }
+    }
+    simpleAlert.alert(obj);
 }
 
-$(".notification-close").on('click', function () {
-    notification.removeClass('notification-active')
-    location.reload();
-})
+function IsNumber(inputString) {
+    let isNumber = false;
+    for (let i = 0; i < inputString.length; i++) {
+    const charCode = inputString.charCodeAt(i);
+    if (charCode >= 48 && charCode <= 57) {
+        isNumber = true;
+    }else{
+        isNumber = false;
+    }
+    }
+    return isNumber;
+}
+
+
   

@@ -27,7 +27,7 @@ module.exports = class BiddingRound
         return poolConnection.then(pool =>{
             return pool.request()
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT sd.id AS student_lid,* FROM [${slug}].student_data sd 
+            .query(`SELECT sd.id AS student_lid, * FROM [${slug}].student_data sd 
                     INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id
                     WHERE sd.bidding_session_lid = @biddingId`);
         })
@@ -71,8 +71,7 @@ module.exports = class BiddingRound
             .input('bidding_session_lid',sql.Int, biddingSessionId)
             .output('output_json', sql.NVarChar(sql.MAX))
             .execute(`[${slug}].[sp_update_round_settings]`)
-    })
-            
+       })
     }
     
 }

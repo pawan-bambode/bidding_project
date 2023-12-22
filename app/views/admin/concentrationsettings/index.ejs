@@ -231,7 +231,7 @@
             paginationData(showEntry,result.length)
                 AjaxtTable(result.data)
             }).catch(error =>{
-            showError(error.responseJSON);
+            showError(JSON.stringify(error.responseJSON));
             })    
         })
         function paginationData(rowCount, totalCount) {
@@ -267,7 +267,7 @@
       ajaxApi(ApiObj).then(result =>{
         showSuccess(result);
       }).catch(error =>{
-        showError(error.responseJSON);
+        showError(JSON.stringify(error.responseJSON));
       })
     })
 $('#concentration-settings-table').on('click','.delete-concentration-settings',function(){
@@ -286,7 +286,7 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
                 showSuccess(result)
             }).catch(error =>{
                 console.log('error:::::',error);
-                showError(error.responseJSON)
+                showError(JSON.stringify(error.responseJSON))
             })
 
         })
@@ -360,36 +360,14 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
     })
     .catch(error => {
       console.log('values of error', error);
-       showError(error.responseJSON);
+       showError(JSON.stringify(error.responseJSON));
     });
 }
 });
    
     });
     
-    function showError(errors) {
-            let simpleAlert = new SimpleAlert();
-            let obj = {
-                title : errors.description,
-                message: "",
-                type: 'alert-danger',
-                buttons: {
-                    positive:{
-                        text: "Okay",
-                        action: function(){
-                            document.querySelector('.simple-alert').remove();
-                        }
-                    },
-                    negative: {
-                        text: "Cancel",
-                        action: function () {
-                        alert('Negative')
-                        }
-                    }
-                }
-            }
-            simpleAlert.alert(obj);
-            }
+   
 
             function AjaxtTable(concentrationSettingList) {
            $("#concentration-settings-table tbody").empty();

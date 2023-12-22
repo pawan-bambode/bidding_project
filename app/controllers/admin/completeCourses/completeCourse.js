@@ -3,7 +3,7 @@ const isJsonString = require('../../../utils/util');
 const excel = require('excel4node');
 const xlsx = require('xlsx');
 const path = require('path');
-const acadSession = require('../../../controllers/admin/acadsession/acadsession')
+
 
 module.exports = {
 
@@ -21,8 +21,7 @@ module.exports = {
      
 const workbook = new excel.Workbook();
 const worksheet = workbook.addWorksheet('Sheet1');
-const acadsessionList =  acadSession.getAcadSessionList(req,res);
-// console.log('values of acadSession ON RETURN VALUES',acadsessionList);
+
 // const dropdownOptions = ['Option 1', 'Option 2', 'Option 3'];
 
 // worksheet.addDataValidation({

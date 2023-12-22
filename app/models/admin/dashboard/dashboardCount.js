@@ -8,13 +8,12 @@ module.exports = class DashboardCount{
             const pool = await poolConnection;
             const result = await pool.request()
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT COUNT(*) FROM [${slug}].courses WHERE active = 1  AND 
-                    bidding_session_lid =   @biddingId`);
+            .query(`SELECT COUNT(*) 
+                    FROM [${slug}].courses WHERE active = 1 AND bidding_session_lid =   @biddingId`);
             courseCount = result.recordset[0]['']; 
             return courseCount;
         } catch (error) {
-            console.error('Error:', error);
-            throw error; 
+             return 0; 
         }
     }
 
@@ -23,13 +22,12 @@ module.exports = class DashboardCount{
             const pool = await poolConnection;
             const result = await pool.request()
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT COUNT(*) FROM [${slug}].programs WHERE active = 1 AND 
-                    bidding_session_lid =  @biddingId`);
+            .query(`SELECT COUNT(*) 
+                    FROM [${slug}].programs WHERE active = 1 AND bidding_session_lid =  @biddingId`);
             const programCount = result.recordset[0]['']; 
             return programCount;
         } catch (error) {
-            console.error('Error:', error);
-            throw error; 
+            return 0; 
         }
     }
 
@@ -39,13 +37,12 @@ module.exports = class DashboardCount{
             const pool = await poolConnection;
             const result = await pool.request()
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT COUNT(*) FROM [${slug}].program_sessions WHERE active = 1 AND 
-                    bidding_session_lid = @biddingId `);
+            .query(`SELECT COUNT(*) 
+                    FROM [${slug}].program_sessions WHERE active = 1 AND bidding_session_lid = @biddingId`);
             programSessionCount  = result.recordset[0][''];
             return programSessionCount;
         }catch(error) {
-            console.log('Error::',error);
-            throw error;
+            return 0;
         }
     }
 
@@ -55,13 +52,12 @@ module.exports = class DashboardCount{
             const pool = await poolConnection;
             const result = await pool.request()
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT COUNT(*) FROM [${slug}].areas WHERE active = 1 AND 
-                    bidding_session_lid = @biddingId`);
+            .query(`SELECT COUNT(*) 
+                    FROM [${slug}].areas WHERE active = 1 AND bidding_session_lid = @biddingId`);
              areaCount  = result.recordset[0][''];
             return areaCount;
         }catch(error) {
-            console.log('Error::',error);
-            throw error;
+            return 0;
         }
     }
 
@@ -71,13 +67,12 @@ module.exports = class DashboardCount{
             const pool = await poolConnection;
             const result = await pool.request()
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT COUNT(*) FROM [${slug}].concentration WHERE active = 1 AND 
-                    bidding_session_lid = @biddingId`);
+            .query(`SELECT COUNT(*) 
+                    FROM [${slug}].concentration WHERE active = 1 AND bidding_session_lid = @biddingId`);
             concentrationCount  = result.recordset[0][''];
             return concentrationCount;
         }catch(error) {
-            console.log('Error::',error);
-            throw error;
+            return 0;
         }
     }
 
@@ -87,13 +82,12 @@ module.exports = class DashboardCount{
             const pool = await poolConnection;
             const result = await pool.request()
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT COUNT(*) FROM [${slug}].concentration_settings 
-                    WHERE active = 1 AND    bidding_session_lid = @biddingId`);
+            .query(`SELECT COUNT(*) 
+                    FROM [${slug}].concentration_settings WHERE active = 1 AND bidding_session_lid = @biddingId`);
             concentrationSettingsCount  = result.recordset[0][''];
             return concentrationSettingsCount;
         }catch(error) {
-            console.log('Error::',error);
-            throw error;
+            return 0;
         }
     }
 
@@ -103,13 +97,12 @@ module.exports = class DashboardCount{
             const pool = await poolConnection;
             const result = await pool.request()
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT COUNT(*) FROM [${slug}].student_data WHERE active = 1 AND 
-                    bidding_session_lid = @biddingId`);
+            .query(`SELECT COUNT(*) 
+                    FROM [${slug}].student_data WHERE active = 1 AND bidding_session_lid = @biddingId`);
             studentCount  = result.recordset[0][''];
             return studentCount;
         }catch(error) {
-            console.log('Error::',error);
-            throw error;
+            return 0;
         }
     }
 
@@ -119,13 +112,12 @@ module.exports = class DashboardCount{
             const pool = await poolConnection;
             const result = await pool.request()
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT COUNT(*) FROM [${slug}].pre_requisites WHERE active = 1 AND 
-                    bidding_session_lid = @biddingId`);
+            .query(`SELECT COUNT(*) 
+                    FROM [${slug}].pre_requisites WHERE active = 1 AND bidding_session_lid = @biddingId`);
             preRequisiteCount  = result.recordset[0][''];
             return preRequisiteCount;
         }catch(error) {
-            console.log('Error::',error);
-            throw error;
+           return 0;
         }
     }
 
@@ -135,13 +127,12 @@ module.exports = class DashboardCount{
             const pool = await poolConnection;
             const result = await pool.request()
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT COUNT(*) FROM [${slug}].completed_courses WHERE active = 1 AND 
-                    bidding_session_lid = @biddingId`);
+            .query(`SELECT COUNT(*) 
+                    FROM [${slug}].completed_courses WHERE active = 1 AND bidding_session_lid = @biddingId`);
             completeCouresCount  = result.recordset[0][''];
             return completeCouresCount;
         }catch(error) {
-            console.log('Error::',error);
-            throw error;
+           return 0;
         }
     }
        
@@ -151,12 +142,12 @@ module.exports = class DashboardCount{
             const pool = await poolConnection;
             const result = await pool.request()
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT COUNT(*) FROM [${slug}].division_batches WHERE active = 1 AND bidding_session_lid = @biddingId`);
+            .query(`SELECT COUNT(*) 
+                    FROM [${slug}].division_batches WHERE active = 1 AND bidding_session_lid = @biddingId`);
             divisionBatchCount  = result.recordset[0][''];
             return divisionBatchCount;
         }catch(error) {
-            console.log('Error::',error);
-            throw error;
+            return 0;
         }
     }
  
@@ -171,8 +162,7 @@ module.exports = class DashboardCount{
             roundSettingCount  = result.recordset[0][''];
             return roundSettingCount;
         }catch(error) {
-            console.log('Error::',error);
-            throw error;
+            return 0;
         }
     }
 }

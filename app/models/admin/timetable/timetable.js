@@ -21,7 +21,7 @@ module.exports = class timetable {
             .input('biddingId', sql.Int, biddingId)
             .query(`SELECT p.id, p.program_id, p.program_name  
                     FROM [${slug}].timetable et 
-                    INNER JOIN [${slug}].programs p ON et.program_lid = p.id  AND p.bidding_session_lid = @biddingId WHERE et.active = 1 AND et.bidding_session_lid =  @biddingId GROUP By p.id, p.program_id,p.program_name
+                    INNER JOIN [${slug}].programs p ON et.program_lid = p.id  AND p.bidding_session_lid = @biddingId WHERE et.active = 1 AND et.bidding_session_lid =  @biddingId GROUP By p.id, p.program_id, p.program_name
             `);
         })
     }  

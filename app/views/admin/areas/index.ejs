@@ -163,7 +163,7 @@
                 AjaxtTable(result.data)
                 $('#page-no').html(data.length);
             }).catch(error =>{
-            showError(error.responseJSON);
+            showError(JSON.stringify(error.responseJSON))
             })    
         })
 
@@ -199,50 +199,14 @@
         ajaxApi(ApiObj).then(result=>{
             showSuccess(result);
         }).catch(error =>{
-            console.log('values of error',error.responseJson);
-            showError(error.responseJson);
+            showError(JSON.stringify(error.responseJSON))
         })
      })
     })
 
 
-function showError(errors) {
-            console.log(errors);
-            console.log('values of description',errors)
-            let simpleAlert = new SimpleAlert();
-            let obj = {
-                title : errors.description,
-                message: "",
-                type: 'alert-danger',
-                buttons: {
-                    positive:{
-                        text: "Okay",
-                        action: function(){
-                            document.querySelector('.simple-alert').remove();
-                        }
-                    },
-                    negative: {
-                        text: "Cancel",
-                        action: function () {
-                        alert('Negative')
-                        }
-                    }
-                }
-            }
-            simpleAlert.alert(obj);
-            }
-            function IsNumber(inputString) {
-                let isNumber = false;
-                for (let i = 0; i < inputString.length; i++) {
-                const charCode = inputString.charCodeAt(i);
-                if (charCode >= 48 && charCode <= 57) {
-                    isNumber = true;
-                }else{
-                    isNumber = false;
-                }
-                }
-                return isNumber;
-            }
+
+           
             function AjaxtTable(areaList) {
            $("#areas-table tbody").empty();
            let AjaxTable = ``;

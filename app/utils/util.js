@@ -5,7 +5,7 @@ const {
     execPreparedStmt
 } = require('../../config/db')
 
-const acadSession = require('../controllers/admin/acadsession/acadsession');
+
 const excel = require('excel4node');
 
 function isJsonString(str) {
@@ -43,8 +43,6 @@ function convertExcelTimeToHHMMSS(excelTime) {
       if(minutes%5 == 4){
            minutes = Math.ceil((excelTime * 24 - hours) * 60);
       }
-     
-
       return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
   } else {
       return excelTime;

@@ -61,8 +61,8 @@
             <button class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body d-flex flex-column justify-content-between">
-            <div class='selected_course table-responsive py-1'>
-              <table class="table table-bordered custom_table table-hover" id="selected_course_table_data">
+            <div class='selected-course table-responsive py-1'>
+              <table class="table table-bordered custom-table table-hover" id="selected_course_table_data">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -98,8 +98,8 @@
             <button class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body d-flex flex-column justify-content-between">
-            <div class='selected_cour_readonly table-responsive'>
-              <table class="table table-bordered custom_table table-hover py-1" id="selected_course_table_data">
+            <div class='selected-our-readonly table-responsive'>
+              <table class="table table-bordered custom-table table-hover py-1" id="selected_course_table_data">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -183,11 +183,10 @@
 })
 
 $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
-        let dataStudentSelected = document.querySelectorAll('.room_slot_selected');
+        let dataStudentSelected = document.querySelectorAll('.room-slot-selected');
         let days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-        let index = $('.selected_course #selected_course_table_data tbody').find(':last-child');
-        console.log('values of index last children',index);
+        let index = $('.selected-course #selected_course_table_data tbody').find(':last-child');
         dataStudentSelected.forEach(function (eachSubject, index) {
           let faculty_name = eachSubject.getAttribute('data-faculty-name');
           let module_name = eachSubject.getAttribute('data-module-name');
@@ -219,11 +218,11 @@ $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
           subjects.push(subject);
         });
         
-        const selectedCourse = $('.selected_course #selected_course_table_data tbody');
+        const selectedCourse = $('.selected-course #selected_course_table_data tbody');
         
         subjects.forEach(function (course, index) {
-         let eleTr  =  $(`.selected_course #selected_course_table_data tbody tr[data-batch-lid = "${course.batch}"][data-day-lid = "${course.day_lid}"]`)
-         let eleSameslot = $(`.selected_course #selected_course_table_data tbody tr[data-start-id = "${course.start}"][data-end-id = "${course.end}"]`)
+         let eleTr  =  $(`.selected-course #selected_course_table_data tbody tr[data-batch-lid = "${course.batch}"][data-day-lid = "${course.day_lid}"]`)
+         let eleSameslot = $(`.selected-course #selected_course_table_data tbody tr[data-start-id = "${course.start}"][data-end-id = "${course.end}"]`)
       
          if(eleTr.length == 0){
           let courseSelectedRecord =
@@ -245,28 +244,25 @@ $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
       });
 
       $('#modal_for_stud_sel_course').on('click', '.btn-close', function () {
-        $('.selected_course .table tbody').empty();
+        $('.selected-course .table tbody').empty();
       })
 
       $('#modal_for_stud_sel_course').on('click', '#okconfirm', function () {
-        $('.selected_course .table tbody').empty();
+        $('.selected-course .table tbody').empty();
       })
 
-      $('#modal_for_stud_sel_course').on('click', '.delete_selected_subject', function () {
-        $(this).parents('tr').remove();
-      });
+
 
       document.addEventListener('click', function(element){
         if(element.target.classList.contains('room-slot-item')){
           addEvent(element);
         }
-        if(element.target.classList.contains('btn_close_custom')){
+        if(element.target.classList.contains('btn-close-custom')){
           closeButton(element);
         }
       })
-      $(document).on('click', '.btn_close_custom', function() {
-           console.log('inside the document', $(this).closest('.room-slot'));
-             $(this).parent().removeClass('room_slot_selected');
+      $(document).on('click', '.btn-close-custom', function() {
+             $(this).parent().removeClass('room-slot-selected');
              $(this).addClass('d-none');
       });
 
@@ -282,7 +278,7 @@ $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
         let event_count = parseInt($('#event_count').text().match(/\d+/));
         
         if(event_count == 0){
-          $('.timetable-container').addClass('disbaled_whole_div');
+          $('.timetable-container').addClass('disbaled-whole-div');
           return;
         }
         room_slot_list.each(function(index, element) {
@@ -295,9 +291,9 @@ $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
               (elementStartLid < targetStartLid && elementEndLid > targetEndLid) ||
               (elementStartLid == targetStartLid && elementEndLid == targetEndLid)) && event_val !== element) {
 
-            if (element.classList.contains('room_slot_selected')) {
-              element.classList.remove('room_slot_selected');
-              element.querySelector('.btn_close_custom').classList.add('d-none');
+            if (element.classList.contains('room-slot-selected')) {
+              element.classList.remove('room-slot-selected');
+              element.querySelector('.btn-close-custom').classList.add('d-none');
               updateEventCount(false);
             }
 
@@ -305,7 +301,7 @@ $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
             element.classList.add('custom_disabled');
           }
           event_val.setAttribute('data-column', dataColumnValue);
-          event_val.classList.add('room_slot_selected');
+          event_val.classList.add('room-slot-selected');
           event_val.classList.remove('custom_disabled');
           event_val.firstElementChild.classList.remove('d-none');
 
@@ -346,29 +342,7 @@ $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
            }
        })
       }
-    function showError(errors) {
-        let simpleAlert = new SimpleAlert();
-        let obj = {
-            title : errors,
-            message: "",
-            type: 'alert-danger',
-            buttons: {
-                positive:{
-                    text: "OK",
-                    action: function(){
-                        document.querySelector('.simple-alert').remove();
-                    }
-                },
-                negative: {
-                    text: "Cancle",
-                    action: function () {
-                    alert('Negative')
-                    }
-                }
-            }
-        }
-        simpleAlert.alert(obj);
-    }
+
    
     function createRoomSlotItem(course, minMaxSlotId, timetableProp,eventCount) {
             const widthOfEvent = timetableProp.widthOfEvent;
@@ -392,7 +366,7 @@ $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
             roomSlotItem.setAttribute("style", `position:absolute;left: ${leftsidemargin}px ;top: 0; text-align:center; width:${widthOfEvent}px;height:100%;background-color:#ffffff;font-size:14px;padding:5px 2px 0px 2px;border-left:1px solid black;`)
 
             roomSlotItem.innerHTML =
-                `<button type="button" class="close btn_close_custom d-none" aria-label="Close"></button>${course.program_name} - ${course.acad_session} <hr> ${course.course_name}-(${course.credits}) <hr>${course.area_name}<hr>`;
+                `<button type="button" class="close btn-close-custom d-none" aria-label="Close"></button>${course.program_name} - ${course.acad_session} <hr> ${course.course_name}-(${course.credits}) <hr>${course.area_name}<hr>`;
 
             return roomSlotItem;
 }

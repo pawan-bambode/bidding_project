@@ -28,9 +28,8 @@ module.exports = {
     worksheet.cell(1, 5).string('programId').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
     worksheet.cell(1, 6).string('bidPoints').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
     worksheet.cell(1, 7).string('yearOfJoining').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 8).string('SpecilizationName').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 9).string('previousElectiveCredits').style({font:{bold:true},alignment:{horizontal:'center',vertical:'center'}});
-    worksheet.cell(1,10).string('dateofBirthDate').style({font:{bold:true},alignment:{horizontal:'center',vertical:'center'}});
+    worksheet.cell(1, 8).string('previousElectiveCredits').style({font:{bold:true},alignment:{horizontal:'center',vertical:'center'}});
+    worksheet.cell(1,9).string('dateofBirthDate').style({font:{bold:true},alignment:{horizontal:'center',vertical:'center'}});
     const filePath = __dirname + '/sampleForImportStudent.xlsx';
     workbook.write(filePath, (err, stats) => {
       if (err) {
@@ -56,7 +55,7 @@ module.exports = {
         data.map(async (item) => {
           let hashedPassword = '';
           if(item.dateofBirthDate){
-           hashedPassword = await hash.hashPassword(convertExcelDateToJSDate(item.dateofBirthDate.toString()));
+           hashedPassword = await hash.hashPassword(convertExcelDateToJSDate(item.dateofBirthDate.toString()),false);
           }
           else{
             hashedPassword = await hash.hashPassword('pass@123');
@@ -69,27 +68,29 @@ module.exports = {
             program_id: item.programId,
             bid_points: item.bidPoints,
             year_of_joining: item.yearOfJoining,
-            concentration_name: item.SpecilizationName.replace(/\s+/g,' ').trim(),
             previous_elective_credits:item.previousElectiveCredits,
-            password: hashedPassword
+            password: hashedPassword,
+            dob: convertExcelDateToJSDate(item.dateofBirthDate.toString(),true)
           };
         })
       );
       return hashedPasswords;
     };
-    const convertExcelDateToJSDate = (excelDate) => {
+    const convertExcelDateToJSDate = (excelDate, isDelimeter) => {
       const millisecondsPerDay = 24 * 60 * 60 * 1000; 
       const epoch = new Date(Date.UTC(1900, 0, 1)); 
       const daysSinceEpoch = excelDate -2; 
       const millisecondsSinceEpoch = daysSinceEpoch * millisecondsPerDay;
-      return  formatJSDate(new Date(epoch.getTime() + millisecondsSinceEpoch));
+      return  formatJSDate(new Date(epoch.getTime() + millisecondsSinceEpoch), isDelimeter);
   };
-  const formatJSDate = (date) => {
+  const formatJSDate = (date, isDelimeter) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0'); 
     const day = String(date.getDate()).padStart(2, '0');
+    const delimiter = isDelimeter ? '-' : '';
+    return `${day}${delimiter}${month}${delimiter}${year}`;
+    
 
-    return `${day}${month}${year}`;
 };
 
     const studentDataWithColumnHypen = await hashPasswords(studentJsonData);

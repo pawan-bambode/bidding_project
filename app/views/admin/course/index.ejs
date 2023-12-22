@@ -290,7 +290,7 @@ $('#program-name-filter').on('change', function() {
         })
         .catch(error => {
             console.log('values of error', error);
-            showError(error.responseJSON);
+            showError(JSON.stringify(error.responseJSON));
         });
 });
 
@@ -328,7 +328,7 @@ $(document).on('change', '#session-name-filter', function() {
         })
         .catch(error => {
             console.log('Error:', error);
-            showError(error.responseJSON);
+            showError(JSON.stringify(error.responseJSON));
         });
 });
 $(document).on('change', '#course-name-filter', function() {
@@ -356,7 +356,7 @@ $(document).on('change', '#course-name-filter', function() {
         })
         .catch(error => {
             console.log('Error:', error);
-            showError(error.responseJSON);
+            showError(JSON.stringify(error.responseJSON));
         });
 });
 
@@ -375,7 +375,7 @@ $(document).on('change', '#course-name-filter', function() {
           paginationData(showEntry,result.length)
             AjaxtTable(result.data)
         }).catch(error =>{
-          showError(error.responseJSON);
+          showError(JSON.stringify(error.responseJSON));
         })    
     })
  
@@ -636,48 +636,7 @@ $(document).on('change', '#course-name-filter', function() {
     });
 })
 }
-function showError(errors) {
-  console.log('error',errors);
-        let simpleAlert = new SimpleAlert();
-        let obj = {
-            title : errors,
-            message: "",
-            type: 'alert-danger',
-            buttons: {
-                positive:{
-                    text: "Yes",
-                    action: function(){
-                        document.querySelector('.simple-alert').remove();
-                    }
-                },
-                negative: {
-                    text: "NO",
-                    action: function () {
-                    alert('Negative')
-                    }
-                }
-            }
-        }
-        simpleAlert.alert(obj);
-    }
    })
-
-   function IsNumber(inputString) {
-      let isNumber = false;
-      for (let i = 0; i < inputString.length; i++) {
-      const charCode = inputString.charCodeAt(i);
-      if (charCode >= 48 && charCode <= 57) {
-          isNumber = true;
-      }else{
-          isNumber = false;
-      }
-    }
-    return isNumber;
-  }
-
-
-
-
 </script>
 <%- include('../partials/footer.ejs') %>
 <%- include('../partials/footerEnd.ejs') %>

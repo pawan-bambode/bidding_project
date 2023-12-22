@@ -13,6 +13,19 @@ module.exports = class DemandEstimation
         });
     }
 
+    static saveSelectedCourse(slug, biddingId, userid, student_lid, round_lid, selectedCourseJson){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(selectedCourseJson))
+            .input('student_lid', sql.Int, student_lid)
+            .input('round_lid', sql.Int, round_lid)
+            .input('last_modified_by', sql.Int, userid)
+            .input('bidding_session_lid', sql.Int, biddingId)
+            .output('output_json', sql.NVarChar(sql.MAX))
+            .execute(`[${slug}].[sp_add_demand]`)
+        })
+    } 
+
     static getCourseListByAcadSession(slug, biddingId, showEntry, acadSessionId){
         return poolConnection.then(pool =>{
             return pool.request()
@@ -121,7 +134,7 @@ module.exports = class DemandEstimation
                     .input('bidding_session_lid', sql.Int, biddingId)
                     .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
                     .query(`SELECT c.id, course_name, credits, program_id, ad.acad_session, 
-                            area_name, min_demand_criteria, year_of_introduction , c.sap_acad_session_id
+                            area_name, min_demand_criteria, year_of_introduction, c.sap_acad_session_id
                             FROM [${slug}].courses c
                             INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id WHERE c.bidding_session_lid = @bidding_session_lid AND active = '1' AND (course_name LIKE @letterSearch OR credits LIKE  @letterSearch OR program_id LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR area_name LIKE @letterSearch OR year_of_introduction LIKE @letterSearch OR min_demand_criteria LIKE @letterSearch)
                     `);
@@ -178,21 +191,4 @@ module.exports = class DemandEstimation
                     INNER JOIN [${slug}].courses c ON c.id = de.course_lid WHERE de.student_lid =@studentId AND de.active = 1 AND c.active = 1`)
         })
     }
-
-    static saveSelectedCourse(slug, biddingId, userid, student_lid, round_lid, selectedCourseJson){
-        console.log('values of studentId', student_lid);
-        console.log('values of round_lid', round_lid);
-        console.log('values of biddingId', biddingId);
-        console.log('values of selectedCourseJson', selectedCourseJson);
-        return poolConnection.then(pool =>{
-            return pool.request()
-            .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(selectedCourseJson))
-            .input('student_lid', sql.Int, student_lid)
-            .input('round_lid', sql.Int, round_lid)
-            .input('last_modified_by', sql.Int, userid)
-            .input('bidding_session_lid', sql.Int, biddingId)
-            .output('output_json', sql.NVarChar(sql.MAX))
-            .execute(`[${slug}].[sp_add_demand]`)
-        })
-    } 
 }

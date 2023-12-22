@@ -243,7 +243,7 @@
                 })
                 .catch(error => {
                     console.log('values of error', error);
-                    showError(error.responseJSON);
+                    showError(JSON.stringify(error.responseJSON))
                 });
         });
 
@@ -270,7 +270,7 @@
                 })
                 .catch(error => {
                     console.log('Error:', error);
-                    showError(error.responseJSON);
+                    showError(JSON.stringify(error.responseJSON))
                 });
         });
         $(".pagination-search").on('click','.pagination li',function(){
@@ -307,7 +307,7 @@
             paginationData(showEntry,result.length)
                 AjaxtTable(result.data)
             }).catch(error =>{
-            showError(error.responseJSON);
+                showError(JSON.stringify(error.responseJSON))
             })    
         })
  
@@ -425,7 +425,7 @@
                   showSuccess(result);
              }).catch(error =>{
               console.log('values of error',error);
-              showError(error.responseJSON);
+              showError(JSON.stringify(error.responseJSON))
              })
         }
     });
@@ -517,29 +517,7 @@ function AjaxtTable(studentDataList) {
 
 });
 
-function showError(errors) {
-        let simpleAlert = new SimpleAlert();
-        let obj = {
-            title : errors,
-            message: "",
-            type: 'alert-danger',
-            buttons: {
-                positive:{
-                    text: "OK",
-                    action: function(){
-                        document.querySelector('.simple-alert').remove();
-                    }
-                },
-                negative: {
-                    text: "Cancle",
-                    action: function () {
-                    alert('Negative')
-                    }
-                }
-            }
-        }
-        simpleAlert.alert(obj);
-    }
+
     function ConfirmationForAllDelete(message) {
     return new Promise((success, failed) => {
     let dialog = document.createElement('div');

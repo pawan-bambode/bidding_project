@@ -756,7 +756,7 @@
                 showSuccess(result)              
             }).catch(error => {
                 console.log('ERROR::::::::::',error)
-                showError(error.responseJSON)
+                showError(JSON.stringify(error.responseJSON))
             })
         })
 
@@ -778,7 +778,7 @@
                 showSuccess(result)
             }).catch(error =>{
                 console.log('error:::::',error.responseJSON);
-                showError(error.responseJSON)
+                showError(JSON.stringify(error.responseJSON))
             })
 
         })
@@ -837,37 +837,13 @@
                 }).catch(error => {
                     console.log('ERROR::::::::::',error.responseJSON)
                     console.log('error',error);
-                    showError(error.responseJSON)
+                    showError(JSON.stringify(error.responseJSON))
                 })
             }
         });
     })
     
-    function showError(errors) {
-            console.log(errors);
-            console.log('values of description',errors)
-            let simpleAlert = new SimpleAlert();
-            let obj = {
-                title : errors.description,
-                message: "",
-                type: 'alert-danger',
-                buttons: {
-                    positive:{
-                        text: "Okay",
-                        action: function(){
-                            document.querySelector('.simple-alert').remove();
-                        }
-                    },
-                    negative: {
-                        text: "Cancel",
-                        action: function () {
-                        alert('Negative')
-                        }
-                    }
-                }
-            }
-            simpleAlert.alert(obj);
-            }
+ 
 </script>
  
 <%- include('../partials/footer.ejs') %>

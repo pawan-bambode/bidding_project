@@ -9,9 +9,8 @@ const {
 
 function AdminRoute(app) {
     const adminDashboard = require('../../routers/admin/dashboard');
-    const courseWorkload = require('../../routers/admin/courseworkload');
+    const course = require('../../routers/admin/course');
     const studentInfo = require('../../routers/admin/student');
-    const acadsessionInfo = require('../../routers/admin/acad_session');
     const academicYearInfo = require('../../routers/admin/academicYear');
     //const timetableShowToStudent = require('../../routers/admin/student');
 
@@ -30,9 +29,8 @@ function AdminRoute(app) {
     const demandEstimation = require('../../routers/student/demandEstimation/demandEstimation');
     
     app.use('/admin/', isLoggedIn, checkPermission, adminDashboard);
-    app.use('/admin/', courseWorkload);
+    app.use('/admin/', course);
     app.use('/admin/', studentInfo);
-    app.use('/admin/', acadsessionInfo)
     app.use('/admin/', academicYearInfo)
     app.use('/student/',isLoggedIn,checkPermission, student)
     app.use('/admin/', program);

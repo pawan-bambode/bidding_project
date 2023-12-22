@@ -213,7 +213,7 @@ $(".pagination-search").on('click','.pagination li',function(){
             paginationData(showEntry,result.length)
                 AjaxtTable(result.data)
             }).catch(error =>{
-            showError(error.responseJSON);
+            showError(JSON.stringify(error.responseJSON));
             })    
         })
 
@@ -334,7 +334,7 @@ $(".pagination-search").on('click','.pagination li',function(){
             }).catch(error => {
                 console.log('ERROR::::::::::',error)
                 console.log('valus of error',error);
-                showError(error.responseJSON)
+                showError(JSON.stringify(error.responseJSON))
             })
         }
         })
@@ -392,7 +392,7 @@ $(".pagination-search").on('click','.pagination li',function(){
                 }).catch(error => {
                     console.log('ERROR::::::::::',error.responseJSON)
                     console.log('error',error);
-                    showError(error.responseJSON)
+                    showError(JSON.stringify(error.responseJSON))
                 })
         });
         $(document).on('click','.delete-program',function(){
@@ -413,7 +413,7 @@ $(".pagination-search").on('click','.pagination li',function(){
                 showSuccess(result)
             }).catch(error =>{
                 console.log('error:::::',error.responseJSON);
-                showError(error.responseJSON)
+                showError(JSON.stringify(error.responseJSON));
             })
 
         })
@@ -444,31 +444,6 @@ function AjaxtTable(programList) {
             }      
             $("#program-table tbody").html(AjaxTable);
         }
-function showError(errors) {
-            console.log(errors);
-            console.log('values of description',errors)
-            let simpleAlert = new SimpleAlert();
-            let obj = {
-                title : errors.description,
-                message: "",
-                type: 'alert-danger',
-                buttons: {
-                    positive:{
-                        text: "Okay",
-                        action: function(){
-                            document.querySelector('.simple-alert').remove();
-                        }
-                    },
-                    negative: {
-                        text: "Cancel",
-                        action: function () {
-                        alert('Negative')
-                        }
-                    }
-                }
-            }
-            simpleAlert.alert(obj);
-            }
    
 </script>
   

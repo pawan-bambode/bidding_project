@@ -1,9 +1,10 @@
-const courseworkload = require('../../../models/admin/courseworkload/courseworkload')
+const course = require('../../../models/admin/course/course');
 const isJsonString = require('../../../utils/util');
+
 module.exports = {
-    getCourseworkload : (req, res) => {
-        Promise.all([courseworkload.getCourseList(res.locals.slug,res.locals.biddingId),courseworkload.getCount(res.locals.slug,res.locals.biddingId),courseworkload.getProgramList(res.locals.slug,res.locals.biddingId)]).then(result =>{
-            res.render('admin/courseworkload/index.ejs',{
+    getCourse : (req, res) => {
+        Promise.all([course.getCourseList(res.locals.slug,res.locals.biddingId),course.getCount(res.locals.slug,res.locals.biddingId),course.getProgramList(res.locals.slug,res.locals.biddingId)]).then(result =>{
+            res.render('admin/course/index.ejs',{
              courseList:result[0].recordset,
              pageCount: result[1].recordset[0][''],
              programList:result[2].recordset,
@@ -14,7 +15,7 @@ module.exports = {
     },
     delete :(req,res) =>{
 
-     courseworkload.delete(req.body.id,res.locals.slug,res.locals.biddingId,res.locals.userId).then(result =>{
+     course.delete(req.body.id,res.locals.slug,res.locals.biddingId,res.locals.userId).then(result =>{
         
         res.status(200).json(JSON.parse(result.output.output_json));
      }).catch(error =>{
@@ -32,7 +33,7 @@ module.exports = {
      })
     },
     update: (req, res) => {
-        courseworkload.update(req.body.editCourse, req.body.biddingSessionId, res.locals.userId, res.locals.slug)
+        course.update(req.body.editCourse, req.body.biddingSessionId, res.locals.userId, res.locals.slug)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
@@ -51,7 +52,7 @@ module.exports = {
     },
     
     search :(req,res) =>{  
-     Promise.all([courseworkload.search(res.locals.slug,res.locals.biddingId,req.body.searchLetter,res.locals.userId),courseworkload.getCountSearch(res.locals.slug,res.locals.biddingId,req.body.searchLetter,res.locals.userId)]).then(result => {
+     Promise.all([course.search(res.locals.slug,res.locals.biddingId,req.body.searchLetter,res.locals.userId),course.getCountSearch(res.locals.slug,res.locals.biddingId,req.body.searchLetter,res.locals.userId)]).then(result => {
             res.json({
                 status: "200",
                 message: "Result fetched",
@@ -64,7 +65,7 @@ module.exports = {
 },
 searchByLetter :(req,res) =>{
     
-    courseworkload.searchByLetter(res.locals.slug,res.locals.biddingId,req.body.searchLetter,req.body.pageNo,req.body.showEntry).then(result =>{
+    course.searchByLetter(res.locals.slug,res.locals.biddingId,req.body.searchLetter,req.body.pageNo,req.body.showEntry).then(result =>{
         res.json({
             status:'200',
             message:'Result fetched',
@@ -76,7 +77,7 @@ searchByLetter :(req,res) =>{
     })
 },
 showEntryCouresList :(req,res) =>{
-  Promise.all([courseworkload.showEntryCouresList(res.locals.slug,res.locals.biddingId,req.body.showEntry,req.body.pageNo),courseworkload.getCounts(res.locals.slug,res.locals.biddingId)]).then(result =>{
+  Promise.all([course.showEntryCouresList(res.locals.slug,res.locals.biddingId,req.body.showEntry,req.body.pageNo),course.getCounts(res.locals.slug,res.locals.biddingId)]).then(result =>{
         res.json({
             status:'200',
             message:'Result fetched',
@@ -88,7 +89,7 @@ showEntryCouresList :(req,res) =>{
     })
 },
 deleteAll:(req,res) =>{
-             courseworkload.deleteAll(res.locals.slug,res.locals.biddingId,res.locals.userId,req.body).then(result =>{
+             course.deleteAll(res.locals.slug,res.locals.biddingId,res.locals.userId,req.body).then(result =>{
                     res.status(200).json(JSON.parse(result.output.output_json));
                 })
                 .catch(error => {
@@ -104,7 +105,7 @@ deleteAll:(req,res) =>{
                 })
 },
 filterByProgramId  :(req,res) =>{
- Promise.all([courseworkload.filterByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry),courseworkload.sessionByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry),courseworkload.getCountfilterByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry)]).then(result =>{
+ Promise.all([course.filterByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry),course.sessionByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry),course.getCountfilterByProgramId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.showEntry)]).then(result =>{
 
        res.json({
         status: "200",
@@ -127,7 +128,7 @@ filterByProgramId  :(req,res) =>{
     })
 },
 filterBySessionId:(req,res) =>{
-    Promise.all([courseworkload.filterBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.showEntry),courseworkload.moduleBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.showEntry),courseworkload.getCountFilterBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId)]).then(result =>{
+    Promise.all([course.filterBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.showEntry),course.moduleBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.showEntry),course.getCountFilterBySessionId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId)]).then(result =>{
           res.json({
            status: "200",
            message: "Sucessfull",
@@ -148,7 +149,7 @@ filterBySessionId:(req,res) =>{
        })
    },
    filterByCourseId:(req,res) =>{
-    Promise.all([courseworkload.filterByCourseId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.courseId,req.body.showEntry),courseworkload.getCountFilterByCourseId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.courseId)]).then(result =>{
+    Promise.all([course.filterByCourseId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.courseId,req.body.showEntry),course.getCountFilterByCourseId(res.locals.slug,res.locals.biddingId,req.body.programId,req.body.sessionId,req.body.courseId)]).then(result =>{
           res.json({
            status: "200",
            message: "Sucessfull",
