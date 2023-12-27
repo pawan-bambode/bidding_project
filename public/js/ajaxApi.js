@@ -5,7 +5,6 @@ function ajaxApi(obj) {
         data: obj.data,
         beforeSend: function () {
             $(".modal-loader").removeClass('d-none')
-            // console.log('Show beforeSend::::::::>')
         },
         success: data => {
             return data
@@ -14,7 +13,7 @@ function ajaxApi(obj) {
             $(".modal-loader").addClass('d-none')
         },
         showSuccess(result) {
-            // console.log('Show Succces::::::::>', result)
+             console.log('Show Succces::::::::>', result)
         },
         error: err => {
             return err
@@ -22,3 +21,8 @@ function ajaxApi(obj) {
         dataType: obj.dataType
     });
 }
+
+
+
+
+

@@ -441,7 +441,11 @@ if (timeRemaing.trim() == 'Rounds Ended') {
             let count = 1;
             for (const course of courseList) {
             let creditsComplete = $('#selected-course-table tbody').attr(`credit-complete-${course.sap_acad_session_id}`);
+            let creditsCourseCompleted =  $('#selected-course-table tbody').attr(`max-credit-area`);
+            console.log('values of credit',creditsCourseCompleted)
             let deleteCredits = $('#selected-course-table tbody').attr(`delete-acad-session-${course.sap_acad_session_id}`);
+     
+          
             let addToTable = true;
             $('#selected-course-table tbody tr').each((index, selectedCourse) => {
                 let selectedCourseId = $(selectedCourse).data('course-id');
@@ -452,9 +456,11 @@ if (timeRemaing.trim() == 'Rounds Ended') {
 
             if (addToTable) {
                 let disabledAddButton = creditsComplete === 'true'?'disabled':'';
+                disabledAddButton = creditsCourseCompleted === 'true'?'disabled':'';
                 if(!deleteCredits){
                     disabledAddButton = 'disabled';
                 }
+                
                 ajaxTable +=
                 `<tr data-course-id="${course.id}" data-area="${course.area_name}" data-course-name="${course.course_name}" data-acad-session="${course.acad_session}" data-credits="${course.credits}" data-acad-session-id="${course.sap_acad_session_id}">
                     <td>${count++}</td>
@@ -468,6 +474,7 @@ if (timeRemaing.trim() == 'Rounds Ended') {
             }
         }
         $("#available-course-table tbody").html(ajaxTable);
+      
        
     }
     let areaAddedArray = [];
@@ -481,6 +488,7 @@ if (timeRemaing.trim() == 'Rounds Ended') {
       let credits = addCouresRow.data('credits');
       let acadSessionId = addCouresRow.data('acad-session-id');
       let selectedCourseCreditCount = $('#selected-course-credits-count').text();
+      let maxCreditPerArea = $('#max-credits-per-area').text();
       let CourseNameAndCredits = {
         areaName:areaName,
         credit:credits,
@@ -502,6 +510,21 @@ if (timeRemaing.trim() == 'Rounds Ended') {
         })
         completedCreditsCount++;
       }
+
+      if ($('#selected-course-table tbody').attr('max-credit-area') !== undefined) {
+       let areaNameCompleted = $('#selected-course-table tbody').attr('max-credit-area');
+       console.log('values of areaNameCompleted', areaNameCompleted);
+       $(`#selected-course-table tbody`).data(`credit-area-${areaNameCompleted}`, 'true');
+       $('#selected-course-table tbody').data(`credit-area-complete`, areaNameCompleted);
+       $('#available-course-table tbody tr').each((index,avaliableCours) =>{
+            if($(avaliableCours).data('area') == areaNameCompleted){
+                $(avaliableCours).find('.add-course').addClass('disabled');
+                $('#selected-course-table tbody').attr(`credit-complete-${acadSessionId}`,'true');           
+            } 
+        })
+}
+
+    
         let ajaxTable =
             `<tr data-course-id="${courseId}" data-area="${areaName}" data-course-name="${courseName}" data-acad-session="${acadSession}" data-credits="${credits}" data-acad-session-id="${acadSessionId}">
                 <td>${count++}</td>
@@ -544,15 +567,20 @@ if (timeRemaing.trim() == 'Rounds Ended') {
             areaAddedArray.push(CourseNameAndCredits);  
            
             let areaCount = calculateAreaFrequency(areaAddedArray);
+            if (areaCount[areaName].totalCredits == Number(maxCreditPerArea)-3) {
+            $('#selected-course-table tbody').attr('max-credit-area', areaName);
+ 
+         }
 
             let areaCountValue = (areaCount[areaName]);
             let minCreditsPerArea = $('#min-credits-per-area').text();
             let concentrationName = $('#concentration-name').text();
-            let maxCreditPerArea = $('#max-credits-per-area').text();
+          
             let minCreditPrimaryArea = $('#min-credits-in-primary-area').text();
             let selectedCredit = $('#selected-course-credits-count').text();
             let yearlyCredit = $('#yearly-credits').text();
-            
+            let areasCountCredit = $('#areas-count').text();
+
             if(areaCountValue.totalCredits == minCreditsPerArea){
                let areaCountElement = Number($('#areas-count').text());
                if(areaCountValue.totalCredits == minCreditsPerArea){
@@ -564,26 +592,14 @@ if (timeRemaing.trim() == 'Rounds Ended') {
                 $('#selected-course-table tbody').attr(`no-of-area-completed`,'true');
                 $(`#available-course-table tbody tr[data-area="${areaName}"]`).addClass('disabled');
             }
-            let areasCountCredit = $('#areas-count').text();
+            
 
             if(concentrationName.toLocaleLowerCase() !== 'general management'){
-                console.log('inside the if block',concentrationName);
               let areaCountValue = 0
               if(areaCount[concentrationName] != undefined){  
               areaCountValue =   areaCount[concentrationName].totalCredits;
               }
-              console.log('values of areaCountValue', areaCountValue);
-              console.log('vlaues of minCreditPrimaryArea', minCreditPrimaryArea);
-              console.log('values of maxCreditsPerArea', maxCreditPerArea);
-              console.log('values of (areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) ',(areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) );
-              console.log('values of selectedCredit', selectedCredit);
-              console.log('values of yearlyCredit', yearlyCredit);
-              console.log('values of areasCountCredit', areasCountCredit);
-              console.log('values of selectedCredit == yearlyCredit', selectedCredit == yearlyCredit);
-              console.log('values of (areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) &&( selectedCredit == yearlyCredit )',(areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) &&( selectedCredit == yearlyCredit ))
-              console.log('values of areasCountCredit == 0',areasCountCredit == '0');
-              console.log('values of areasCountCredit == 00',(areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) &&( selectedCredit == yearlyCredit ) &&(areasCountCredit == '0'));
-
+             
               if((areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) &&( selectedCredit == yearlyCredit ) &&(areasCountCredit == '0')  ){
                 $('.criteria-status').text('Criteria Met');
                 $('.criteria-status').removeClass('btn-danger');
@@ -599,8 +615,9 @@ if (timeRemaing.trim() == 'Rounds Ended') {
                 $('.criteria-status').addClass('btn-success');
                 $('.save-select-course').removeClass('d-none');
               }
+            }  
 
-            }      
+    
     });
 
     $('#selected-course-table').on('click','.cancel-course',function(){
@@ -661,17 +678,16 @@ if (timeRemaing.trim() == 'Rounds Ended') {
                   
                     let minCreditsPerArea = $('#min-credits-per-area').text();
                     let areaFrequencyCount = calculateAreaFrequency(areaAddedArray);
-                    
-                   if(areaFrequencyCount[areaName] != undefined? areaFrequencyCount[areaName].totalCredits:0 < minCreditsPerArea){
+
+                   if((areaFrequencyCount[areaName] != undefined? areaFrequencyCount[areaName].totalCredits:0) < minCreditsPerArea){
                     let areaCount = Number($('#areas-count').text());
                  
-                    if(areaCount <= concentrationSettingAreaCount){
+                    if(areaCount < concentrationSettingAreaCount){
                         $('#areas-count').text(areaCount+1);
-                    }
-                    
+                    }    
                    }
-                     
                 })
+
     $(".pagination-search").on('click', '.pagination li', function () {
                 let pageNo = $(this).attr('data-lp')
                 let searchValue = $(this).val();
@@ -761,12 +777,14 @@ if (timeRemaing.trim() == 'Rounds Ended') {
         arr.forEach((obj) => {
             let area = obj.areaName;
             if (areaFrequency[area]) {
+                areaFrequency[area].name  = area;
                 areaFrequency[area].frequency++;
                 areaFrequency[area].totalCredits += obj.credit;
             } else {
                 areaFrequency[area] = {
                     frequency: 1,
-                    totalCredits: obj.credit
+                    totalCredits: obj.credit,
+                    name:area
                 };
             }
         });

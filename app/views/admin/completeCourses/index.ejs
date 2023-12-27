@@ -275,115 +275,110 @@ $(document).on('change', '#course-name-filter', function() {
 });
 
 
-    // $('#changeEntry').on('change',function(){
-    //   let showEntry = $(this).val();
-    //   let ApiObj = {
-    //       type:'POST',
-    //       url:'/admin/completed-courses/showEntry',
-    //       data:{
-    //         showEntry:showEntry
-    //       },
-    //       datatype:'JSON'
-    //     }
-    //     ajaxApi(ApiObj).then(result=>{
-    //       paginationData(showEntry,result.length)
-    //         AjaxtTable(result.data)
-    //     }).catch(error =>{
-    //       showError(JSON.stringify(error.responseJSON));
-    //     })    
-    // })
+      $('#changeEntry').on('change',function(){
+         let showEntry = $(this).val();
+         let ApiObj = {
+             type:'POST',
+             url:'/admin/completed-courses/showEntry',
+             data:{
+              showEntry:showEntry
+             },
+             datatype:'JSON'
+          }
+           ajaxApi(ApiObj).then(result=>{
+            console.log('values of result=========>',result.data);
+           paginationData(showEntry,result.length)
+             AjaxtTable(result.data)
+           }).catch(error =>{
+            showError(JSON.stringify(error.responseJSON));
+         })    
+     })
  
-    // let test = '<%- pageCount %>';
-    // let rowCount = $('#changeEntry').val();
-    // $('#page-no').html(test);
-    // paginationData(rowCount, parseInt(test));
+      let test = '<%- pageCount %>';
+      let rowCount = $('#changeEntry').val();
+      $('#page-no').html(test);
+      paginationData(rowCount, parseInt(test));
   
-    // function paginationData(rowCount, totalCount) {
-    //         let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
-    //         $('#page-no').html(totalCount);
-    //         $('#pagination').bootpag({
-    //             total: pageNos,
-    //             page: 1,
-    //             maxVisible: 10,
-    //             leaps: true,
-    //             firstLastUse: true,
-    //             first: '←',
-    //             last: '→',
-    //             wrapClass: 'pagination',
-    //             activeClass: 'active', 
-    //             disabledClass: 'disabled',
-    //             nextClass: 'next',
-    //             prevClass: 'prev',
-    //             lastClass: 'last',
-    //             firstClass: 'first'
-    //         }).on("page", function (event, num) {
+     function paginationData(rowCount, totalCount) {
+             let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
+             $('#page-no').html(totalCount);
+             $('#pagination').bootpag({
+                 total: pageNos,
+                 page: 1,
+                 maxVisible: 10,
+                 leaps: true,
+                 firstLastUse: true,
+                 first: '←',
+                 last: '→',
+                 wrapClass: 'pagination',
+                 activeClass: 'active', 
+                 nextClass: 'next',
+                 prevClass: 'prev',
+                 lastClass: 'last',
+                 firstClass: 'first'
+             }).on("page", function (event, num) {
                
-    //         });
-    //     }
-    //     $('#searchkeyword').on('input',function(){
-    //      let searchValue = $(this).val();
-    //      $.ajax({
-    //       type:'POST',
-    //       url:'/admin/completed-courses/search',
-    //       data:{
-    //         searchLetter:searchValue
-    //       },
-    //       success:function(data){
-    //        paginationData(rowCount,data.length)
-    //         AjaxtTable(data.data)
-    //       }
-    //      })
-    //     })
-    //     $(".pagination-search").on('click', '.pagination li', function () {
-    //             let pageNo = $(this).attr('data-lp')
-    //             let searchValue = $(this).val();
-    //             let showEntry = $('#changeEntry').val();
-    //               $.ajax({
-    //                   type:'POST',
-    //                   url:'/admin/completed-courses/search',
-    //                   data:{
-    //                     searchLetter:searchValue,
-    //                     pageNo:pageNo,
-    //                     showEntry:showEntry
-    //                   },
-    //              success:function(data){
-    //              AjaxtTable(data.data)
-    //       }
-    //      })
-    //     })
-    //     function AjaxtTable(courseList) {
-             
-    //         $("#course-table tbody").empty();
-    //         let AjaxTable = ``;
-    //         if (courseList.length > 0) {
-    //             let count = 1;
-    //             for (course of courseList) {
-    //                 AjaxTable +=
-    //                     `<tr>
-    //                         <td>${count++}</td>
-    //                         <td>${course.course_name}</td>
-    //                         <td>${course.credits}</td>
-    //                         <td>${course.program_id}</td>
-    //                         <td>${course.acad_session}</td>
-    //                         <td>${course.area_name}</td>
-    //                         <td>${course.year_of_introduction}</td>
-    //                         <td>${course.min_demand_criteria}</td>
-    //                         <td>
-    //                             <a class="edit-course" data-bs-target="#edit-course-modal" data-bs-toggle="modal" data-id="${course.id}"
-    //                                 data-course-name="${course.course_name}"  data-credits="${course.credits}" data-year-of-introduction ="${course.year_of_introduction}" data-min-demand-criteria="${course.min_demand_criteria}">
-    //                                 <i class="fa fa-edit"></i>
-    //                             </a>
-    //                             <a data-id="${course.id}" class="delete-course">
-    //                                 <i class="fas fa-trash text-danger"></i>
-    //                             </a>
-    //                             <input class="d-none checkbox-course" type="checkbox" name="course" data-id="${course.id}">
-    //                         </td>
-    //                     </tr>`
-    //             }
-    //         }
-    //         $('#page-no').val(courseList.length);        
-    //         $("#course-table tbody").html(AjaxTable);
-    //     }
+             });
+         }
+         $('#searchkeyword').on('input',function(){
+           let searchValue = $(this).val();
+           let pageNo = $(this).attr('data-lp');
+           let showEntry = $('#changeEntry').val();
+
+           $.ajax({
+            type:'POST',
+            url:'/admin/completed-courses/search',
+            data:{
+              searchLetter:searchValue,
+              pageNo:pageNo,
+              showEntry:showEntry
+             },
+            success:function(data){
+             paginationData(rowCount,data.length)
+              AjaxtTable(data.data)
+           }
+          })
+         })
+         $(".pagination-search").on('click', '.pagination li', function () {
+                 let pageNo = $(this).attr('data-lp')
+                let searchValue = $('#searchkeyword').val();
+                 let showEntry = $('#changeEntry').val();
+                 console.log('values of showEntry',showEntry);
+                   $.ajax({
+                       type:'POST',
+                       url:'/admin/completed-courses/search',
+                       data:{
+                         searchLetter:searchValue,
+                         pageNo:pageNo,
+                         showEntry:showEntry
+                       },
+                  success:function(data){
+                    console.log('values of data',data);
+                  AjaxtTable(data.data)
+           }
+         })
+         })
+        function AjaxtTable(courseList) {
+               console.log('values of courseList',courseList);
+               $("#course-table tbody").empty();
+               let AjaxTable = ``;
+              if (courseList.length > 0) {
+                 let count = 1;
+                  for (course of courseList) {
+                     AjaxTable +=
+                          `<tr>
+                              <td>${count++}</td>
+                              <td>${course.student_name}</td>
+                              <td>${course.course_name}</td>
+                              <td>
+                                <input class="checkbox-complete-course" type="checkbox" name="complete-courses" data-id="${course.id}" >
+                              </td>
+                           </tr>`
+                   }
+               }
+               $('#page-no').val(courseList.length);        
+               $("#complete-courses-table tbody").html(AjaxTable);
+          }
 
     $('#edit-course-modal').on('shown.bs.modal',function(){
       $('.select2').select2();

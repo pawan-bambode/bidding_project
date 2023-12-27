@@ -137,7 +137,7 @@ workbook.write(filePath, (err, stats) => {
               })
           },
           search :(req,res) =>{  
-            Promise.all([completeCourses.search(res.locals.slug,res.locals.biddingId,req.body.searchLetter,res.locals.userId),completeCourses.getCountSearch(res.locals.slug,res.locals.biddingId,req.body.searchLetter,res.locals.userId)]).then(result => {
+            Promise.all([completeCourses.search(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.pageNo, req.body.showEntry),completeCourses.getCountSearch(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.pageNo, req.body.showEntry)]).then(result => {
                    res.json({
                        status: "200",
                        message: "Result fetched",

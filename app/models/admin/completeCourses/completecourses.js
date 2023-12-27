@@ -70,6 +70,33 @@ module.exports = class completeCourses {
                     INNER JOIN [${slug}].student_data sd ON cc.sap_id = sd.sap_id WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId`)
         })
     }
+    
+    static getCountSearch(slug, biddingId, letterSearch, pageNo, showEntry) {
+        
+        if(pageNo){
+            console.log('inside the if block second',pageNo);
+            return poolConnection.then(pool => {
+                return pool.request()
+                    .input('pageNo', sql.Int, pageNo)
+                    .input('biddingId', sql.Int, biddingId)
+                    .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+                    .query(`SELECT COUNT(*)
+                            FROM [${slug}].completed_courses cc 
+                            INNER JOIN [${slug}].student_data sd ON cc.sap_id = sd.sap_id WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND sd.bidding_session_lid = @biddingId AND (sd.student_name LIKE @letterSearch OR cc.course_name like @letterSearch)`);
+            })
+        }
+        else{
+            return poolConnection.then(pool => {
+                console.log('inside the else block second',pageNo);
+                return pool.request()
+                    .input('biddingId', sql.Int, biddingId)
+                    .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+                    .query(`SELECT COUNT(*) 
+                            FROM [${slug}].completed_courses cc 
+                            INNER JOIN [${slug}].student_data sd ON cc.sap_id = sd.sap_id WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND sd.bidding_session_lid = @biddingId AND (sd.student_name LIKE @letterSearch OR cc.course_name like @letterSearch)`);
+            })
+        }
+    }
 
     static search(slug, biddingId, letterSearch, pageNo, showEntry) {
         
@@ -79,9 +106,9 @@ module.exports = class completeCourses {
                     .input('pageNo', sql.Int, pageNo)
                     .input('biddingId', sql.Int, biddingId)
                     .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
-                    .query(`SELECT TOP ${showEntry} cc.id, sd.student_name, cc.course_name 
+                    .query(`SELECT cc.id, sd.student_name, cc.course_name 
                             FROM [${slug}].completed_courses cc 
-                            INNER JOIN [${slug}].student_data sd ON cc.sap_id = sd.sap_id WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND sd.bidding_session_lid = @biddingId AND (sd.student_name LIKE @letterSearch OR cc.course_name like @letterSearch) ORDER BY c.id DESC OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`);
+                            INNER JOIN [${slug}].student_data sd ON cc.sap_id = sd.sap_id WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND sd.bidding_session_lid = @biddingId AND (sd.student_name LIKE @letterSearch OR cc.course_name like @letterSearch) ORDER BY cc.id DESC OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`);
             })
         }
         else{
@@ -102,7 +129,7 @@ module.exports = class completeCourses {
             return pool.request() 
             .input('biddingId', sql.Int, biddingId)
             .input('pageNo', sql.Int, pageNo)
-            .query(`SELECT TOP ${showEntry} cc.id, sd.student_name, cc.course_name 
+            .query(`SELECT cc.id, sd.student_name, cc.course_name 
                     FROM [${slug}].completed_courses cc 
                     INNER JOIN [${slug}].student_data sd ON cc.sap_id = sd.sap_id WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND sd.bidding_session_lid = @biddingId
                     WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId

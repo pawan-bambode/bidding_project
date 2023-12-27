@@ -1,18 +1,9 @@
 
-// $(document).ready(function () {
-    // SIDE-BAR OPENING EVENT
-    // const mobileHamburger = document.querySelector('.hamburger-smalldevices');
-    // const leftBar = document.querySelector('.left-sidebar');
 
     $('.hamburger-smalldevices').on('click', function() {
         $('.left-sidebar').toggleClass('left-sidebar-open')
     })
-    // mobileHamburger.addEventListener('click', () => {
-    //     leftBar.classList.toggle('left-sidebar-open');
-    // })
-// })
-
-
+  
 
 function delay(callback, ms) {
     var timer = 0;
@@ -58,7 +49,5 @@ function toggle_full_screen() {
     }
 }
 
-
-//left bar accordion expander
 
 

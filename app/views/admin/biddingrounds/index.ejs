@@ -66,7 +66,7 @@
                         <td><%- biddingRound.total_courses %></td> 
                         <td><%- biddingRound.start_date_time %></td>
                         <td><%- biddingRound.end_date_time %></td>
-                        <td><a class="edit-bidding-rounds" data-bs-target="#edit-bidding-rounds" data-bs-toggle="modal"><i class="fa fa-edit"></i></a>
+                        <td><a class="edit-bidding-rounds" data-bs-target="#edit-bidding-rounds" data-bs-toggle="modal" data-round-lid =<%-biddingRound.round_lid %>><i class="fa fa-edit"></i></a>
                             <a class="delete-bidding-rounds" data-id="<%-biddingRound.round_lid %>"><i class="fa-solid fa-trash text-danger"></i></a>
                         </td>
                     </tr>
@@ -323,13 +323,13 @@
                    
                     <div class="row mt-4">
                         <div class="col-md-6 d-flex">          
-                         
+                            
                                 <div class="input-group  mb-3">
                                     <button class="btn btn-danger text-white" type="button"  data-bs-target="#update-total-student-bidding-rounds" data-bs-toggle="modal" >Total Students</button>
                                     <input type="text" class="form-control" placeholder="total students" id="total-students"  disabled>
                                 </div>
                          </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 d-none update-total-course">
                             <div class="input-group mb-3">
                                 <button class="btn btn-danger text-white" type="button" data-bs-target="#update-total-courses-bidding-rounds" data-bs-toggle="modal" >Total Courses</button>
                                 <input type="text" class="form-control" placeholder="total courses" id="total-courses"  disabled>
@@ -518,11 +518,6 @@
          })  
 
         
-
-
-       
-         
-         
          $('#add-bidding-rounds-modal').on('show.bs.modal', function () {
            $('.left-sidebar').addClass('d-none');
           });
@@ -536,6 +531,13 @@
             let dataBiddingRoundId = $(event.relatedTarget).closest('tr').data('bidding-round-id');
             let dataBiddingRoundLid =  $(event.relatedTarget).closest('tr').data('bidding-round-lid');
             $(this).attr('data-bidding-round-id',dataBiddingRoundId);
+            if(dataBiddingRoundId == 1){
+                $('#edit-bidding-rounds .update-total-course').removeClass('d-none');
+            }
+            else{
+                $('#edit-bidding-rounds .update-total-course').addClass('d-none');
+            }
+
             $('#bidding-rounds-checkbox').prop('checked', false);
             $('#bidding-rounds').val(dataBiddingRoundId);
             $('#bidding-rounds').attr('round-lid',dataBiddingRoundLid)
@@ -548,14 +550,12 @@
              const checkedValue = checkedRadioButton.val();
                 if (checkedValue == 'Yes') {
                     $(this).closest('tr').find('#bid-point-limit-per-bid').removeClass('d-none');
-                    $(this).closest('tr').find('#bid-point-limit-per-bid').focus();
-                    
+                    $(this).closest('tr').find('#bid-point-limit-per-bid').focus();     
                 } else {
                     $(this).closest('tr').find('#bid-point-limit-per-bid').addClass('d-none');
                 }
          })
 
- 
          $('#bidding-rounds-add-date-time').on('change','#end-date-time',function(){
             $('#save-bidding-rounds-date-time').removeClass('disabled');
             $('#add-bidding-rounds-modal #import-bidding-rounds').removeClass('disabled');
@@ -841,9 +841,100 @@
                 })
             }
         });
+
+        
+        $('#searchkeyword').on('input',function(){
+
+            let areaValue = $(this).val();
+            let showEntry = $('#changeEntry').val();
+
+                $.ajax({
+                type:'POST',
+                url:'/admin/bidding-rounds/search',
+                data:{
+                searchLetter:areaValue,
+                showEntry:showEntry
+                },
+                success:function(data){
+                paginationData(showEntry,data.length)
+                AjaxtTable(data.data)
+                $('#page-no').html(data.length);
+                }
+                })
+            })       
+
+    $(".pagination-search").on('click','.pagination li',function(){
+        let keyword = $("#searchkeyword").val();
+        let showEntry = $('#changeEntry').val();
+        let pageNo = $(this).attr('data-lp');
+
+        $.ajax({
+            type: "POST",
+            url: "/admin/bidding-rounds/search",
+            data: {
+                searchLetter: keyword,
+                pageNo: pageNo,
+                showEntry:showEntry
+            },
+            success: function (data) {
+                console.log('values of data',data);
+                AjaxtTable(data.data);
+                $('#page-no').html(data.length);
+            }
+        });
+    });
     })
     
  
+    function paginationData(rowCount, totalCount) {
+            let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
+            console.log("Page Numbers", pageNos);
+            $('#pagination').bootpag({
+                total: pageNos,
+                page: 1,
+                maxVisible: 10,
+                leaps: true,
+                firstLastUse: true,
+                first: '←',
+                last: '→',
+                wrapClass: 'pagination',
+                activeClass: 'active', 
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+               
+            });
+        }
+
+        function AjaxtTable(roundSettingList) {
+             if ($('#student-data-checkbox').prop('checked')) {
+              $('#student-data-checkbox').prop('checked', false);
+             }
+            $("#student-data-table tbody").empty();
+            let AjaxTable = ``;
+            if (roundSettingList.length > 0) {
+                let count = 1;
+                for (roundsetting of roundSettingList) {
+                    AjaxTable +=
+                        `<tr>
+                            <td>${count++}</td>
+                            <td>${roundsetting.round_name}</td>
+                            <td>${roundsetting.total_students}</td>
+                            <td>${roundsetting.total_courses}</td>
+                            <td>${roundsetting.start_date_time}</td>
+                            <td>${roundsetting.end_date_time}</td>
+                            <td><a class="edit-bidding-rounds" data-bs-target="#edit-bidding-rounds" data-bs-toggle="modal" data-round-lid =${roundsetting.round_lid}><i class="fa fa-edit"></i></a>
+                            <a class="delete-bidding-rounds" data-id="${roundsetting.round_lid }"><i class="fa-solid fa-trash text-danger"></i></a>
+                        </td>
+                        </tr>`
+                }
+            }
+                  
+            $("#bidding-rounds-table tbody").html(AjaxTable);
+        }
 </script>
  
 <%- include('../partials/footer.ejs') %>

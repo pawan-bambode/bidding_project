@@ -8,9 +8,7 @@ class SimpleAlert {
 
 
     alert(obj) {
-
-        console.log(">>>>>>>>>>>>> CALLING ALERT FUNC");
-       
+ 
         this.removeAlert();
 
         let alertElem = document.createElement('div');

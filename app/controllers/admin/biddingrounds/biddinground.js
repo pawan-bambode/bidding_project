@@ -72,5 +72,18 @@ module.exports = {
                     });
                 }
             });
-    }
+    },
+
+    search :(req,res) =>{  
+        Promise.all([biddingRound.search(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.pageNo, req.body.showEntry),biddingRound.getCountSearch(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.pageNo, req.body.showEntry)]).then(result => {
+               res.json({
+                   status: "200",
+                   message: "Result fetched",
+                   data: result[0].recordset,
+                   length: result[1].recordset[0]['']    
+               })
+           }).catch(error => {
+               throw error
+           })
+   },
 }

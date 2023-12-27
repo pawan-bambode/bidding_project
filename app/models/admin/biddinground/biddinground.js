@@ -73,5 +73,39 @@ module.exports = class BiddingRound
             .execute(`[${slug}].[sp_update_round_settings]`)
        })
     }
-    
+
+    static search(slug, biddingId, letterSearch, pageNo, showEntry) {
+        
+        if(pageNo){
+            return poolConnection.then(pool => {
+                return pool.request()
+                    .input('pageNo', sql.Int, pageNo)
+                    .input('biddingId', sql.Int, biddingId)
+                    .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+                    .query(`SELECT id, round_lid, round_name, total_students, total_courses, 
+                            FORMAT(end_date_time, 'dd MMM  yyyy, hh:mm tt') AS end_date_time, FORMAT(start_date_time, 'dd MMM yyyy, hh:mm tt') AS start_date_time 
+                            FROM [${slug}].round_settings WHERE bidding_session_lid = @biddingId AND active = 1 AND (round_name LIKE @letterSearch OR total_students LIKE @letterSearch OR total_courses LIKE @letterSearch OR end_date_time LIKE @letterSearch OR start_date_time LIKE @letterSearch) ORDER BY cc.id DESC OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`)
+            })
+        }
+        else{
+            return poolConnection.then(pool => {
+                return pool.request()
+                    .input('biddingId', sql.Int, biddingId)
+                    .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+                    .query(`SELECT id, round_lid, round_name, total_students, total_courses, 
+                            FORMAT(end_date_time, 'dd MMM  yyyy, hh:mm tt') AS end_date_time, FORMAT(start_date_time, 'dd MMM yyyy, hh:mm tt') AS start_date_time 
+                            FROM [${slug}].round_settings WHERE bidding_session_lid = @biddingId AND active = 1 AND (round_name LIKE @letterSearch OR total_students LIKE @letterSearch OR total_courses LIKE @letterSearch OR end_date_time LIKE @letterSearch OR start_date_time LIKE @letterSearch)`);
+            })
+        }
+    }
+
+    static getCountSearch(slug, biddingId, letterSearch, pageNo, showEntry) {
+                return poolConnection.then(pool => {
+                    return pool.request()
+                        .input('biddingId', sql.Int, biddingId)
+                        .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+                        .query(`SELECT count(*)
+                                FROM [${slug}].round_settings WHERE bidding_session_lid = @biddingId AND active = 1 AND (round_name LIKE @letterSearch OR total_students LIKE @letterSearch OR total_courses LIKE @letterSearch OR end_date_time LIKE @letterSearch OR start_date_time LIKE @letterSearch)`);
+                })
+        }     
 }

@@ -17,7 +17,7 @@
     </div>
     <div class="card card-custom-border-curv" >
         <div class="card-header-custom d-flex justify-content-between p-2">
-            <h4 class="ms-2">Course Data</h4>
+            <h4 class="ms-2">Course</h4>
             <div>
               <button class="btn btn-danger disabled" id="delete-all-coures">Delete All Courses</button>
             <button type="button" class="btn btn-success me-2"  data-bs-target="#upload-course-modal" data-bs-toggle="modal">Upload Courses</button>
@@ -408,6 +408,7 @@ $(document).on('change', '#course-name-filter', function() {
         }
         $('#searchkeyword').on('input',function(){
          let searchValue = $(this).val();
+         
          $.ajax({
           type:'POST',
           url:'/admin/course/search',
