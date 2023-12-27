@@ -152,7 +152,7 @@
   
     console.log('values of delete',deleteCompleteCourseArray);
     if(deleteCompleteCourseArray.length > 0){
-      ConfirmationForAllDelete('Are you sure to delete the selected Division Batches ?').then(result =>{
+      ConfirmationForAllDelete('Are you sure to delete the selected Completed Courses ?').then(result =>{
       if(result){
         let ApiObj = {
              url:'/admin/complete-course/delete-all',

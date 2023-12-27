@@ -530,8 +530,9 @@
            
             let dataBiddingRoundId = $(event.relatedTarget).closest('tr').data('bidding-round-id');
             let dataBiddingRoundLid =  $(event.relatedTarget).closest('tr').data('bidding-round-lid');
+            console.log('values of dataBiddingRoundId',dataBiddingRoundId);
             $(this).attr('data-bidding-round-id',dataBiddingRoundId);
-            if(dataBiddingRoundId == 1){
+            if(dataBiddingRoundLid == 1){
                 $('#edit-bidding-rounds .update-total-course').removeClass('d-none');
             }
             else{

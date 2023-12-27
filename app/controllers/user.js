@@ -94,7 +94,7 @@ module.exports = {
                             };
                         
                     }
-        
+                 
                     if (req.body.username === userData.recordset[0].username && isVerified == true && userData.recordset[0].role_name === 'admin') {
                         res.redirect('/admin/dashboard');
                     }
@@ -113,11 +113,11 @@ module.exports = {
         }
     },
 
-    dashboard: (req, res, next) => {
-        res.render('dashboard.ejs', {
-            username: req.session.username
-        })
-    },
+    // dashboard: (req, res, next) => {
+    //     res.render('dashboard.ejs', {
+    //         username: req.session.username
+    //     })
+    // },
 
     logout: (req, res) => {
         req.session.destroy(function (err) {

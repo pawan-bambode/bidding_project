@@ -85,7 +85,7 @@
                       <th>Course</th>
                       <th>Acad Session</th>
                       <th>Credits</th>
-                      <th class="hide-column-after-round-over">Action</th>
+                      <th>Action</th>
                   </thead>
                   <tbody>
                         <% let selectedCourseIndex = 1 %>
@@ -93,12 +93,12 @@
                           <% for (let selectedCourse of selectCourse) { %>
                             <tr data-course-id = "<%- selectedCourse.id %>" data-area="<%-selectedCourse.area_name %>" data-course-name="<%- selectedCourse.course_name %>" data-acad-session="<%-selectedCourse.acad_session %>" data-credits="<%-selectedCourse.credits %>" data-acad-session-id="<%-selectedCourse.sap_acad_session_id %>">
 
-                              <td><%- selectedCourseIndex++ %></td>
+                              <td class="index-row-demand-estimation"><%- selectedCourseIndex++ %></td>
                               <td><%- selectedCourse.area_name %></td>
                               <td><%- selectedCourse.course_name %></td>
                               <td><%- selectedCourse.acad_session %></td>
                               <td><%- selectedCourse.credits %></td>
-                              <td class="hide-column-after-round-over"><a class="delete-selected-course" data-id="<%- selectedCourse.id %>"><i class="fa fa-trash text-danger"></i></a></td>
+                              <td><a class="delete-selected-course" data-id="<%- selectedCourse.id %>"><i class="fa fa-trash text-danger"></i></a></td>
                             
                             </tr>
                           <% } %>
@@ -292,10 +292,13 @@ if (timeRemaing.trim() == 'Rounds Ended') {
            })
         })
         let deleteAcadSession = [];
+        let countArea = 0;
         $('#selected-course-table').on('click', '.delete-selected-course', function () {
+       
             let acadSessionId = $(this).closest('tr').data('acad-session-id');
             let areaName = $(this).closest('tr').data('area');
             let numberOfAreaToCover = Number($('#areas-count').text());
+            let minimumCreditPoint = Number($('#min-credits-per-area').text());
             $('.demand-estimation-status').removeClass('d-none');
             let credits = Number($(this).closest('tr').data('credits'));
             let previousCredits = Number($(`#credits-points-${acadSessionId}`).text());
@@ -309,17 +312,42 @@ if (timeRemaing.trim() == 'Rounds Ended') {
             count = $('#selected-course-table tbody tr').length + 1;
             $(this).closest('tr').remove();
             let areaFrequency = {};
+            let countAreaFrequency = 0;
             $('#selected-course-table tbody tr').each(function() {
-                    let dataArea = $(this).attr('data-area');
-                    if (dataArea) {
-                        areaFrequency[dataArea] = (areaFrequency[dataArea] || 0) + 1;
+                let dataArea = $(this).data('area');
+                let credits = parseInt($(this).data('credits'));
+
+                if (dataArea) {
+                    areaFrequency[dataArea] = areaFrequency[dataArea] || { frequency: 0, credits: 0 };
+                    areaFrequency[dataArea].frequency++;
+                    areaFrequency[dataArea].credits += credits;
                 }
             });
-            
-           let numberOfSelectedCourse  = Number(Object.keys(areaFrequency).length);
-           if(numberOfSelectedCourse < numberOfAreaToCover){
-            $('#areas-count').text(numberOfAreaToCover-1);
-           }
+          
+            console.log('values of areaFrequency', Object.keys(areaFrequency));
+            Object.keys(areaFrequency).forEach(function(key) {
+                console.log('values of areaFrequency[key].totalCredits',areaFrequency[key].credits);
+             if(areaFrequency[key].credits ==  minimumCreditPoint){
+                console.log('values of countARea',countAreaFrequency);
+                countAreaFrequency++;
+             }
+           });
+
+          console.log('values of countAreaFrequency',countAreaFrequency);
+            if (areaFrequency[areaName] && areaFrequency[areaName].credits !== undefined) {
+               
+                if ( Number(areaFrequency[areaName].credits) < minimumCreditPoint) {
+                    if ((countAreaFrequency < `<%-concentrationSettings.no_of_areas_to_cover %>`) ) {
+                         countArea++;
+                    $('#areas-count').text(countArea);
+                    }
+                    else{
+                        $('#areas-count').text(0);
+                    }
+                }
+            }
+
+
             let deleteCourse = {
             areaName:areaName,
             acadSession:acadSessionId
@@ -342,12 +370,17 @@ if (timeRemaing.trim() == 'Rounds Ended') {
                 let currentAcadSessionId = $(this).data('acad-session-id');
                 let creditPoint = Number($(`#credits-points-${currentAcadSessionId}`).text());
                 let targetCreditsPoint = Number($(`#credits-points-target-${currentAcadSessionId}`).text());
+                let diabledElement = $('#selected-course-table tbody').attr(`max-credit-area`) == undefined ?'':$('#selected-course-table tbody').attr(`max-credit-area`);
                 
-                if (creditPoint < targetCreditsPoint) {
-                    $(this).find('.add-course').removeClass('disabled');
-                } else {
+                if(diabledElement != undefined){
+                    if (creditPoint < targetCreditsPoint) {
+                    $(this).find(`.add-course:not([data-area="${diabledElement}"])`).removeClass('disabled');
+                }} else if ((creditPoint < targetCreditsPoint)){
+                    $(this).find(`.add-course)`).removeClass('disabled');
+                }else{
                     $(this).find('.add-course').addClass('disabled');
                 }
+              
             });
         }
         function EnableAcadSession(acadSessionId) {
@@ -442,7 +475,6 @@ if (timeRemaing.trim() == 'Rounds Ended') {
             for (const course of courseList) {
             let creditsComplete = $('#selected-course-table tbody').attr(`credit-complete-${course.sap_acad_session_id}`);
             let creditsCourseCompleted =  $('#selected-course-table tbody').attr(`max-credit-area`);
-            console.log('values of credit',creditsCourseCompleted)
             let deleteCredits = $('#selected-course-table tbody').attr(`delete-acad-session-${course.sap_acad_session_id}`);
      
           
@@ -468,7 +500,7 @@ if (timeRemaing.trim() == 'Rounds Ended') {
                     <td>${course.course_name}</td>
                     <td>${course.acad_session}</td>
                     <td>${course.credits}</td>
-                    <td><button class="btn btn-secondary add-course ${disabledAddButton}">Add</button></td>
+                    <td><button class="btn btn-secondary add-course ${disabledAddButton}" data-area="${course.area_name}" >Add</button></td>
                 </tr>`;
             }
             }
@@ -513,7 +545,6 @@ if (timeRemaing.trim() == 'Rounds Ended') {
 
       if ($('#selected-course-table tbody').attr('max-credit-area') !== undefined) {
        let areaNameCompleted = $('#selected-course-table tbody').attr('max-credit-area');
-       console.log('values of areaNameCompleted', areaNameCompleted);
        $(`#selected-course-table tbody`).data(`credit-area-${areaNameCompleted}`, 'true');
        $('#selected-course-table tbody').data(`credit-area-complete`, areaNameCompleted);
        $('#available-course-table tbody tr').each((index,avaliableCours) =>{
@@ -527,12 +558,12 @@ if (timeRemaing.trim() == 'Rounds Ended') {
     
         let ajaxTable =
             `<tr data-course-id="${courseId}" data-area="${areaName}" data-course-name="${courseName}" data-acad-session="${acadSession}" data-credits="${credits}" data-acad-session-id="${acadSessionId}">
-                <td>${count++}</td>
+                <td class="index-row-demand-estimation">${count++}</td>
                 <td>${areaName}</td>
                 <td>${courseName}</td>
                 <td>${acadSession}</td>
                 <td>${credits}</td>
-                <td><button class="btn btn-danger cancel-course">Cancel</button></td>
+                <td><button class="btn btn-danger cancel-course" data-area="${areaName}">Cancel</button></td>
             </tr>`;
 
             $("#selected-course-table tbody").append(ajaxTable);
@@ -548,12 +579,21 @@ if (timeRemaing.trim() == 'Rounds Ended') {
             
              let concentrationName = $('#concentration-name').text();
              let deleteCount =  calculateDeleteFrequency(deleteAcadSession)
-             let deletePrimaryArea = deleteCount[concentrationName].frequency;
+             console.log('values of deleteCount',deleteCount[areaName]);
+             console.log('values of deleteCount', deleteCount[areaName]);
+             let deletePrimaryArea = 0;
+Object.keys(deleteCount).forEach((key) => {
+    let element = deleteCount[key];
+    deletePrimaryArea += element.frequency;
+    console.log('values of element', element.frequency);
+});
+
              let cancelCourseElements = $('#selected-course-table tbody tr .cancel-course').closest('tr');
+             
              
 
                 let filteredElements = cancelCourseElements.filter(function() {
-                    return $(this).attr('data-area') == concentrationName;
+                    return $(this).attr('data-area') == areaName;
                 });
 
                 let lengthOfFilteredElements = filteredElements.length;
@@ -567,10 +607,15 @@ if (timeRemaing.trim() == 'Rounds Ended') {
             areaAddedArray.push(CourseNameAndCredits);  
            
             let areaCount = calculateAreaFrequency(areaAddedArray);
-            if (areaCount[areaName].totalCredits == Number(maxCreditPerArea)-3) {
+            if ((areaCount[areaName].totalCredits) == Number(maxCreditPerArea)) {
             $('#selected-course-table tbody').attr('max-credit-area', areaName);
  
          }
+            if( $('#selected-course-table tbody').attr('max-credit-area') != undefined ){
+                let selectedCourse = $('#selected-course-table tbody').attr('max-credit-area');
+                $(`#available-course-table tbody tr[data-area = "${selectedCourse}"]`).find('.add-course').addClass('disabled');
+            }
+          
 
             let areaCountValue = (areaCount[areaName]);
             let minCreditsPerArea = $('#min-credits-per-area').text();
@@ -630,7 +675,10 @@ if (timeRemaing.trim() == 'Rounds Ended') {
       let acadSessionId = addCouresRow.data('acad-session-id');
       let selectedCourseCreditCount = $('#selected-course-credits-count').text();
       let removed = false;
-	  
+      let maxCreditPerArea = $('#max-credits-per-area').text();
+      let areaCount = calculateAreaFrequency(areaAddedArray);
+
+     
       $('#selected-course-credits-count').text(Number(selectedCourseCreditCount)-Number(credits));
 
       let creditsPointsElement = $(`#credits-points-${acadSessionId}`);
@@ -656,10 +704,10 @@ if (timeRemaing.trim() == 'Rounds Ended') {
                 <td>${courseName}</td>
                 <td>${acadSession}</td>
                 <td>${credits}</td>
-                <td><button class="btn btn-secondary add-course">Add</button></td>
+                <td><button class="btn btn-secondary add-course" data-area="${areaName}">Add</button></td>
             </tr>`;
 
-            $("#available-course-table tbody").append(ajaxTable);
+                   $("#available-course-table tbody").append(ajaxTable);
                     $('.criteria-status').removeClass('btn-success');
                     $('.criteria-status').addClass('btn-danger');
                     $('.criteria-status').html('Criteria Not Met');
@@ -686,6 +734,18 @@ if (timeRemaing.trim() == 'Rounds Ended') {
                         $('#areas-count').text(areaCount+1);
                     }    
                    }
+                   let tableLength = $('#selected-course-table tbody').length;
+                    $('#selected-course-table tbody tr').each((index, ele) => {
+                        $(ele).find('.index-row-demand-estimation').text(index + 1);
+                    });
+                   
+            let totalCreditsCounts = Number(areaCount[areaName].totalCredits) - Number(credits);
+           
+      if (totalCreditsCounts != Number(maxCreditPerArea)-3) {
+            $('#selected-course-table tbody').removeAttr('max-credit-area');
+ 
+         }
+
                 })
 
     $(".pagination-search").on('click', '.pagination li', function () {
