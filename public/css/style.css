@@ -1252,3 +1252,8 @@ box-shadow: -30px -30px 0 var(--primary-white);
  animation: concentration-not-selected 1s infinite;
     color: red;   
 }
+
+.over-credits{
+    animation: concentration-not-selected 1s infinite;
+    color:red;
+}
