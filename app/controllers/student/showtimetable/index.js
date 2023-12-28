@@ -5,8 +5,10 @@ const course = require('../../../models/admin/course/course');
 module.exports = {
 
   getDashBoard : (req ,res) =>{
+    
     let studentHomePageUrl = req.route.path.split('/');
     let studentHomePage = studentHomePageUrl[studentHomePageUrl.length - 1]
+
     Promise.all([programSession.getProgramSessionCreditsPoint(res.locals.slug,res.locals.biddingId),
       student.getStudentDetail(res.locals.slug,res.locals.biddingId,res.locals.username),
       student.getConcentrationList(res.locals.slug,res.locals.biddingId),
@@ -16,6 +18,7 @@ module.exports = {
       student.getWaitListCouresList(res.locals.slug,res.locals.biddingId),
       student.getConfirmCreditsCounts(res.locals.slug,res.locals.biddingId),
       student.getCompleteCourese(res.locals.slug,res.locals.biddingId,res.locals.useSapId),]).then(result =>{
+
       res.render('student/dashboard/index', {
         active:studentHomePage,
         currentFormStep: 0,
@@ -30,25 +33,53 @@ module.exports = {
         completeCoureseList:result[8].recordset
     })
     })
-},
+  },
 
+  getBidding : (req , res) => {
 
+    let biddingUrl = req.route.path.split('/');
+    let bidding = biddingUrl[biddingUrl.length - 1]
+    
+    res.render('student/bidding/index',{
+      active :bidding
+    });
+  },
 
- getBidding : (req , res) =>{
-  let biddingUrl = req.route.path.split('/');
-  let bidding = biddingUrl[biddingUrl.length - 1]
-  res.render('student/bidding/index',{
-    active :bidding
-  });
-},
+  availableCourse :(req , res) =>{
+    let availableCourseUrl = req.route.path.split('/');
+    let availableCourse = availableCourseUrl[availableCourseUrl.length-1]
+    res.render('student/availablecourse/index', {
+      active : availableCourse
+    })
+  },
 
-getConfirmation :(req ,res) =>{
-  let confirmationUrl = req.route.path.split('/');
-  let confirmation = confirmationUrl[confirmationUrl.length-1]
-  res.render('student/confirmation/index',{
-    active : confirmation
-  })
-},
+  getConfirmation :(req ,res) => {
+
+    let confirmationUrl = req.route.path.split('/');
+    let confirmation = confirmationUrl[confirmationUrl.length-1]
+
+    res.render('student/confirmation/index',{
+      active : confirmation
+    })
+  },
+
+  getWaitList :(req, res) => {
+
+    let waitListUrl = req.route.path.split('/');
+    let wait = waitListUrl[waitListUrl.length-1]
+
+    res.render('student/waitlist/index', {
+      active : wait
+    })
+  },
+
+  getAddDrop :(req, res) =>{
+    let addDropUrl = req.route.path.split('/');
+    let addDrop = addDropUrl[addDropUrl.length-1]
+    res.render('student/adddrop/index', {
+      active: addDrop
+    })
+  },
 
 multipleHit: (req, res) => {
   Promise.all([student.multipleHit()]).then(result => {

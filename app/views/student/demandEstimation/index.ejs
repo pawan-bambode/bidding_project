@@ -190,7 +190,7 @@ $(document).ready(function() {
     let startTime = '<%- startAndEndTime %>'.trim();
     let timeRemaing = $('.time-remaing').text().trim();
 
-    console.log('values of ',timeRemaing);
+    
         if (timeRemaing.trim() == 'Rounds Ended') {
             $('.hide-column-after-round-over').addClass('d-none');
         }
@@ -527,16 +527,17 @@ $(document).ready(function() {
       let acadSessionId = addCouresRow.data('acad-session-id');
       let selectedCourseCreditCount = $('#selected-course-credits-count').text();
       let maxCreditPerArea = $('#max-credits-per-area').text();
+      
       let CourseNameAndCredits = {
         areaName:areaName,
         credit:credits,
         id:courseId
       }
+
       let maxCreditLimit = $('#selected-course-table tbody').attr('no-of-area-completed');
-      console.log('values of no-of-area-completed',maxCreditLimit);
-      
       let creditsPointsElement = $(`#credits-points-${acadSessionId}`);
       let currentCredits = Number(creditsPointsElement.text());
+
       creditsPointsElement.text(currentCredits + Number(credits));
       $('#selected-course-credits-count').text(Number(selectedCourseCreditCount)+Number(credits));
       let targetCreditsPoints = Number($(`#credits-points-target-${acadSessionId}`).text());
@@ -709,8 +710,6 @@ $(document).ready(function() {
               areaCountValue =   areaCount[concentrationName].totalCredits;
               }
           
-              console.log('values of ',areaCountValue >= minCreditPrimaryArea );
-           
               if((areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) &&( selectedCredit == yearlyCredit ) &&(areasCountCredit == '0') && acadSessionValue  ){
                 $('.criteria-status').text('Criteria Met');
                 $('.criteria-status').removeClass('btn-danger');
@@ -753,8 +752,6 @@ $(document).ready(function() {
       let creditPoint = Number($(`#credits-points-${currentAcadSessionId}`).text());
       let targetCreditsPoint = Number($(`#credits-points-target-${currentAcadSessionId}`).text());
 
-      console.log('values of creditPoint',typeof creditPoint);
-         console.log('values of targetCreditPoint',currentAcadSessionId);
          if (creditPoint > targetCreditsPoint) {
                     $(`#credits-points-${currentAcadSessionId}`).closest('h6').removeClass('over-credits');
                 }
