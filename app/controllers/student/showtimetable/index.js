@@ -35,52 +35,6 @@ module.exports = {
     })
   },
 
-  getBidding : (req , res) => {
-
-    let biddingUrl = req.route.path.split('/');
-    let bidding = biddingUrl[biddingUrl.length - 1]
-    
-    res.render('student/bidding/index',{
-      active :bidding
-    });
-  },
-
-  availableCourse :(req , res) =>{
-    let availableCourseUrl = req.route.path.split('/');
-    let availableCourse = availableCourseUrl[availableCourseUrl.length-1]
-    res.render('student/availablecourse/index', {
-      active : availableCourse
-    })
-  },
-
-  getConfirmation :(req ,res) => {
-
-    let confirmationUrl = req.route.path.split('/');
-    let confirmation = confirmationUrl[confirmationUrl.length-1]
-
-    res.render('student/confirmation/index',{
-      active : confirmation
-    })
-  },
-
-  getWaitList :(req, res) => {
-
-    let waitListUrl = req.route.path.split('/');
-    let wait = waitListUrl[waitListUrl.length-1]
-
-    res.render('student/waitlist/index', {
-      active : wait
-    })
-  },
-
-  getAddDrop :(req, res) =>{
-    let addDropUrl = req.route.path.split('/');
-    let addDrop = addDropUrl[addDropUrl.length-1]
-    res.render('student/adddrop/index', {
-      active: addDrop
-    })
-  },
-
 multipleHit: (req, res) => {
   Promise.all([student.multipleHit()]).then(result => {
     res.json({

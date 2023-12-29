@@ -2,17 +2,12 @@ const favouriteCourse = require('../../../models/student/favouriteCourse/favouri
 const divisionBatches = require('../../../models/admin/divisionBatches/divisionBatches')
 
 module.exports = {
-    getPage : (req ,res) => {
-      let demandEstimationUrl = req.route.path.split('/');
-      let demandEstimationActive = demandEstimationUrl[demandEstimationUrl.length - 1]
-      Promise.all([
-                  ]).then(result =>{
-                    
-        res.render('student/demandEstimation/index',{
-          active:demandEstimationActive,
-         
 
-        });
-      })
-   }
+  getPage :(req , res) =>{
+    let availableCourseUrl = req.route.path.split('/');
+    let availableCourse = availableCourseUrl[availableCourseUrl.length-1]
+    res.render('student/availablecourse/index', {
+      active : availableCourse
+    })
+  },
 }  
