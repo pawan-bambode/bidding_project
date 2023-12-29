@@ -21,6 +21,7 @@
     --eventNoBreakWidth: 156px;
     --fixedBreakWidth: 65px;
     --left-sidebar-width : 260px;
+    --bidding-trimester-active:0px;
 }
 
 body {
@@ -1256,4 +1257,22 @@ box-shadow: -30px -30px 0 var(--primary-white);
 .over-credits{
     animation: concentration-not-selected 1s infinite;
     color:red;
+}
+
+/* In bidding active trimester means while trimester tab use click*/
+.bidding-trimester-selected{
+    border-bottom: 2px solid black !important;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bidding-trimester-selected::after{
+    content: '';
+    position: absolute;
+    border-top: 16px solid black;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    top:var(--bidding-trimester-active);
 }

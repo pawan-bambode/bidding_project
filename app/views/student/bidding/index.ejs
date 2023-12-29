@@ -2,89 +2,93 @@
 
 <%- include('../partials/leftSidebarForStudent.ejs') %>
 <%- include('../partials/header.ejs') %>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 
 <div class="main-content">
   <div class="card card-custom-border-curv">
     <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-2"> Bidding Testing</h3>  
+        <h3 class="ms-2"> Bidding</h3>  
     </div>
     <div class="card-body table-responsive">
      
     </div>
   </div>
   
-  <div class="card card-custom-border-curv mt-5 demand-estimation-modal">
+  <div class="card card-custom-border-curv mt-5 bidding-modal">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2">Available Courses</h3>
     </div>
  
     <div class="card-body table-responsive">
         <div class="d-flex">
-          <div>
-              <label>Show Entries</label>
-              <select class="form-select" id="changeEntry">
-                  <%for(let page of locals.page_filter){%>
-                     <option value="<%-page%>"><%-page%></option>
-                  <%}%>
-              </select>
-          </div>
-            <div class="col-md-3 ms-5">
-                <label class="form-label mb-1" for="acad-session-change">Select Acad Session:</label>
-                <select class="form-select form-control select2" id="acad-session-change">
-                    <option selected disabled>--Select Acad Session-- </option>
-                     <%for(let acadSession of dropdownAcadSessionList) { %>
-                        <option value="<%- acadSession.sap_acad_session_id %>"><%- acadSession.acad_session %></option>
-                    <% } %>    
-                </select>
-             </div>   
-                <div class="col-md-3 ms-5">
-                  <label class="form-label mb-1" for="area-change">Select Area:</label>
-                <select class="form-select form-control select2" id="area-change">
-                  <option selected disabled>--Select Area-- </option>   
-              </select>
+          <% for(let acadSession of dropdownAcadSessionList) { %>
+            <div class="col-sm-4 p-2">
+              <button class="btn btn-light w-100 border bidding-trimester"  data-acad-session-id = "<%- acadSession.sap_acad_session_id %>">
+                <%-acadSession.acad_session %>
+              </button>
             </div>
-        </div>
-        <div class="card-body table-responsive">
-            <table class="table custom_row table-bordered mt-4 custom-table" id="available-course-table">
-              <thead>
-                  <th>#</th>
-                  <th>Area</th>
-                  <th>Course</th>
-                  <th>Acad Session</th>
-                  <th>Credits</th>
-                  <th class="hide-column-after-round-over">Action</th>
-              </thead>
-              <tbody>
-                 
-              </tbody>
-            </table>
-            <div class="d-flex justify-content-between">
-              <div>
-                  <p>Total entries :&nbsp;<span id="page-no"></span>
-                  </p>
-              </div>
-              <div>
-                  <p id="pagination" class="pagination-search"></p>
-              </div>
-          </div>
-        </div>
-    </div>     
+          <% } %>
+        </div> 
+        <table class="table custom_row table-bordered mt-4 custom-table" id="bidding-trimester-select-table">
+            <thead>
+                <th>Area</th>
+                <th>Course</th>
+                <th>Trimester</th>
+                <th>Credits</th>
+            </thead>
+            <tbody>
+
+            </tbody>
+         </table>
   </div>
 </div>
-
+<%- include('../partials/footer.ejs') %>
 <script>
 $(document).ready(function() {
     let active = `<%- active %>`;
     $('#sidebar .side-menu li.' + active).addClass('active');
+
+    $('.bidding-modal').on('click', '.bidding-trimester', function() {
+       $('#bidding-trimester-select-table tbody').empty();
+       let prevSelected = $(this).closest('div').siblings().find('.bidding-trimester-selected');
+       prevSelected.removeClass('bidding-trimester-selected');
+       $(this).addClass('bidding-trimester-selected');
+       $(this).css('--bidding-trimester-active', $(this).innerHeight() + 'px');
+
+       let acadSessionId = $(this).data('acad-session-id');
+       
+       let ApiObj = {
+        type: 'POST',
+        url: '/student/bidding/course-by-acadsession',
+        data:{
+          acadSessionId: acadSessionId
+        },
+        dataType :'JSON',
+       }
+      ajaxApi(ApiObj).then(result =>{
+        console.log('values of result,',result);
+        showData(result.biddingCourseList);
+      }).catch(error =>{
+        showError(JSON.stringify(error.responseJSON))
+      })
+   });
+
 });
 
-</script>
+function showData(biddingCourseList){
+  let biddingTrimesterTable = $('#bidding-trimester-select-table tbody');
+  if(biddingCourseList.length > 0 ){
+    for(let biddingCourse of biddingCourseList){
+      biddingTrimesterTable.append(`
+          <tr>
+            <td>${biddingCourse.area_name}</td>
+            <td>${biddingCourse.course_name}</td>
+            <td>${biddingCourse.acad_session}</td>
+            <td>${biddingCourse.credits}</td>
+          </tr>`);
+    }
+  }
+}
 
-<%- include('../partials/footer.ejs') %>
+</script>
 
 <%- include('../partials/footerEnd.ejs') %>

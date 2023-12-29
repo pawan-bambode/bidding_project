@@ -1,4 +1,5 @@
 const course = require('../../../models/admin/course/course');
+const divisionBatch = require('../../../models/admin/divisionBatches/divisionBatches');
 
 module.exports = {
 
@@ -14,4 +15,15 @@ module.exports = {
         })
    
     },  
+
+    getCourseByAcadSession : (req, res) =>{
+      Promise.all([divisionBatch.getBiddingCourseByAcadSession(res.locals.slug, res.locals.biddingId, req.body.acadSessionId)]).then(result =>{
+        console.log('values of result-------->',result[0].recordset);
+        res.json({
+            status:'200',
+            message:'Result fetched',
+            biddingCourseList:result[0].recordset
+        })
+        })
+    }
 }
