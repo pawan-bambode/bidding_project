@@ -321,7 +321,6 @@ $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
         dataColumnValue++;
       }
       function removeIdentifyItem(selectedArray,elementToRemove){
-        console.log('inside the remove IdentifyItem',elementToRemove,selectedArray);
         return selectedArray.filter(item => item.batch[0] !== elementToRemove);
       }
       function updateEventCount(isAdd) {
@@ -336,7 +335,6 @@ $('#modal_for_stud_sel_course').on('show.bs.modal', function (event) {
         let data_batch  = event_val.parentElement.getAttribute('data-batch-lid');
          selected_event.forEach(function(ele,index){
            if(data_batch == ele.batch){
-            console.log('inside the data_batch',ele.batch);
            selected_event = removeIdentifyItem(selected_event,data_batch);
            updateEventCount(false);
            }

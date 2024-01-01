@@ -217,29 +217,6 @@ $(".pagination-search").on('click','.pagination li',function(){
             })    
         })
 
-        function paginationData(rowCount, totalCount) {
-            let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
-            console.log("Page Numbers", pageNos);
-            $('#pagination').bootpag({
-                total: pageNos,
-                page: 1,
-                maxVisible: 10,
-                leaps: true,
-                firstLastUse: true,
-                first: '←',
-                last: '→',
-                wrapClass: 'pagination',
-                activeClass: 'active', 
-                disabledClass: 'disabled',
-                nextClass: 'next',
-                prevClass: 'prev',
-                lastClass: 'last',
-                firstClass: 'first'
-            }).on("page", function (event, num) {
-               
-            });
-        }
-
         $(document).on('click','.program-div', function(event) {
 
             let programCode = $(this).data('program-code');
@@ -329,11 +306,8 @@ $(".pagination-search").on('click','.pagination li',function(){
             }
             
             ajaxApi(ApiObj).then(result => {
-                console.log('response::::::::::',result)
                 showSuccess(result)              
             }).catch(error => {
-                console.log('ERROR::::::::::',error)
-                console.log('valus of error',error);
                 showError(JSON.stringify(error.responseJSON))
             })
         }
@@ -387,11 +361,8 @@ $(".pagination-search").on('click','.pagination li',function(){
                 dataType: 'JSON' 
                 }
                 ajaxApi(ApiObj).then(result => {
-                    console.log('response::::::::::',result)
                     showSuccess(result)
                 }).catch(error => {
-                    console.log('ERROR::::::::::',error.responseJSON)
-                    console.log('error',error);
                     showError(JSON.stringify(error.responseJSON))
                 })
         });
@@ -409,10 +380,8 @@ $(".pagination-search").on('click','.pagination li',function(){
                 dataType:'JSON'
             }
             ajaxApi(ApiObj).then(result =>{
-                console.log('response:::::::',result);
                 showSuccess(result)
             }).catch(error =>{
-                console.log('error:::::',error.responseJSON);
                 showError(JSON.stringify(error.responseJSON));
             })
 

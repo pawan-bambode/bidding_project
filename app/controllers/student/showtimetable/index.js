@@ -43,7 +43,6 @@ multipleHit: (req, res) => {
       timetablelist: 0,
     })
   }).catch(error => {
-    console.log(error)
     res.status(500).json(error.originalError.info.message)
   })
 },
@@ -91,7 +90,6 @@ multipleHit: (req, res) => {
       student.saveSpecialization(res.locals.slug, req.body.inputJSON, res.locals.biddingId, res.locals.userId).then(result =>{
         res.status(200).json(JSON.parse(result.output.output_json))
       }).catch(error =>{
-        console.log('values of error',error.message);
         res.status(500).json(JSON.parse(error.originalError.info.message));
       })
     } 

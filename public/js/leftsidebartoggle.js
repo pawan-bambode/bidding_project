@@ -37,7 +37,6 @@ $('.session-name').on('click', function(){
             $('#bidding-session-popup-modal').modal('show')
         }
     }).catch(error => {
-        console.log('Error', error)
     })
 
 })
@@ -68,7 +67,7 @@ $('#update-status').on('click', function(){
     ajaxApi(apiObj).then(result => {
         showSuccess(result)
     }).catch(error => {
-        console.log('Error', error)
+    
     })
 })
 
@@ -143,7 +142,6 @@ $('body').on('click', '#update-password-btn', function() {
 
 
 function showSuccess(errors) {
-    console.log(errors);
     let simpleAlert = new SimpleAlert();
     let obj = {
         title: errors.description,
@@ -191,6 +189,29 @@ function showError(errors) {
     simpleAlert.alert(obj);
 }
 
+function paginationData(rowCount, totalCount) {
+    let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
+    console.log("Page Numbers", pageNos);
+    $('#pagination').bootpag({
+        total: pageNos,
+        page: 1,
+        maxVisible: 10,
+        leaps: true,
+        firstLastUse: true,
+        first: '←',
+        last: '→',
+        wrapClass: 'pagination',
+        activeClass: 'active', 
+        disabledClass: 'disabled',
+        nextClass: 'next',
+        prevClass: 'prev',
+        lastClass: 'last',
+        firstClass: 'first'
+    }).on("page", function (event, num) {
+       
+    });
+}
+
 function IsNumber(inputString) {
     let isNumber = false;
     for (let i = 0; i < inputString.length; i++) {
@@ -203,6 +224,42 @@ function IsNumber(inputString) {
     }
     return isNumber;
 }
+
+function updateCurrentTime() {
+    let currentDate = new Date();
+    let formattedDateTime = currentDate.toLocaleString();
+    $('#current-date-time').text(convertDateFormat(formattedDateTime)); 
+}
+
+function convertDateFormat(inputDate) {
+    let [datePart, timePart] = inputDate.split(',');
+    let [ month,day, year] = datePart.split('/');
+
+    let monthNames = [
+        'January', 'February', 'March', 'April',
+        'May', 'June', 'July', 'August',
+        'September', 'October', 'November', 'December'
+    ];
+    let monthName = monthNames[parseInt(month) - 1];
+    let formattedDate = `${day}-${monthName} ${year}`;
+    let formattedDateTime = `${formattedDate} ${timePart}`;
+    return formattedDateTime;
+} 
+
+function convertMillisecondsToReadableTime(milliseconds) {
+    if(milliseconds == 0){
+        return `0 h:0 M:0 S`
+    }
+    let seconds = Math.floor(milliseconds / 1000);
+    let minutes = Math.floor(seconds / 60);
+    let hours = Math.floor(minutes / 60);
+
+    let remainingMinutes = minutes % 60;
+    let remainingSeconds = seconds % 60;
+
+    return `${hours} h:${remainingMinutes}M:${remainingSeconds}S`;
+    }
+
 
 
   

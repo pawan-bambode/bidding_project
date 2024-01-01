@@ -15,7 +15,7 @@ module.exports = {
                    course.getDropdownAcadSessionList(res.locals.slug, res.locals.biddingId),
                    programSession.getCredits(res.locals.slug, res.locals.biddingId),
                    roundSetting.getRoundLid(res.locals.slug, res.locals.biddingId),
-                   roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId),
+                   roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId,1),
                    demandEstimation.getSelectedCourses(res.locals.slug, res.locals.biddingId, res.locals.studentId),
                    concentrationSetting.getStudentConcentrationSettings(res.locals.slug, res.locals.biddingId, res.locals.username),
                    concentrationSetting.getTotalCreditsCounts(res.locals.slug, res.locals.biddingId)
@@ -97,12 +97,10 @@ module.exports = {
     let object = {
       import_selected_courses: JSON.parse(req.body.inputJSON)
     };
-    console.log('values of req.body', req.body.studentLid);
     demandEstimation.saveSelectedCourse(res.locals.slug, res.locals.biddingId, res.locals.userId, req.body.studentLid, req.body.roundLid, object).then(result =>{
       res.status(200).json(JSON.parse(result.output.output_json));
     })
     .catch(error => {
-          console.log('value of error',error);
         if (isJsonString.isJsonString(error.originalError.info.message)) {
             res.status(500).json(JSON.parse(error.originalError.info.message));
         } else {

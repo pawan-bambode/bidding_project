@@ -19,7 +19,6 @@ module.exports = {
     renderLoginPage: (req, res, next) => {
 
         OrganizationSlug.fetchAll().then(result => {
-            // console.log(result.recordset)
             res.render('login')
         })
         

@@ -401,12 +401,7 @@ $(document).ready(function() {
                 }
             })
         }
-    function updateCurrentTime() {
-        let currentDate = new Date();
-        let formattedDateTime = currentDate.toLocaleString();
-        $('#current-date-time').text(convertDateFormat(formattedDateTime)); 
-    }
-
+        
     function demandEstimationTimeCountDown(){
         let endTime = $('#end-time').text();
         let startTime = $('#start-time').text();
@@ -444,34 +439,8 @@ $(document).ready(function() {
         }
     } 
 
-    function convertDateFormat(inputDate) {
-        let [datePart, timePart] = inputDate.split(',');
-        let [ month,day, year] = datePart.split('/');
 
-        let monthNames = [
-            'January', 'February', 'March', 'April',
-            'May', 'June', 'July', 'August',
-            'September', 'October', 'November', 'December'
-        ];
-        let monthName = monthNames[parseInt(month) - 1];
-        let formattedDate = `${day}-${monthName} ${year}`;
-        let formattedDateTime = `${formattedDate} ${timePart}`;
-        return formattedDateTime;
-    } 
 
-    function convertMillisecondsToReadableTime(milliseconds) {
-        if(milliseconds == 0){
-            return `0 h:0 M:0 S`
-        }
-        let seconds = Math.floor(milliseconds / 1000);
-        let minutes = Math.floor(seconds / 60);
-        let hours = Math.floor(minutes / 60);
-
-        let remainingMinutes = minutes % 60;
-        let remainingSeconds = seconds % 60;
-
-        return `${hours} h:${remainingMinutes}M:${remainingSeconds}S`;
-        }
 
     function ajaxTable(courseList) {
         $("#available-course-table tbody").empty();
@@ -969,29 +938,6 @@ $(document).ready(function() {
     });
     return areaFrequency;
 }
-
-    function paginationData(rowCount, totalCount) {
-        $('#page-no').html(totalCount);
-                let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
-                $('#pagination').bootpag({
-                    total: pageNos,
-                    page: 1,
-                    maxVisible: 10,
-                    leaps: true,
-                    firstLastUse: true,
-                    first: '←',
-                    last: '→',
-                    wrapClass: 'pagination',
-                    activeClass: 'active', 
-                    disabledClass: 'disabled',
-                    nextClass: 'next',
-                    prevClass: 'prev',
-                    lastClass: 'last',
-                    firstClass: 'first'
-                }).on("page", function (event, num) {
-                
-                });
-            }
    
 </script>
 

@@ -18,7 +18,6 @@ function isJsonString(str) {
 }
 
 async function   currentAcadYear () {
-    console.log('HERE:::::::::::::>>')
         let acadyear = await new Promise(async resolve => {
             return poolConnection.then(pool => {
                 return pool.request().query(`SELECT input_acad_year FROM [dbo].academic_year WHERE is_locked = 1 AND name ='currrent_academic_year'`)
@@ -54,7 +53,6 @@ async function  generateExcel (req, res) {
     const workbook = new excel.Workbook();
     const worksheet = workbook.addWorksheet('Sheet1');
     const acadsessionList = Promise.all([acadSession.getAcadSessionList(req,res)]).then(result =>{
-        console.log('values of acadSession',result[0]);
     });
     
     //const dropdownOptions = ['Option 1', 'Option 2', 'Option 3'];
@@ -92,7 +90,6 @@ async function  generateExcel (req, res) {
         console.error(err);
       } else {
         res.json({'status':'200'})
-        console.log('Excel file with dropdown created successfully');
       }
     });
     

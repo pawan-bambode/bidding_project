@@ -13,13 +13,14 @@ module.exports = class RoundSettings {
     });
   }
 
-  static getStartEndTime(slug, biddingId) {
+  static getStartEndTime(slug, biddingId, roundlid) {
     return poolConnection.then(pool => {
       return pool.request()
         .input('biddingId', sql.Int, biddingId)
+        .input('round_lid', sql.Int, roundlid)
         .query(`SELECT FORMAT(start_date_time, 'dd-MMMM yyyy h:mm:ss tt') AS startTime,
                 FORMAT(end_date_time, 'dd-MMMM yyyy h:mm:ss tt') AS endTime 
-                FROM [${slug}].round_settings WHERE active = 1`);
+                FROM [${slug}].round_settings WHERE active = 1 AND round_lid = @round_lid`);
     });
   }
 };

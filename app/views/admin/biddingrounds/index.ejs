@@ -435,7 +435,6 @@
             })
 
             $(document).on('click', '.bidding-rounds-div', function(event) {
-                console.log('inside the event click');
                 studentList = [];
                 courseList = [];
             let canProceed = true;
@@ -507,7 +506,6 @@
 
 
          $('#total-student-bidding-rounds').on('show.bs.modal',function(event){
-            console.log('inside the fun');
             $('#bidding-rounds-checkbox').prop('checked', false);
             $('.student-sap-id-bidding-rounds').prop('checked',false);
             let dataBiddingRoundId = $(event.relatedTarget).closest('tr').attr('data-bidding-round-id');
@@ -530,7 +528,6 @@
            
             let dataBiddingRoundId = $(event.relatedTarget).closest('tr').data('bidding-round-id');
             let dataBiddingRoundLid =  $(event.relatedTarget).closest('tr').data('bidding-round-lid');
-            console.log('values of dataBiddingRoundId',dataBiddingRoundId);
             $(this).attr('data-bidding-round-id',dataBiddingRoundId);
             if(dataBiddingRoundLid == 1){
                 $('#edit-bidding-rounds .update-total-course').removeClass('d-none');
@@ -563,7 +560,6 @@
          })
 
        $('#total-student-bidding-rounds').on('click','#import-total-student-bidding-rounds',function(){
-        console.log('values of testing');
         let totalStudentBiddingRoundsCounts =  $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
         $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
           studentList.push($(selectedElement).closest('tr').data('student-id'));
@@ -581,7 +577,6 @@
                 }
             });
               if(Number(dataBiddingRoundId)> 1){
-                console.log('inside the if block');
                  $('#add-date-time').removeClass('d-none');
                  $('#add-date-time').attr('data-bidding-round-id',dataBiddingRoundId);
               }
@@ -602,13 +597,12 @@
             });  
        })
        $('#total-courses-bidding-rounds').on('click','#total-course-bidding-rounds',function(){
-        console.log('inside the click function');
         let totalCoursesBiddingRoundsCounts =  $('#total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
         
         $('#total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
           courseList.push($(selectedElement).closest('tr').data('course-id'));
         });
-        console.log('inside the click function',courseList);
+
         let dataBiddingRoundId =  $('#total-student-bidding-rounds').attr('data-bidding-round-id');
          $('#add-bidding-rounds-modal .modal-body .table-responsive tbody tr').each(function(index,element) {
                
@@ -631,7 +625,6 @@
            $('#add-date-time').addClass('d-none');
            $('#add-bidding-rounds-modal .modal-body .table-responsive tbody tr').each(function(index,element) {
                 if(($(element).attr('data-bidding-round-id')) === biddingRoundId){
-                    console.log('values of element',$(element));
                   $(element).children('.end-date-time').html(endDateTime);
                   $(element).children('.start-date-time').html(startDateTime);
                   $(element).attr('data-start-date-time',startDateTime);
@@ -741,7 +734,7 @@
           let importBiddingDetails = {
             round_setting: importBiddingRoundsArray,
             };
-             console.log('values of importBiddingDetails',JSON.stringify(importBiddingDetails));
+             
            let ApiObj = {
                 type: 'POST',
                 url: '/admin/bidding-rounds/create',
@@ -753,10 +746,8 @@
             }
            
             ajaxApi(ApiObj).then(result => {
-                console.log('response::::::::::',result)
                 showSuccess(result)              
             }).catch(error => {
-                console.log('ERROR::::::::::',error)
                 showError(JSON.stringify(error.responseJSON))
             })
         })
@@ -778,7 +769,6 @@
                 $(this).closest('tr').remove();
                 showSuccess(result)
             }).catch(error =>{
-                console.log('error:::::',error.responseJSON);
                 showError(JSON.stringify(error.responseJSON))
             })
 
@@ -805,7 +795,6 @@
             let totalCourses   = $('#total-courses').val();
             let id             = $('#bidding-rounds').val();
             let roundLid  = $('#bidding-rounds').attr('round-lid');
-            console.log('value of',roundLid);
             let temp = [];
            
             let editBiddingRounds = {
@@ -833,11 +822,8 @@
                 dataType: 'JSON' 
                 }
                 ajaxApi(ApiObj).then(result => {
-                    console.log('response::::::::::',result)
                     showSuccess(result)
                 }).catch(error => {
-                    console.log('ERROR::::::::::',error.responseJSON)
-                    console.log('error',error);
                     showError(JSON.stringify(error.responseJSON))
                 })
             }
@@ -878,7 +864,6 @@
                 showEntry:showEntry
             },
             success: function (data) {
-                console.log('values of data',data);
                 AjaxtTable(data.data);
                 $('#page-no').html(data.length);
             }
@@ -887,29 +872,6 @@
     })
     
  
-    function paginationData(rowCount, totalCount) {
-            let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
-            console.log("Page Numbers", pageNos);
-            $('#pagination').bootpag({
-                total: pageNos,
-                page: 1,
-                maxVisible: 10,
-                leaps: true,
-                firstLastUse: true,
-                first: '←',
-                last: '→',
-                wrapClass: 'pagination',
-                activeClass: 'active', 
-                disabledClass: 'disabled',
-                nextClass: 'next',
-                prevClass: 'prev',
-                lastClass: 'last',
-                firstClass: 'first'
-            }).on("page", function (event, num) {
-               
-            });
-        }
-
         function AjaxtTable(roundSettingList) {
              if ($('#student-data-checkbox').prop('checked')) {
               $('#student-data-checkbox').prop('checked', false);

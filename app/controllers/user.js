@@ -109,7 +109,7 @@ module.exports = {
                     res.send('Login Failed');
                 }
             } catch (err) {
-            console.log("Error catched: ", err);
+            
         }
     },
 

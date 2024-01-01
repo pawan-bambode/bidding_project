@@ -32,30 +32,7 @@
             createConfirmation(result);
            })
     })
-    function showSuccess(errors) {
-        console.log(errors);
-        let simpleAlert = new SimpleAlert();
-        let obj = {
-            title: errors,
-            message: "",
-            type: 'alert-success',
-            buttons: {
-                positive: {
-                    text: "Okay",
-                    action: function () {
-                        document.querySelector('.simple-alert').remove();
-                    }
-                },
-                negative: {
-                    text: "Cancel",
-                    action: function () {
-                        alert('Negative')
-                    }
-                }
-            }
-        }
-        simpleAlert.alert(obj);
-    }
+
 
 
 
@@ -66,7 +43,6 @@
             data: obj.data,
             beforeSend: function () {
                 $(".modal-loader").removeClass('d-none')
-                // console.log('Show beforeSend::::::::>')
             },
             success: data => {
                 return data
@@ -75,7 +51,7 @@
                 $(".modal-loader").addClass('d-none')
             },
             showSuccess(result) {
-                // console.log('Show Succces::::::::>', result)
+
             },
             error: err => {
                 return err

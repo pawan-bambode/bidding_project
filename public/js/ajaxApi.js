@@ -13,7 +13,6 @@ function ajaxApi(obj) {
             $(".modal-loader").addClass('d-none')
         },
         showSuccess(result) {
-             console.log('Show Succces::::::::>', result)
         },
         error: err => {
             return err

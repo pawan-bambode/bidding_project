@@ -291,28 +291,6 @@
     $('#page-no').html(test);
     paginationData(rowCount, parseInt(test));
   
-    function paginationData(rowCount, totalCount) {
-            let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
-            $('#page-no').html(totalCount);
-            $('#pagination').bootpag({
-                total: pageNos,
-                page: 1,
-                maxVisible: 10,
-                leaps: true,
-                firstLastUse: true,
-                first: '←',
-                last: '→',
-                wrapClass: 'pagination',
-                activeClass: 'active', 
-                disabledClass: 'disabled',
-                nextClass: 'next',
-                prevClass: 'prev',
-                lastClass: 'last',
-                firstClass: 'first'
-            }).on("page", function (event, num) {
-               
-            });
-        }
         $('#searchkeyword').on('input',function(){
          let PreRequisiteValue = $(this).val();
          $.ajax({

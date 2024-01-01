@@ -21,25 +21,17 @@ module.exports = {
     },
 
     readExcelFile : (req, res) => {
-        console.log('While Upload== ', req.file.buffer)
-
         const excelFileBuffer = req.file.buffer;
-
-        // Parse the uploaded Excel file
         const workbook = xlsx.read(excelFileBuffer);
 
-        // Assuming the first sheet is the one you want to read
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
 
-        // Convert the sheet data to JSON
         const jsonData = xlsx.utils.sheet_to_json(sheet);
         
         let jsonArr = JSON.stringify(jsonData);
        
-        Students.saveStudentDetails(jsonArr).then(data => {
-            // console.log('check response == ', data.output.output_json)
-            
+        Students.saveStudentDetails(jsonArr).then(data => { 
             res.redirect('/admin/student')
             
         })
@@ -76,7 +68,6 @@ module.exports = {
     },
 
     getStudentDetailsById : (req, res) => {
-        console.log('body data', req.body.studentId)
         Students.fetchStudentDetailsById(req.body.studentId).then(data => {
             res.status(200).json({
                 data: data.recordset,
@@ -155,7 +146,6 @@ module.exports = {
         let encryptPass = await hash.hashPassword(req.body.newPassword);
 
         Students.updatePassword(userName, encryptPass).then(data => {
-            console.log('===>> ', data.rowsAffected.length)
             if(data.rowsAffected.length > 0) {
                 res.status(200).json({
                     status: 'S'

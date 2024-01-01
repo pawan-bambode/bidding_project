@@ -74,7 +74,6 @@ module.exports = class completeCourses {
     static getCountSearch(slug, biddingId, letterSearch, pageNo, showEntry) {
         
         if(pageNo){
-            console.log('inside the if block second',pageNo);
             return poolConnection.then(pool => {
                 return pool.request()
                     .input('pageNo', sql.Int, pageNo)
@@ -87,7 +86,6 @@ module.exports = class completeCourses {
         }
         else{
             return poolConnection.then(pool => {
-                console.log('inside the else block second',pageNo);
                 return pool.request()
                     .input('biddingId', sql.Int, biddingId)
                     .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)

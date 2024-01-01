@@ -224,9 +224,8 @@
             let divisionId = $('#max-seats').data('id');
             let maxSeats   = $('#max-seats').val();
   
-            console.log('values of divisionId',divisionId);
             let isMaxSeats =  IsNumber(maxSeats);
-               console.log('values of ',divisionId);
+
               if (!isMaxSeats) {
                 $('#error-max-seats').removeClass('d-none');
                 return;
@@ -323,7 +322,6 @@
                 ajaxApi(ApiObj).then(result =>{
                       showSuccess(result);
                 }).catch(error =>{
-                  console.log('values of error',error);
                   showError(JSON.stringify(error.responseJSON));
                 })
             }
@@ -356,28 +354,6 @@
     $('#page-no').html(test);
     paginationData(rowCount, parseInt(test));
   
-    function paginationData(rowCount, totalCount) {
-            let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
-            $('#page-no').html(totalCount);
-            $('#pagination').bootpag({
-                total: pageNos,
-                page: 1,
-                maxVisible: 10,
-                leaps: true,
-                firstLastUse: true,
-                first: '←',
-                last: '→',
-                wrapClass: 'pagination',
-                activeClass: 'active', 
-                disabledClass: 'disabled',
-                nextClass: 'next',
-                prevClass: 'prev',
-                lastClass: 'last',
-                firstClass: 'first'
-            }).on("page", function (event, num) {
-               
-            });
-        }
         $('#searchkeyword').on('input',function(){
          let divisionBatchesValue = $(this).val();
          let showEntry = $('#changeEntry').val();
@@ -444,7 +420,6 @@
                   AjaxtTable(result.workload);
               })
               .catch(error => {
-                  console.log('values of error', error);
                   showError(JSON.stringify(error.responseJSON));
               });
           });

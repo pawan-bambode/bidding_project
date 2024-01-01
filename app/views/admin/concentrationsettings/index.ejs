@@ -212,7 +212,6 @@
                 },
                 success: function (data) {
                     AjaxtTable(data.data);
-                    console.log(data.data);
                 }
             });
         });
@@ -234,28 +233,7 @@
             showError(JSON.stringify(error.responseJSON));
             })    
         })
-        function paginationData(rowCount, totalCount) {
-            let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
-            console.log("Page Numbers", pageNos);
-            $('#pagination').bootpag({
-                total: pageNos,
-                page: 1,
-                maxVisible: 10,
-                leaps: true,
-                firstLastUse: true,
-                first: '←',
-                last: '→',
-                wrapClass: 'pagination',
-                activeClass: 'active', 
-                disabledClass: 'disabled',
-                nextClass: 'next',
-                prevClass: 'prev',
-                lastClass: 'last',
-                firstClass: 'first'
-            }).on("page", function (event, num) {
-               
-            });
-        }
+
     $('#refresh-concentration-settings').on('click',function(){
       console.log('refresh concentration settings');
       let ApiObj = {
@@ -282,7 +260,6 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
                 dataType:'JSON'
             }
             ajaxApi(ApiObj).then(result =>{
-                console.log('response:::::::',result);
                 showSuccess(result)
             }).catch(error =>{
                 console.log('error:::::',error);
@@ -353,13 +330,12 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
     data:{  editConcentrationsettings : JSON.stringify(editConcentrationsettings)},
     dataType: 'JSON'
   };
-   console.log('valuesof ApiObj',ApiObj);
+   
   ajaxApi(ApiObj)
     .then(result => {
       showSuccess(result);
     })
     .catch(error => {
-      console.log('values of error', error);
        showError(JSON.stringify(error.responseJSON));
     });
 }

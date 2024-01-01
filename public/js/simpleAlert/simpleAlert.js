@@ -8,9 +8,6 @@ class SimpleAlert {
 
 
     alert(obj) {
-
-        console.log(">>>>>>>>>>>>> CALLING ALERT FUNC");
-       
         this.removeAlert();
 
         let alertElem = document.createElement('div');
@@ -20,7 +17,6 @@ class SimpleAlert {
         if(obj.message.length > 0){
             if(obj.express){
                 for (let ele of  obj.message){
-                    console.log('listttttt', ele.msg)
                         list += `<li>${ele.msg}</li>`
                     
                 }

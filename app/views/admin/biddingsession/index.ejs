@@ -272,7 +272,6 @@
           $('#temp-bidding-session-details').on('click','#delete-bidding-session',function(){
                     $(this).closest('tr').remove();
                     let addBiddingSessionTableIsEmpty = $('#add-bidding-session #temp-bidding-session-details tbody').children().length;
-                    console.log('values of childre',addBiddingSessionTableIsEmpty);
                     if(addBiddingSessionTableIsEmpty == 0){
                         $('#add-bidding-session #add-acad-session').addClass('d-none');
                         $('#add-bidding-session #bidding-name').val('');
@@ -451,7 +450,6 @@
            ajaxApi(ApiObj).then(result =>{
             showSuccess(result);
            }).catch(error =>{
-            console.log('values of error',error);
             showError(JSON.stringify(error.responseJSON));
            })
         } 

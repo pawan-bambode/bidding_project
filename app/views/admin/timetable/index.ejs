@@ -234,7 +234,6 @@
                     let acadSession = `<option value="">--Select Acad Session--</option>`;
                     if (result.acadSessionList.length > 0) {
                         result.acadSessionList.forEach(element => {
-                            console.log('value sof element',element);
                            acadSession  += `<option value="${element.id}">${element.acad_session}</option>`;
                         });
                        

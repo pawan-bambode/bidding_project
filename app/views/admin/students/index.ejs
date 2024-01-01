@@ -242,7 +242,6 @@
                     $('#page-no').html(result.length);
                 })
                 .catch(error => {
-                    console.log('values of error', error);
                     showError(JSON.stringify(error.responseJSON))
                 });
         });
@@ -269,7 +268,6 @@
                     paginationData(showEntry,result.length)
                 })
                 .catch(error => {
-                    console.log('Error:', error);
                     showError(JSON.stringify(error.responseJSON))
                 });
         });
@@ -311,30 +309,6 @@
             })    
         })
  
-
-        function paginationData(rowCount, totalCount) {
-            let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
-            console.log("Page Numbers", pageNos);
-            $('#pagination').bootpag({
-                total: pageNos,
-                page: 1,
-                maxVisible: 10,
-                leaps: true,
-                firstLastUse: true,
-                first: '←',
-                last: '→',
-                wrapClass: 'pagination',
-                activeClass: 'active', 
-                disabledClass: 'disabled',
-                nextClass: 'next',
-                prevClass: 'prev',
-                lastClass: 'last',
-                firstClass: 'first'
-            }).on("page", function (event, num) {
-               
-            });
-        }
-
         $('#student-data-table').on('change','#student-data-checkbox', function() {
         if (this.checked) {
            $('.checkbox-student-data').removeClass('d-none');
@@ -424,7 +398,6 @@
              ajaxApi(ApiObj).then(result =>{
                   showSuccess(result);
              }).catch(error =>{
-              console.log('values of error',error);
               showError(JSON.stringify(error.responseJSON))
              })
         }
@@ -506,10 +479,8 @@ function AjaxtTable(studentDataList) {
                 dataType:'JSON'
             }
             ajaxApi(ApiObj).then(result =>{
-                console.log('response:::::::',result);
                 showSuccess(result)
             }).catch(error =>{
-                console.log('error:::::',error.responseJSON);
                 showError(JSON.stringify(error.responseJSON))
             })
 

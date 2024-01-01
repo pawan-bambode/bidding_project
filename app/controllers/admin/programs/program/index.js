@@ -81,7 +81,6 @@ module.exports = {
             
         });
       }).catch(error => {
-        console.log('values of error',error);
         if ((isJsonString.isJsonString(error.originalError.info.message))) {
             res.status(500).json(JSON.parse(error.originalError.info.message));
         } else {

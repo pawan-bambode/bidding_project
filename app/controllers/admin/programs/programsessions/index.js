@@ -71,7 +71,6 @@ module.exports = {
         });
     },
     showEntryProgramSessionList :(req,res) =>{
-        console.log('values hos show Entry',req.body)
         Promise.all([programSession.showEntryProgramSessionList(req.body.showEntry,res.locals.slug,res.locals.biddingId,req.body.pageNo),programSession.getCountsProgramSession(req.body.showEntry,res.locals.slug,res.locals.biddingId,req.body.pageNo)]).then(result =>{
              res.json({
              status:'200',

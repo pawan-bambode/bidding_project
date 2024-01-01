@@ -4,7 +4,6 @@ $(document).ready(function () {
         let val = $('#password').val();
         
         if(val === '' || val == undefined){
-            console.log('inside the if block',$(this).parent());
             $(this).parent().addClass('border-danger');
             $(this).prev().attr('placeholder','password not enter');   
         }

@@ -265,14 +265,14 @@ module.exports = class divisionBatches {
             .input('biddingId', sql.Int, biddingId)
             .input('acadSessionId', sql.Int, acadSessionId)
             .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, 
-                    db.max_seats,
+                    db.max_seats, db.division, t.faculty_id, t.faculty_name,
                     MAX(CASE WHEN t.day_lid = 1 THEN CONCAT('Monday (', LEFT(CONVERT(VARCHAR, s1.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s8.end_time, 100), 7), ')') END) AS Day1,
                     MAX(CASE WHEN t.day_lid = 2 THEN CONCAT('Tuesday (',LEFT(CONVERT(VARCHAR, s2.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s9.end_time, 100), 7), ')') END) AS Day2,
-                    MAX(CASE WHEN t.day_lid = 3 THEN CONCAT( LEFT(CONVERT(VARCHAR, s3.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s10.end_time, 100), 7), ')') END) AS Day3,
-                    MAX(CASE WHEN t.day_lid = 4 THEN CONCAT( LEFT(CONVERT(VARCHAR, s4.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s11.end_time, 100), 7), ')') END) AS Day4,
-                    MAX(CASE WHEN t.day_lid = 5 THEN CONCAT( LEFT(CONVERT(VARCHAR, s5.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s12.end_time, 100), 7), ')') END) AS Day5,
-                    MAX(CASE WHEN t.day_lid = 6 THEN CONCAT( LEFT(CONVERT(VARCHAR, s6.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s13.end_time, 100), 7), ')') END) AS Day6,
-                    MAX(CASE WHEN t.day_lid = 7 THEN CONCAT( LEFT(CONVERT(VARCHAR, s7.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s14.end_time, 100), 7), ')') END) AS Day7
+                    MAX(CASE WHEN t.day_lid = 3 THEN CONCAT('Wednesday (', LEFT(CONVERT(VARCHAR, s3.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s10.end_time, 100), 7), ')') END) AS Day3,
+                    MAX(CASE WHEN t.day_lid = 4 THEN CONCAT('Thursday (', LEFT(CONVERT(VARCHAR, s4.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s11.end_time, 100), 7), ')') END) AS Day4,
+                    MAX(CASE WHEN t.day_lid = 5 THEN CONCAT('Friday (', LEFT(CONVERT(VARCHAR, s5.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s12.end_time, 100), 7), ')') END) AS Day5,
+                    MAX(CASE WHEN t.day_lid = 6 THEN CONCAT('Saturday (', LEFT(CONVERT(VARCHAR, s6.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s13.end_time, 100), 7), ')') END) AS Day6,
+                    MAX(CASE WHEN t.day_lid = 7 THEN CONCAT('Sunday (', LEFT(CONVERT(VARCHAR, s7.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s14.end_time, 100), 7), ')') END) AS Day7
                     FROM [${slug}].timetable t
                     INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid
                     INNER JOIN [${slug}].courses c ON c.id = db.course_lid
@@ -290,7 +290,7 @@ module.exports = class divisionBatches {
                     LEFT JOIN dbo.slot_interval_timings s12 ON t.day_lid = 5 AND t.end_slot_lid = s12.id
                     LEFT JOIN dbo.slot_interval_timings s13 ON t.day_lid = 6 AND t.end_slot_lid = s13.id
                     LEFT JOIN dbo.slot_interval_timings s14 ON t.day_lid = 7 AND t.end_slot_lid = s14.id
-                    WHERE c.sap_acad_session_id = @acadSessionId GROUP BY t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, db.max_seats`)
+                    WHERE c.sap_acad_session_id = @acadSessionId GROUP BY t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, db.max_seats, db.division, t.faculty_id, t.faculty_name`)
         })
     }
 }

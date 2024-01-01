@@ -249,7 +249,6 @@
              ajaxApi(ApiObj).then(result =>{
                   showSuccess(result);
              }).catch(error =>{
-              console.log('values of error',error);
               showError(JSON.stringify(error.responseJSON));
              })
         }
@@ -289,7 +288,6 @@ $('#program-name-filter').on('change', function() {
             AjaxtTable(result.workload);
         })
         .catch(error => {
-            console.log('values of error', error);
             showError(JSON.stringify(error.responseJSON));
         });
 });
@@ -383,29 +381,7 @@ $(document).on('change', '#course-name-filter', function() {
     let rowCount = $('#changeEntry').val();
     $('#page-no').html(test);
     paginationData(rowCount, parseInt(test));
-  
-    function paginationData(rowCount, totalCount) {
-            let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
-            $('#page-no').html(totalCount);
-            $('#pagination').bootpag({
-                total: pageNos,
-                page: 1,
-                maxVisible: 10,
-                leaps: true,
-                firstLastUse: true,
-                first: '←',
-                last: '→',
-                wrapClass: 'pagination',
-                activeClass: 'active', 
-                disabledClass: 'disabled',
-                nextClass: 'next',
-                prevClass: 'prev',
-                lastClass: 'last',
-                firstClass: 'first'
-            }).on("page", function (event, num) {
-               
-            });
-        }
+
         $('#searchkeyword').on('input',function(){
          let searchValue = $(this).val();
          

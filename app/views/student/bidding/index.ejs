@@ -9,6 +9,50 @@
         <h3 class="ms-2"> Bidding</h3>  
     </div>
     <div class="card-body table-responsive">
+                
+      <div class="row ps-5 pe-5">
+        <%for(let credit of creditList) { %>
+            <div class="col-md-4">
+                <h6><%- credit.acad_session %> Credits :&nbsp;<span class="credits-point-target" id="credits-points-target-<%- credit.sap_acad_session_id %>"><%- credit.min_credits %></span></h6>
+            </div>
+        <% } %>
+    </div>
+
+    <div class="row ps-5 pe-5">
+            <%for(let acadSession of dropdownAcadSessionList) { %>
+                <div class="col-md-4">
+                    <h6><%- acadSession.acad_session %> Selected Credits :&nbsp;<span class="credit-points" id="credits-points-<%- acadSession.sap_acad_session_id %>">0</span></h6>
+                </div>
+            <% } %>
+    </div>
+
+    <div class="row ps-5 pe-5">
+        <div class="col-md-4">
+            <h6>Start Time :&nbsp;<span id="start-time"><%-startAndEndTime.startTime %></span></h6>
+        </div>    
+        <div class="col-md-4">
+            <h6>End Time :&nbsp;<span id="end-time"><%-startAndEndTime.endTime %></h6>
+        </div>
+        <div class="col-md-4">
+            <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
+        </div>
+    </div>
+    </div>
+  </div>
+
+  <div class="card card-custom-border-curv mt-5">
+    <div class="card-header-custom d-flex justify-content-between p-1">
+        <h3 class="ms-2">Confirmation Courses</h3>  
+    </div>
+    <div class="card-body table-responsive">
+     
+    </div>
+  </div>
+  <div class="card card-custom-border-curv mt-5">
+    <div class="card-header-custom d-flex justify-content-between p-1">
+        <h3 class="ms-2">Consideration Course</h3>  
+    </div>
+    <div class="card-body table-responsive">
      
     </div>
   </div>
@@ -52,6 +96,9 @@ $(document).ready(function() {
     let active = `<%- active %>`;
     $('#sidebar .side-menu li.' + active).addClass('active');
 
+    updateCurrentTime();
+    setInterval(updateCurrentTime, 1000);
+
     $('.bidding-modal').on('click', '.bidding-trimester', function() {
        $('#bidding-trimester-select-table tbody').empty();
        let prevSelected = $(this).closest('div').siblings().find('.bidding-trimester-selected');
@@ -70,7 +117,6 @@ $(document).ready(function() {
         dataType :'JSON',
        }
       ajaxApi(ApiObj).then(result =>{
-        console.log('values of result,',result);
         showData(result.biddingCourseList);
       }).catch(error =>{
         showError(JSON.stringify(error.responseJSON))
@@ -93,7 +139,7 @@ function showData(biddingCourseList){
   biddingTrimesterTable.append(`
     <tr>
       <td>${biddingCourse.area_name}</td>
-      <td>${biddingCourse.course_name}</td>
+      <td>${biddingCourse.course_name}-${biddingCourse.division}( ${biddingCourse.faculty_name} )</td>
       <td>${biddingCourse.acad_session}</td>
       <td>${daysHTML}</td>
       <td>${biddingCourse.credits}</td>
@@ -105,6 +151,7 @@ function showData(biddingCourseList){
     }
   }
 }
+
 
 </script>
 

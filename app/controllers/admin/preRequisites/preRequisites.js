@@ -86,7 +86,6 @@ module.exports = {
             preRequisites.delete(req.body.id,res.locals.slug,res.locals.biddingId,res.locals.userId).then(result =>{
                res.status(200).json(JSON.parse(result.output.output_json));
             }).catch(error =>{
-                 console.log('values of error',error);
                if(isJsonString.isJsonString(error.originalError.info.message)){
                    res.status(500).json(JSON.parse(error.originalError.info.message));
                }

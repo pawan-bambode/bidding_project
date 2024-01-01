@@ -22,7 +22,6 @@ function startBench(){
  
  autocannon.track(instance);
  function finishedBench(err,res){
-  console.log("finishedBench",err,res);
  }
  }
  startBench();

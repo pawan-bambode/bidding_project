@@ -35,7 +35,6 @@ module.exports = {
         divisionBatch.uploadDivisionBatches(res.locals.slug,divisionBatches,res.locals.userId,biddingId).then(result =>{
         res.status(200).json(JSON.parse(result.output.output_json));
        }).catch(error =>{
-        console.log('values of error',error);
            if(isJsonString.isJsonString(error.originalError.info.message)){
             res.status(500).json(JSON.parse(error.originalError.info.message));
            }
@@ -82,7 +81,6 @@ module.exports = {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
             .catch(error => {
-                console.log('values of error',error);
                 if (isJsonString.isJsonString(error.originalError.info.message)) {
                     res.status(500).json(JSON.parse(error.originalError.info.message));
                 } else {
@@ -186,7 +184,6 @@ filterBySessionId:(req,res) =>{
            workloadLength:result[1].recordset[0][''] 
           })
        }) .catch(error => {
-        console.log('values of error',error);
            if (isJsonString.isJsonString(error.originalError.info.message)) {
                res.status(500).json(JSON.parse(error.originalError.info.message));
            } else {

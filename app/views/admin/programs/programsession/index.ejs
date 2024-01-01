@@ -120,28 +120,7 @@
         $('#sidebar .side-menu li.' + active).addClass('active');
 
         paginationData(rowCount, parseInt(test));
-        function paginationData(rowCount, totalCount) {
-            let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
-            console.log("Page Numbers", pageNos);
-            $('#pagination').bootpag({
-                total: pageNos,
-                page: 1,
-                maxVisible: 10,
-                leaps: true,
-                firstLastUse: true,
-                first: '←',
-                last: '→',
-                wrapClass: 'pagination',
-                activeClass: 'active', 
-                disabledClass: 'disabled',
-                nextClass: 'next',
-                prevClass: 'prev',
-                lastClass: 'last',
-                firstClass: 'first'
-            }).on("page", function (event, num) {
-               
-            });
-        }  
+    
      $('#refresh-program-sessions').on('click',function(){
         let ApiObj = {
             url:'/admin/program-session/refresh',
@@ -216,7 +195,6 @@
             showEntry:showEntry
             },
             success:function(data){
-                console.log('values of data',data);
             paginationData(rowCount,data.length)
             AjaxtTable(data.programSessionList )
             }
@@ -237,7 +215,6 @@ $(".pagination-search").on('click','.pagination li',function(){
             showEntry:showEntry
         },
         success: function (data) {
-            console.log('values of data',data);
             AjaxtTable(data.programSessionList);
             paginationData(showEntry,data.length)
             $('#page-no').html(data.length);

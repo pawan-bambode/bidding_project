@@ -133,7 +133,6 @@
         }
     });
     $('#complete-courses-table').on('change','.checkbox-complete-course', function() {
-      console.log('values of complete',$(this));
         if (this.checked) {
            $('#delete-all-complete-coures').removeClass('disabled');
         } else {
@@ -150,7 +149,6 @@
         deleteCompleteCourseArray.push(deleteCompleteCourse);
     });
   
-    console.log('values of delete',deleteCompleteCourseArray);
     if(deleteCompleteCourseArray.length > 0){
       ConfirmationForAllDelete('Are you sure to delete the selected Completed Courses ?').then(result =>{
       if(result){
@@ -163,7 +161,6 @@
              ajaxApi(ApiObj).then(result =>{
                   showSuccess(result);
              }).catch(error =>{
-              console.log('values of error',error);
               showError(JSON.stringify(error.responseJSON));
              })
         }
@@ -203,7 +200,6 @@ $('#program-name-filter').on('change', function() {
             AjaxtTable(result.workload);
         })
         .catch(error => {
-            console.log('values of error', error);
             showError(JSON.stringify(error.responseJSON));
         });
 });
@@ -286,7 +282,6 @@ $(document).on('change', '#course-name-filter', function() {
              datatype:'JSON'
           }
            ajaxApi(ApiObj).then(result=>{
-            console.log('values of result=========>',result.data);
            paginationData(showEntry,result.length)
              AjaxtTable(result.data)
            }).catch(error =>{
@@ -299,27 +294,6 @@ $(document).on('change', '#course-name-filter', function() {
       $('#page-no').html(test);
       paginationData(rowCount, parseInt(test));
   
-     function paginationData(rowCount, totalCount) {
-             let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
-             $('#page-no').html(totalCount);
-             $('#pagination').bootpag({
-                 total: pageNos,
-                 page: 1,
-                 maxVisible: 10,
-                 leaps: true,
-                 firstLastUse: true,
-                 first: '←',
-                 last: '→',
-                 wrapClass: 'pagination',
-                 activeClass: 'active', 
-                 nextClass: 'next',
-                 prevClass: 'prev',
-                 lastClass: 'last',
-                 firstClass: 'first'
-             }).on("page", function (event, num) {
-               
-             });
-         }
          $('#searchkeyword').on('input',function(){
            let searchValue = $(this).val();
            let pageNo = $(this).attr('data-lp');
@@ -343,7 +317,6 @@ $(document).on('change', '#course-name-filter', function() {
                  let pageNo = $(this).attr('data-lp')
                 let searchValue = $('#searchkeyword').val();
                  let showEntry = $('#changeEntry').val();
-                 console.log('values of showEntry',showEntry);
                    $.ajax({
                        type:'POST',
                        url:'/admin/completed-courses/search',
@@ -353,13 +326,12 @@ $(document).on('change', '#course-name-filter', function() {
                          showEntry:showEntry
                        },
                   success:function(data){
-                    console.log('values of data',data);
                   AjaxtTable(data.data)
            }
          })
          })
         function AjaxtTable(courseList) {
-               console.log('values of courseList',courseList);
+               
                $("#course-table tbody").empty();
                let AjaxTable = ``;
               if (courseList.length > 0) {
@@ -402,12 +374,9 @@ $(document).on('change', '#course-name-filter', function() {
           processData: false,
           contentType: false,
           success: function(response) {
-            console.log('values of response',response);
             showSuccess(response);
           },
           error: function(xhr, status, error) {
-            console.log('values of errror',error);
-            console.log('valuesof xhr',xhr);
             showError(JSON.stringify(xhr.responseJSON));
           }
         });

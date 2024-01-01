@@ -152,7 +152,6 @@ module.exports = class Students {
     }
 
     static updateStudentDetails(firstName, lastName, studentEmail, studentPhone, studentId) {
-        console.log('IN MODAL', firstName)
         return poolConnection.then(pool => {
             return pool.request().query(`UPDATE student_details SET first_name = '${firstName}', last_name = '${lastName}', email = '${studentEmail}', phone = '${studentPhone}' WHERE id = ${studentId}`)
         })
@@ -186,9 +185,10 @@ module.exports = class Students {
             return pool.request().query(`UPDATE users SET password = '${newPassword}' WHERE username = '${userName}'`)
         })
     }
+    
     static multipleHit(){
-        console.log('inside the multiple hit');
     }
+
     static getSlotForShowTimetable(){
         return poolConnection.then(pool => {
           return pool.request().query(`SELECT MIN(start_slot_lid) AS start_time_lid, MAX(end_slot_lid) AS end_time_lid FROM [sbm-mum].timetable`)
