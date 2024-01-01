@@ -18,7 +18,6 @@ module.exports = {
 
     getCourseByAcadSession : (req, res) =>{
       Promise.all([divisionBatch.getBiddingCourseByAcadSession(res.locals.slug, res.locals.biddingId, req.body.acadSessionId)]).then(result =>{
-        console.log('values of result-------->',result[0].recordset);
         res.json({
             status:'200',
             message:'Result fetched',

@@ -33,7 +33,12 @@
                 <th>Area</th>
                 <th>Course</th>
                 <th>Trimester</th>
+                <th>Course Timings</th>
                 <th>Credits</th>
+                <th>Available Seats</th>
+                <th>Total Bidders</th>
+                <th>MRB</th>
+                <th>Action</th>
             </thead>
             <tbody>
 
@@ -78,13 +83,25 @@ function showData(biddingCourseList){
   let biddingTrimesterTable = $('#bidding-trimester-select-table tbody');
   if(biddingCourseList.length > 0 ){
     for(let biddingCourse of biddingCourseList){
-      biddingTrimesterTable.append(`
-          <tr>
-            <td>${biddingCourse.area_name}</td>
-            <td>${biddingCourse.course_name}</td>
-            <td>${biddingCourse.acad_session}</td>
-            <td>${biddingCourse.credits}</td>
-          </tr>`);
+      const days = Object.keys(biddingCourse)
+    .filter(key => key.startsWith('Day'))
+    .map(key => biddingCourse[key])
+    .filter(day => day !== null);
+
+  const daysHTML = days.map(day => `<div>${day}</div>`).join('');
+
+  biddingTrimesterTable.append(`
+    <tr>
+      <td>${biddingCourse.area_name}</td>
+      <td>${biddingCourse.course_name}</td>
+      <td>${biddingCourse.acad_session}</td>
+      <td>${daysHTML}</td>
+      <td>${biddingCourse.credits}</td>
+      <td>${biddingCourse.max_seats}</td>
+      <td>0</td>
+      <td>0</td>
+      <td><button class="btn btn-secondary add-bidding">Add</button></td>
+    </tr>`);
     }
   }
 }

@@ -264,28 +264,33 @@ module.exports = class divisionBatches {
             return pool.request()
             .input('biddingId', sql.Int, biddingId)
             .input('acadSessionId', sql.Int, acadSessionId)
-            .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits,
-                    db.max_seats, d.day_name,
-                    MAX(COALESCE(CASE WHEN t.day_lid = 1 THEN CONCAT( s1.start_time, '-', s1.end_time) END, 'No Data')) AS Day1,
-                    MAX(COALESCE(CASE WHEN t.day_lid = 2 THEN CONCAT( s2.start_time, '-', s2.end_time) END, 'No Data')) AS Day2,
-                    MAX(COALESCE(CASE WHEN t.day_lid = 3 THEN CONCAT( s3.start_time, ', End Time - ', s3.end_time) END, 'No Data')) AS Day3,
-                    MAX(COALESCE(CASE WHEN t.day_lid = 4 THEN CONCAT( s4.start_time, ', End Time - ', s4.end_time) END, 'No Data')) AS Day4,
-                    MAX(COALESCE(CASE WHEN t.day_lid = 5 THEN CONCAT( s5.start_time, ', End Time - ', s5.end_time) END, 'No Data')) AS Day5,
-                    MAX(COALESCE(CASE WHEN t.day_lid = 6 THEN CONCAT( s6.start_time, ', End Time - ', s6.end_time) END, 'No Data')) AS Day6,
-                    MAX(COALESCE(CASE WHEN t.day_lid = 7 THEN CONCAT('Start Time - ', s7.start_time, ', End Time - ', s7.end_time) END, 'No Data')) AS Day7
+            .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, 
+                    db.max_seats,
+                    MAX(CASE WHEN t.day_lid = 1 THEN CONCAT('Monday (', LEFT(CONVERT(VARCHAR, s1.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s8.end_time, 100), 7), ')') END) AS Day1,
+                    MAX(CASE WHEN t.day_lid = 2 THEN CONCAT('Tuesday (',LEFT(CONVERT(VARCHAR, s2.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s9.end_time, 100), 7), ')') END) AS Day2,
+                    MAX(CASE WHEN t.day_lid = 3 THEN CONCAT( LEFT(CONVERT(VARCHAR, s3.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s10.end_time, 100), 7), ')') END) AS Day3,
+                    MAX(CASE WHEN t.day_lid = 4 THEN CONCAT( LEFT(CONVERT(VARCHAR, s4.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s11.end_time, 100), 7), ')') END) AS Day4,
+                    MAX(CASE WHEN t.day_lid = 5 THEN CONCAT( LEFT(CONVERT(VARCHAR, s5.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s12.end_time, 100), 7), ')') END) AS Day5,
+                    MAX(CASE WHEN t.day_lid = 6 THEN CONCAT( LEFT(CONVERT(VARCHAR, s6.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s13.end_time, 100), 7), ')') END) AS Day6,
+                    MAX(CASE WHEN t.day_lid = 7 THEN CONCAT( LEFT(CONVERT(VARCHAR, s7.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s14.end_time, 100), 7), ')') END) AS Day7
                     FROM [${slug}].timetable t
-                    INNER JOIN [dbo].days d ON t.day_lid = d.id
                     INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid
                     INNER JOIN [${slug}].courses c ON c.id = db.course_lid
-                    LEFT JOIN [dbo].slot_interval_timings s1 ON t.day_lid = 1 AND t.start_slot_lid = s1.id
-                    LEFT JOIN [dbo].slot_interval_timings s2 ON t.day_lid = 2 AND t.start_slot_lid = s2.id
-                    LEFT JOIN [dbo].slot_interval_timings s3 ON t.day_lid = 3 AND t.start_slot_lid = s3.id
-                    LEFT JOIN [dbo].slot_interval_timings s4 ON t.day_lid = 4 AND t.start_slot_lid = s4.id
-                    LEFT JOIN [dbo].slot_interval_timings s5 ON t.day_lid = 5 AND t.start_slot_lid = s5.id
-                    LEFT JOIN [dbo].slot_interval_timings s6 ON t.day_lid = 6 AND t.start_slot_lid = s6.id
-                    LEFT JOIN [dbo].slot_interval_timings s7 ON t.day_lid = 7 AND t.start_slot_lid = s7.id
-                    WHERE c.sap_acad_session_id = @acadSessionId GROUP BY t.division_batch_lid, c.area_name, 
-                    c.course_name, c.course_id, c.acad_session, c.credits, db.max_seats`)
+                    LEFT JOIN dbo.slot_interval_timings s1 ON t.day_lid = 1 AND t.start_slot_lid = s1.id
+                    LEFT JOIN dbo.slot_interval_timings s2 ON t.day_lid = 2 AND t.start_slot_lid = s2.id
+                    LEFT JOIN dbo.slot_interval_timings s3 ON t.day_lid = 3 AND t.start_slot_lid = s3.id
+                    LEFT JOIN dbo.slot_interval_timings s4 ON t.day_lid = 4 AND t.start_slot_lid = s4.id
+                    LEFT JOIN dbo.slot_interval_timings s5 ON t.day_lid = 5 AND t.start_slot_lid = s5.id
+                    LEFT JOIN dbo.slot_interval_timings s6 ON t.day_lid = 6 AND t.start_slot_lid = s6.id
+                    LEFT JOIN dbo.slot_interval_timings s7 ON t.day_lid = 7 AND t.start_slot_lid = s7.id
+                    LEFT JOIN dbo.slot_interval_timings s8 ON t.day_lid = 1 AND t.end_slot_lid = s8.id
+                    LEFT JOIN dbo.slot_interval_timings s9 ON t.day_lid = 2 AND t.end_slot_lid = s9.id
+                    LEFT JOIN dbo.slot_interval_timings s10 ON t.day_lid = 3 AND t.end_slot_lid = s10.id
+                    LEFT JOIN dbo.slot_interval_timings s11 ON t.day_lid = 4 AND t.end_slot_lid = s11.id
+                    LEFT JOIN dbo.slot_interval_timings s12 ON t.day_lid = 5 AND t.end_slot_lid = s12.id
+                    LEFT JOIN dbo.slot_interval_timings s13 ON t.day_lid = 6 AND t.end_slot_lid = s13.id
+                    LEFT JOIN dbo.slot_interval_timings s14 ON t.day_lid = 7 AND t.end_slot_lid = s14.id
+                    WHERE c.sap_acad_session_id = @acadSessionId GROUP BY t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, db.max_seats`)
         })
     }
 }
