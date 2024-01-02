@@ -1276,3 +1276,7 @@ box-shadow: -30px -30px 0 var(--primary-white);
     border-right: 10px solid transparent;
     top:var(--bidding-trimester-active);
 }
+
+.add-bidding i.fa-circle-plus {
+    font-size: 24px;
+  }

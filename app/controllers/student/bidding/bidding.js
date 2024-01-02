@@ -11,24 +11,40 @@ module.exports = {
 
         Promise.all([course.getDropdownAcadSessionList(res.locals.slug, res.locals.biddingId),
                      programSession.getCredits(res.locals.slug, res.locals.biddingId),
-                     roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId,2)]).then(result => {
+                     roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId,2),
+                     divisionBatch.getBiddingCourse(res.locals.slug, res.locals.biddingId),
+                     divisionBatch.getCourseNameForFilter(res.locals.slug, res.locals.biddingId)]).then(result => {
+                        
                 res.render('student/bidding/index',{
                     active :bidding,
                     dropdownAcadSessionList: result[0].recordset,
                     creditList: result[1].recordset,
-                    startAndEndTime: result[2].recordset[0]  
+                    startAndEndTime: result[2].recordset[0],
+                    biddingCourseList: result[3].recordset,
+                    courseList: result[4].recordset 
             });
         })
    
     },  
 
     getCourseByAcadSession : (req, res) =>{
-      Promise.all([divisionBatch.getBiddingCourseByAcadSession(res.locals.slug, res.locals.biddingId, req.body.acadSessionId)]).then(result =>{
+      Promise.all([divisionBatch.getBiddingCourseByAcadSession(res.locals.slug, res.locals.biddingId, req.body.acadSessionId), divisionBatch.getCourseNameForFilter(res.locals.slug, res.locals.biddingId, req.body.acadSessionId)]).then(result =>{
         res.json({
             status:'200',
             message:'Result fetched',
-            biddingCourseList:result[0].recordset
+            biddingCourseList:result[0].recordset,
+            courseName: result[1].recordset
         })
         })
+    },
+
+    getCourseByCourseId : (req, res) =>{
+        Promise.all([divisionBatch.getBiddingCourseByCourseId(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.courseId)]).then(result =>{
+            res.json({
+                status:'200',
+                message:'Result fetched',
+                biddingCourseList:result[0].recordset
+            })
+            })
     }
 }

@@ -2,7 +2,6 @@
 
 <%- include('../partials/leftSidebarForStudent.ejs') %>
 <%- include('../partials/header.ejs') %>
-
 <div class="main-content">
   <div class="card card-custom-border-curv">
     <div class="card-header-custom d-flex justify-content-between p-1">
@@ -53,7 +52,24 @@
         <h3 class="ms-2">Consideration Course</h3>  
     </div>
     <div class="card-body table-responsive">
-     
+      <table class="table custom_row table-bordered mt-4 custom-table" id="consideration-table">
+        <thead>
+            <th>#</th>
+            <th>Area</th>
+            <th>Course</th>
+            <th>Credits</th>
+            <th>Available Seats</th>
+            <th>Total Bidders</th>
+            <th>MRB</th>
+            <th>Winning status</th>
+            <th>Your Bid</th>
+            <th>Change Bid</th>
+            <th>Withdraw</th>
+        </thead>
+        <tbody>
+
+        </tbody>
+     </table>
     </div>
   </div>
   
@@ -72,8 +88,19 @@
             </div>
           <% } %>
         </div> 
+
+        <div class="col-md-3 mt-4 ms-2">
+            <select class="form-select form-control select2 d-none" id="course-filter">
+              <option value="" selected>Select Course</option>
+              <% for(let biddingCourse of courseList) { %>
+                <option value="<%-biddingCourse.course_id %>" ><%-biddingCourse.course_name %></option>
+              <% } %>
+            </select>
+        </div>
+
         <table class="table custom_row table-bordered mt-4 custom-table" id="bidding-trimester-select-table">
             <thead>
+                <th>#</th>
                 <th>Area</th>
                 <th>Course</th>
                 <th>Trimester</th>
@@ -84,75 +111,165 @@
                 <th>MRB</th>
                 <th>Action</th>
             </thead>
-            <tbody>
-
-            </tbody>
+            <tbody>     
          </table>
   </div>
 </div>
 <%- include('../partials/footer.ejs') %>
 <script>
 $(document).ready(function() {
+    $('.select2').select2();
+
     let active = `<%- active %>`;
     $('#sidebar .side-menu li.' + active).addClass('active');
+    
+    let biddingCourseListData = `<%- JSON.stringify(biddingCourseList) %>`;
+    let biddingCourseList = JSON.parse(biddingCourseListData);
 
     updateCurrentTime();
     setInterval(updateCurrentTime, 1000);
+   
+    biddingCourses(biddingCourseList);
 
     $('.bidding-modal').on('click', '.bidding-trimester', function() {
-       $('#bidding-trimester-select-table tbody').empty();
-       let prevSelected = $(this).closest('div').siblings().find('.bidding-trimester-selected');
-       prevSelected.removeClass('bidding-trimester-selected');
-       $(this).addClass('bidding-trimester-selected');
-       $(this).css('--bidding-trimester-active', $(this).innerHeight() + 'px');
+       resetBiddingTrimester();
+       selectBiddingTrimester($(this));
 
        let acadSessionId = $(this).data('acad-session-id');
        
-       let ApiObj = {
-        type: 'POST',
-        url: '/student/bidding/course-by-acadsession',
-        data:{
-          acadSessionId: acadSessionId
-        },
-        dataType :'JSON',
-       }
-      ajaxApi(ApiObj).then(result =>{
-        showData(result.biddingCourseList);
-      }).catch(error =>{
-        showError(JSON.stringify(error.responseJSON))
-      })
-   });
+        let ApiObj = {
+          type: 'POST',
+          url: '/student/bidding/course-by-acadsession',
+          data:{
+            acadSessionId: acadSessionId
+          },
+          dataType :'JSON',
+        }
+        ajaxApi(ApiObj).then(result =>{
+        
+          let courseName = `<option  >Select Session</option>`;
+              if (result.courseName.length > 0) {
+                  result.courseName.forEach(element => {
+                    courseName += `<option value="${element.course_id}">${element.course_name}</option>`;
+                  });
+              } else {
+                courseName += `<option value="">No Course Found!</option>`;
+              }
 
+              $("#course-filter").html(courseName);
+              biddingCourses(result.biddingCourseList);
+          
+        }).catch(error =>{
+          showError(JSON.stringify(error.responseJSON))
+        })
+    });
+
+   $('#course-filter').on('change', function() {
+        let courseId = $(this).val();
+        let acadSessionId = $('button.bidding-trimester-selected').data('acad-session-id');
+       
+        let ApiObj = {
+             type: 'POST',
+             url: '/student/bidding/course',
+             data: {
+                    courseId: courseId,
+                    acadSessionId:acadSessionId 
+              },
+              dataType: 'JSON'
+            };
+
+          ajaxApi(ApiObj).then(result => {
+            biddingCourses(result.biddingCourseList);
+            }).catch(error => {
+                    showError(JSON.stringify(error.responseJSON))
+                });
+      });
+
+      $('#bidding-trimester-select-table').on('click','.add-bidding',function(){
+
+          let areaName = $(this).closest('tr').data('area-name');
+          let courseName = $(this).closest('tr').data('course-name');
+          let credits = $(this).closest('tr').data('credits');
+          let available = $(this).closest('tr').data('max-seats');
+          let biddingTable = $('#consideration-table tbody');
+          let tableId = $('#consideration-table tbody tr').length;
+
+          let biddingRow = `<tr>
+                        <td>${++tableId}</td>
+                        <td>${areaName}</td>
+                        <td>${courseName}</td>
+                        <td>${credits}</td>
+                        <td>${available}</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td></td>
+                        <td></td>
+                        <td class="d-flex"><input type="text" placeholder="Bids" class="p-2" size='15'>
+                          <button class="btn border  border-dark ms-2">
+                          <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
+                          </button> </td>
+                        <td><button class="btn border border-danger cancel-bidding-course" data-area="${areaName}"><img src='/image/student/body-part-image/bidding-round-image/withdraw.png' </button></td></tr>`;
+               biddingTable.append(biddingRow);
+        })
+       
 });
 
-function showData(biddingCourseList){
-  let biddingTrimesterTable = $('#bidding-trimester-select-table tbody');
-  if(biddingCourseList.length > 0 ){
-    for(let biddingCourse of biddingCourseList){
-      const days = Object.keys(biddingCourse)
-    .filter(key => key.startsWith('Day'))
-    .map(key => biddingCourse[key])
-    .filter(day => day !== null);
+function biddingCourses(biddingCourseList) {
+  $('#bidding-trimester-select-table tbody').empty();
 
-  const daysHTML = days.map(day => `<div>${day}</div>`).join('');
+  biddingCourseList.forEach(function(biddingCourse, index) {
+  
+    let { division_batch_lid: divisionBatchId, faculty_id: facultyId } = biddingCourse;
+    let existingElement = $(`#bidding-trimester-select-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
+    let existingFaculty = existingElement.filter(`[data-faculty-id="${facultyId}"]`);
+    let otherFacultyExists = existingElement.not(existingFaculty);
+    let lengthOfTable = $('#bidding-trimester-select-table tbody tr').length;
 
-  biddingTrimesterTable.append(`
-    <tr>
-      <td>${biddingCourse.area_name}</td>
-      <td>${biddingCourse.course_name}-${biddingCourse.division}( ${biddingCourse.faculty_name} )</td>
-      <td>${biddingCourse.acad_session}</td>
-      <td>${daysHTML}</td>
-      <td>${biddingCourse.credits}</td>
-      <td>${biddingCourse.max_seats}</td>
-      <td>0</td>
-      <td>0</td>
-      <td><button class="btn btn-secondary add-bidding">Add</button></td>
-    </tr>`);
+    if (existingElement.length === 0) {
+      let newRow = `<tr 
+         data-area-name = "${biddingCourse.area_name}" 
+         data-course-name = "${biddingCourse.course_name}-${biddingCourse.division}" 
+         data-acad-session = "${biddingCourse.acad_session}" 
+         data-division-batch-lid = "${biddingCourse.division_batch_lid}"
+         data-faculty-id = "${biddingCourse.faculty_id}"
+         data-credits = "${biddingCourse.credits}"
+         data-max-seats = "${biddingCourse.max_seats}">
+
+          <td>${++lengthOfTable}</td>
+          <td>${biddingCourse.area_name}</td>
+          <td>${biddingCourse.course_name}-${biddingCourse.division}</td>
+          <td>${biddingCourse.acad_session}</td>
+          <td class='course-timing'>${biddingCourse.day_name}(${biddingCourse.StartTime} to ${biddingCourse.EndTime}) ${biddingCourse.faculty_name}</td>
+          <td>${biddingCourse.credits}</td>
+          <td>${biddingCourse.max_seats}</td>
+          <td>0</td>
+          <td>0</td>
+          <td>
+            <button class="btn border border-dark add-bidding">
+              <i class="fa-solid fa-circle-plus" style="color:#5ca4ea"></i>
+            </button>
+          </td>
+        </tr>`;
+      $('#bidding-trimester-select-table tbody').append(newRow);
+    } else {
+      let courseTiming = `<div>${biddingCourse.day_name}(${biddingCourse.StartTime} to ${biddingCourse.EndTime})`;
+      let contentToAppend = otherFacultyExists.length ? `${courseTiming} - ${biddingCourse.faculty_name})` : `${courseTiming}`;
+      existingElement.children('.course-timing').append(contentToAppend);
     }
-  }
+  });
 }
 
+function resetBiddingTrimester() {
+  $('#bidding-trimester-select-table tbody').empty();
+  let prevSelected = $('.bidding-trimester-selected');
+  prevSelected.removeClass('bidding-trimester-selected');
+}
 
+function selectBiddingTrimester(element) {
+  element.addClass('bidding-trimester-selected');
+  element.css('--bidding-trimester-active', element.innerHeight() + 'px');
+}
+             
 </script>
 
 <%- include('../partials/footerEnd.ejs') %>

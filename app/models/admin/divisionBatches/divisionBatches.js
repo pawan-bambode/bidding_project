@@ -257,40 +257,97 @@ module.exports = class divisionBatches {
                     WHERE db.active = 1 AND db.bidding_session_lid = @biddingId AND p.program_id = @programId AND c.sap_acad_session_id = @sessionId`)
         })
     }
+    static getBiddingCourse(slug, biddingId){
 
+            return poolConnection.then(pool =>{
+                return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, 
+                        db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, db.max_seats 
+                        FROM [${slug}].timetable t 
+                        INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
+                        INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
+                        INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
+                        INNER JOIN [${slug}].courses c ON c.id = db.course_lid
+                        INNER JOIN [dbo].days d ON d.id = t.day_lid`)
+            })
+    }
     static getBiddingCourseByAcadSession(slug, biddingId, acadSessionId){
      
         return poolConnection.then(pool =>{
             return pool.request()
             .input('biddingId', sql.Int, biddingId)
             .input('acadSessionId', sql.Int, acadSessionId)
-            .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, 
-                    db.max_seats, db.division, t.faculty_id, t.faculty_name,
-                    MAX(CASE WHEN t.day_lid = 1 THEN CONCAT('Monday (', LEFT(CONVERT(VARCHAR, s1.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s8.end_time, 100), 7), ')') END) AS Day1,
-                    MAX(CASE WHEN t.day_lid = 2 THEN CONCAT('Tuesday (',LEFT(CONVERT(VARCHAR, s2.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s9.end_time, 100), 7), ')') END) AS Day2,
-                    MAX(CASE WHEN t.day_lid = 3 THEN CONCAT('Wednesday (', LEFT(CONVERT(VARCHAR, s3.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s10.end_time, 100), 7), ')') END) AS Day3,
-                    MAX(CASE WHEN t.day_lid = 4 THEN CONCAT('Thursday (', LEFT(CONVERT(VARCHAR, s4.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s11.end_time, 100), 7), ')') END) AS Day4,
-                    MAX(CASE WHEN t.day_lid = 5 THEN CONCAT('Friday (', LEFT(CONVERT(VARCHAR, s5.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s12.end_time, 100), 7), ')') END) AS Day5,
-                    MAX(CASE WHEN t.day_lid = 6 THEN CONCAT('Saturday (', LEFT(CONVERT(VARCHAR, s6.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s13.end_time, 100), 7), ')') END) AS Day6,
-                    MAX(CASE WHEN t.day_lid = 7 THEN CONCAT('Sunday (', LEFT(CONVERT(VARCHAR, s7.start_time, 100), 7), ' to ', LEFT(CONVERT(VARCHAR, s14.end_time, 100), 7), ')') END) AS Day7
-                    FROM [${slug}].timetable t
-                    INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid
+            .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, 
+                    c.credits, db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time,
+                    100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name  
+                    FROM [${slug}].timetable t 
+                    INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
+                    INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
+                    INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
                     INNER JOIN [${slug}].courses c ON c.id = db.course_lid
-                    LEFT JOIN dbo.slot_interval_timings s1 ON t.day_lid = 1 AND t.start_slot_lid = s1.id
-                    LEFT JOIN dbo.slot_interval_timings s2 ON t.day_lid = 2 AND t.start_slot_lid = s2.id
-                    LEFT JOIN dbo.slot_interval_timings s3 ON t.day_lid = 3 AND t.start_slot_lid = s3.id
-                    LEFT JOIN dbo.slot_interval_timings s4 ON t.day_lid = 4 AND t.start_slot_lid = s4.id
-                    LEFT JOIN dbo.slot_interval_timings s5 ON t.day_lid = 5 AND t.start_slot_lid = s5.id
-                    LEFT JOIN dbo.slot_interval_timings s6 ON t.day_lid = 6 AND t.start_slot_lid = s6.id
-                    LEFT JOIN dbo.slot_interval_timings s7 ON t.day_lid = 7 AND t.start_slot_lid = s7.id
-                    LEFT JOIN dbo.slot_interval_timings s8 ON t.day_lid = 1 AND t.end_slot_lid = s8.id
-                    LEFT JOIN dbo.slot_interval_timings s9 ON t.day_lid = 2 AND t.end_slot_lid = s9.id
-                    LEFT JOIN dbo.slot_interval_timings s10 ON t.day_lid = 3 AND t.end_slot_lid = s10.id
-                    LEFT JOIN dbo.slot_interval_timings s11 ON t.day_lid = 4 AND t.end_slot_lid = s11.id
-                    LEFT JOIN dbo.slot_interval_timings s12 ON t.day_lid = 5 AND t.end_slot_lid = s12.id
-                    LEFT JOIN dbo.slot_interval_timings s13 ON t.day_lid = 6 AND t.end_slot_lid = s13.id
-                    LEFT JOIN dbo.slot_interval_timings s14 ON t.day_lid = 7 AND t.end_slot_lid = s14.id
-                    WHERE c.sap_acad_session_id = @acadSessionId GROUP BY t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, db.max_seats, db.division, t.faculty_id, t.faculty_name`)
+                    INNER JOIN [dbo].days d ON d.id = t.day_lid
+                    WHERE c.sap_acad_session_id = @acadSessionId AND t.bidding_session_lid = @biddingId`)
         })
+    }
+
+    static getBiddingCourseByCourseId(slug, biddingId, acadSessionId, courseId){
+      if(acadSessionId){
+
+            return poolConnection.then(pool =>{
+                return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .input('acadSessionId', sql.Int, acadSessionId)
+                .input('courseId', sql.Int, courseId)
+                .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, 
+                        db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name  
+                        FROM [${slug}].timetable t 
+                        INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
+                        INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
+                        INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
+                        INNER JOIN [${slug}].courses c ON c.id = db.course_lid
+                        INNER JOIN [dbo].days d ON d.id = t.day_lid 
+                        WHERE c.sap_acad_session_id = @acadSessionId AND c.course_id = @courseId AND t.bidding_session_lid = @biddingId`)
+            })
+        }
+        else{
+            return poolConnection.then(pool =>{
+                return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .input('courseId', sql.Int, courseId)
+                .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, 
+                        db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name  
+                        FROM [${slug}].timetable t 
+                        INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
+                        INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
+                        INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
+                        INNER JOIN [${slug}].courses c ON c.id = db.course_lid
+                        INNER JOIN [dbo].days d ON d.id = t.day_lid 
+                        WHERE c.course_id = @courseId AND t.bidding_session_lid = @biddingId`)
+            })
+        }
+    }
+
+    static getCourseNameForFilter(slug, biddingId, acadSessionId){
+        if(acadSessionId){ 
+            return poolConnection.then(pool =>{
+                return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .input('acadSessionId', sql.Int, acadSessionId)
+                .query(`SELECT c.course_id, c.course_name FROM [${slug}].timetable t
+                        INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid
+                        INNER JOIN [${slug}].courses c ON c.id = db.course_lid WHERE t.active = 1 AND db.active = 1 AND c.active = 1 AND t.bidding_session_lid = @biddingId 
+                        AND c.sap_acad_session_id = @acadSessionId`);
+            });
+        }
+        else{
+            return poolConnection.then(pool =>{
+                return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .query(`SELECT c.course_id, c.course_name FROM [${slug}].timetable t
+                        INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid
+                        INNER JOIN [${slug}].courses c ON c.id = db.course_lid WHERE t.active = 1 AND db.active = 1 AND c.active = 1 AND t.bidding_session_lid = @biddingId `);
+            });
+        }    
     }
 }
