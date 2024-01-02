@@ -262,8 +262,9 @@ module.exports = class divisionBatches {
             return poolConnection.then(pool =>{
                 return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, 
-                        db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, db.max_seats 
+                .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, 
+                        c.sap_acad_session_id, c.credits, db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, 
+                        d.day_name 
                         FROM [${slug}].timetable t 
                         INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
                         INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
@@ -272,6 +273,7 @@ module.exports = class divisionBatches {
                         INNER JOIN [dbo].days d ON d.id = t.day_lid`)
             })
     }
+    
     static getBiddingCourseByAcadSession(slug, biddingId, acadSessionId){
      
         return poolConnection.then(pool =>{
@@ -280,7 +282,7 @@ module.exports = class divisionBatches {
             .input('acadSessionId', sql.Int, acadSessionId)
             .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, 
                     c.credits, db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time,
-                    100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name  
+                    100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id  
                     FROM [${slug}].timetable t 
                     INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
                     INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
@@ -300,7 +302,7 @@ module.exports = class divisionBatches {
                 .input('acadSessionId', sql.Int, acadSessionId)
                 .input('courseId', sql.Int, courseId)
                 .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, 
-                        db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name  
+                        db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id  
                         FROM [${slug}].timetable t 
                         INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
                         INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
@@ -316,7 +318,7 @@ module.exports = class divisionBatches {
                 .input('biddingId', sql.Int, biddingId)
                 .input('courseId', sql.Int, courseId)
                 .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, 
-                        db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name  
+                        db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id  
                         FROM [${slug}].timetable t 
                         INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
                         INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
