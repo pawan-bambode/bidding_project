@@ -63,6 +63,7 @@
             <th>#</th>
             <th>Area</th>
             <th>Course</th>
+            <th>Acad Session</th>
             <th>Credits</th>
             <th>Available Seats</th>
             <th>Total Bidders</th>
@@ -94,16 +95,26 @@
             </div>
           <% } %>
         </div> 
-
-        <div class="col-md-3 mt-4 ms-2">
-            <select class="form-select form-control select2 d-none" id="course-filter">
-              <option value="" selected>Select Course</option>
-              <% for(let biddingCourse of courseList) { %>
-                <option value="<%-biddingCourse.course_id %>" ><%-biddingCourse.course_name %></option>
+        
+       <div class="row">
+          <div class="col-md-3 mt-4 ms-2">
+            <select class="form-select form-control select2 d-none" id="area-filter">
+              <option value="" selected>Select Area</option>
+              <% for(let area of areaList) { %>
+                <option value="<%-area.area_name %>" ><%-area.area_name %></option>
               <% } %>
             </select>
+         </div>
+          <div class="col-md-3 mt-4 ms-2">
+              <select class="form-select form-control select2 d-none" id="course-filter">
+                <option value="" selected>Select Course</option>
+                <% for(let biddingCourse of courseList) { %>
+                  <option value="<%-biddingCourse.course_id %>" ><%-biddingCourse.course_name %></option>
+                <% } %>
+              </select>
+          </div>
         </div>
-
+        
         <table class="table custom_row table-bordered mt-4 custom-table" id="bidding-trimester-select-table">
             <thead>
                 <th>#</th>
@@ -147,13 +158,22 @@ $(document).ready(function() {
     $('.select2').select2({
     dropdownParent: $('#bidding-modal')
    });
-
+  
+    let biddingDetails = [];
+    let areaCount = 0;
+    let areaDetails = 0;
+    let concentrationSettingJson = `<%-JSON.stringify(concentrationSetting) %>`;
+    let concentrationSettingData = JSON.parse(concentrationSettingJson);
+    let minCreditsCompleteArea = [];
+    let primaryAreaDetails = [];
 
     let active = `<%- active %>`;
     $('#sidebar .side-menu li.' + active).addClass('active');
     
     let biddingCourseListData = `<%- JSON.stringify(biddingCourseList) %>`;
     let biddingCourseList = JSON.parse(biddingCourseListData);
+    let dropdownAcadSessionList = JSON.parse(`<%- JSON.stringify(dropdownAcadSessionList) %>`);
+    const concentrationId = concentrationSettingData.concentration_lid;
 
     updateCurrentTime();
     setInterval(updateCurrentTime, 1000);
@@ -213,6 +233,27 @@ $(document).ready(function() {
                     showError(JSON.stringify(error.responseJSON))
                 });
       });
+       
+      $('#area-filter').on('change', function() {
+        let areaName = $(this).val();
+        let acadSessionId = $('button.bidding-trimester-selected').data('acad-session-id');
+       
+        let ApiObj = {
+             type: 'POST',
+             url: '/student/bidding/course-by-area',
+             data: {
+                    areaName: areaName,
+                    acadSessionId:acadSessionId 
+              },
+              dataType: 'JSON'
+            };
+
+          ajaxApi(ApiObj).then(result => {
+            biddingCourses(result.biddingCourseList);
+            }).catch(error => {
+                    showError(JSON.stringify(error.responseJSON))
+                });
+      });
 
       $('#bidding-trimester-select-table').on('click','.add-bidding',function(){
 
@@ -225,6 +266,17 @@ $(document).ready(function() {
           let facultyId = $(this).closest('tr').data('faculty-id');
           let acadSessionId = $(this).closest('tr').data('acad-session-id');
           let courseTime = $(this).closest('tr').children('.course-timing').html();
+          let courseId = $(this).closest('tr').data('course-id');
+          let isTotalCreditsMet = true;
+          let totalSelectedCredits = 0;
+          
+          let areaNameAndCredits = {
+            areaName:areaName,
+            credit:credits,
+            id:courseId
+          }
+          
+        
 
           let biddingTable = $('#consideration-table tbody');
           let tableId = $('#consideration-table tbody tr').length;
@@ -239,11 +291,12 @@ $(document).ready(function() {
               }, 500);
               return;
             }
-
-          let biddingRow = `<tr data-area-name ="${areaName}" data-course-name ="${courseName}" data-acad-session ="${acadSession}" data-division-batch-lid ="${divisionBatchId}" data-faculty-id =${facultyId} data-credits = "${credits}" data-max-seats =${available} data-course-time ="${courseTime}" data-acad-session-id = "${acadSessionId}">
+   
+          let biddingRow = `<tr data-area-name ="${areaName}" data-course-name ="${courseName}" data-acad-session ="${acadSession}" data-division-batch-lid ="${divisionBatchId}" data-faculty-id =${facultyId} data-credits = "${credits}" data-max-seats =${available} data-course-time ="${courseTime}" data-acad-session-id = "${acadSessionId}" data-course-id =${courseId}>
                         <td>${++tableId}</td>
                         <td>${areaName}</td>
                         <td>${courseName}</td>
+                        <td>${acadSession}</td>
                         <td>${credits}</td>
                         <td>${available}</td>
                         <td>0</td>
@@ -272,13 +325,105 @@ $(document).ready(function() {
                 setTimeout(() => {
                   $('.pop-up-message').addClass('d-none');
                 }, 500);
-
-               
+        
                 let creditsAcadSession = Number($(`#credits-points-${acadSessionId}`).text()) + Number(credits);
                 $(`#credits-points-${acadSessionId}`).text(creditsAcadSession);
 
                 $(this).closest('tr').remove();
                 arrangeTableId('bidding-trimester-select-table');
+
+                biddingDetails.push(areaNameAndCredits);
+                areaDetails = calculateAreaFrequency(biddingDetails);
+
+                for (let credit of dropdownAcadSessionList) { 
+                    let targetCreditPoints = $(`#credits-points-target-${credit.sap_acad_session_id}`).text();
+                    let creditPoints = $(`#credits-points-${credit.sap_acad_session_id}`).text();
+                    
+                    if (targetCreditPoints !== creditPoints) {
+                        isTotalCreditsMet = false;
+                        break; 
+                    }
+                }
+                
+                $('.credit-points').each((index, selectedCredit) => {
+                      totalSelectedCredits += parseFloat($(selectedCredit).text()) || 0;
+                });
+
+              
+                const areaCountLength = Object.keys(areaDetails).length;
+               
+                if (concentrationId === 5) {
+                      if (
+                          ((concentrationSettingData.min_credits_per_area <= areaDetails[areaName].totalCredits) &&
+                          (areaDetails[areaName].totalCredits <= concentrationSettingData.max_credits_per_area)) &&
+                          (areaCount <= areaCountLength)
+                      ) {
+                        
+                        if (!minCreditsCompleteArea.includes(areaName)) {
+                                areaCount++;
+                            minCreditsCompleteArea.push(areaName);
+                        }
+                        if (minCreditsCompleteArea.includes(areaName)) {
+                            const existingArea = primaryAreaDetails.find(area => area.areaName === areaName);
+                            if (existingArea) {
+                                creditExistingArea =  Number(existingArea.totalCredits)+Number(credits);
+                                existingArea.frequency++;
+                                existingArea.totalCredits = creditExistingArea;
+                            } else {
+                                primaryAreaDetails.push({ areaName: areaName, frequency: 1, totalCredits:credits });
+                            }
+                        }
+                  
+                      }
+                      if (isTotalCreditsMet) {
+                      if (areaCount >= concentrationSettingData.no_of_areas_to_cover && totalSelectedCredits === concentrationSettingData.total_elective_credits) {
+                          console.log('criteria met');
+                      } else {
+                          const areaMessage = areaCount < concentrationSettingData.no_of_areas_to_cover ? 'No of area is mismatch' : '';
+                          console.log('values of areaMessage', areaMessage);
+                      }
+                    }
+                 }
+              
+                 if (concentrationId != 5) {
+                      if (
+                          ((concentrationSettingData.min_credits_per_area <= areaDetails[areaName].totalCredits) &&
+                          (areaDetails[areaName].totalCredits <= concentrationSettingData.max_credits_per_area)) &&
+                          (areaCount <= areaCountLength)
+                      ) {
+                       
+                      
+                        if (!minCreditsCompleteArea.includes(areaName)) {
+                                areaCount++;
+                            minCreditsCompleteArea.push(areaName);
+                        }
+
+                      
+                        if (minCreditsCompleteArea.includes(areaName)) {
+                            const existingArea = primaryAreaDetails.find(area => area.areaName === areaName);
+                            if (existingArea) {
+                                creditExistingArea =  Number(existingArea.totalCredits)+Number(credits);
+                                existingArea.frequency++;
+                                existingArea.totalCredits = creditExistingArea;
+                            } else {
+                                primaryAreaDetails.push({ areaName: areaName, frequency: 1, totalCredits:credits });
+                            }
+                        }
+                        
+                      }
+                      if (isTotalCreditsMet) {
+                        const area = primaryAreaDetails.find(element => {
+                          return element.totalCredits >= concentrationSettingData.min_credits_in_primary_area && 
+                                element.totalCredits <= concentrationSettingData.max_credits_per_area;
+                      });
+                      
+                      if ((areaCount >= concentrationSettingData.no_of_areas_to_cover && totalSelectedCredits === concentrationSettingData.total_elective_credits) && area) {
+                          console.log('criteria met');
+                      } else {
+                          const areaMessage = areaCount < concentrationSettingData.no_of_areas_to_cover ? 'No of area is mismatch' : '';
+                          console.log('values of areaMessage', areaMessage);
+                      }}
+                 }  
         })
         
         $('#consideration-table').on('click', '.cancel-bidding-course', function(){
@@ -293,6 +438,7 @@ $(document).ready(function() {
           let tableBiddingCourse = $('#bidding-trimester-select-table tbody');
           let courseTime = $(this).closest('tr').data('course-time');
           let acadSessionId = $(this).closest('tr').data('acad-session-id')
+          let courseId = $(this).closest('tr').data('course-id');
           let tableId =  $('#bidding-trimester-select-table tbody tr').length;
           
           let creditPoints = Number($(`#credits-points-${acadSessionId}`).text());
@@ -301,7 +447,7 @@ $(document).ready(function() {
                   $('.pop-up-message-error').addClass('d-none');
                 }
 
-          let biddingRow = `<tr data-area-name ="${areaName}" data-course-name ="${courseName}" data-acad-session ="${acadSession}" data-division-batch-lid ="${divisionBatchId}" data-faculty-id =${facultyId} data-credits = "${credits}" data-max-seats =${maxSeats}>
+          let biddingRow = `<tr data-area-name ="${areaName}" data-course-name ="${courseName}" data-acad-session ="${acadSession}" data-division-batch-lid ="${divisionBatchId}" data-faculty-id =${facultyId} data-credits = "${credits}" data-max-seats =${maxSeats} data-course-id ="${courseId}">
                         <td>${++tableId}</td>
                         <td>${areaName}</td>
                         <td>${courseName}</td>
@@ -324,6 +470,29 @@ $(document).ready(function() {
 
                  $(this).closest('tr').remove(); 
                  arrangeTableId('consideration-table');
+                
+                 const existingArea = primaryAreaDetails.find(area => area.areaName === areaName);
+                 minCreditsCompleteArea = minCreditsCompleteArea.filter(area => area !== areaName);
+                 
+                            if(existingArea){
+                            if ((existingArea.totalCredits) > credits) {
+                                creditExistingArea =  Number(existingArea.totalCredits)-Number(credits);
+                                existingArea.frequency--;
+                                existingArea.totalCredits = creditExistingArea;
+                                if((existingArea.totalCredits < concentrationSettingData.min_credits_per_area) && (concentrationId == 5)){
+                                areaCount--;
+                                }
+                            }
+                            else{
+                              const existingAreaIndex = primaryAreaDetails.findIndex(area => area.areaName === areaName);
+                                if (existingAreaIndex !== -1) {
+                                  if (concentrationId != 5) {
+                                    areaCount--;
+                                  }
+                                    primaryAreaDetails.splice(existingAreaIndex, 1);
+                                }
+                            }
+                          }
         })
 });
 
@@ -331,7 +500,7 @@ function biddingCourses(biddingCourseList) {
   $('#bidding-trimester-select-table tbody').empty();
 
   biddingCourseList.forEach(function(biddingCourse, index) {
-  
+
     let { division_batch_lid: divisionBatchId, faculty_id: facultyId } = biddingCourse;
     let existingElement = $(`#bidding-trimester-select-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
     let existingFaculty = existingElement.filter(`[data-faculty-id="${facultyId}"]`);
@@ -348,6 +517,7 @@ function biddingCourses(biddingCourseList) {
          data-credits = "${biddingCourse.credits}"
          data-max-seats = "${biddingCourse.max_seats}"
          data-acad-session-id = "${biddingCourse.sap_acad_session_id}"
+         data-course-id = "${biddingCourse.course_id}"
          >
 
           <td>${++lengthOfTable}</td>
@@ -386,7 +556,6 @@ function selectBiddingTrimester(element) {
 }
 
 function arrangeTableId(tableId){
-
   $(`#${tableId} tbody tr`).each((index, elem) =>{
     $(elem).find('td:first-child').html(++index);
   })

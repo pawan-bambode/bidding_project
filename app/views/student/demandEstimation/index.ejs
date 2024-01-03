@@ -64,7 +64,7 @@
                      <% }  else {%>
                     <span id="selected-course-credits-count">0</span></h6></button>
                      <% } %>
-                     <button class="btn btn-secondary me-3 areas-count"><h6>No.of Areas to cover :&nbsp;<span id="areas-count">0</span></h6></button>
+                     <button class="btn btn-secondary me-3 areas-count"><h6>No.of Areas to cover :&nbsp;<span id="areas-count"><%- concentrationSettings.no_of_areas_to_cover %></span></h6></button>
                 <button class="btn btn-secondary me-3 min-credits-per-area"><h6>Min Credits per Area :&nbsp;<span id="min-credits-per-area"><%- concentrationSettings.min_credits_per_area %></span></h6></button>
                 <button class="btn btn-success me-3 max-credits-per-area"><h6>Max Credits per Area :&nbsp;<span id="max-credits-per-area">
                     <%- concentrationSettings.max_credits_per_area %>
@@ -608,7 +608,7 @@ $(document).ready(function() {
                let areaCountElement = Number($('#areas-count').text());
                if(areaCountValue.totalCredits == minCreditsPerArea){
                 if(areaCountElement > 0){
-               $('#areas-count').text(areaCountElement - 1);
+                 $('#areas-count').text(areaCountElement - 1);
               }}
             } 
             if(areaCountValue.totalCredits == maxCreditPerArea){
@@ -622,10 +622,10 @@ $(document).ready(function() {
                  let areasCountElement = $('#areas-count');
                  let currentCount = parseInt(areasCountElement.text());
 
-                if (!isNaN(currentCount) && currentCount > 0) {
-                    let newCount = currentCount - 1; 
-                    areasCountElement.text(newCount);
-                }
+                // if (!isNaN(currentCount) && currentCount > 0) {
+                //     let newCount = currentCount - 1; 
+                //     areasCountElement.text(newCount);
+                // }
                 
                 } 
             
@@ -904,40 +904,7 @@ $(document).ready(function() {
     }
     });
 
-    function calculateAreaFrequency(arr) {
-        let areaFrequency = {};
-        arr.forEach((obj) => {
-            let area = obj.areaName;
-            if (areaFrequency[area]) {
-                areaFrequency[area].name  = area;
-                areaFrequency[area].frequency++;
-                areaFrequency[area].totalCredits += obj.credit;
-            } else {
-                areaFrequency[area] = {
-                    frequency: 1,
-                    totalCredits: obj.credit,
-                    name:area
-                };
-            }
-        });
-        return areaFrequency;
-   }
 
-   function calculateDeleteFrequency(arr) {
-    let areaFrequency = {};
-    arr.forEach((obj) => {
-        let area = obj.areaName;
-        if (areaFrequency[area]) {
-            areaFrequency[area].frequency++;
-        } else {
-            areaFrequency[area] = {
-                frequency: 1,
-                acadSession: obj.acadSession 
-            };
-        }
-    });
-    return areaFrequency;
-}
    
 </script>
 

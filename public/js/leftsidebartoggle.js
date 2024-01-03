@@ -259,6 +259,58 @@ function convertMillisecondsToReadableTime(milliseconds) {
 
     return `${hours} h:${remainingMinutes}M:${remainingSeconds}S`;
     }
+    
+    function calculateAreaFrequency(arr) {
+        let areaFrequency = {};
+        arr.forEach((obj) => {
+            let area = obj.areaName;
+            if (areaFrequency[area]) {
+                areaFrequency[area].name  = area;
+                areaFrequency[area].frequency++;
+                areaFrequency[area].totalCredits += obj.credit;
+            } else {
+                areaFrequency[area] = {
+                    frequency: 1,
+                    totalCredits: obj.credit,
+                    name:area
+                };
+            }
+        });
+        return areaFrequency;
+   }
+
+   function calculateDeleteFrequency(arr) {
+    let areaFrequency = {};
+    arr.forEach((obj) => {
+        let area = obj.areaName;
+        if (areaFrequency[area]) {
+            areaFrequency[area].frequency++;
+        } else {
+            areaFrequency[area] = {
+                frequency: 1,
+                acadSession: obj.acadSession 
+            };
+        }
+    });
+    return areaFrequency;
+}
+
+function withdrawBidding(arr, key, credits) {
+     console.log('values of arra', arr);
+     console.log('values key', key);
+     console.log('values of credits', credits);
+        if (arr[key]) {
+            if (arr[key].frequency > 1) {
+                let totalCredits = arr[key].totalCredits
+                arr[key].frequency--;
+                arr[key].totalCredits = Number(totalCredits)-Number(credits);
+            } else {
+                delete arr[key];
+            }
+        }
+
+    return Object.values(arr);
+}
 
 
 
