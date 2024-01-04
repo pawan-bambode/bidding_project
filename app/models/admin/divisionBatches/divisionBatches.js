@@ -354,15 +354,15 @@ module.exports = class divisionBatches {
                   .input('biddingId', sql.Int, biddingId)
                   .input('acadSessionId', sql.Int, acadSessionId)
                   .input('areaName', sql.NVarChar, `%${areaName}%`)
-                  .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, 
-                          db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id  
+                  .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, 
+                          c.acad_session, c.credits, db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id  
                           FROM [${slug}].timetable t 
                           INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
                           INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
                           INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
                           INNER JOIN [${slug}].courses c ON c.id = db.course_lid
                           INNER JOIN [dbo].days d ON d.id = t.day_lid 
-                          WHERE c.area_name LIKE @areaName AND c.course_id = @courseId AND t.bidding_session_lid = @biddingId`)
+                          WHERE c.area_name LIKE @areaName AND c.area_name LIKE @areaName AND t.bidding_session_lid = @biddingId`)
               })
           }
           else{
@@ -429,4 +429,15 @@ module.exports = class divisionBatches {
             });
         }    
     }
+
+    static addFavourite(slug, userid, biddingId, favJson) {
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('input_json', sql.NVarChar(sql.MAX), favJson)
+                .input('last_modified_by', sql.Int, userid)
+                .input('bidding_session_lid', sql.Int, biddingId)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_add_favourite]`)
+        })
+    } 
 }

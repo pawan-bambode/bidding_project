@@ -9,23 +9,295 @@
 
 
 <div class="main-content">
-  <div class="card card-custom-border-curv">
+
+    <div class="card card-custom-border-curv mt-5">
+      <div class="card-header-custom d-flex justify-content-between p-1">
+          <h3 class="ms-2">Favourite Course</h3>  
+      </div>
+  
+      <div class="card-body table-responsive">
+        <table class="table custom_row table-bordered mt-4 custom-table" id="fav-course-table">
+          <thead>
+              <th>#</th>
+              <th>Area</th>
+              <th>Course</th>
+              <th>Acad Session</th>
+              <th>Course Timings</th>
+              <th>Credits</th>
+              <th>Faculty</th>
+          </thead>
+          <tbody>
+
+          </tbody>
+      </table>
+      </div>
+    </div>
+  <div class="card card-custom-border-curv" id="available-course">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2">Available Course</h3>  
     </div>
+
     <div class="card-body table-responsive">
-     
+        <div class="d-flex">
+          <% for(let acadSession of dropdownAcadSessionList) { %>
+            <div class="col-sm-4 p-2">
+              <button class="btn btn-light w-100 available-course-trimester available-course-trimester-selected"  data-acad-session-id = "<%- acadSession.sap_acad_session_id %>">
+                <%-acadSession.acad_session %>
+              </button>
+            </div>
+          <% } %>
+        </div> 
+        
+       <div class="row">
+          <div class="col-md-3 mt-4 ms-2">
+            <select class="form-select form-control select2" id="area-filter">
+              <option value="" selected>Select Area</option>
+              <% for(let area of areaList) { %>
+                <option value="<%-area.area_name %>" ><%-area.area_name %></option>
+              <% } %>
+            </select>
+         </div>
+          <div class="col-md-3 mt-4 ms-2">
+              <select class="form-select form-control select2" id="course-filter">
+                <option value="" selected>Select Course</option>
+                <% for(let biddingCourse of courseList) { %>
+                  <option value="<%-biddingCourse.course_id %>" ><%-biddingCourse.course_name %></option>
+                <% } %>
+              </select>
+          </div>
+        </div>
+        
+        <table class="table custom_row table-bordered mt-4 custom-table" id="available-course-table">
+            <thead>
+                <th>#</th>
+                <th>Area</th>
+                <th>Course</th>
+                <th>Acad Session</th>
+                <th>Course Timings</th>
+                <th>Credits</th>
+                <th>Total Seats</th>
+                <th>Remaining Seats</th>
+                <th>Faculty</th>
+                <th>Favourite</th>
+            </thead>
+            <tbody>     
+         </table>
+  </div>
     </div>
   </div>  
 </div>
+<%- include('../partials/footer.ejs') %>
 <script>
 $(document).ready(function() {
     let active = `<%- active %>`;
     $('#sidebar .side-menu li.' + active).addClass('active');
+
+    let availableCourseListData = `<%- JSON.stringify(availableCourseList) %>`;
+    let availableCourseList = JSON.parse(availableCourseListData);
+    let favCourseId = [];
+
+    let favCourseList = JSON.parse(`<%- JSON.stringify(favCourseList) %>`);
+  
+    availableCourses(availableCourseList);
+
+    $('.available-course-trimester').each((index, availableCourse) =>{
+      $(availableCourse).css('--available-trimester-active', $(availableCourse).innerHeight() + 'px');
+    })
+    
+   
+    $('#available-course-table tbody').on('click', '.add-favourite', function(){
+       $(this).children('i').toggleClass('d-none');
+       $(this).children('.added-star').toggleClass('d-none');
+       let courseId = $(this).closest('tr').data('course-id');
+       let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
+       let studentLid = $('#student-data').data('student-lid');
+       let isFavourite = $(this).children('i').hasClass('d-none') ? 1 : 0;
+
+       if(isFavourite){
+       if(favCourseId.includes(courseId)){
+        $(`#available-course-table tbody tr[data-course-id="${courseId}"]`).each((index , ele) =>{
+            if($(ele).data('division-batch-lid') != divisionBatchId){
+              $(ele).css('background-color','red');
+              alert(`You already select this course for ${$(ele).data('course-name')}`);
+            }
+        })
+       }
+      }
+      
+       if(isFavourite){
+        favCourseId.push(courseId);
+       }
+       let favCourse = {
+          student_lid: studentLid,
+          div_batch_lid: divisionBatchId,
+          is_favourite: isFavourite
+        };
+
+       let ApiObj = {
+          type: 'POST',
+          url: '/student/available-course/add-favourite',
+          data:{
+            addFavCourse: JSON.stringify(favCourse)
+          },
+          dataType :'JSON',
+        }
+        ajaxApi(ApiObj).then(result =>{
+          console.log('values of result', result);
+        }).catch(error =>{
+          showError(JSON.stringify(error.responseJSON))
+        })
+    })
+
+    $('#available-course').on('click', '.available-course-trimester', function() {
+       resetBiddingTrimester('available-course-table', 'available-course-trimester-selected');
+       selectBiddingTrimester($(this), 'available-course-trimester-selected', 'available-trimester-active');
+       $(this).removeClass('border');
+       $(this).closest('div').siblings().find('button').addClass('border');
+
+       let acadSessionId = $(this).data('acad-session-id');
+       
+        let ApiObj = {
+          type: 'POST',
+          url: '/student/available-course/course-by-acadsession',
+          data:{
+            acadSessionId: acadSessionId
+          },
+          dataType :'JSON',
+        }
+        ajaxApi(ApiObj).then(result =>{
+        
+          let courseName = `<option  >Select Course</option>`;
+              if (result.courseName.length > 0) {
+                  result.courseName.forEach(element => {
+                    courseName += `<option value="${element.course_id}">${element.course_name}</option>`;
+                  });
+              } else {
+                courseName += `<option value="">No Course Found!</option>`;
+              }
+
+              $("#course-filter").html(courseName);
+              availableCourses(result.availableCourseList);
+          
+        }).catch(error =>{
+          showError(JSON.stringify(error.responseJSON))
+        })
+    });
+
+    $('#course-filter').on('change', function() {
+        let courseId = $(this).val();
+        let acadSessionId = $('button.available-course-trimester-selected').data('acad-session-id');
+
+        let ApiObj = {
+             type: 'POST',
+             url: '/student/available-course/course',
+             data: {
+                    courseId: courseId,
+                    acadSessionId:acadSessionId 
+              },
+              dataType: 'JSON'
+            };
+
+          ajaxApi(ApiObj).then(result => {
+            availableCourses(result.availableCourseList);
+            }).catch(error => {
+                    showError(JSON.stringify(error.responseJSON))
+                });
+      });
+       
+      $('#area-filter').on('change', function() {
+        let areaName = $(this).val();
+        let acadSessionId = $('button.available-course-trimester-selected').data('acad-session-id');
+        acadSessionId = acadSessionId == undefined?'':acadSessionId;
+     
+        let ApiObj = {
+             type: 'POST',
+             url: '/student/available-course/course-by-area',
+             data: {
+                    areaName: areaName,
+                    acadSessionId:acadSessionId 
+              },
+              dataType: 'JSON'
+            };
+
+          ajaxApi(ApiObj).then(result => {
+            let courseName = `<option  >Select Course</option>`;
+              if (result.courseName.length > 0) {
+                  result.courseName.forEach(element => {
+                    courseName += `<option value="${element.course_id}">${element.course_name}</option>`;
+                  });
+              } else {
+                courseName += `<option value="">No Course Found!</option>`;
+              }
+
+              $("#course-filter").html(courseName);
+              availableCourses(result.availableCourseList);
+            }).catch(error => {
+                    showError(JSON.stringify(error.responseJSON))
+                });
+      });
+
+function availableCourses(biddingCourseList) {
+  $('#available-course-table tbody').empty();
+  biddingCourseList.forEach(function(biddingCourse, index) {
+    
+    let foundCourse = favCourseList.find(function(favCourse) {
+    return favCourse.div_batch_lid === biddingCourse.division_batch_lid;
+    });
+
+    let { division_batch_lid: divisionBatchId, faculty_id: facultyId } = biddingCourse;
+    let existingElement = $(`#available-course-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
+    let existingFaculty = existingElement.filter(`[data-faculty-id="${facultyId}"]`);
+    let otherFacultyExists = existingElement.not(existingFaculty);
+    let lengthOfTable = $('#bidding-trimester-select-table tbody tr').length;
+
+    if (existingElement.length === 0) {
+      let newRow = `<tr 
+         data-area-name = "${biddingCourse.area_name}" 
+         data-course-name = "${biddingCourse.course_name}-${biddingCourse.division}" 
+         data-acad-session = "${biddingCourse.acad_session}" 
+         data-division-batch-lid = "${biddingCourse.division_batch_lid}"
+         data-faculty-id = "${biddingCourse.faculty_id}"
+         data-credits = "${biddingCourse.credits}"
+         data-max-seats = "${biddingCourse.max_seats}"
+         data-acad-session-id = "${biddingCourse.sap_acad_session_id}"
+         data-course-id = "${biddingCourse.course_id}"
+         >
+
+          <td>${++lengthOfTable}</td>
+          <td>${biddingCourse.area_name}</td>
+          <td>${biddingCourse.course_name}-${biddingCourse.division}</td>
+          <td>${biddingCourse.acad_session}</td>
+          <td class='course-timing'>${biddingCourse.day_name}(${biddingCourse.StartTime} to ${biddingCourse.EndTime})</td>
+          <td>${biddingCourse.credits}</td>
+          <td>${biddingCourse.max_seats}</td>
+          <td>0</td>
+          <td>${biddingCourse.faculty_name}</td>
+          <td>
+            <button class="btn add-favourite">              
+               <i class="fa-regular fa-star add-star" style="height:24px;width:24px;"></i>
+               <img class="d-none added-star" src="/image/student/body-part-image/available-course/added-star.png" alt='added'>
+            </button>
+          </td>
+        </tr>`;
+      $('#available-course-table tbody').append(newRow);
+      let foundCourse = favCourseList.find(function(favCourse) {
+       return favCourse.div_batch_lid === biddingCourse.division_batch_lid;
+       });
+
+      if (foundCourse) {
+          $(`tr[data-division-batch-lid="${biddingCourse.division_batch_lid}"] .add-star`).addClass('d-none');
+          $(`tr[data-division-batch-lid="${biddingCourse.division_batch_lid}"] .added-star`).removeClass('d-none');
+      }
+
+    } else {
+      let courseTiming = `<div>${biddingCourse.day_name}(${biddingCourse.StartTime} to ${biddingCourse.EndTime})`;
+      let contentToAppend = otherFacultyExists.length ? `${courseTiming} - ${biddingCourse.faculty_name})` : `${courseTiming}`;
+      existingElement.children('.course-timing').append(contentToAppend);
+    }
+    
+  });
+}
 });
-
 </script>
-
-<%- include('../partials/footer.ejs') %>
 
 <%- include('../partials/footerEnd.ejs') %>

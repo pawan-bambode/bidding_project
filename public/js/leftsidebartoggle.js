@@ -296,9 +296,7 @@ function convertMillisecondsToReadableTime(milliseconds) {
 }
 
 function withdrawBidding(arr, key, credits) {
-     console.log('values of arra', arr);
-     console.log('values key', key);
-     console.log('values of credits', credits);
+
         if (arr[key]) {
             if (arr[key].frequency > 1) {
                 let totalCredits = arr[key].totalCredits
@@ -311,6 +309,23 @@ function withdrawBidding(arr, key, credits) {
 
     return Object.values(arr);
 }
+
+function resetBiddingTrimester(tableId, classToRemove) {
+    $(`#${tableId} tbody`).empty();
+    let prevSelected = $(`.${classToRemove}`);
+    prevSelected.removeClass(`${classToRemove}`);
+  }
+  
+  function selectBiddingTrimester(element, classToAdd , activeElement) {
+    element.addClass(classToAdd);
+    element.css(`--${activeElement}`, element.innerHeight() + 'px');
+  }
+  
+  function arrangeTableId(tableId){
+    $(`#${tableId} tbody tr`).each((index, elem) =>{
+      $(elem).find('td:first-child').html(++index);
+    })
+  }
 
 
 

@@ -191,4 +191,16 @@ module.exports = class DemandEstimation
                     INNER JOIN [${slug}].courses c ON c.id = de.course_lid WHERE de.student_lid =@studentId AND de.active = 1 AND c.active = 1`)
         })
     }
+
+    static getFavouriteCourseList(slug, biddingId, studentId){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('biddingId', sql.Int, biddingId)
+            .input('studentId', sql.Int, studentId)
+            .query(`SELECT * FROM [${slug}].student_elective_mapping 
+                    WHERE student_lid = @studentId AND bidding_session_lid = @biddingId AND is_favourite = 1`);
+
+        })
+    }
+
 }
