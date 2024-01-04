@@ -18,7 +18,6 @@ module.exports = {
                      concentrationSetting.getStudentConcentrationSettings(res.locals.slug, res.locals.biddingId, res.locals.username),
                      divisionBatch.getAreaList(res.locals.slug, res.locals.biddingId)
                      ]).then(result => {
-                        console.log('values of result',result[6].recordset);
                 res.render('student/bidding/index',{
                     active :bidding,
                     dropdownAcadSessionList: result[0].recordset,
@@ -56,11 +55,12 @@ module.exports = {
 
     getCourseByArea : (req, res) =>{
         Promise.all([divisionBatch.getBiddingCourseByAreaName(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaName), divisionBatch.getCourseNameAreaWiseFilter(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaName)]).then(result =>{
+            
             res.json({
                 status:'200',
                 message:'Result fetched',
                 biddingCourseList:result[0].recordset,
-                filterAreaWise: result[1].recordset
+                courseName: result[1].recordset
             })
             })
     }

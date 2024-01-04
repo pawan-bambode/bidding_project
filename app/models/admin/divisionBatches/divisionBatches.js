@@ -406,13 +406,13 @@ module.exports = class divisionBatches {
         }    
     }
 
-    static getCourseNameAreaWiseFilter(slug, biddingId, areaName){
+    static getCourseNameAreaWiseFilter(slug, biddingId, acadSessionId, areaName){
         if(acadSessionId){ 
             return poolConnection.then(pool =>{
                 return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('areaName', sql.NVarChar, `%${areaName}%`)
-                .query(`SELECT c.course_id, c.course_name FROM [${slug}].timetable t
+                .query(`SELECT DISTINCT c.course_id, c.course_name FROM [${slug}].timetable t
                         INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid
                         INNER JOIN [${slug}].courses c ON c.id = db.course_lid WHERE t.active = 1 AND db.active = 1 AND c.active = 1 AND t.bidding_session_lid = @biddingId 
                         AND c.area_name LIKE @areaName`);
@@ -423,7 +423,7 @@ module.exports = class divisionBatches {
                 return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('areaName', sql.NVarChar, `%${areaName}%`)
-                .query(`SELECT c.course_id, c.course_name FROM [${slug}].timetable t
+                .query(`SELECT DISTINCT c.course_id, c.course_name FROM [${slug}].timetable t
                         INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid
                         INNER JOIN [${slug}].courses c ON c.id = db.course_lid WHERE t.active = 1 AND db.active = 1 AND c.active = 1 AND t.bidding_session_lid = @biddingId AND c.area_name LIKE @areaName`);
             });
