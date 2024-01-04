@@ -263,7 +263,7 @@ module.exports = class divisionBatches {
                 return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, 
-                        c.sap_acad_session_id, c.credits, db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, 
+                        c.sap_acad_session_id, c.credits, db.max_seats, RTRIM(LTRIM(db.division)) as division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, 
                         d.day_name 
                         FROM [${slug}].timetable t 
                         INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id

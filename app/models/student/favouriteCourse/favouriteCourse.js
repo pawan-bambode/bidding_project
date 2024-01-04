@@ -197,8 +197,9 @@ module.exports = class DemandEstimation
             return pool.request()
             .input('biddingId', sql.Int, biddingId)
             .input('studentId', sql.Int, studentId)
-            .query(`SELECT * FROM [${slug}].student_elective_mapping 
-                    WHERE student_lid = @studentId AND bidding_session_lid = @biddingId AND is_favourite = 1`);
+            .query(`SELECT sem.*, db.course_id FROM [${slug}].student_elective_mapping sem
+                    INNER JOIN [${slug}].division_batches db ON sem.div_batch_lid = db.id
+                    WHERE sem.student_lid = @studentId AND sem.bidding_session_lid = @biddingId AND is_favourite = 1`);
 
         })
     }

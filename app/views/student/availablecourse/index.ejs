@@ -9,29 +9,6 @@
 
 
 <div class="main-content">
-
-    <div class="card card-custom-border-curv mt-5">
-      <div class="card-header-custom d-flex justify-content-between p-1">
-          <h3 class="ms-2">Favourite Course</h3>  
-      </div>
-  
-      <div class="card-body table-responsive">
-        <table class="table custom_row table-bordered mt-4 custom-table" id="fav-course-table">
-          <thead>
-              <th>#</th>
-              <th>Area</th>
-              <th>Course</th>
-              <th>Acad Session</th>
-              <th>Course Timings</th>
-              <th>Credits</th>
-              <th>Faculty</th>
-          </thead>
-          <tbody>
-
-          </tbody>
-      </table>
-      </div>
-    </div>
   <div class="card card-custom-border-curv" id="available-course">
     <div class="card-header-custom d-flex justify-content-between p-1">
         <h3 class="ms-2">Available Course</h3>  
@@ -97,56 +74,76 @@ $(document).ready(function() {
     let favCourseId = [];
 
     let favCourseList = JSON.parse(`<%- JSON.stringify(favCourseList) %>`);
-  
+        favCourseList.forEach((ele, index) => {
+         favCourseId.push(ele.course_id);
+     });
+
     availableCourses(availableCourseList);
 
-    $('.available-course-trimester').each((index, availableCourse) =>{
-      $(availableCourse).css('--available-trimester-active', $(availableCourse).innerHeight() + 'px');
-    })
-    
-   
-    $('#available-course-table tbody').on('click', '.add-favourite', function(){
-       $(this).children('i').toggleClass('d-none');
-       $(this).children('.added-star').toggleClass('d-none');
-       let courseId = $(this).closest('tr').data('course-id');
-       let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
-       let studentLid = $('#student-data').data('student-lid');
-       let isFavourite = $(this).children('i').hasClass('d-none') ? 1 : 0;
-
-       if(isFavourite){
-       if(favCourseId.includes(courseId)){
-        $(`#available-course-table tbody tr[data-course-id="${courseId}"]`).each((index , ele) =>{
-            if($(ele).data('division-batch-lid') != divisionBatchId){
-              $(ele).css('background-color','red');
-              alert(`You already select this course for ${$(ele).data('course-name')}`);
-            }
+        $('.available-course-trimester').each((index, availableCourse) =>{
+          $(availableCourse).css('--available-trimester-active', $(availableCourse).innerHeight() + 'px');
         })
-       }
-      }
+        
+        $('#available-course-table tbody').on('click', '.add-favourite', async function () {
+        $(this).children('i').toggleClass('d-none');
+        $(this).children('.added-star').toggleClass('d-none');
+        let courseId = $(this).closest('tr').data('course-id');
+        let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
+        let studentLid = $('#student-data').data('student-lid');
+        let division = $(this).closest('tr').data('division');
+        let isFavourite = $(this).children('i').hasClass('d-none') ? 1 : 0;
+
+        if (isFavourite && favCourseId.includes(courseId)) {
+            let alreadySelectedCourse = $(`#available-course-table tbody tr[data-course-id="${courseId}"]`);
+            for (let i = 0; i < alreadySelectedCourse.length; i++) {
+                let ele = alreadySelectedCourse[i];
+                if ($(ele).data('division-batch-lid') != divisionBatchId) {
       
-       if(isFavourite){
-        favCourseId.push(courseId);
-       }
-       let favCourse = {
-          student_lid: studentLid,
-          div_batch_lid: divisionBatchId,
-          is_favourite: isFavourite
+                    let customMessage = {
+                        favourite_heading: 'Confirmation',
+                        favourite_message: `You've already favourited ${$(ele).data('course-name')} for the course. Would you like to add ${division} to favorites?`,
+                        favourite_label_for_success: 'Yes',
+                        favourite_label_for_cancel: 'NO'
+                    };
+
+                    let favResponse = await createConfirmation(customMessage);
+                    if(!favResponse){
+                      $(this).children('i').toggleClass('d-none');
+                      $(this).children('.added-star').toggleClass('d-none');
+                      return;
+                    }
+                }
+            }
+        }
+
+        if (isFavourite) {
+            favCourseId.push(courseId);
+        }
+
+        let favCourse = {
+            student_lid: studentLid,
+            div_batch_lid: divisionBatchId,
+            is_favourite: isFavourite
         };
 
-       let ApiObj = {
-          type: 'POST',
-          url: '/student/available-course/add-favourite',
-          data:{
-            addFavCourse: JSON.stringify(favCourse)
-          },
-          dataType :'JSON',
-        }
-        ajaxApi(ApiObj).then(result =>{
-          console.log('values of result', result);
-        }).catch(error =>{
-          showError(JSON.stringify(error.responseJSON))
-        })
-    })
+        let ApiObj = {
+            type: 'POST',
+            url: '/student/available-course/add-favourite',
+            data: {
+                addFavCourse: JSON.stringify(favCourse)
+            },
+            dataType: 'JSON',
+        };
+
+        ajaxApi(ApiObj)
+            .then(result => {
+                console.log('values of result', result);
+            })
+            .catch(error => {
+                showError(JSON.stringify(error.responseJSON));
+            });
+    });
+
 
     $('#available-course').on('click', '.available-course-trimester', function() {
        resetBiddingTrimester('available-course-table', 'available-course-trimester-selected');
@@ -237,9 +234,10 @@ $(document).ready(function() {
       });
 
 function availableCourses(biddingCourseList) {
+ 
   $('#available-course-table tbody').empty();
   biddingCourseList.forEach(function(biddingCourse, index) {
-    
+    console.log('valueso f ',biddingCourse);
     let foundCourse = favCourseList.find(function(favCourse) {
     return favCourse.div_batch_lid === biddingCourse.division_batch_lid;
     });
@@ -261,6 +259,7 @@ function availableCourses(biddingCourseList) {
          data-max-seats = "${biddingCourse.max_seats}"
          data-acad-session-id = "${biddingCourse.sap_acad_session_id}"
          data-course-id = "${biddingCourse.course_id}"
+         data-division = "${biddingCourse.division}"
          >
 
           <td>${++lengthOfTable}</td>
@@ -297,6 +296,60 @@ function availableCourses(biddingCourseList) {
     
   });
 }
+
+    async function createConfirmation(customMessage) {
+        return await ConfirmationCustom(customMessage);
+       
+    }
+    function ConfirmationCustom(message) {
+        return new Promise((success, failed) => {
+            let dialog = document.createElement('div');
+            dialog.classList.add('dialog');
+        
+            let dialogBox = document.createElement('div');
+            dialogBox.classList.add('dialogBox');
+            dialog.appendChild(dialogBox);
+            
+            let messageBox = document.createElement('div');
+            messageBox.classList.add('messageBox');
+            dialogBox.appendChild(messageBox);
+        
+            let dialogHeading = document.createElement('h1');
+            dialogHeading.classList.add('dialogHeading');
+            dialogHeading.textContent = `${message.favourite_heading}`
+            messageBox.appendChild(dialogHeading); 
+        
+            let dialogMessage = document.createElement('p');
+            dialogMessage.classList.add('dialogMessage');
+            dialogMessage.textContent = `${message.favourite_message}`;
+            messageBox.appendChild(dialogMessage);
+        
+            let buttonContainer = document.createElement('div');
+            buttonContainer.classList.add('buttonContainer');
+            dialogBox.appendChild(buttonContainer);
+        
+            let okButton = document.createElement('button');
+            okButton.classList.add('okButton');
+            okButton.textContent = `${message.favourite_label_for_success}`;
+            buttonContainer.appendChild(okButton);
+        
+            let cancelButton = document.createElement('button');
+            cancelButton.classList.add('cancelButton');
+            cancelButton.textContent = `${message.favourite_label_for_cancel}`;
+            buttonContainer.appendChild(cancelButton);
+        
+            document.querySelector('body').append(dialog);
+            okButton.addEventListener('click', function () {
+                document.querySelector('.dialog').remove();
+                success(true);
+            });
+        
+            cancelButton.addEventListener('click',  function (){
+                document.querySelector('.dialog').remove();
+                success(false);
+            });
+        })
+    }
 });
 </script>
 
