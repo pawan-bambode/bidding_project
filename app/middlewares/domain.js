@@ -61,7 +61,6 @@ module.exports = {
                 
               
         } else {
-            console.log('in else condition')
             next();
         }
 

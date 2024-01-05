@@ -4,8 +4,8 @@ require('dotenv').config()
 const http = require('http');
 const https = require("https");
 
-const setRouter = require("./router")
-
+const setRouter = require("./router");
+const biddingResponse = require('./app/controllers/student/bidding/biddingProcess');
 const {
     verifySubdomain
 } = require('./app/middlewares/domain')
@@ -119,5 +119,6 @@ if (process.env.APP_ENV === 'PRODUCTION' || process.env.APP_ENV === 'DEV') {
 
 else {
       const server = http.createServer(app).listen(process.env.APP_PORT);
-
+      global.io = require("socket.io")(server);
+      global.io.on("connection", biddingResponse.respond)
 }

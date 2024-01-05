@@ -153,12 +153,14 @@
 </div>
 
 <%- include('../partials/footer.ejs') %>
+<script src="/socket.io/socket.io.js"></script>
+
 <script>
 $(document).ready(function() {
     $('.select2').select2({
     dropdownParent: $('#bidding-modal')
    });
-  
+
     let biddingDetails = [];
     let areaCount = 0;
     let areaDetails = 0;
@@ -166,6 +168,7 @@ $(document).ready(function() {
     let concentrationSettingData = JSON.parse(concentrationSettingJson);
     let minCreditsCompleteArea = [];
     let primaryAreaDetails = [];
+    let socket = io();
 
     let active = `<%- active %>`;
     $('#sidebar .side-menu li.' + active).addClass('active');
@@ -179,6 +182,10 @@ $(document).ready(function() {
     setInterval(updateCurrentTime, 1000);
    
     biddingCourses(biddingCourseList);
+
+    socket.on('connect', () => {
+        console.log('Socket >>', socket.connected)
+      });
 
     $('.bidding-trimester').each((index, biddingTrimester) =>{
       $(biddingTrimester).css('--bidding-trimester-active', $(biddingTrimester).innerHeight() + 'px');
@@ -292,8 +299,6 @@ $(document).ready(function() {
             id:courseId
           }
           
-        
-
           let biddingTable = $('#consideration-table tbody');
           let tableId = $('#consideration-table tbody tr').length;
 
@@ -314,13 +319,13 @@ $(document).ready(function() {
                         <td>${courseName}</td>
                         <td>${acadSession}</td>
                         <td>${credits}</td>
-                        <td>${available}</td>
-                        <td>0</td>
-                        <td>0</td>
+                        <td class="available-count">${available}</td>
+                        <td class="total-bidder-couts">0</td>
+                        <td class="mrb-points">0</td>
                         <td class="winning-status">Yes</td>
-                        <td></td>
-                        <td class="d-flex"><input type="text" placeholder="Bids" class="p-2" size='15'>
-                          <button class="btn border  border-dark ms-2">
+                        <td class="student-bid-points">0</td>
+                        <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 self-bid-points" size='15'>
+                          <button class="btn border border-dark ms-2 add-bidding-points">
                           <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
                           </button> </td>
                         <td>
@@ -440,8 +445,51 @@ $(document).ready(function() {
                           console.log('values of areaMessage', areaMessage);
                       }}
                  }  
+                 socket.emit('joinRoom', `${divisionBatchId}`);
         })
         
+      
+        // Client side
+      $('#consideration-table').on('click', '.add-bidding-points', function () {
+        let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
+        let studentBidPoints = $(this).closest('tr').find('.self-bid-points').val();
+        let bidPoints = Number(studentBidPoints);
+        let minimumBidPointRequire = bidPoints + 1;
+
+        console.log('values of bidPoints', bidPoints);
+        console.log('values of min',minimumBidPointRequire);
+        console.log('values of studentBid',studentBidPoints);
+        console.log('values of division',divisionBatchId);
+
+        socket.emit('bidding', {
+          roomName: `${divisionBatchId}`,
+          studentBidPoints: bidPoints,
+          mrb: minimumBidPointRequire
+        });
+      });
+
+         socket.on('biddingStudentbidPoints', async function (data) {
+            console.log('inside the client side ',data.roomName);
+            $(`#consideration-table tbody tr[data-division-batch-lid="${data.roomName}"]`).find('.student-bid-points').html(data.studentBidPoints);
+          });
+
+          socket.on('biddingResponse', async function (data) {
+           console.log('Received biddingResponse:', data);
+  
+            let selectedRows = $(`#consideration-table tbody tr[data-division-batch-lid='${data.roomName}']`);
+             console.log('Selected rows:', selectedRows);
+
+            selectedRows.each(function (index, element) {
+              let available = Number($('.available-count').html()) - Number(data.totalBidder);   
+              let row = $(element);
+              row.find('.available-count').html(available)
+              row.find('.mrb-points').html(data.mrb);
+              row.find('.total-bidder-counts').html(data.totalBidder)
+            });
+      });
+
+
+      
         $('#consideration-table').on('click', '.cancel-bidding-course', function(){
          
           let areaName = $(this).closest('tr').data('area-name');
@@ -510,7 +558,7 @@ $(document).ready(function() {
                             }
                           }
         })
-});
+
 
 function biddingCourses(biddingCourseList) {
   $('#bidding-trimester-select-table tbody').empty();
@@ -560,6 +608,7 @@ function biddingCourses(biddingCourseList) {
   });
 }
 
+});
 </script>
 
 <%- include('../partials/footerEnd.ejs') %>
