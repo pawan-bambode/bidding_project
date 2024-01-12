@@ -52,11 +52,11 @@
         <h3 class="ms-2">Bidding Course</h3>  
     </div>
     <div class="col-md-3 mt-4 ms-5">
-      <select class="form-select form-control select2 d-none" id="program-filter">
+      <select class="form-select form-control select2 d-none" id="bidding-acad-session-filter">
         <option value="" selected>Select Program</option>
         <option value="34">Trimester IV</option>
         <option value="35">Trimester V</option>
-        <option value="36">Trimester V</option>
+        <option value="36">Trimester VI</option>
         
       </select>
      </div>
@@ -80,7 +80,7 @@
         <tbody>
           <% let count = 1; %>
           <% considerationSetList.forEach((considerationSet) => { %>
-
+           
             <tr 
             data-id= "<%= considerationSet.id %>" data-division-batch-lid = "<%- considerationSet.div_batch_lid %>"
             data-area-name = "<%- considerationSet.area_name %>" data-course-name = "<%- considerationSet.course_name %>" data-acad-session = "<%- considerationSet.acad_session %>"  data-round-lid ="<%- considerationSet.round_lid %>"
@@ -101,7 +101,7 @@
                         <% } else { %>
                           <td class="winning-status losing">No</td>
                          <% } %>
-                        <td class="student-previous-bid-point">0</td>
+                        <td class="student-previous-bid-point"><%= considerationSet.bid_points %></td>
                         <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15'>
                           <button class="btn border border-dark ms-2 add-bidding-points">
                           <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
@@ -214,6 +214,8 @@ $(document).ready(function() {
     let concentrationId = concentrationSettingData.concentration_lid;
     let biddingSessionId = concentrationSettingData.bidding_session_lid;
     
+
+    
     let socket = io();
      
     let trimesterWiseTargetCreditPoints = {};
@@ -238,6 +240,15 @@ $(document).ready(function() {
     socket.on('connect', () => {
         console.log('Socket >>', socket.connected)   
       });
+
+    $('#program-filter-bidding').on('change', function () {
+        let programId = $(this).val();
+        let selectedRows = $('#bidding-table tbody').find(`tr[data-acad-session-id="${programId}"]`);
+        $('#bidding-table tbody tr').hide();
+        selectedRows.show();
+        arrangeTableId('bidding-table');
+    });
+
 
     $('.bidding-trimester').each((index, biddingTrimester) =>{
             $(biddingTrimester).css('--bidding-trimester-active', $(biddingTrimester).innerHeight() + 'px');
@@ -513,20 +524,28 @@ $(document).ready(function() {
   })
 
   socket.on('addBiddingResponse', function(biddingReponseResult) {
+  
     let biddingResponseToUser = biddingReponseResult.message.description;
+    let biddingAddedByUserId = biddingReponseResult.userId;
     
     biddingReponseResult.biddingDetails.forEach(userSpecificWinningStatus => {
-        let divisionBatchLidReponse = userSpecificWinningStatus.div_batch_lid;
-        let biddingUserId = userSpecificWinningStatus.student_lid;
-        let isWinning = userSpecificWinningStatus.is_winning;
 
-        if (biddingReponseResult.message.status === 1) {
+        let divisionBatchLidReponse = userSpecificWinningStatus.div_batch_lid;
+        let biddingUserId = userSpecificWinningStatus.userId;
+        const isCurrentUser = userId === biddingAddedByUserId;
+        const isSuccessResponse = biddingReponseResult.message.status === 1;
+
+        if (isSuccessResponse) {
             if (userId == biddingUserId) {
                 updateTableForCurrentUser(userSpecificWinningStatus);
             }
-            createToast(biddingResponseToUser, 'alert-success', 'message-content');
+            if(isCurrentUser){
+              createToast(biddingResponseToUser, 'alert-success', 'message-content');
+            }    
         } else {
+          if (isCurrentUser) {
             createToast(biddingResponseToUser, 'alert-danger', 'error-message');
+          }
         }
      });
   });
@@ -546,37 +565,33 @@ $(document).ready(function() {
     });          
   });
 
-  socket.on('withdrawBiddingResponse', function(biddingReponseResult) {
-    
+  socket.on('withdrawBiddingResponse', function (biddingReponseResult) {
+  
     let biddingUserId = biddingReponseResult.userId;
     let divisionBatchId = biddingReponseResult.divisionId;
     let biddingResponseToUser = biddingReponseResult.message.description;
-    
-      if (userId == biddingUserId) {
-          
-          let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
-          targetRow.remove();
-          biddingCourses(biddingReponseResult.courseList, true);
-          createToast(biddingResponseToUser, 'alert-success', 'message-content');
-      }
 
-      biddingReponseResult.withdrawBiddingCourse.forEach(userSpecificWithdrawStatus => {
+    const isCurrentUser = userId === biddingUserId;
+    const isSuccessResponse = biddingReponseResult.message.status === 1;
 
-      if (biddingReponseResult.message.status == 1) {
-      
-        let divisionBatchLidReponse = userSpecificWithdrawStatus.div_batch_lid;
-        let minimumRequireBits = userSpecificWithdrawStatus.mrb;
-        let actualAvailableSeats = userSpecificWithdrawStatus.available_seats;
-        let totalBidders = userSpecificWithdrawStatus.total_bidders;
-        let isWinning = userSpecificWithdrawStatus.is_winning;
+    if (isSuccessResponse) {
+        if (isCurrentUser) {
+            let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
+            targetRow.remove();
+            biddingCourses(biddingReponseResult.courseList, true);
+            createToast(biddingResponseToUser, 'alert-success', 'message-content');
+        }
 
-        updateTableForCurrentUser(userSpecificWithdrawStatus);
-
-      } else {
-          createToast(biddingResponseToUser, 'alert-danger', 'error-message');
-      }
+        biddingReponseResult.withdrawBiddingCourse.forEach(userSpecificWithdrawStatus => {
+            updateTableForCurrentUser(userSpecificWithdrawStatus);
+        });
+    } else {
+        if (isCurrentUser) {
+            createToast(biddingResponseToUser, 'alert-danger', 'error-message');
+        }
+    }
   });
-});
+
 
   $('#bidding-table').on('click', '.add-bidding-points', function () {
 
@@ -605,42 +620,49 @@ $(document).ready(function() {
 
   socket.on('studentBiddingResponse', function(biddingReponseResult) {
 
-    console.log('values of biddingReponseResult', biddingReponseResult);
+  let biddingResponseToUser = biddingReponseResult.studentBiddingResponse.description;
+  const isCurrentUser = userId === biddingReponseResult.userId;
+  const isSuccessResponse = biddingReponseResult.studentBiddingResponse.status === 1;
 
-    let biddingResponseToUser = biddingReponseResult.message.description;
+    if (isSuccessResponse) {
 
-    if (biddingReponseResult.message.status === 1) {
-
+      let biddingUserId = biddingReponseResult.userId;
       let divisionBatchId = biddingReponseResult.divisionId;
-      let winningStudentList = biddingReponseResult.winningStudent;
+      let winningStudent = biddingReponseResult.studentBiddingResponse.data.winning_user_id;
+      let loosingStudent = biddingReponseResult.studentBiddingResponse.data.loosing_user_id;
       let mrbPoint = biddingReponseResult.minimumRequireBits.Mrb;
     
         let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
         if (targetRow.length > 0) {
-       
-        let winningStatusElement = targetRow.find('.winning-status');
-        let mrbPointsElement = targetRow.find('.mrb-points');
-        let curentStudentBitPoints = targetRow.find('.student-current-bid-point').val();
+      
+          let winningStatusElement = targetRow.find('.winning-status');
+          let mrbPointsElement = targetRow.find('.mrb-points');
+          let curentStudentBitPoints = targetRow.find('.student-current-bid-point').val();
+          
+          curentStudentBitPoints = curentStudentBitPoints !== '' ? curentStudentBitPoints : 0;
+          targetRow.find('.student-previous-bid-point').html(curentStudentBitPoints)
         
-        curentStudentBitPoints = curentStudentBitPoints !== '' ? curentStudentBitPoints : 0;
-        targetRow.find('.student-previous-bid-point').html(curentStudentBitPoints)
-    
-        mrbPointsElement.html(mrbPoint);
-        if (winningStudentList.some(winningStudent => winningStudent.userId == userId)) {
-          winningStatusElement.html('Yes');
-          winningStatusElement.removeClass('losing').addClass('winning');
-         
+          mrbPointsElement.html(mrbPoint);
+          if (winningStudent == userId) {
+            winningStatusElement.html('Yes');
+            winningStatusElement.removeClass('losing').addClass('winning');
+          
+          }
+          if(loosingStudent == userId){
+            winningStatusElement.html('No');
+            winningStatusElement.removeClass('winning').addClass('losing');
+          }
         }
-        else{
-          winningStatusElement.html('No');
-          winningStatusElement.removeClass('winning').addClass('losing');
-        }
+        if(isCurrentUser){
+        createToast(biddingResponseToUser, 'alert-success', 'message-content');
         }
     } 
     else{
-      createToast(biddingResponseToUser, 'alert-danger', 'error-message');
+      if(isCurrentUser){
+        createToast(biddingResponseToUser, 'alert-danger', 'error-message');
+      }
     } 
-  });
+ });
 
 
     $('#bidding-table').on('click', '.cancel-bidding-course', function(){

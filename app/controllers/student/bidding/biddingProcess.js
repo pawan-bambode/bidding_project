@@ -28,12 +28,17 @@ module.exports.respond = async (socket, io) => {
                                 });
                              })
             } else {
-                io.emit("withdrawBiddingResponse", {
+                io.emit("addBiddingResponse", {
                     message: JSON.parse(error.originalError.info.message),
                     userId: userId
                 });
             }
-        });
+        }).catch(error =>{
+            io.emit("addBiddingResponse", {
+                    message: JSON.parse(error.originalError.info.message),
+                    userId: userId
+                });
+        })
     });
 
     socket.on('withdrawBidding', async biddingDetails => {
@@ -65,7 +70,12 @@ module.exports.respond = async (socket, io) => {
                         userId: userId
                     });
                 }
-            })         
+            }).catch(error => {
+                io.emit("withdrawBiddingResponse", {
+                    message: JSON.parse(error.originalError.info.message),
+                    userId: userId
+                });
+            })        
     });
 
     socket.on('studentBidding', (biddingDetails) => {
@@ -81,28 +91,27 @@ module.exports.respond = async (socket, io) => {
         bidding.studentBidByPoints(slug, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson).then(result =>{
            
             const parsedMessage = JSON.parse(result.output.output_json);
-            console.log('values of ',result);
-        
+            
             if (parsedMessage.status === 1) {
                 Promise.all([bidding.getBiddingWinningResponse(slug, biddingSessionId, divBatchId),
                 bidding.getMRBPointsResponse(slug, biddingSessionId, divBatchId)]).then(result =>{
                                 io.emit("studentBiddingResponse", {
-                                    message: parsedMessage,
-                                    winningStudent: result[0].recordset,
+                                    studentBiddingResponse: parsedMessage,
                                     minimumRequireBits: result[1].recordset[0],
-                                    divisionId: divBatchId
+                                    divisionId: divBatchId,
+                                    userId: userId
                                 });
                              })
             } else {
                 io.emit("studentBiddingResponse", {
-                    message: JSON.parse(error.originalError.info.message),
+                    studentBiddingResponse: JSON.parse(error.originalError.info.message),
                     userId: userId
                 });
             }
         }).catch(error =>{
-            console.log('inside the else block',error);
+
             io.emit("studentBiddingResponse", {
-                message: JSON.parse(error.originalError.info.message),
+                studentBiddingResponse: JSON.parse(error.originalError.info.message),
                 userId: userId
             });
         })         

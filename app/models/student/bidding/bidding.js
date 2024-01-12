@@ -40,7 +40,7 @@ module.exports = class Bidding
             .input('biddingId', sql.Int, biddingId)
             .input('studentLid', sql.Int, studentLid)
             .query(`SELECT seb.div_batch_lid, seb.id, c.area_name, c.course_name, rtb.available_seats, 
-                    rtb.total_bidders, rtb.min_req_bid, seb.is_winning, t.division_batch_lid, c.course_id, c.acad_session, STRING_AGG(CONCAT(d.day_name, ' (', CONVERT(VARCHAR, sit.start_time, 100), ' to ', CONVERT(VARCHAR, sit1.end_time, 100), ') ', t.faculty_name), ', ') AS faculty_date_time, c.sap_acad_session_id, c.credits, db.max_seats, RTRIM(LTRIM(db.division)) AS division,c.id AS course_lid, t.faculty_id , t.faculty_name, seb.round_lid
+                    rtb.total_bidders, rtb.min_req_bid, seb.is_winning, t.division_batch_lid, c.course_id, c.acad_session, STRING_AGG(CONCAT(d.day_name, ' (', CONVERT(VARCHAR, sit.start_time, 100), ' to ', CONVERT(VARCHAR, sit1.end_time, 100), ') ', t.faculty_name), ', ') AS faculty_date_time, c.sap_acad_session_id, c.credits, db.max_seats, RTRIM(LTRIM(db.division)) AS division,c.id AS course_lid, t.faculty_id , t.faculty_name, seb.round_lid, seb.bid_points
                     FROM [${slug}].timetable t
                     INNER JOIN [${slug}].student_elective_bidding seb ON seb.div_batch_lid = t.division_batch_lid
                     INNER JOIN [${slug}].real_time_bidding rtb ON rtb.div_batch_lid = seb.div_batch_lid
@@ -49,8 +49,8 @@ module.exports = class Bidding
                     INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
                     INNER JOIN [${slug}].courses c ON c.id = db.course_lid
                     INNER JOIN [dbo].days d ON d.id = t.day_lid
-                    WHERE seb.bidding_session_lid = @biddingId AND seb.student_lid = @studentLid AND t.division_batch_lid IN(SELECT div_batch_lid FROM [${slug}].student_elective_bidding Where student_lid = @studentLid) 
-                    GROUP BY seb.id, c.area_name, c.course_name, acad_session, c.credits, seb.div_batch_lid, rtb.available_seats, rtb.total_bidders, rtb.min_req_bid, seb.is_winning, t.division_batch_lid, c.course_id, c.acad_session, c.sap_acad_session_id, c.credits,db.max_seats, RTRIM(LTRIM(db.division)), c.id, t.faculty_id , t.faculty_name, seb.round_lid`)                    
+                    WHERE seb.bidding_session_lid = @biddingId AND seb.active = 1 AND seb.student_lid = @studentLid AND t.division_batch_lid IN(SELECT div_batch_lid FROM [${slug}].student_elective_bidding Where student_lid = @studentLid) 
+                    GROUP BY seb.id, c.area_name, c.course_name, acad_session, c.credits, seb.div_batch_lid, rtb.available_seats, rtb.total_bidders, rtb.min_req_bid, seb.is_winning, t.division_batch_lid, c.course_id, c.acad_session, c.sap_acad_session_id, c.credits,db.max_seats, RTRIM(LTRIM(db.division)), c.id, t.faculty_id , t.faculty_name, seb.round_lid, seb.bid_points`)                    
         })
     }
     
@@ -78,11 +78,11 @@ module.exports = class Bidding
             .input('div_batch_lid', sql.Int, divisionId)
             .input('biddingId', sql.Int, biddingId)
             .query(`SELECT seb.id AS studentBiddingId, seb.round_lid, available_seats, seb.is_winning , rtb.div_batch_lid,
-                    u.id AS student_lid, total_bidders, min_req_bid AS mrb
+                    u.id AS userId, total_bidders, min_req_bid AS mrb
                     FROM [${slug}].real_time_bidding rtb 
                     INNER JOIN [${slug}].student_elective_bidding seb ON rtb.div_batch_lid = seb.div_batch_lid 
-                    INNER JOIN [${slug}].student_data sd ON sd.id = seb.student_lid
-                    INNER JOIN [${slug}].users u ON sd.email = u.email
+                    INNER JOIN [${slug}].student_data sd ON sd.id = seb.student_lid AND sd.active = 1
+                    INNER JOIN [${slug}].users u ON sd.email = u.email AND u.active = 1
                     WHERE seb.div_batch_lid = @div_batch_lid AND seb.bidding_session_lid = @biddingId`);
         })
     }
