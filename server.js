@@ -3,6 +3,8 @@ const app = express();
 require('dotenv').config()
 const http = require('http');
 const https = require("https");
+const socketIO = require('socket.io');
+
 
 const setRouter = require("./router");
 const biddingResponse = require('./app/controllers/student/bidding/biddingProcess');
@@ -119,6 +121,9 @@ if (process.env.APP_ENV === 'PRODUCTION' || process.env.APP_ENV === 'DEV') {
 
 else {
       const server = http.createServer(app).listen(process.env.APP_PORT);
-      global.io = require("socket.io")(server);
-      global.io.on("connection", biddingResponse.respond)
+      const io = socketIO(server);
+      io.on('connection', (socket) => {
+        biddingResponse.respond(socket, io);
+    });
+    
 }

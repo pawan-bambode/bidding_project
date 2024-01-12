@@ -1304,7 +1304,7 @@ box-shadow: -30px -30px 0 var(--primary-white);
     font-size: 24px;
   }
 
-.winning-status {
+.winning {
  background-color: #198754 !important;
  color:white;
  vertical-align: middle;
@@ -1313,8 +1313,8 @@ box-shadow: -30px -30px 0 var(--primary-white);
 .pop-up-message {
     position: fixed;
     background-color: white;
-    top: 100px;
-    right: 60px;
+    top: 86px;
+    right: 20px;
     overflow: hidden; 
     border: 1px solid black;
     border-radius: 15px;
@@ -1331,8 +1331,8 @@ box-shadow: -30px -30px 0 var(--primary-white);
   .pop-up-message-error{
     position: fixed;
     background-color: #f8d7da;
-    top: 100px;
-    right: 60px;
+    top: 86px;
+    right: 20px;
     overflow: hidden; 
     border: 1px solid black;
     border-radius: 15px;
@@ -1341,4 +1341,41 @@ box-shadow: -30px -30px 0 var(--primary-white);
   .fa-regular.fa-star {
    width: 24px;
    height: 24px;
+  }
+
+  .toast-alert {
+    position: fixed !important;
+    box-shadow: 0px 0px 2px 2px;
+    width: 300px;
+    max-height: 80px;
+    bottom: 5px;
+    right: 10px;
+    z-index: 10000;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000000000;
+  }
+
+  .top-80 {
+    top: 80px !important;
+  }
+
+  .message-content{
+    color: #0f5132;
+  }
+
+  .error-message{
+   color: #842029
+  }
+
+  .losing{
+    background-color: red !important;
+    color:white;
+    vertical-align: middle;
+  }
+
+  .fav-course {
+    width: 15px;
+    height: 15px;
   }

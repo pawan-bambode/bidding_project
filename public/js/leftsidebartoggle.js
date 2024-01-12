@@ -327,6 +327,35 @@ function resetBiddingTrimester(tableId, classToRemove) {
     })
   }
 
+  function updateCreditsPointTargets(trimesterWiseTargetCreditPoints) {
+    $('.credits-point-target').each((index, element) => {
+      const elementId = $(element).data('id');
+      const targetCredit = trimesterWiseTargetCreditPoints[elementId]?.max_credits;
+      if (targetCredit !== undefined) {
+        $(element).text(targetCredit);
+      }
+    });
+  }
 
+  function createToast(message, className, contentColorClassName) {
+    
+    const toastDiv = document.createElement('div');
+    toastDiv.className = `position-fixed top-80 right-0 toast-alert ${className}`;
+
+    toastDiv.innerHTML = `
+        <div>
+            <div class="d-flex p-2">
+                <div class="${contentColorClassName}">${message}</div>
+                <button type="button" class="btn-close toast-close-button"></button>
+            </div>
+        </div>`;
+    document.body.appendChild(toastDiv);
+
+    setTimeout(() => {
+        toastDiv.classList.add('d-none'); 
+    }, 1000);
+  }
+
+  
 
   

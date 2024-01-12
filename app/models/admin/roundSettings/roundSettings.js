@@ -23,4 +23,14 @@ module.exports = class RoundSettings {
                 FROM [${slug}].round_settings WHERE active = 1 AND round_lid = @round_lid`);
     });
   }
+  
+  static getRoundLid(slug, biddingId) {
+    return poolConnection.then(pool => {
+      return pool.request()
+        .input('biddingId', sql.Int, biddingId)
+        .input('roundName', sql.NVarChar, `%${'BIDDING_ROUND1'}%`)
+        .query(`SELECT round_lid as round_lid
+                FROM [${slug}].round_settings WHERE active = 1 AND round_name like @roundName`);
+    });
+  }
 };

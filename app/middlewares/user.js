@@ -16,6 +16,9 @@ module.exports = {
 
         if (req.sessionID) {
             store.get(req.sessionID, async (err, result) => {
+                if(err){
+                    res.redirect('/user/login')
+                }
                 if (!result) {
                     res.redirect('/user/login')
                 } else {
@@ -44,7 +47,7 @@ module.exports = {
         store.get(req.sessionID, async (err, result) => {
            
             if (!result) {
-               //return res.redirect('/user/login')
+              // return res.redirect('/user/login')
                return next();
             }
 

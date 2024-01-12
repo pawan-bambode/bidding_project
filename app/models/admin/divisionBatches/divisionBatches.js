@@ -257,21 +257,23 @@ module.exports = class divisionBatches {
                     WHERE db.active = 1 AND db.bidding_session_lid = @biddingId AND p.program_id = @programId AND c.sap_acad_session_id = @sessionId`)
         })
     }
-    static getBiddingCourse(slug, biddingId){
-
+    static getBiddingCourse(slug, biddingId, studentId){
+    
             return poolConnection.then(pool =>{
                 return pool.request()
                 .input('biddingId', sql.Int, biddingId)
+                .input('studentLid', sql.Int, studentId)
                 .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, 
-                        c.sap_acad_session_id, c.credits, db.max_seats, RTRIM(LTRIM(db.division)) as division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, 
-                        d.day_name 
+                        c.sap_acad_session_id, c.credits, db.max_seats, RTRIM(LTRIM(db.division)) AS division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, 
+                        d.day_name, c.id AS course_lid, IIF(sem.is_favourite IS NULL,0, sem.is_favourite) AS is_favourite
                         FROM [${slug}].timetable t 
                         INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
                         INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
                         INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
                         INNER JOIN [${slug}].courses c ON c.id = db.course_lid
                         INNER JOIN [dbo].days d ON d.id = t.day_lid
-                        WHERE t.bidding_session_lid = @biddingId`)
+                        LEFT JOIN [sbm-mum].student_elective_mapping sem ON sem.div_batch_lid = db.id AND student_lid = @studentLid
+                        WHERE t.division_batch_lid NOT IN (SELECT div_batch_lid FROM [${slug}].student_elective_bidding WHERE student_lid = @studentLid AND bidding_session_lid = @biddingId AND active = 1 AND round_lid = 2) ORDER BY sem.id DESC`)                    
             })
     }
     
@@ -298,14 +300,16 @@ module.exports = class divisionBatches {
             .input('acadSessionId', sql.Int, acadSessionId)
             .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, 
                     c.credits, db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time,
-                    100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id  
+                    100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id, c.id AS course_lid  
                     FROM [${slug}].timetable t 
                     INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
                     INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
                     INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
                     INNER JOIN [${slug}].courses c ON c.id = db.course_lid
                     INNER JOIN [dbo].days d ON d.id = t.day_lid
-                    WHERE c.sap_acad_session_id = @acadSessionId AND t.bidding_session_lid = @biddingId`)
+                    LEFT JOIN [${slug}].student_elective_bidding seb ON seb.div_batch_lid = db.id
+                    WHERE c.sap_acad_session_id = @acadSessionId AND t.bidding_session_lid = @biddingId
+                    AND seb.div_batch_lid IS NULL`)
         })
     }
 
@@ -318,14 +322,15 @@ module.exports = class divisionBatches {
                 .input('acadSessionId', sql.Int, acadSessionId)
                 .input('courseId', sql.Int, courseId)
                 .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, 
-                        db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id  
+                        db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id, c.id AS course_lid  
                         FROM [${slug}].timetable t 
                         INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
                         INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
                         INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
                         INNER JOIN [${slug}].courses c ON c.id = db.course_lid
-                        INNER JOIN [dbo].days d ON d.id = t.day_lid 
-                        WHERE c.sap_acad_session_id = @acadSessionId AND c.course_id = @courseId AND t.bidding_session_lid = @biddingId`)
+                        INNER JOIN [dbo].days d ON d.id = t.day_lid
+                        LEFT JOIN [${slug}].student_elective_bidding seb ON seb.div_batch_lid = db.id
+                        WHERE c.sap_acad_session_id = @acadSessionId AND c.course_id = @courseId AND t.bidding_session_lid = @biddingId AND seb.div_batch_lid IS NULL`)
             })
         }
         else{
@@ -334,7 +339,7 @@ module.exports = class divisionBatches {
                 .input('biddingId', sql.Int, biddingId)
                 .input('courseId', sql.Int, courseId)
                 .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, 
-                        db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id  
+                        db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id, c.id AS course_lid  
                         FROM [${slug}].timetable t 
                         INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
                         INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
@@ -355,14 +360,15 @@ module.exports = class divisionBatches {
                   .input('acadSessionId', sql.Int, acadSessionId)
                   .input('areaName', sql.NVarChar, `%${areaName}%`)
                   .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, 
-                          c.acad_session, c.credits, db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id  
+                          c.acad_session, c.credits, db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id, c.id AS course_lid 
                           FROM [${slug}].timetable t 
                           INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
                           INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
                           INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
                           INNER JOIN [${slug}].courses c ON c.id = db.course_lid
-                          INNER JOIN [dbo].days d ON d.id = t.day_lid 
-                          WHERE c.area_name LIKE @areaName AND c.area_name LIKE @areaName AND t.bidding_session_lid = @biddingId`)
+                          INNER JOIN [dbo].days d ON d.id = t.day_lid
+                          LEFT JOIN [${slug}].student_elective_bidding seb ON seb.div_batch_lid = db.id
+                          WHERE c.area_name LIKE @areaName AND c.area_name LIKE @areaName AND t.bidding_session_lid = @biddingId AND seb.div_batch_lid IS NULL`)
               })
           }
           else{
@@ -371,7 +377,7 @@ module.exports = class divisionBatches {
                   .input('biddingId', sql.Int, biddingId)
                   .input('areaName', sql.NVarChar, `%${areaName}%`)
                   .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, c.credits, 
-                          db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id  
+                          db.max_seats, db.division, t.faculty_id, t.faculty_name, CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, d.day_name, c.sap_acad_session_id, c.id AS course_lid  
                           FROM [${slug}].timetable t 
                           INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
                           INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
@@ -389,7 +395,7 @@ module.exports = class divisionBatches {
                 return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('acadSessionId', sql.Int, acadSessionId)
-                .query(`SELECT c.course_id, c.course_name FROM [${slug}].timetable t
+                .query(`SELECT DISTINCT c.course_id, c.course_name FROM [${slug}].timetable t
                         INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid
                         INNER JOIN [${slug}].courses c ON c.id = db.course_lid WHERE t.active = 1 AND db.active = 1 AND c.active = 1 AND t.bidding_session_lid = @biddingId 
                         AND c.sap_acad_session_id = @acadSessionId`);
@@ -399,7 +405,7 @@ module.exports = class divisionBatches {
             return poolConnection.then(pool =>{
                 return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .query(`SELECT c.course_id, c.course_name FROM [${slug}].timetable t
+                .query(`SELECT DISTINCT c.course_id, c.course_name FROM [${slug}].timetable t
                         INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid
                         INNER JOIN [${slug}].courses c ON c.id = db.course_lid WHERE t.active = 1 AND db.active = 1 AND c.active = 1 AND t.bidding_session_lid = @biddingId `);
             });

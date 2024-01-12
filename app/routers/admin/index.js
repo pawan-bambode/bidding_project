@@ -50,12 +50,12 @@ function AdminRoute(app) {
     app.use('/admin/', binddingRound);
 
     app.use('/student/', isLoggedIn, checkPermission, student)
-    app.use('/student', demandEstimation);
-    app.use('/student', favouriteCourse);
-    app.use('/student', bidding);
-    app.use('/student', confirmation);
-    app.use('/student', waitList);
-    app.use('/student', addDrop);
+    app.use('/student', isLoggedIn, checkPermission, demandEstimation);
+    app.use('/student', isLoggedIn, checkPermission, favouriteCourse);
+    app.use('/student', isLoggedIn, checkPermission, bidding);
+    app.use('/student', isLoggedIn, checkPermission, confirmation);
+    app.use('/student', isLoggedIn, checkPermission, waitList);
+    app.use('/student', isLoggedIn, checkPermission, addDrop);
 }
 
 module.exports = AdminRoute;

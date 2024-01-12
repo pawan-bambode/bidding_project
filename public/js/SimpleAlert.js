@@ -12,7 +12,7 @@ class SimpleAlert {
         this.removeAlert();
 
         let alertElem = document.createElement('div');
-        alertElem.setAttribute('class', `simple-alert alert ${obj.type} position-absolute bottom-0 end-3`);
+        alertElem.setAttribute('class', `simple-alert alert ${obj.type}  bottom-0 end-3`);
         let list = ``;
       
         if(obj.message.length > 0){

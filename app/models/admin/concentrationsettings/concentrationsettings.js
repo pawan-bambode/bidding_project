@@ -151,9 +151,11 @@ module.exports =  class ConcentrationSettigs{
             return pool.request()
             .input('biddingId', sql.Int, biddingId)
             .input('studentEmail', sql.NVarChar, studentEmail)
-            .query(`SELECT cs.* FROM [${slug}].student_data sd 
+            .query(`SELECT cs.*, u.id AS userId, sd.id AS studentId 
+                    FROM [${slug}].student_data sd 
                     INNER JOIN [${slug}].concentration c ON sd.concentration_lid = c.id
-                    INNER JOIN [${slug}].concentration_settings cs ON cs.concentration_lid = sd.concentration_lid WHERE email = @studentEmail AND sd.active = 1`)
+                    INNER JOIN [${slug}].users u ON u.email = sd.email
+                    INNER JOIN [${slug}].concentration_settings cs ON cs.concentration_lid = sd.concentration_lid WHERE sd.email = @studentEmail AND sd.active = 1 AND u.active = 1`)
         })
     }
 
