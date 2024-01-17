@@ -1,0 +1,189 @@
+<%- include('../../partials/head') %>
+
+<%- include('../../partials/leftSidebarForStudent.ejs') %>
+<%- include('../../partials/header.ejs') %>
+
+<div class="main-content">
+
+  <div class="card card-custom-border-curv">
+    <div class="card-header-custom d-flex justify-content-center p-1">
+      <h3 class="confirmation-first d-none">Confirmation Rounds I</h3>  
+      <h3 class="confirmation-second d-none">Confirmation Rounds II</h3>
+    </div>
+    <div class="card-body table-responsive">
+      <div class="row ps-5 pe-5">
+        <div class="col-md-4">
+            <h6>Start Time :&nbsp;<span id="start-time"><%- %></span></h6>
+        </div>    
+        <div class="col-md-4">
+            <h6>End Time :&nbsp;<span id="end-time"><%- %></h6>
+        </div>
+        <div class="col-md-4">
+            <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
+        </div>
+    </div>
+    </div>
+  </div>
+  <div class="card card-custom-border-curv mt-5">
+    <div class="card-header-custom d-flex justify-content-between p-1">
+        <h3 class="ms-2">Confirmation Courses</h3>  
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table custom_row table-bordered mt-4 custom-table" id="confirm-courses-table">
+        <thead>
+          <th>#</th>
+          <th>Area</th>
+          <th>Trimester</th>
+          <th>Course</th>
+          <th>Faculty</th>
+          <th>Credits</th>
+          <th>Your Bid</th>
+          <th>Action</th>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+    <div class="card card-custom-border-curv mt-5 bidding-modal" id="bidding-modal">
+      <div class="card-header-custom d-flex justify-content-between p-1">
+          <h3 class="ms-2">Winning Courses</h3>
+      </div>
+   
+      <div class="card-body table-responsive"> 
+          <table class="table custom_row table-bordered mt-4 custom-table" id="winning-course-table">
+              <thead>
+                  <th>#</th>
+                  <th>Area</th>
+                  <th>Trimester</th>
+                  <th>Course</th>
+                  <th>Faculty</th>
+                  <th>Credits</th>
+                  <th>Your Bid</th>
+                  <th>Action</th>
+              </thead>
+              <tbody>
+                <% if(winningCourseList.length > 0) { %>
+                <% let count = 1 %>
+                <% for(let winningCourse of winningCourseList) { %>
+                    <tr data-faculty-id = "<%- winningCourse.faculty_id %>"  data-faculty-name = "<%- winningCourse.faculty_name %>" data-area-name = "<%- winningCourse.area_name %>"
+                    data-acad-session-id = "<%- winningCourse.sap_acad_session_id %>" data-acad-session = "<%- winningCourse.acad_session %>" data-course-name = "<%- winningCourse.course_name %>"
+                    data-course-id = "<%- winningCourse.course_id %>" data-credits = "<%- winningCourse.credits %>" data-bid-points = "<%- winningCourse.bid_points %>" data-division = "<%- winningCourse.division %>" data-concentration-lid = "<%- winningCourse.concentration_lid %>" data-division-batch-lid = "<%- winningCourse.id %>" data-is-dropped = "<%- winningCourse.is_dropped %>" data-is-waitlist = "<%- winningCourse.is_waitlisted %>" data-is-winning = "<%- winningCourse.is_winning %>" data-course-lid = "<%- winningCourse.course_lid %>"
+                      >
+                        <td><%- count++ %></td>
+                        <td><%- winningCourse.area_name %></td>
+                        <td><%- winningCourse.acad_session %></td>
+                        <td><%- winningCourse.course_name %>-<%- winningCourse.division %></td>
+                        <td><%- winningCourse.faculty_name %></td>
+                        <td><%- winningCourse.credits %></td>
+                        <td><%- winningCourse.bid_points %></td>
+                        <td><button class="btn btn-success confirm-courses me-1"><i class="fa-solid fa-check"></i> Confirm</button></td>
+                    </tr>
+                <% } %>
+                <% } %>
+            </tbody>
+             
+           </table>
+    </div>  
+</div>
+
+<%- include('../../partials/footer.ejs') %>
+<script>
+$(document).ready(function() {
+ 
+    let active = `<%- active %>`;
+    let roundId = `<%- roundId %>`;
+    
+    $('.confirmation-first').toggleClass('d-none', roundId !== '2');
+    $('.confirmation-second').toggleClass('d-none', roundId === '2');
+    
+    $('#sidebar .side-menu li.' + active).addClass('active');
+
+    $('#winning-course-table').on('click', '.confirm-courses', function(){
+
+      let studentId = $('#student-data').data('student-lid');
+      let concentrationId = $(this).closest('tr').data('concentration-lid');
+      let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
+      let bidPoints = $(this).closest('tr').data('bid-points');
+      let isWinning = $(this).closest('tr').data('is-winning') == true ? 1 : 0;
+      let isDropped = $(this).closest('tr').data('is-dropped') == true ? 1 : 0;
+      let isWaitListed = $(this).closest('tr').data('is-waitlist') == true ? 1 : 0;
+      let courseId = $(this).closest('tr').data('course-lid');
+      let isConfirmed = 1;
+      
+      let confirmCourse = {
+        student_lid : studentId,
+        concentration_lid: concentrationId,
+        div_batch_lid: divisionBatchId,
+        bid_points: bidPoints,
+        is_winning: isWinning,
+        is_confirmed: isConfirmed,
+        is_dropped: isDropped,
+        is_waitlisted: isWaitListed,
+        course_lid: courseId,
+        round_lid: 3
+      }
+       
+      let ApiObj = {
+            type: 'POST',
+            url: '/student/confirmation/add-confirmation',
+            data: {
+                inputJson: JSON.stringify(confirmCourse)
+            },
+            dataType: 'JSON',
+      };
+
+        ajaxApi(ApiObj)
+            .then(result => {
+                console.log('values of result', result);
+            })
+            .catch(error => {
+                showError(JSON.stringify(error.responseJSON));
+            });
+
+
+      confirmUnConfirmRow($(this), 'confirm-courses-table', 'btn btn-danger unconfirm-courses', 'fa-close', 'unConfirm');
+
+    })
+
+    $('#confirm-courses-table').on('click', '.unconfirm-courses', function(){
+        confirmUnConfirmRow($(this), 'winning-course-table', 'btn btn-success confirm-courses', 'fa-check', 'Confirm')
+    })
+
+  function confirmUnConfirmRow(element, tableId, buttonClass, iconClass, buttonLabel) {
+    let facultyId = $(element).closest('tr').data('faculty-id');
+    let facultyName = $(element).closest('tr').data('faculty-name');
+    let areaName = $(element).closest('tr').data('area-name');
+    let acadSessionId = $(element).closest('tr').data('acad-session-id');
+    let acadSession = $(element).closest('tr').data('acad-session');
+    let courseName = $(element).closest('tr').data('course-name');
+    let courseId = $(element).closest('tr').data('course-id');
+    let credits = $(element).closest('tr').data('credits');
+    let studentPoints = $(element).closest('tr').data('bid-points');
+    let division = $(element).closest('tr').data('division');
+    let concentrationId = $(element).closest('tr').data('concentration-lid');
+    let divisionBatchId = $(element).closest('tr').data('division-batch-lid');
+    let isDropped = $(element).closest('tr').data('is-dropped');
+    let isWaitListed = $(element).closest('tr').data('is_waitlisted');
+    let isWinning = $(element).closest('tr').data('is_winning');
+    let courseLid = $(element).closest('tr').data('course-lid');
+    let confirmaCourseTableLength = $('#confirm-courses-table tbody tr').length;
+
+    let confirmaCourseRow = `<tr data-faculty-id = "${facultyId}"  data-faculty-name = "${facultyName}" data-area-name = "${areaName}" data-acad-session-id = "${acadSessionId}" data-acad-session = "${acadSession}" data-course-name = "${courseName}" data-course-id = "${courseId}" data-credits = "${credits}" data-bid-points = "${studentPoints}" data-division = "${division}" data-concentration-lid = "${concentrationId}" data-division-batch-lid = "${divisionBatchId}" data-is-dropped = "${isDropped}" data-is-waitlist = "${isWaitListed}" data-is-winning = "${isWinning}"  data-course-lid = "${courseLid}"> 
+      <td>${++confirmaCourseTableLength}</td>
+      <td>${areaName}</td>
+      <td>${acadSession}</td>
+      <td>${courseName}-${division}</td>
+      <td>${facultyName}</td>
+      <td>${credits}</td>
+      <td>${studentPoints}</td>
+      <td><button class="${buttonClass}"><i class="me-1 fa-solid ${iconClass}"></i>${buttonLabel}</button></td>
+    </tr>`;
+
+    $(`#${tableId} tbody`).append(confirmaCourseRow);
+    $(element).closest('tr').remove();
+  }
+}); 
+</script>
+
+<%- include('../../partials/footerEnd.ejs') %>

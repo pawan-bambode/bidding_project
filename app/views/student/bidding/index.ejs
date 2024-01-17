@@ -102,7 +102,7 @@
             data-max-seats ="<%- considerationSet.available_seats %>" data-course-time ="${courseTime}" data-acad-session-id = "<%- considerationSet.sap_acad_session_id %>" data-course-id ="<%- considerationSet.course_id %>" data-course-lid="<%- considerationSet.course_lid %>">
               <td class="id-column"><%= count++ %></td>
               <td><%= considerationSet.area_name %></td>
-              <td><%= considerationSet.course_name %></td>
+              <td><%= considerationSet.course_name %>-<%= considerationSet.division %></td>
               <td><%= considerationSet.acad_session %></td>
               <td><%= considerationSet.faculty_name %></td>
               <td><%= considerationSet.credits %></td>

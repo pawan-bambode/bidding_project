@@ -3,112 +3,51 @@
 <%- include('../partials/leftSidebarForStudent.ejs') %>
 <%- include('../partials/header.ejs') %>
 
-<div class="main-content">
-  <div class="card card-custom-border-curv">
-    <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-2">Confirmation</h3>  
+<div class="main-content mt-5">
+    <div class="d-flex">
+        <div class="card round-wise ms-5 me-5">
+            <div class="card-body">
+                <a href="confirmation/rounds-first" class="text-decoration-none text-dark confirmation-round-wise" data-id="3">
+                    <div class="d-flex justify-content-center align-items-center h-100">
+                        <div class="d-flex">
+                            <img src="/image/student/body-part-image/confirmation-round/confirmation.png" alt="confirmation round I">
+                            <h4 class="ms-2 round-label">Confirmation Rounds I</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="card round-wise">
+            <div class="card-body">
+                <a href="confirmation/rounds-second" class="text-decoration-none text-dark confirmation-round-wise" data-id = "5">
+                    <div class="d-flex justify-content-center align-items-center h-100">
+                        <div class="d-flex">
+                            <img src="/image/student/body-part-image/confirmation-round/confirmation.png" alt="confirmation round II">
+                            <h4 class="ms-2 round-label">Confirmation Rounds II</h4>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
     </div>
-    <div class="card-body table-responsive">
-      <table class="table custom_row table-bordered mt-4 custom-table" id="confirm-courses-table">
-        <thead>
-          <th>#</th>
-          <th>Area</th>
-          <th>Trimester</th>
-          <th>Course</th>
-          <th>Faculty</th>
-          <th>Credits</th>
-          <th>Your Bid</th>
-          <th>Action</th>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
-    </div>
-  </div>
-    <div class="card card-custom-border-curv mt-5 bidding-modal" id="bidding-modal">
-      <div class="card-header-custom d-flex justify-content-between p-1">
-          <h3 class="ms-2">Winning Courses</h3>
-      </div>
-   
-      <div class="card-body table-responsive"> 
-          <table class="table custom_row table-bordered mt-4 custom-table" id="winning-course-table">
-              <thead>
-                  <th>#</th>
-                  <th>Area</th>
-                  <th>Trimester</th>
-                  <th>Course</th>
-                  <th>Faculty</th>
-                  <th>Credits</th>
-                  <th>Your Bid</th>
-                  <th>Action</th>
-              </thead>
-              <tbody>
-                <% let count = 1 %>
-                <% for(let winningCourse of winningCourseList) { %>
-                    <tr data-faculty-id = "<%- winningCourse.faculty_id %>"  data-faculty-name = "<%- winningCourse.faculty_name %>" data-area-name ="<%- winningCourse.area_name %>"
-                    data-acad-session-id = "<%- winningCourse.sap_acad_session_id %>" data-acad-session ="<%- winningCourse.acad_session %>" data-course-name ="<%- winningCourse.course_name %>"
-                    data-course-id = "<%- winningCourse.course_id %>" data-credits = "<%- winningCourse.credits %>" data-bid-points = "<%- winningCourse.bid_points %>" 
-                      >
-                        <td><%- count++ %></td>
-                        <td><%- winningCourse.area_name %></td>
-                        <td><%- winningCourse.acad_session %></td>
-                        <td><%- winningCourse.course_name %></td>
-                        <td><%- winningCourse.faculty_name %></td>
-                        <td><%- winningCourse.credits %></td>
-                        <td><%- winningCourse.bid_points %></td>
-                        <td><button class="btn btn-success confirm-courses me-1"><i class="fa-solid fa-check"></i> Confirm</button></td>
-                    </tr>
-                <% } %>
-            </tbody>
-             
-           </table>
-    </div>  
 </div>
 
 <%- include('../partials/footer.ejs') %>
 <script>
-$(document).ready(function() {
-    let active = `<%- active %>`;
-    $('#sidebar .side-menu li.' + active).addClass('active');
+    $(document).ready(function() {
+        let active = `<%- active %>`;
+        $('#sidebar .side-menu li.' + active).addClass('active');
 
-    $('#winning-course-table').on('click', '.confirm-courses', function(){
-      let studentLid = $('#student-data').data('student-lid');
-      console.log('values of studentLid', studentLid);  
-      confirmUnConfirmRow($(this), 'confirm-courses-table', 'btn btn-danger unconfirm-courses', 'fa-close', 'unConfirm');
-
-    })
-
-    $('#confirm-courses-table').on('click', '.unconfirm-courses', function(){
-        confirmUnConfirmRow($(this), 'winning-course-table', 'btn btn-success confirm-courses', 'fa-check', 'Confirm')
-    })
-
-  function confirmUnConfirmRow(element, tableId, buttonClass, iconClass, buttonLabel) {
-    let facultyId = $(element).closest('tr').data('faculty-id');
-    let facultyName = $(element).closest('tr').data('faculty-name');
-    let areaName = $(element).closest('tr').data('area-name');
-    let acadSessionId = $(element).closest('tr').data('acad-session-id');
-    let acadSession = $(element).closest('tr').data('acad-session');
-    let courseName = $(element).closest('tr').data('course-name');
-    let courseId = $(element).closest('tr').data('course-id');
-    let credits = $(element).closest('tr').data('credits');
-    let studentPoints = $(element).closest('tr').data('bid-points');
-    let confirmaCourseTableLength = $('#confirm-courses-table tbody tr').length;
-
-    let confirmaCourseRow = `<tr data-faculty-id="${facultyId}"  data-faculty-name="${facultyName}" data-area-name="${areaName}" data-acad-session-id="${acadSessionId}" data-acad-session="${acadSession}" data-course-name="${courseName}" data-course-id="${courseId}" data-credits="${credits}" data-bid-points="${studentPoints}">
-      <td>${++confirmaCourseTableLength}</td>
-      <td>${areaName}</td>
-      <td>${acadSession}</td>
-      <td>${courseName}</td>
-      <td>${facultyName}</td>
-      <td>${credits}</td>
-      <td>${studentPoints}</td>
-      <td><button class="${buttonClass}"><i class="me-1 fa-solid ${iconClass}"></i>${buttonLabel}</button></td>
-    </tr>`;
-
-    $(`#${tableId} tbody`).append(confirmaCourseRow);
-    $(element).closest('tr').remove();
-  }
-}); 
+        $(document).on('click', '.confirmation-round-wise', function(event){
+           event.preventDefault();
+           let confirmationUrl = $(this).attr('href');
+           let confirmationName = $(this).find('.round-label').text();
+           
+           localStorage.setItem('confirmationName', confirmationName);
+           window.location.href = $(this).attr('href');
+        })
+    });
 </script>
 
 <%- include('../partials/footerEnd.ejs') %>
