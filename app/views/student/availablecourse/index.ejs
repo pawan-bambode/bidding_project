@@ -237,7 +237,7 @@ function availableCourses(biddingCourseList) {
  
   $('#available-course-table tbody').empty();
   biddingCourseList.forEach(function(biddingCourse, index) {
-    console.log('valueso f ',biddingCourse);
+    
     let foundCourse = favCourseList.find(function(favCourse) {
     return favCourse.div_batch_lid === biddingCourse.division_batch_lid;
     });

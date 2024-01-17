@@ -1379,3 +1379,10 @@ box-shadow: -30px -30px 0 var(--primary-white);
     width: 15px;
     height: 15px;
   }
+
+  #bidding-trimester-select-table tbody tr.odd-row {
+    background-color: var(--primary-table-bg) !important;
+}
+#bidding-trimester-select-table th {
+    background-color: var(--primary-table-bg) !important;
+}

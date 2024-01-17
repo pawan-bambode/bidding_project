@@ -2,10 +2,7 @@
 <%- include('../partials/head') %>
 <%- include('../partials/leftSidebar.ejs') %>
 <%- include('../partials/header.ejs') %>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+
 
 <div class="main-content">
     <div class="breadcrumbs-container">
@@ -164,9 +161,7 @@
       </div>
   </div>
   
-      
-<script src='../../../../public/js/simpleAlert/simpleAlert.js'></script>
-          
+  <%- include('../partials/footer.ejs') %>          
 <script>
    $(document).ready(function(){
     
@@ -298,7 +293,7 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
       $('#edit-concentration-setting-modal #concentration-name').attr('data-id',concentrationSettingsId);
      })
 
-     $('#edit-concentration-setting-modal').on('click', '#update-concentration-settings', function(){
+$('#edit-concentration-setting-modal').on('click', '#update-concentration-settings', function(){
   let id = $('#concentration-name').attr('data-id');
   let concentrationName = $('#concentration-name').val();
   let minCreditsInPrimaryArea = $('#min-credits-in-primary-area').val();
@@ -306,7 +301,7 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
   let minCreditsPerArea = $('#min-credits-per-area').val();
   let totalElectiveCredits = $('#total-elective-credits').val();
   let numberOfAreasToCover = $('#number-of-areas-to-cover').val();
-  let primaryAreaOption =  $('#primary-area option:selected').text() === '--Select Primary Area--' ? 'NA' : $('#primary-area option:selected').text();
+  let primaryAreaOption =  $('#primary-area option:selected').text() === '--Select Primary Area--' ? null : $('#primary-area option:selected').text();
 ;
 
   if((primaryAreaOption === '--Select Primary Area--') && (editConcentration.toLowerCase() != 'general management')){

@@ -34,6 +34,7 @@ module.exports.respond = async (socket, io) => {
                 });
             }
         }).catch(error =>{
+            console.log('values of error', error);
             io.emit("addBiddingResponse", {
                     message: JSON.parse(error.originalError.info.message),
                     userId: userId
@@ -87,6 +88,7 @@ module.exports.respond = async (socket, io) => {
         let userId = biddingDetails.userId;
         let biddingSessionId = biddingDetails.biddingSessionId;
         let inputJson = biddingDetails.inputJson;
+        
         
         bidding.studentBidByPoints(slug, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson).then(result =>{
            

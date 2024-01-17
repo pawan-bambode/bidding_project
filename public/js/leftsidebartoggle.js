@@ -226,25 +226,40 @@ function IsNumber(inputString) {
 }
 
 function updateCurrentTime() {
+   
     let currentDate = new Date();
     let formattedDateTime = currentDate.toLocaleString();
     $('#current-date-time').text(convertDateFormat(formattedDateTime)); 
 }
 
-function convertDateFormat(inputDate) {
+
+
+  function convertDateFormat(inputDate) {
+    
     let [datePart, timePart] = inputDate.split(',');
-    let [ month,day, year] = datePart.split('/');
+    let [firstComponent, secondComponent, year] = datePart.split(/[\/-]/);
+    let isDayFirst = firstComponent.length > secondComponent.length;
+    let day, month;
+
+    if (isDayFirst) {
+        [day, month] = [firstComponent, secondComponent];
+    } else {
+        [month, day] = [firstComponent, secondComponent];
+    }
 
     let monthNames = [
         'January', 'February', 'March', 'April',
         'May', 'June', 'July', 'August',
         'September', 'October', 'November', 'December'
     ];
+
     let monthName = monthNames[parseInt(month) - 1];
     let formattedDate = `${day}-${monthName} ${year}`;
     let formattedDateTime = `${formattedDate} ${timePart}`;
+
     return formattedDateTime;
-} 
+}
+
 
 function convertMillisecondsToReadableTime(milliseconds) {
     if(milliseconds == 0){
@@ -310,8 +325,8 @@ function withdrawBidding(arr, key, credits) {
     return Object.values(arr);
 }
 
-function resetBiddingTrimester(tableId, classToRemove) {
-    $(`#${tableId} tbody`).empty();
+function resetBiddingTrimester( classToRemove) {
+    
     let prevSelected = $(`.${classToRemove}`);
     prevSelected.removeClass(`${classToRemove}`);
   }
@@ -336,9 +351,22 @@ function resetBiddingTrimester(tableId, classToRemove) {
       }
     });
   }
+  function updateCurrentPointTargets(trimesterWiseTargetCreditPoints) {
+    
+    $('.current-credit-points').each((index, element) => {
+        console.log('values of element', element);
+      const elementId = $(element).data('id');
+      const targetCredit = trimesterWiseTargetCreditPoints[`${elementId}`];
+      console.log('values of targetCredit', targetCredit);
+      const elementValue = Number($(element).text());
+      console.log('values of elementValue',elementValue);
+      if (targetCredit != 0) {
+        $(element).text(elementValue-Number(targetCredit));
+      }
+    });
+  }
 
   function createToast(message, className, contentColorClassName) {
-    
     const toastDiv = document.createElement('div');
     toastDiv.className = `position-fixed top-80 right-0 toast-alert ${className}`;
 
@@ -356,6 +384,14 @@ function resetBiddingTrimester(tableId, classToRemove) {
     }, 1000);
   }
 
+  function applyOddRowStyles(element, rowIndex) {
+    
+    if (rowIndex % 2 == 0) {
+        element.addClass('odd-row');
+        element.closest('table').removeClass('custom-table');
+        element.closest('tbody').prev('thead').find('th').addClass('odd-row');
+    }
+}
   
 
   

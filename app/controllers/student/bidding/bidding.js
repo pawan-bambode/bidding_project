@@ -21,7 +21,9 @@ module.exports = {
                      concentrationSetting.getStudentConcentrationSettings(res.locals.slug, res.locals.biddingId, res.locals.username),
                      divisionBatch.getAreaList(res.locals.slug, res.locals.biddingId),
                      roundSetting.getRoundLid(res.locals.slug, res.locals.biddingId),
-                     biddingClass.getConsiderationSet(res.locals.slug, res.locals.biddingId, res.locals.studentId)
+                     biddingClass.getConsiderationSet(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+                     biddingClass.getStudentBidPoints(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+                     biddingClass.getUpdateBidPoints(res.locals.slug, res.locals.biddingId, res.locals.studentId)
                     ]).then(result => {
                    
                 res.render('student/bidding/index',{
@@ -33,8 +35,12 @@ module.exports = {
                     courseList: result[4].recordset,
                     concentrationSetting: result[5].recordset[0],
                     areaList: result[6].recordset,
-                    roundId : result[7].recordset != '' ? result[7].recordset[0].round_lid : 0,
-                    considerationSetList : result[8].recordset,
+                    roundId: result[7].recordset != '' ? result[7].recordset[0].round_lid : 0,
+                    considerationSetList: result[8].recordset,
+                    studentBidsPoints: result[9].recordset[0] != null && result[9].recordset[0] !== undefined? result[9].recordset[0] : 0,
+                    remaingBidPoints: result[10].recordset[0] !== null && result[10].recordset[0] !== undefined
+                    ? result[10].recordset[0] : result[9].recordset[0] != null && result[9].recordset[0] !== undefined? result[9].recordset[0] : 0,
+
                     slug: slug
             });
         })

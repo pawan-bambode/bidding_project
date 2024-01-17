@@ -53,6 +53,28 @@ module.exports = class Bidding
                     GROUP BY seb.id, c.area_name, c.course_name, acad_session, c.credits, seb.div_batch_lid, rtb.available_seats, rtb.total_bidders, rtb.min_req_bid, seb.is_winning, t.division_batch_lid, c.course_id, c.acad_session, c.sap_acad_session_id, c.credits,db.max_seats, RTRIM(LTRIM(db.division)), c.id, t.faculty_id , t.faculty_name, seb.round_lid, seb.bid_points`)                    
         })
     }
+
+    static getStudentBidPoints(slug, biddingId, studentLid){
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('biddingId', sql.Int, biddingId)
+            .input('studentLid', sql.Int, studentLid)
+            .query(`SELECT bid_points AS student_bid_points FROM [${slug}].student_data where id = @studentLid AND bidding_session_lid = @biddingId`)                    
+        })
+    }
+
+    static getUpdateBidPoints(slug, biddingId, studentLid){
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('biddingId', sql.Int, biddingId)
+            .input('studentLid', sql.Int, studentLid)
+            .query(`SELECT DISTINCT (sd.remaining_bid_points) - SUM(seb.bid_points) AS student_bid_points 
+                    FROM [${slug}].student_data sd
+                    RIGHT JOIN [${slug}].student_elective_bidding seb ON seb.student_lid = sd.id
+                    WHERE seb.student_lid = @studentLid AND sd.id = @studentLid AND sd.active = 1 AND seb.active = 1 AND
+                    seb.bidding_session_lid = @biddingId GROUP BY sd.remaining_bid_points`)                    
+        })
+    }
     
     static getWithdrawBiddingDetails (slug, biddingId, divisionId){
         
@@ -160,7 +182,7 @@ module.exports = class Bidding
             
             .input('div_batch_lid', sql.Int, divisionId)
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT u.id AS userId 
+            .query(`SELECT u.id AS userId, seb.bid_points
                     FROM [${slug}].student_elective_bidding seb
                     INNER JOIN [${slug}].real_time_bidding rtb  ON rtb.div_batch_lid = seb.div_batch_lid AND rtb.active = 1
                     INNER JOIN [${slug}].student_data sd ON sd.id = seb.student_lid AND sd.active = 1
