@@ -9,7 +9,7 @@
    <div class="card card-custom-border-curv">
         <div class="card-header-custom d-flex justify-content-between p-1">
             <h4 class="ms-2">Demand Estimation Round</h4>
-            <button class="btn btn-danger time-remaing me-5"></button> 
+            <button class="btn btn-danger time-remaining me-5"></button> 
         </div>
         <div class="card-body table-responsive">
             <h3 class="text-center bidding-round" data-id="<%- roundLid %>">Demand Estimation Round</h3>
@@ -178,6 +178,16 @@
       </div>     
 </div>
 
+<footer class="footer">
+    <div class="footer-div">
+        <div class="d-flex justify-content-center align-items-center" style="height: 40px;">
+            <div class="d-flex justify-content-between align-items-center">
+             <button class="btn btn-success text-light">Remaining Bid Points:&nbsp;<span id="remaining-bid-points"></button>
+            </div>
+        </div>
+    </div>
+</footer>
+<%- include('../partials/footerEnd.ejs') %>
 <%- include('../partials/footer.ejs') %>
 <script>
 $(document).ready(function() {
@@ -188,20 +198,20 @@ $(document).ready(function() {
 
     let concentrationSettings = '<%- concentrationSettings%>'.trim();
     let startTime = '<%- startAndEndTime %>'.trim();
-    let timeRemaing = $('.time-remaing').text().trim();
+    let timeRemaing = $('.time-remaining').text().trim();
 
     
-        if (timeRemaing.trim() == 'Rounds Ended') {
+        if (timeRemaing.trim() == 'Round Ended') {
             $('.hide-column-after-round-over').addClass('d-none');
         }
 
        if (startTime.trim() === '') {
          $('.demand-estimation-not-created').removeClass('d-none');
-         $('.time-remaing').addClass('d-none');
+         $('.time-remaining').addClass('d-none');
        } else {
         
          $('.demand-estimation-not-created').addClass('d-none');
-        $('.time-remaing').removeClass('d-none');
+        $('.time-remaining').removeClass('d-none');
       }
  
      if(concentrationSettings == 0){
@@ -413,16 +423,16 @@ $(document).ready(function() {
         if(endDateTime > currentDateTime){
         let dateSubtraction = endDateTime - currentDateTime;
         let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
-        $('.time-remaing').text(`Rounds Ended In ${dateSubtractionValue}`);
+        $('.time-remaining').text(`Round ends in ${dateSubtractionValue}`);
         }
 
         if(endDateTime == currentDateTime){
             let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
-        $('.time-remaing').text(`Rounds Ended In ${dateSubtractionValue}`);
+        $('.time-remaining').text(`Round ends in ${dateSubtractionValue}`);
         }
         if(endDateTime < currentDateTime){
-            $('.time-remaing').text(`Rounds Ended`);
-            $('.time-remaing').attr('data-round-status','end');
+            $('.time-remaining').text(`Round ended`);
+            $('.time-remaining').attr('data-round-status','end');
             $('.save-select-course').addClass('d-none');
             $('.demand-estimation-status').addClass('d-none');
             $('.demand-estimation-modal').addClass('d-none');
@@ -430,12 +440,12 @@ $(document).ready(function() {
         
         if(startDateTime > currentDateTime){
         
-            $('.time-remaing').text(`Rounds Not Started Yet`);
-            $('.time-remaing').attr('data-round-status','not-started');
+            $('.time-remaining').text(`Round has not started yet`);
+            $('.time-remaining').attr('data-round-status','not-started');
             $('.save-select-course').addClass('d-none');
             $('.demand-estimation-status').addClass('d-none');
-            $('.time-remaing').removeClass('btn-danger');
-            $('.time-remaing').addClass('btn-success');
+            $('.time-remaining').removeClass('btn-danger');
+            $('.time-remaining').addClass('btn-success');
         }
     } 
 
@@ -551,7 +561,7 @@ $(document).ready(function() {
             $(this).closest('tr').remove();
 
           if(completedCreditsCount == acadSessionCount){
-                let demandEstimationStatus = $('.time-remaing').attr('data-round-status');
+                let demandEstimationStatus = $('.time-remaining').attr('data-round-status');
             }
 
             
@@ -908,4 +918,3 @@ $(document).ready(function() {
    
 </script>
 
-<%- include('../partials/footerEnd.ejs') %>

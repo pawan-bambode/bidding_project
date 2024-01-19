@@ -28,15 +28,20 @@ module.exports = {
       confirmation.getRoundId(res.locals.slug, res.locals.biddingId, previusBiddingRound)
         .then(roundId => {
           if (roundId.recordset[0] && roundId.recordset[0].roundId !== '') {
-            return confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, roundId.recordset[0].roundId);
+            return confirmation.winningCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, roundId.recordset[0].roundId);
           } 
         })
         .then(confirmCourseList => {
-          res.render('student/confirmation/confirmationRoundWise/index', {
-            active: 'confirmation',
-            winningCourseList: confirmCourseList.recordset,
-            roundId: confirmCourseList.recordset[0] != undefined ?  confirmCourseList.recordset[0].round_lid :0
-          });
+          Promise.all([confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId)]).then(result =>{
+            console.log('values of result[0].recordset[0]', result[0].recordset);
+            res.render('student/confirmation/confirmationRoundWise/index', {
+              active: 'confirmation',
+              winningCourseList: confirmCourseList.recordset,
+              confirmCourseList: result[0].recordset,
+              roundId: confirmCourseList.recordset[0] != undefined ?  confirmCourseList.recordset[0].round_lid :0
+            });
+          })
+         
         })
         .catch(error => {
           console.log('values of error', error);

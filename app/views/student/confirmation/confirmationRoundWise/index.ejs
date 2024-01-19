@@ -5,10 +5,34 @@
 
 <div class="main-content">
 
-  <div class="card card-custom-border-curv">
+  <ul class="d-flex round-wises">
+    <li class="ms-5">
+        <a href="#" class="text-decoration-none text-dark confirmation-round-wise" data-id="3">
+            <div class="d-flex justify-content-center align-items-center">
+                <div class="d-flex justify-content-between align-items-center active-div">
+                    <img src="/image/student/body-part-image/confirmation-round/confirmation.png" alt="confirmation round I">
+                    <h4 class="ms-2 round-label">Confirmation Round I</h4>
+                </div>
+            </div>
+        </a>
+    </li>
+    <li class="ms-5 px-2 active">
+        <a href="#" class="text-decoration-none text-dark confirmation-round-wise" data-id="5">
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <div class="d-flex">
+                    <img src="/image/student/body-part-image/confirmation-round/confirmation.png" alt="confirmation round II">
+                    <h4 class="ms-2 round-label">Confirmation Round II</h4>
+                </div>
+            </div>
+        </a>
+    </li>
+</ul>
+
+  <div class="main-div-round-wise card-custom-border-curv p-2 mt-2 confirmation-first-way-2">
+  <div class="card card-custom-border-curv round-wise-tab mt-2">
     <div class="card-header-custom d-flex justify-content-center p-1">
-      <h3 class="confirmation-first d-none">Confirmation Rounds I</h3>  
-      <h3 class="confirmation-second d-none">Confirmation Rounds II</h3>
+      <h3 class="confirmation-first d-none">Confirmation Round I</h3>  
+      <h3 class="confirmation-second d-none">Confirmation Round II</h3>
     </div>
     <div class="card-body table-responsive">
       <div class="row ps-5 pe-5">
@@ -24,9 +48,9 @@
     </div>
     </div>
   </div>
-  <div class="card card-custom-border-curv mt-5">
+  <div class="card card-custom-border-curv round-wise-tab mt-5">
     <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-2">Confirmation Courses</h3>  
+        <h3 class="ms-2">Confirmed Courses</h3>  
     </div>
     <div class="card-body table-responsive">
       <table class="table custom_row table-bordered mt-4 custom-table" id="confirm-courses-table">
@@ -38,14 +62,26 @@
           <th>Faculty</th>
           <th>Credits</th>
           <th>Your Bid</th>
-          <th>Action</th>
         </thead>
         <tbody>
+          <% let count = 1 %>
+          <% for (let confirmCourse of confirmCourseList) { %>
+            <tr>
+              <td><%- count++ %></td>
+              <td><%- confirmCourse.area_name %></td>
+              <td><%- confirmCourse.acad_session %></td>
+              <td><%- confirmCourse.course_name %></td>
+              <td><%- confirmCourse.faculty_name %></td>
+              <td><%- confirmCourse.credits %></td>
+              <td><%- confirmCourse.bid_points %></td>
+            </tr>
+          <% } %>
+
         </tbody>
       </table>
     </div>
   </div>
-    <div class="card card-custom-border-curv mt-5 bidding-modal" id="bidding-modal">
+    <div class="card card-custom-border-curv round-wise-tab mt-5 bidding-modal" id="bidding-modal">
       <div class="card-header-custom d-flex justify-content-between p-1">
           <h3 class="ms-2">Winning Courses</h3>
       </div>
@@ -84,19 +120,46 @@
             </tbody>
              
            </table>
-    </div>  
+    </div>
+  </div>  
 </div>
-
+<footer class="footer">
+  <div class="footer-div">
+      <div class="d-flex justify-content-center align-items-center" style="height: 40px;">
+          <div class="d-flex justify-content-between align-items-center">
+           <button class="btn btn-success text-light">Remaining Bid Points:&nbsp;<span id="remaining-bid-points"></span></button>
+          </div>
+      </div>
+  </div>
+</footer>
 <%- include('../../partials/footer.ejs') %>
 <script>
 $(document).ready(function() {
  
     let active = `<%- active %>`;
     let roundId = `<%- roundId %>`;
+    let confirmCourseList = `JSON.stringify(<%- confirmCourseList %>`;
+
+    console.log('values of confirmCourseList',confirmCourseList);
+
+   
+    if (roundId === '2') {
+      console.log('inside the if block', roundId);
+      $('.confirmation-first').removeClass('d-none');
+      $('.confirmation-second').addClass('d-none');
+    } else {
+      console.log('inside the else block', roundId);
+      $('.confirmation-first').addClass('d-none');
+      $('.confirmation-second').removeClass('d-none');
+    }
+
+    let beforeWidth = Number($('ul.round-wises li.active').outerWidth())+Number(40);
+    let beforeWidthLeft = $('ul.round-wises li.active').position().left;
+
+    $('body').css('--pseudo-element-width', `${beforeWidth}px`);
+  
     
-    $('.confirmation-first').toggleClass('d-none', roundId !== '2');
-    $('.confirmation-second').toggleClass('d-none', roundId === '2');
-    
+  
     $('#sidebar .side-menu li.' + active).addClass('active');
 
     $('#winning-course-table').on('click', '.confirm-courses', function(){

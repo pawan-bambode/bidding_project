@@ -1,12 +1,9 @@
 
-const { Result } = require('express-validator');
 const {sql,poolConnection} = require('../../../../config/db');
-const { max } = require('moment');
 
 module.exports = class Confirmation
 {
-    static getConfirmCourseList(slug, biddingId, studentId, roundId) { 
-        
+    static winningCourseList(slug, biddingId, studentId, roundId) {  
         return poolConnection.then(pool => {
             return pool.request()
             .input('biddingId', sql.Int, biddingId)
@@ -20,6 +17,24 @@ module.exports = class Confirmation
                     INNER JOIN [${slug}].courses c ON c.id = db.course_lid
                     INNER JOIN [${slug}].timetable t ON t.division_batch_lid = db.id
                     WHERE seb.student_lid = @studentLid AND seb.is_winning = 1 AND seb.round_lid = @round_lid AND seb.is_confirmed = 0 AND seb.active = 1
+                    GROUP BY db.id, t.faculty_id, c.area_name, c.acad_session, c.sap_acad_session_id, 
+                    c.course_name, c.course_id,  t.faculty_name, c.credits, seb.bid_points, db.division, seb.concentration_lid, seb.course_lid, is_dropped , is_waitlisted, is_winning, round_lid`)
+        });
+    }
+    
+    static getConfirmCourseList(slug, biddingId, studentId) {  
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('biddingId', sql.Int, biddingId)
+            .input('studentLid', sql.Int, studentId)
+            .query(`SELECT db.id, t.faculty_id, c.area_name, c.acad_session, c.sap_acad_session_id, 
+                    c.course_name, c.course_id,  t.faculty_name, c.credits, seb.bid_points, db.division,
+                    seb.concentration_lid, seb.course_lid, is_dropped , is_waitlisted, is_winning, round_lid     
+                    FROM [${slug}].student_elective_bidding  seb
+                    INNER JOIN [${slug}].division_batches db ON seb.div_batch_lid = db.id
+                    INNER JOIN [${slug}].timetable t ON t.division_batch_lid = db.id
+                    INNER JOIN [${slug}].courses c ON db.course_lid = c.id
+                    WHERE seb.student_lid = @studentLid AND seb.active = 1 AND is_confirmed = 1
                     GROUP BY db.id, t.faculty_id, c.area_name, c.acad_session, c.sap_acad_session_id, 
                     c.course_name, c.course_id,  t.faculty_name, c.credits, seb.bid_points, db.division, seb.concentration_lid, seb.course_lid, is_dropped , is_waitlisted, is_winning, round_lid`)
         });

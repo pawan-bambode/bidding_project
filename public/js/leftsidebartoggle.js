@@ -2,6 +2,7 @@ $(document).on('click', '.fa-angles-left', function() {
     $('.left-sidebar').addClass('hide');
     $('.main').css('left', '80px');
     $('.top-navbar').css('left', '80px');
+    $('.footer').css('left', '80px');
     $('.nmims-logo').addClass('d-none');
     $('.nmims-logo-small').removeClass('d-none');
     $(this).removeClass('fa-angles-left').addClass('fa-angles-right');
@@ -12,6 +13,7 @@ $(document).on('click', '.fa-angles-right', function() {
     $('.left-sidebar').removeClass('hide');
     $('.main').css('left', '260px');
     $('.top-navbar').css('left', '260px');
+    $('.footer').css('left', '260px');
     $('.nmims-logo').removeClass('d-none');
     $('.nmims-logo-small').addClass('d-none');
     $(this).addClass('fa-angles-left').removeClass('fa-angles-right');

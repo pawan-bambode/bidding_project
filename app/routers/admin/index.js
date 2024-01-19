@@ -11,8 +11,7 @@ function AdminRoute(app) {
     const course = require('../../routers/admin/course');
     const studentInfo = require('../../routers/admin/student');
     const academicYearInfo = require('../../routers/admin/academicYear');
-    //const timetableShowToStudent = require('../../routers/admin/student');
-
+   
     const program = require('../../routers/admin/programs/programs')
     const biddingSession = require('../../routers/admin/biddingsession/biddingsession')
     const generateExcel = require('../../routers/admin/generatesampleCoursesImportExcelFile/generatedExecl')
@@ -25,6 +24,7 @@ function AdminRoute(app) {
     const timetable = require('../../routers/admin/timetable/timetable')
     const student = require('../../routers/student/student');
     const binddingRound = require('../../routers/admin/biddingrounds/biddingrounds');
+    const bonusBiddingPoint = require('../../routers/admin/bonusBidPoints/bonusBidPoint');
 
     const demandEstimation = require('../../routers/student/demandEstimation/demandEstimation');
     const favouriteCourse = require('../../routers/student/favouriteCourse/favouriteCourse');
@@ -47,6 +47,7 @@ function AdminRoute(app) {
     app.use('/admin/', completeCourse);
     app.use('/admin/', preRequisites);
     app.use('/admin/', timetable);
+    app.use('/admin/', isLoggedIn, checkPermission, bonusBiddingPoint);
     app.use('/admin/', binddingRound);
 
     app.use('/student/', isLoggedIn, checkPermission, student)
