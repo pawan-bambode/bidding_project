@@ -1,4 +1,5 @@
 const confirmation = require('../../../models/student/confirmation/confirmation');
+const roundSetting = require('../../../models/admin/roundSettings/roundSettings');
 const isJsonString = require('../../../utils/util');
 module.exports = {
 
@@ -18,11 +19,14 @@ module.exports = {
     
     getPageRoundWise: (req, res) => {
       let previusBiddingRound;
+      let roundId ;
     
       if (req.url == '/confirmation/rounds-first') {
         previusBiddingRound = 'BIDDING_ROUND1';
+        roundId = 3;
       } else if (req.url == '/confirmation/rounds-second') {
         previusBiddingRound = 'BIDDING_ROUND2';
+        roundId = 5;
       }
     
       confirmation.getRoundId(res.locals.slug, res.locals.biddingId, previusBiddingRound)
@@ -32,12 +36,13 @@ module.exports = {
           } 
         })
         .then(confirmCourseList => {
-          Promise.all([confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId)]).then(result =>{
-            console.log('values of result[0].recordset[0]', result[0].recordset);
+          Promise.all([confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId,roundId)]).then(result =>{
+            console.log('values of result[1]', result[1].recordset);
             res.render('student/confirmation/confirmationRoundWise/index', {
               active: 'confirmation',
               winningCourseList: confirmCourseList.recordset,
               confirmCourseList: result[0].recordset,
+              startAndEndTime: result[1].recordset[0],
               roundId: confirmCourseList.recordset[0] != undefined ?  confirmCourseList.recordset[0].round_lid :0
             });
           })

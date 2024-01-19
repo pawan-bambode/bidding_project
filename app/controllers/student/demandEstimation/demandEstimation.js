@@ -8,6 +8,7 @@ const concentrationSetting = require('../../../models/admin/concentrationsetting
 module.exports = {
     getHomePage : (req ,res) => {
       let demandEstimationUrl = req.route.path.split('/');
+      let roundId = 1;
       let demandEstimationActive = demandEstimationUrl[demandEstimationUrl.length - 1]
       Promise.all([demandEstimation.getDemandEstimationRoundList(res.locals.slug, res.locals.biddingId),
                    course.getAvailableCourseList(res.locals.slug, res.locals.biddingId),
@@ -15,7 +16,7 @@ module.exports = {
                    course.getDropdownAcadSessionList(res.locals.slug, res.locals.biddingId),
                    programSession.getCredits(res.locals.slug, res.locals.biddingId),
                    roundSetting.getRoundLid(res.locals.slug, res.locals.biddingId),
-                   roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId,1),
+                   roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId,roundId),
                    demandEstimation.getSelectedCourses(res.locals.slug, res.locals.biddingId, res.locals.studentId),
                    concentrationSetting.getStudentConcentrationSettings(res.locals.slug, res.locals.biddingId, res.locals.username),
                    concentrationSetting.getTotalCreditsCounts(res.locals.slug, res.locals.biddingId)

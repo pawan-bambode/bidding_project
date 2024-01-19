@@ -356,12 +356,9 @@ function resetBiddingTrimester( classToRemove) {
   function updateCurrentPointTargets(trimesterWiseTargetCreditPoints) {
     
     $('.current-credit-points').each((index, element) => {
-        console.log('values of element', element);
       const elementId = $(element).data('id');
       const targetCredit = trimesterWiseTargetCreditPoints[`${elementId}`];
-      console.log('values of targetCredit', targetCredit);
       const elementValue = Number($(element).text());
-      console.log('values of elementValue',elementValue);
       if (targetCredit != 0) {
         $(element).text(elementValue-Number(targetCredit));
       }
