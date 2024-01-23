@@ -5,21 +5,26 @@
 
 <div class="main-content">
 
-  <ul class="d-flex round-wises">
-    <li class="ms-5">
-        <a href="#" class="text-decoration-none text-dark confirmation-round-wise" data-id="3">
-            <div class="d-flex justify-content-center align-items-center">
-                <div class="d-flex justify-content-between align-items-center active-div">
-                    <img src="/image/student/body-part-image/confirmation-round/confirmation.png" alt="confirmation round I">
-                    <h4 class="ms-2 round-label">Confirmation Round I</h4>
-                </div>
-            </div>
-        </a>
-    </li>
-    <li class="ms-5 px-2 active">
-        <a href="#" class="text-decoration-none text-dark confirmation-round-wise" data-id="5">
-            <div class="d-flex justify-content-center align-items-center h-100">
-                <div class="d-flex">
+  <ul class="d-flex round-wises justify-content-between">
+    <li>
+      <a href="#" class="text-decoration-none text-dark" data-id="3">
+        
+          <div class="d-flex flex-column justify-content-center align-items-center h-100 upper-div">
+              <div class="d-flex justify-content-between align-items-center active-div" style=" padding-inline-end: 20px;
+              padding-inline-start: 20px">
+                  <img src="/image/student/body-part-image/confirmation-round/confirmation.png" alt="confirmation round I">
+                  <h4 class="ms-2 round-label">Confirmation Round I</h4>
+              </div>
+          </div>
+          
+      </a>
+  </li>
+  
+    <li>
+        <a href="#" class="text-decoration-none text-dark" data-id="5">
+            <div class="d-flex justify-content-center align-items-center h-100 upper-div">
+                <div class="d-flex justify-content-between align-items-center active-div" style=" padding-inline-end: 20px;
+                padding-inline-start: 20px;">
                     <img src="/image/student/body-part-image/confirmation-round/confirmation.png" alt="confirmation round II">
                     <h4 class="ms-2 round-label">Confirmation Round II</h4>
                 </div>
@@ -28,7 +33,7 @@
     </li>
 </ul>
 
-  <div class="main-div-round-wise card-custom-border-curv p-2 mt-2 confirmation-first-way-2">
+  <div class="main-div-round-wise card-custom-border-curv p-2 mt-5 confirmation-first-way-2">
   <div class="card card-custom-border-curv round-wise-tab mt-2">
     <div class="card-header-custom d-flex justify-content-center p-1">
       <h3 class="confirmation-first d-none">Confirmation Round I</h3>  
@@ -140,9 +145,9 @@ $(document).ready(function() {
     let roundId = `<%- roundId %>`;
     let startTime = '<%- startAndEndTime %>';
 
-    console.log('values of startTime', startTime);
+    let outerWidth = $('.round-wises li.active').innerWidth() + Number(10);
+    $('.round-wises li.active::before').css('--active-element-width', outerWidth + 'px');
     
-   
     updateCurrentTime();
     setInterval(updateCurrentTime, 1000);
 
@@ -154,12 +159,15 @@ $(document).ready(function() {
       $('.confirmation-first').addClass('d-none');
       $('.confirmation-second').removeClass('d-none');
     }
-
-    let beforeWidth = Number($('ul.round-wises li.active').outerWidth())+Number(40);
-    let beforeWidthLeft = $('ul.round-wises li.active').position().left;
-
-    $('body').css('--pseudo-element-width', `${beforeWidth}px`);
-    $('#sidebar .side-menu li.' + active).addClass('active');
+  
+    $('ul.round-wises li').on('click', function() {
+        $('ul.round-wises li').removeClass('active');
+        let outerWidth = Number($(this).outerWidth(true))+Number(30);  
+        $(':root').css('--active-right-width', outerWidth + 'px');
+        $(this).addClass('active');
+        $(this).css('height','82px');
+  
+    });
 
     $('#winning-course-table').on('click', '.confirm-courses', function(){
 
