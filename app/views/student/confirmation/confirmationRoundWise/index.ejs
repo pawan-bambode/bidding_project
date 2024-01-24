@@ -32,8 +32,8 @@
         </a>
     </li>
 </ul>
-
-  <div class="main-div-round-wise card-custom-border-curv p-2 mt-5 confirmation-first-way-2">
+  
+  <div class="main-div-round-wise card-custom-border-curv p-2 confirmation-first-way-2 mt-5">
   <div class="card card-custom-border-curv round-wise-tab mt-2">
     <div class="card-header-custom d-flex justify-content-center p-1">
       <h3 class="confirmation-first d-none">Confirmation Round I</h3>  
@@ -42,10 +42,10 @@
     <div class="card-body table-responsive">
       <div class="row ps-5 pe-5">
         <div class="col-md-4">
-            <h6>Start Time :&nbsp;<span id="start-time"><%- %></span></h6>
+            <h6>Start Time :&nbsp;<span id="start-time"><%- startAndEndTime.startTime %></span></h6>
         </div>    
         <div class="col-md-4">
-            <h6>End Time :&nbsp;<span id="end-time"><%- %></h6>
+            <h6>End Time :&nbsp;<span id="end-time"><%-startAndEndTime.endTime %></h6>
         </div>
         <div class="col-md-4">
             <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
@@ -155,7 +155,6 @@ $(document).ready(function() {
       $('.confirmation-first').removeClass('d-none');
       $('.confirmation-second').addClass('d-none');
     } else {
-      console.log('inside the else block', roundId);
       $('.confirmation-first').addClass('d-none');
       $('.confirmation-second').removeClass('d-none');
     }
@@ -205,7 +204,6 @@ $(document).ready(function() {
 
         ajaxApi(ApiObj)
             .then(result => {
-                console.log('values of result', result);
             })
             .catch(error => {
                 showError(JSON.stringify(error.responseJSON));

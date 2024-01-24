@@ -14,6 +14,7 @@ module.exports = class DemandEstimation
     }
 
     static saveSelectedCourse(slug, biddingId, userid, student_lid, round_lid, selectedCourseJson){
+        
         return poolConnection.then(pool =>{
             return pool.request()
             .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(selectedCourseJson))

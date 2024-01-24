@@ -1,53 +1,261 @@
+
 <%- include('../partials/head') %>
 
 <%- include('../partials/leftSidebarForStudent.ejs') %>
 <%- include('../partials/header.ejs') %>
 
-<div class="main-content mt-5">
-    <div class="d-flex">
-        <div class="card round-wise ms-5 me-5">
-            <div class="card-body">
-                <a href="confirmation/rounds-first" class="text-decoration-none text-dark confirmation-round-wise" data-id="3">
-                    <div class="d-flex justify-content-center align-items-center h-100">
-                        <div class="d-flex">
-                            <img src="/image/student/body-part-image/confirmation-round/confirmation2.png" alt="confirmation round I">
-                            <h4 class="ms-2 round-label">Confirmation Round I</h4>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </div>
+<div class="main-content">
 
-        <div class="card round-wise">
-            <div class="card-body">
-                <a href="confirmation/rounds-second" class="text-decoration-none text-dark confirmation-round-wise" data-id = "5">
-                    <div class="d-flex justify-content-center align-items-center h-100">
-                        <div class="d-flex">
-                            <img src="/image/student/body-part-image/confirmation-round/confirmation2.png" alt="confirmation round II">
-                            <h4 class="ms-2 round-label">Confirmation Round II</h4>
-                        </div>
-                    </div>
-                </a>
+  <ul class="d-flex round-wises justify-content-between">
+    <li class="ms-2">
+      <a href="#" class="text-decoration-none text-dark" data-id="3">
+        
+          <div class="d-flex flex-column justify-content-center align-items-center h-100 upper-div">
+              <div class="d-flex justify-content-between align-items-center active-div" style=" padding-inline-end: 20px;
+              padding-inline-start: 20px">
+                  <img src="/image/student/body-part-image/confirmation-round/confirmation.png" alt="confirmation round I">
+                  <h4 class="ms-2 round-label">Confirmation Round I</h4>
+              </div>
+          </div>
+          
+      </a>
+      
+  </li>
+  
+    <li class="ms-5">
+        <a href="#" class="text-decoration-none text-dark" data-id="5">
+            <div class="d-flex justify-content-center align-items-center h-100 upper-div">
+                <div class="d-flex justify-content-between align-items-center active-div" style=" padding-inline-end: 20px;
+                padding-inline-start: 20px;">
+                    <img src="/image/student/body-part-image/confirmation-round/confirmation.png" alt="confirmation round II">
+                    <h4 class="ms-2 round-label">Confirmation Round II</h4>
+                </div>
             </div>
+        </a>
+    </li>
+    
+</ul>
+  
+  <div class="main-div-round-wise card-custom-border-curv p-2 confirmation-first-way-2 mt-5">
+  <div class="card card-custom-border-curv round-wise-tab mt-2">
+    <div class="card-header-custom d-flex justify-content-center p-1">
+      <h3 class="confirmation-first d-none">Confirmation Round I</h3>  
+      <h3 class="confirmation-second d-none">Confirmation Round II</h3>
+    </div>
+    <div class="card-body table-responsive">
+      <div class="row ps-5 pe-5">
+        <div class="col-md-4">
+            <h6>Start Time :&nbsp;<span id="start-time"><%- startAndEndTime.startTime %></span></h6>
+        </div>    
+        <div class="col-md-4">
+            <h6>End Time :&nbsp;<span id="end-time"><%-startAndEndTime.endTime %></h6>
+        </div>
+        <div class="col-md-4">
+            <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
         </div>
     </div>
-</div>
+    </div>
+  </div>
+  <div class="card card-custom-border-curv round-wise-tab mt-5">
+    <div class="card-header-custom d-flex justify-content-between p-1">
+        <h3 class="ms-2">Confirmed Courses</h3>  
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table custom_row table-bordered mt-4 custom-table" id="confirm-courses-table">
+        <thead>
+          <th>#</th>
+          <th>Area</th>
+          <th>Trimester</th>
+          <th>Course</th>
+          <th>Faculty</th>
+          <th>Credits</th>
+          <th>Your Bid</th>
+        </thead>
+        <tbody>
+          <% let count = 1 %>
+          <% for (let confirmCourse of confirmCourseList) { %>
+            <tr>
+              <td><%- count++ %></td>
+              <td><%- confirmCourse.area_name %></td>
+              <td><%- confirmCourse.acad_session %></td>
+              <td><%- confirmCourse.course_name %></td>
+              <td><%- confirmCourse.faculty_name %></td>
+              <td><%- confirmCourse.credits %></td>
+              <td><%- confirmCourse.bid_points %></td>
+            </tr>
+          <% } %>
 
+        </tbody>
+      </table>
+    </div>
+  </div>
+    <div class="card card-custom-border-curv round-wise-tab mt-5 bidding-modal" id="bidding-modal">
+      <div class="card-header-custom d-flex justify-content-between p-1">
+          <h3 class="ms-2">Winning Courses</h3>
+      </div>
+   
+      <div class="card-body table-responsive"> 
+          <table class="table custom_row table-bordered mt-4 custom-table" id="winning-course-table">
+              <thead>
+                  <th>#</th>
+                  <th>Area</th>
+                  <th>Trimester</th>
+                  <th>Course</th>
+                  <th>Faculty</th>
+                  <th>Credits</th>
+                  <th>Your Bid</th>
+                  <th>Action</th>
+              </thead>
+              <tbody>
+                <% if(winningCourseList.length > 0) { %>
+                <% let count = 1 %>
+                <% for(let winningCourse of winningCourseList) { %>
+                    <tr data-faculty-id = "<%- winningCourse.faculty_id %>"  data-faculty-name = "<%- winningCourse.faculty_name %>" data-area-name = "<%- winningCourse.area_name %>"
+                    data-acad-session-id = "<%- winningCourse.sap_acad_session_id %>" data-acad-session = "<%- winningCourse.acad_session %>" data-course-name = "<%- winningCourse.course_name %>"
+                    data-course-id = "<%- winningCourse.course_id %>" data-credits = "<%- winningCourse.credits %>" data-bid-points = "<%- winningCourse.bid_points %>" data-division = "<%- winningCourse.division %>" data-concentration-lid = "<%- winningCourse.concentration_lid %>" data-division-batch-lid = "<%- winningCourse.id %>" data-is-dropped = "<%- winningCourse.is_dropped %>" data-is-waitlist = "<%- winningCourse.is_waitlisted %>" data-is-winning = "<%- winningCourse.is_winning %>" data-course-lid = "<%- winningCourse.course_lid %>"
+                      >
+                        <td><%- count++ %></td>
+                        <td><%- winningCourse.area_name %></td>
+                        <td><%- winningCourse.acad_session %></td>
+                        <td><%- winningCourse.course_name %>-<%- winningCourse.division %></td>
+                        <td><%- winningCourse.faculty_name %></td>
+                        <td><%- winningCourse.credits %></td>
+                        <td><%- winningCourse.bid_points %></td>
+                        <td><button class="btn btn-success confirm-courses me-1"><i class="fa-solid fa-check"></i> Confirm</button></td>
+                    </tr>
+                <% } %>
+                <% } %>
+            </tbody>
+             
+           </table>
+    </div>
+  </div>  
+</div>
+<footer class="footer">
+  <div class="footer-div">
+      <div class="d-flex justify-content-center align-items-center" style="height: 40px;">
+          <div class="d-flex justify-content-between align-items-center">
+           <button class="btn btn-success text-light">Remaining Bid Points:&nbsp;<span id="remaining-bid-points"></span></button>
+          </div>
+      </div>
+  </div>
+</footer>
 <%- include('../partials/footer.ejs') %>
 <script>
-    $(document).ready(function() {
-        let active = `<%- active %>`;
-        $('#sidebar .side-menu li.' + active).addClass('active');
+$(document).ready(function() {
+ 
+    let active = `<%- active %>`;
+    let startTime = '<%- startAndEndTime %>';
 
-        $(document).on('click', '.confirmation-round-wise', function(event){
-           event.preventDefault();
-           let confirmationUrl = $(this).attr('href');
-           let confirmationName = $(this).find('.round-label').text();
-           
-           localStorage.setItem('confirmationName', confirmationName);
-           window.location.href = $(this).attr('href');
-        })
+    $('#sidebar .side-menu li.' + `<%- active %>`).addClass('active');
+    let outerWidth = $('.round-wises li.active').innerWidth() + Number(10);
+    $('.round-wises li.active::before').css('--active-element-width', outerWidth + 'px');
+    
+    updateCurrentTime();
+    setInterval(updateCurrentTime, 1000);
+  
+    $('ul.round-wises li').on('click', function() {
+        $('ul.round-wises li').removeClass('active');
+        $(this).addClass('active');
+        $('.spacer').remove();
+
+        let divElement = $('<div></div>').addClass('spacer');
+        let spacerWidth = $('li.active .active-div').innerWidth() - Number(40) + 7;
+        let outerWidth = Number($(this).outerWidth(true)) + 30;
+
+        $(':root').css('--active-right-width', outerWidth + 'px');
+        $(':root').css('--active-spacer-width', spacerWidth + 'px');
+        
+        $(this).append(divElement);
+        $(this).css('height', '82px');
     });
+
+
+
+    $('#winning-course-table').on('click', '.confirm-courses', function(){
+
+      let studentId = $('#student-data').data('student-lid');
+      let concentrationId = $(this).closest('tr').data('concentration-lid');
+      let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
+      let bidPoints = $(this).closest('tr').data('bid-points');
+      let isWinning = $(this).closest('tr').data('is-winning') == true ? 1 : 0;
+      let isDropped = $(this).closest('tr').data('is-dropped') == true ? 1 : 0;
+      let isWaitListed = $(this).closest('tr').data('is-waitlist') == true ? 1 : 0;
+      let courseId = $(this).closest('tr').data('course-lid');
+      let isConfirmed = 1;
+      
+      let confirmCourse = {
+        student_lid : studentId,
+        concentration_lid: concentrationId,
+        div_batch_lid: divisionBatchId,
+        bid_points: bidPoints,
+        is_winning: isWinning,
+        is_confirmed: isConfirmed,
+        is_dropped: isDropped,
+        is_waitlisted: isWaitListed,
+        course_lid: courseId,
+        round_lid: 3
+      }
+       
+      let ApiObj = {
+            type: 'POST',
+            url: '/student/confirmation/add-confirmation',
+            data: {
+                inputJson: JSON.stringify(confirmCourse)
+            },
+            dataType: 'JSON',
+      };
+
+        ajaxApi(ApiObj)
+            .then(result => {
+            })
+            .catch(error => {
+                showError(JSON.stringify(error.responseJSON));
+            });
+
+
+      confirmUnConfirmRow($(this), 'confirm-courses-table', 'btn btn-danger unconfirm-courses', 'fa-close', 'unConfirm');
+
+    })
+
+    $('#confirm-courses-table').on('click', '.unconfirm-courses', function(){
+        confirmUnConfirmRow($(this), 'winning-course-table', 'btn btn-success confirm-courses', 'fa-check', 'Confirm')
+    })
+
+  function confirmUnConfirmRow(element, tableId, buttonClass, iconClass, buttonLabel) {
+    let facultyId = $(element).closest('tr').data('faculty-id');
+    let facultyName = $(element).closest('tr').data('faculty-name');
+    let areaName = $(element).closest('tr').data('area-name');
+    let acadSessionId = $(element).closest('tr').data('acad-session-id');
+    let acadSession = $(element).closest('tr').data('acad-session');
+    let courseName = $(element).closest('tr').data('course-name');
+    let courseId = $(element).closest('tr').data('course-id');
+    let credits = $(element).closest('tr').data('credits');
+    let studentPoints = $(element).closest('tr').data('bid-points');
+    let division = $(element).closest('tr').data('division');
+    let concentrationId = $(element).closest('tr').data('concentration-lid');
+    let divisionBatchId = $(element).closest('tr').data('division-batch-lid');
+    let isDropped = $(element).closest('tr').data('is-dropped');
+    let isWaitListed = $(element).closest('tr').data('is_waitlisted');
+    let isWinning = $(element).closest('tr').data('is_winning');
+    let courseLid = $(element).closest('tr').data('course-lid');
+    let confirmaCourseTableLength = $('#confirm-courses-table tbody tr').length;
+
+    let confirmaCourseRow = `<tr data-faculty-id = "${facultyId}"  data-faculty-name = "${facultyName}" data-area-name = "${areaName}" data-acad-session-id = "${acadSessionId}" data-acad-session = "${acadSession}" data-course-name = "${courseName}" data-course-id = "${courseId}" data-credits = "${credits}" data-bid-points = "${studentPoints}" data-division = "${division}" data-concentration-lid = "${concentrationId}" data-division-batch-lid = "${divisionBatchId}" data-is-dropped = "${isDropped}" data-is-waitlist = "${isWaitListed}" data-is-winning = "${isWinning}"  data-course-lid = "${courseLid}"> 
+      <td>${++confirmaCourseTableLength}</td>
+      <td>${areaName}</td>
+      <td>${acadSession}</td>
+      <td>${courseName}-${division}</td>
+      <td>${facultyName}</td>
+      <td>${credits}</td>
+      <td>${studentPoints}</td>
+      <td><button class="${buttonClass}"><i class="me-1 fa-solid ${iconClass}"></i>${buttonLabel}</button></td>
+    </tr>`;
+
+    $(`#${tableId} tbody`).append(confirmaCourseRow);
+    $(element).closest('tr').remove();
+  }
+}); 
 </script>
 
 <%- include('../partials/footerEnd.ejs') %>

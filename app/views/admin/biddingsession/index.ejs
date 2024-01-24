@@ -228,10 +228,8 @@
                 dataType:'JSON'
             }
             ajaxApi(ApiObj).then(result =>{
-                console.log('response:::::::',result);
                 showSuccess(result)
             }).catch(error =>{
-                console.log('error:::::',error.responseJSON);
                 showError(JSON.stringify(error.responseJSON))
             })
             });

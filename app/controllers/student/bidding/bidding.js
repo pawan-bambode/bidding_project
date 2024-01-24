@@ -20,7 +20,7 @@ module.exports = {
                      divisionBatch.getCourseNameForFilter(res.locals.slug, res.locals.biddingId),
                      concentrationSetting.getStudentConcentrationSettings(res.locals.slug, res.locals.biddingId, res.locals.username),
                      divisionBatch.getAreaList(res.locals.slug, res.locals.biddingId),
-                     roundSetting.getRoundLid(res.locals.slug, res.locals.biddingId),
+                     roundSetting.getBiddingRoundLid(res.locals.slug, res.locals.biddingId),
                      biddingClass.getConsiderationSet(res.locals.slug, res.locals.biddingId, res.locals.studentId),
                      biddingClass.getStudentBidPoints(res.locals.slug, res.locals.biddingId, res.locals.studentId),
                      biddingClass.getUpdateBidPoints(res.locals.slug, res.locals.biddingId, res.locals.studentId)

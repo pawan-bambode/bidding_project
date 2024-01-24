@@ -146,7 +146,6 @@ $(document).ready(function() {
 
         ajaxApi(ApiObj)
             .then(result => {
-                console.log('values of result', result);
             })
             .catch(error => {
                 showError(JSON.stringify(error.responseJSON));

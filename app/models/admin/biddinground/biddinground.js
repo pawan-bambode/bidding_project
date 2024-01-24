@@ -42,6 +42,7 @@ module.exports = class BiddingRound
     }
 
     static save(inputJSON, slug, userid, biddingId) {
+        
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), inputJSON)

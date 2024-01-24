@@ -46,16 +46,6 @@ worksheet.cell(1, 1).string('studentSapId').style(headerStyle);
 worksheet.cell(1, 2).string('acadSession').style(headerStyle);
 worksheet.cell(1, 3).string('courseId').style(headerStyle);
 worksheet.cell(1, 4).string('courseName').style(headerStyle);
-
-  // worksheet.cell(i, 2).string('').style({ dataValidation: { showDropDown: true } });
-  
-//workbook.write(path.join(__dirname, '../../../../excelFile/'+'sampleForImportCompleteCourses.xlsx'))
-//   if (err) {
-//     console.error(err);
-//   } else {
-//     console.log('Excel file with dropdown created successfully');
-//   }
-// });
         
 const filePath = __dirname + '/sampleForImportCompleteCourses.xlsx';
 

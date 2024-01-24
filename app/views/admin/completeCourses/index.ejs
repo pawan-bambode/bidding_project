@@ -237,7 +237,6 @@ $(document).on('change', '#session-name-filter', function() {
             AjaxtTable(result.workload);
         })
         .catch(error => {
-            console.log('Error:', error);
             showError(JSON.stringify(error.responseJSON));
         });
 });
@@ -265,7 +264,6 @@ $(document).on('change', '#course-name-filter', function() {
             paginationData(showEntry,result.workloadLength)
         })
         .catch(error => {
-            console.log('Error:', error);
             showError(JSON.stringify(error.responseJSON));
         });
 });

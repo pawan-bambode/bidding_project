@@ -20,9 +20,7 @@ getTimetableforStudent : (req,res) => {
         }
     })
     .then(resp => {
-        console.log('Response >>', resp.data);
-        return JSON.stringify(resp.data)
-       
+        return JSON.stringify(resp.data);
     })
 }
 }

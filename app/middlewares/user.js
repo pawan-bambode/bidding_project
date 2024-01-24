@@ -38,8 +38,7 @@ module.exports = {
 
     redirectIfLoggedIn: (req, res, next) => {
         let sessionId = req.sessionID;
-        console.log('sessionId is 12345 ====>>>>> ', sessionId);
-
+    
         if (!req.sessionID) {
             return next();
         }

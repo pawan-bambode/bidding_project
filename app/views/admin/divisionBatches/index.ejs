@@ -446,7 +446,6 @@
                     AjaxtTable(result.workload);
                 })
                 .catch(error => {
-                    console.log('Error:', error);
                     showError(JSON.stringify(error.responseJSON));
                 });
         });

@@ -193,7 +193,7 @@ function showError(errors) {
 
 function paginationData(rowCount, totalCount) {
     let pageNos = Math.ceil(Number(totalCount) / Number(rowCount));
-    console.log("Page Numbers", pageNos);
+    
     $('#pagination').bootpag({
         total: pageNos,
         page: 1,

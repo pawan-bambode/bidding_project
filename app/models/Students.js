@@ -70,18 +70,6 @@ module.exports = class Students {
         });
     }
     
-    // static getCompleteCourese(slug,biddingId,username){
-    //     console.log('values username',username);
-    //     console.log('value sof slug',slug);
-    //     console.log('values biddingId',biddingId);
-    //   return poolConnection.then(pool =>{
-    //     return pool.request()
-    //     .input('biddingId',sql.Int,biddingId)
-    //     .input('sapId',sql.NVarChar,username.sap_id)
-    //     .query(`SELECT  cc.id , cc.course_name FROM [${slug}].completed_courses cc 
-    //      WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND cc.sap_id = @sapId  ORDER BY cc.id`)
-    //   })
-    // }
      static getDropCourseList(slug,biddingId){
         return poolConnection.then(pool =>{
             return pool.request()

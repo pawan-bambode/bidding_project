@@ -2,6 +2,7 @@ const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class RoundSettings {
   static getRoundLid(slug, biddingId) {
+
     let DEMAND_ESTIMATION_ROUND = 'DEMAND_ESTIMATION_ROUND';
     return poolConnection.then(pool => {
       return pool.request()
@@ -24,7 +25,7 @@ module.exports = class RoundSettings {
     });
   }
   
-  static getRoundLid(slug, biddingId) {
+  static getBiddingRoundLid(slug, biddingId) {
     return poolConnection.then(pool => {
       return pool.request()
         .input('biddingId', sql.Int, biddingId)

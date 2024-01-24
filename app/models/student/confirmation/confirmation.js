@@ -23,6 +23,7 @@ module.exports = class Confirmation
     }
     
     static getConfirmCourseList(slug, biddingId, studentId) {  
+
         return poolConnection.then(pool => {
             return pool.request()
             .input('biddingId', sql.Int, biddingId)

@@ -247,7 +247,6 @@ $(document).ready(function() {
     biddingCourses(biddingCourseList, false);
 
     socket.on('connect', () => {
-        console.log('Socket >>', socket.connected)   
       });
 
      
@@ -517,16 +516,14 @@ $(document).ready(function() {
                   }
                   if (isTotalCreditsMet) {
                   if (areaCount >= concentrationSettingData.no_of_areas_to_cover && totalSelectedCredits === concentrationSettingData.total_elective_credits) {
-                      console.log('criteria met');
                   } else {
                       const areaMessage = areaCount < concentrationSettingData.no_of_areas_to_cover ? 'No of area is mismatch' : '';
-                      console.log('values of areaMessage', areaMessage);
                   }
                 }
               }
           
               if (concentrationName != 'General Management') {
-                console.log('inside the not general management', concentrationName);
+                
                   if (
                       ((concentrationSettingData.min_credits_per_area <= areaDetails[areaName].totalCredits) &&
                       (areaDetails[areaName].totalCredits <= concentrationSettingData.max_credits_per_area)) &&
@@ -556,10 +553,10 @@ $(document).ready(function() {
                     });
                   
                     if ((areaCount >= concentrationSettingData.no_of_areas_to_cover && totalSelectedCredits === concentrationSettingData.total_elective_credits) && area) {
-                        console.log('criteria met');
+                        
                     } else {
                         const areaMessage = areaCount < concentrationSettingData.no_of_areas_to_cover ? 'No of area is mismatch' : '';
-                        console.log('values of areaMessage', areaMessage);
+                        
                     }
                   }
               } 
@@ -621,8 +618,6 @@ $(document).ready(function() {
   
     trimesterWiseTargetCreditPoints[`${acadSessionId}`].max_credits += Number(credits);
     currentCreditsPoints[`${acadSessionId}`] -= Number(credits);
-
-    console.log('values of currentCreditsPoints', currentCreditsPoints);
 
     updateCreditsPointTargets(trimesterWiseTargetCreditPoints);
     updateCurrentPointTargets(currentCreditsPoints);

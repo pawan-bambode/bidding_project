@@ -230,7 +230,7 @@
         })
 
     $('#refresh-concentration-settings').on('click',function(){
-      console.log('refresh concentration settings');
+
       let ApiObj = {
         url:'/admin/concentration-settings/refresh',
         type:'POST',
@@ -257,7 +257,6 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
             ajaxApi(ApiObj).then(result =>{
                 showSuccess(result)
             }).catch(error =>{
-                console.log('error:::::',error);
                 showError(JSON.stringify(error.responseJSON))
             })
 

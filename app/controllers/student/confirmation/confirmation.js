@@ -6,12 +6,15 @@ module.exports = {
     getPage :(req ,res) => {
         let confirmationUrl = req.route.path.split('/');
         let confirmationActive = confirmationUrl[confirmationUrl.length-1]
-    
-      Promise.all([confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, 2)]).then(result =>{
+        let roundId = 3;
         
+        Promise.all([confirmation.winningCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, roundId), confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId,roundId)]).then(result =>
+        {
         res.render('student/confirmation/index',{
-          active : confirmationActive,
-          winningCourseList: result[0].recordset
+          active: confirmationActive,
+          winningCourseList: result[0].recordset,
+          confirmCourseList: result[1].recordset,
+          startAndEndTime: result[2].recordset
         })  
       })
       
@@ -37,7 +40,7 @@ module.exports = {
         })
         .then(confirmCourseList => {
           Promise.all([confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId,roundId)]).then(result =>{
-            console.log('values of result[1]', result[1].recordset);
+            
             res.render('student/confirmation/confirmationRoundWise/index', {
               active: 'confirmation',
               winningCourseList: confirmCourseList.recordset,
@@ -49,7 +52,6 @@ module.exports = {
          
         })
         .catch(error => {
-          console.log('values of error', error);
           res.status(500).json(JSON.parse(error.originalError.info.message));
         });
     },

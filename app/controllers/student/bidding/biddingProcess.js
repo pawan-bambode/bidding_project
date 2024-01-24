@@ -3,7 +3,6 @@ const bidding = require('../../../models/student/bidding/bidding');
 module.exports.respond = async (socket, io) => {
 
     socket.on('join', function (data) {
-        console.log('bidding initialiazation ', data);
     });
 
     socket.on('addBidding',async biddingDetails => {
@@ -34,7 +33,6 @@ module.exports.respond = async (socket, io) => {
                 });
             }
         }).catch(error =>{
-            console.log('values of error', error);
             io.emit("addBiddingResponse", {
                     message: JSON.parse(error.originalError.info.message),
                     userId: userId

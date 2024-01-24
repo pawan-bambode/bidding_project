@@ -347,7 +347,6 @@
                 datatype:'JSON'
             }
             ajaxApi(ApiObj).then(result=>{
-                console.log('vlaues of result', result);
                 showSuccess(result)   
             }).catch(error =>{
                 showError(JSON.stringify(error.responseJSON))
