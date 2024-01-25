@@ -191,9 +191,8 @@
 <%- include('../partials/footer.ejs') %>
 <script>
 $(document).ready(function() {
-    updateCurrentTime();
+    
     demandEstimationTimeCountDown();
-    setInterval(updateCurrentTime, 1000);
     setInterval(demandEstimationTimeCountDown, 1000);
 
     let concentrationSettings = '<%- concentrationSettings%>'.trim();

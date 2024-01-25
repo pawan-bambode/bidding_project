@@ -148,9 +148,6 @@ $(document).ready(function() {
     let outerWidth = $('.round-wises li.active').innerWidth() + Number(10);
     $('.round-wises li.active::before').css('--active-element-width', outerWidth + 'px');
     
-    updateCurrentTime();
-    setInterval(updateCurrentTime, 1000);
-
     if (roundId === '2') {
       $('.confirmation-first').removeClass('d-none');
       $('.confirmation-second').addClass('d-none');

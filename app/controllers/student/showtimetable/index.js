@@ -17,8 +17,8 @@ module.exports = {
       student.getWinningCourseList(res.locals.slug,res.locals.biddingId),
       student.getWaitListCouresList(res.locals.slug,res.locals.biddingId),
       student.getConfirmCreditsCounts(res.locals.slug,res.locals.biddingId),
-      student.getCompleteCourese(res.locals.slug,res.locals.biddingId,res.locals.useSapId),]).then(result =>{
-
+      student.getCompleteCourese(res.locals.slug,res.locals.biddingId,res.locals.useSapId)]).then(result =>{
+  
       res.render('student/dashboard/index', {
         active:studentHomePage,
         currentFormStep: 0,

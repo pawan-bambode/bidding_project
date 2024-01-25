@@ -1400,17 +1400,11 @@ option:hover,
 .round-wise:hover h4 {
  color: white;   
 }
-
-.round-wise-tab{
-    width: 95%;
-    margin:auto;
-}
-
+/* confirmation main page selector  */
 .main-div-round-wise {
-    background-color: #ffffff;
-    height: 100vh;
-    
+    background-color: #ffffff;   
 }
+
 .top-navbar::before
 {
 content: '';
@@ -1451,8 +1445,7 @@ studet-footer .footer-div {
 
 }
 
-
-ul.round-wises{
+ul.round-wises {
     background-color: var(--primary-bg);
     height: 73px;
     width: 95%;
@@ -1461,56 +1454,51 @@ ul.round-wises{
     margin-inline-end: 0px;
     padding-inline-start: 0px;
     margin-bottom: 0px;
-
-    
 }
 
-     ul.round-wises li.active{
-        background-color: white;
-        position: relative;
-        border-radius: 16px;
-        
-     }    
+ul.round-wises li.active {
+    background-color: white;
+    position: relative;
+    border-radius: 16px;
+}
 
-     
+.active-div {
+    padding-inline-end: 5px;
+    padding-inline-start: 5px;
+}
+
 ul.round-wises li.active::before {
     content: "";
     position: absolute;
-    top: 78px;
-    left: -18px;
-    width: 34px;
-    height: 43px;
+    top: 54px;
+    left: -16px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     background-color: var(--primary-bg);
     box-shadow: 10px 1px 0 var(--primary-white);
-} 
-li.active.upper-div {
-    padding-inline-end: 20px;
-    padding-inline-start: 20px;
 }
-ul.round-wise li.active.active-div{ 
-    padding-inline-end: 20px;
-    padding-inline-start: 20px;
-}
+
 ul.round-wises li.active::after {
     content: "";
     position: absolute;
-    top: 78px;
-    right: -18px;
-    width: 34px;
-    height: 43px;
-    border-radius: 50%;  
+    top: 54px;
+    right: -16px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     box-shadow: -10px 1px 0 white;
 }
 
 ul.round-wises .spacer {
     position: absolute;
-    top: 81px;
+    top: 47px;
     left: 17px;
     width: var(--active-spacer-width);
     height: 43px;
     background-color: white;
-} 
+}
+ 
 
 
 

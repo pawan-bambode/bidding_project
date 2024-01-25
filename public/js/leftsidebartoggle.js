@@ -392,5 +392,8 @@ function resetBiddingTrimester( classToRemove) {
     }
 }
   
+updateCurrentTime();
+setInterval(updateCurrentTime, 1000);  
 
-  
+
+

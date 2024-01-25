@@ -64,7 +64,6 @@ module.exports = class Students {
                     return result.recordset; 
                 })
                 .catch(err => {
-                    console.error('Database error:', err);
                     throw err; 
                 });
         });

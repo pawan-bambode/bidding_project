@@ -87,7 +87,7 @@ async function  generateExcel (req, res) {
 
     workbook.write('C:/Users/suraj.pal.ext/Desktop/8November/bidding_project_working (1)/bidding_project_working/excelFile/'+'sampleForImportCompleteCourses.xlsx', (err, stats) => {
       if (err) {
-        console.error(err);
+   
       } else {
         res.json({'status':'200'})
       }

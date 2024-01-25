@@ -6,51 +6,32 @@ module.exports = {
     getPage :(req ,res) => {
         let confirmationUrl = req.route.path.split('/');
         let confirmationActive = confirmationUrl[confirmationUrl.length-1]
-        let roundId = 3;
+        let roundId = req.body.roundId != undefined ? req.body.roundId : 3;
         
-        Promise.all([confirmation.winningCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, roundId), confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId,roundId)]).then(result =>
+        Promise.all([confirmation.winningCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, roundId), confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, roundId),roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId,roundId)]).then(result =>
         {
-        res.render('student/confirmation/index',{
+
+          res.render('student/confirmation/index',{
           active: confirmationActive,
           winningCourseList: result[0].recordset,
           confirmCourseList: result[1].recordset,
-          startAndEndTime: result[2].recordset
+          startAndEndTime: result[2].recordset[0]
         })  
       })
       
     },
     
-    getPageRoundWise: (req, res) => {
-      let previusBiddingRound;
-      let roundId ;
-    
-      if (req.url == '/confirmation/rounds-first') {
-        previusBiddingRound = 'BIDDING_ROUND1';
-        roundId = 3;
-      } else if (req.url == '/confirmation/rounds-second') {
-        previusBiddingRound = 'BIDDING_ROUND2';
-        roundId = 5;
-      }
-    
-      confirmation.getRoundId(res.locals.slug, res.locals.biddingId, previusBiddingRound)
-        .then(roundId => {
-          if (roundId.recordset[0] && roundId.recordset[0].roundId !== '') {
-            return confirmation.winningCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, roundId.recordset[0].roundId);
-          } 
-        })
-        .then(confirmCourseList => {
-          Promise.all([confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId,roundId)]).then(result =>{
-            
-            res.render('student/confirmation/confirmationRoundWise/index', {
+    getDetailsRoundWise: (req, res) => {
+      let roundId = req.body.roundId != undefined ? req.body.roundId : 3;
+          Promise.all([confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, req.body.roundId), confirmation.winningCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, roundId) ,roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId, req.body.roundId)]).then(result =>{
+            res.json({
+              status: "200",
               active: 'confirmation',
-              winningCourseList: confirmCourseList.recordset,
               confirmCourseList: result[0].recordset,
-              startAndEndTime: result[1].recordset[0],
-              roundId: confirmCourseList.recordset[0] != undefined ?  confirmCourseList.recordset[0].round_lid :0
-            });
+              winningCourseList: result[1].recordset,
+              startAndEndTime: result[2].recordset[0]
+            }) 
           })
-         
-        })
         .catch(error => {
           res.status(500).json(JSON.parse(error.originalError.info.message));
         });

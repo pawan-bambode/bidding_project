@@ -241,9 +241,6 @@ $(document).ready(function() {
    
     updateCreditsPointTargets(trimesterWiseTargetCreditPoints);
     
-    updateCurrentTime();
-    setInterval(updateCurrentTime, 1000);
-   
     biddingCourses(biddingCourseList, false);
 
     socket.on('connect', () => {
