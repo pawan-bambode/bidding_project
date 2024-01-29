@@ -58,8 +58,8 @@ module.exports = {
                       min_demand_criteria: item.minDemandCriteria
                     };
                   })
-    let course = {courses: courseDataWithColumnHypen}
-    course.uploadCourse(res.locals.slug,course,res.locals.userId,biddingId).then(result =>{
+    let courseJSON = {courses: courseDataWithColumnHypen}
+    course.uploadCourse(res.locals.slug,courseJSON,res.locals.userId,biddingId).then(result =>{
     res.status(200).json(JSON.parse(result.output.output_json));
    }).catch(error =>{
        if(isJsonString.isJsonString(error.originalError.info.message)){

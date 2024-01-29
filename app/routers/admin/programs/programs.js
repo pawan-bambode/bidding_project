@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const program = require('../../../controllers/admin/programs/program/index');
-const programSessions = require('../../../controllers/admin/programs/programsessions/index')
+const programSessions = require('../../../controllers/admin/programs/programsessions/index');
+
 router.get('/program',program.getPage);
 router.post('/program/create',program.create);
 router.post('/program/update',program.update);

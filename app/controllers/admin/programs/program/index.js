@@ -3,7 +3,9 @@ const isJsonString = require('../../../../utils/util')
 
 module.exports = {
     getPage: (req, res) => {
-        Promise.all([program.getAllProgram(req, res,res.locals.slug,res.locals.biddingId),program.getCount(res.locals.slug,res.locals.biddingId), program.getAllProgramFromDbo(req, res, res.locals.slug,res.locals.biddingId)])
+        Promise.all([program.getAllProgram(req, res,res.locals.slug,res.locals.biddingId),
+                     program.getCount(res.locals.slug,res.locals.biddingId), 
+                     program.getAllProgramFromDbo(res.locals.slug,res.locals.biddingId)])
             .then(result => {
                 res.render('admin/programs/program/index.ejs', {
                     programList: result[0].recordset,

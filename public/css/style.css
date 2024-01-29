@@ -1502,6 +1502,19 @@ ul.round-wises .spacer {
     height: 43px;
     background-color: white;
 }
+
+.toast-message {
+    position: fixed !important;
+    box-shadow: 0px 0px 5px 5px;
+    bottom: 5px;
+    right: 10px;
+    z-index: 10000;
+    border-radius: 5px;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000000000;
+}
  
 
 

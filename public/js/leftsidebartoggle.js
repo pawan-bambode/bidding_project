@@ -365,6 +365,27 @@ function resetBiddingTrimester( classToRemove) {
     });
   }
 
+  function createToastMessage(message) {
+    let simpleAlert = new SimpleAlert();
+    let obj = {
+        title: message,  
+        message: "",
+        type: 'alert-success',
+        buttons: {
+            positive: {
+                text: "Okay",
+                action: function () {
+                    document.querySelector('.simple-alert').remove();
+                }
+            }
+        }  
+    };
+    simpleAlert.alert(obj);
+}
+
+
+
+
   function createToast(message, className, contentColorClassName) {
     const toastDiv = document.createElement('div');
     toastDiv.className = `position-fixed top-80 right-0 toast-alert ${className}`;
@@ -396,27 +417,30 @@ updateCurrentTime();
 setInterval(updateCurrentTime, 1000);  
 
 function formatDate(todayDateVal, flag, noOfMonthBeforeActivity) {
-    let fullYear = todayDateVal.getFullYear();
-    let date = todayDateVal.getDate();
-    let month = todayDateVal.getMonth() + 1;
-    let formatMonth = month < 10 ? '0' + month : month;
-    let formatDate = date < 10 ? '0' + date : date;
-    let minDate = fullYear + '-' + formatMonth + '-' + formatDate;
+    
+    const padZero = (num) => (num < 10 ? '0' + num : num);
 
-    let maxDateYearInc = Math.floor((month + noOfMonthBeforeActivity) / 12);
-    let maxDateMonthInc = (month + noOfMonthBeforeActivity) % 12;
-    fullYear = fullYear + maxDateYearInc;
-    let formatMonthMax = maxDateMonthInc >= 10 ? maxDateMonthInc : '0' + maxDateMonthInc;
+    const fullYear = todayDateVal.getFullYear();
+    const date = padZero(todayDateVal.getDate());
+    const month = todayDateVal.getMonth() + 1;
+    const formatMonth = padZero(month);
 
-    let maxDate = fullYear + '-' + formatMonthMax + '-' + formatDate;
+    const minDate = `${fullYear}-${formatMonth}-${date}`;
 
-    if (flag) {
-        $('#add-bidding-session #end-date').attr('min', minDate);
-        $('#add-bidding-session #end-date').attr('max', maxDate);
-    } else {
-        $('#add-bidding-session #start-date').attr('min', minDate);
-        $('#add-bidding-session #start-date').attr('max', maxDate);
-    }
+    const maxDateYearInc = Math.floor((month + noOfMonthBeforeActivity) / 12);
+    const maxDateMonthInc = (month + noOfMonthBeforeActivity) % 12;
+    const updatedFullYear = fullYear + maxDateYearInc;
+    const formatMonthMax = padZero(maxDateMonthInc);
+
+    const maxDate = `${updatedFullYear}-${formatMonthMax}-${date}`;
+    
+    const targetInput = flag ? '#add-bidding-session #end-date' : '#add-bidding-session #start-date';
+
+    $(targetInput).attr('min', minDate);
+    $('#add-bidding-session #end-date').attr('min', minDate);
+    $('#add-bidding-session #start-date').attr('min', minDate);
+
+
 }
 
 function isSessionDuplicate(sessionVal) {

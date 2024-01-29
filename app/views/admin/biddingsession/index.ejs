@@ -83,7 +83,7 @@
                         <label class="form-label" for="start-date">Session Start Date</label>
                         <input class="form-control" type="date" name="start-date" id="start-date">
                         <label class="form-label" for="end-date">Session End Date</label>
-                        <input class="form-control" type="date" name="end-date" id="end-date">
+                        <input class="form-control disabled" type="date" name="end-date" id="end-date">
                         <div class="d-flex justify-content-end align-items mt-4">
                             <button class="btn btn-primary" id="add-bidding-details">Add Bidding Details </button>
                         </div>
@@ -191,30 +191,26 @@
 
         formatDate(new Date(), false, 6);
         setActiveMenuItem(`<%- active %>`);
-
+       
         $('#add-bidding-session').on('change', '#start-date', function() {
             formatDate(new Date($(this).val()), true, 15);
-            console.log('inside the add-bdding-session-changes');
+            $('#end-date').prop('disabled', false);
         });
 
         $(document).on('click', '#add-acad-session-in-bidding i', function() {
             $(this).closest('span').remove();
-            console.log('inside the add-acad-session-in-bidding i');
         });
 
         $('#add-bidding-session').on('show.bs.modal', function() {
             $('.left-sidebar').addClass('d-none');
-            console.log('inside the add-bidding-session show.bs.modal');
         });
 
         $('#add-bidding-session').on('click', '.full-modal-left-sidebar', function() {
             $('.left-sidebar').removeClass('d-none');
-            console.log('inside the add-bidding-session full-modal-left-sidebar');
         });
 
         $('#edit-bidding-session-modal').on('click', '.add-acad-session-bidding-session', function() {
             $('#edit-bidding-session-modal .edit-bidding-session-acad-seession').removeClass('d-none');
-            console.log('inside the add-bidding-session add-acad-session-bidding-session');
         });
 
         $('#add-bidding-session').on('click', '#add-acad-session-in-bidding', function(event) {
@@ -223,16 +219,12 @@
             if ($(event.target).is('span.badge.bg-danger')) {
                 $(this).find('span').remove();
             }
-
-            console.log('values of add-acad-session-in-bidding');
         });
 
         $('#edit-bidding-session-modal').on('click', '.bidding-acad-session-cancle', function() {
             let acadSessionId = $(this).closest('span').attr('data-bidding-session-id');
             $('#edit-academic-session-add').find(`option[value="${acadSessionId}"]`).removeClass('d-none');
             $(this).closest('span').remove();
-
-            console.log('values of bidding-acad-session-cancle');
         });
 
         $('#add-bidding-details').on('click', function() {
@@ -243,16 +235,20 @@
                 let biddingName = $('#add-bidding-session #bidding-name').val().replace(/\s+/g, ' ').trim();
                 let startDate = $('#add-bidding-session #start-date').val();
                 let endDate = $('#add-bidding-session #end-date').val();
-
+                
+                if(biddingName != '' && startDate != '' && endDate != ''){
                 let biddingSessionDetailRow = `<tr data-bidding-name="${biddingName}" data-start-date="${startDate}" data-end-date=${endDate}><td>${countRow++}</td><td>${biddingName}</td><td class="session-td"><div id="add-acad-session-in-bidding" class="d-flex flex-column justify-content-between align-item-center    add-acad-session-in-bidding"><span class="badge bg-danger"><i class="fa-solid fa-circle-plus"><i></span></div></td>
                     <td>${startDate}</td><td>${endDate}</td><td id="delete-bidding-session"><i class="fa fa-trash text-danger"></i></td>
                     </tr>`;
                 tempBiddingTable.append(biddingSessionDetailRow);
+                }
+                else{
+                    alert('Please fill out all fields.');
+                    return false;
+                }
             } else {
                 alert('Only Bidding Session add At a time');
             }
-
-            console.log('add-bidding-session #temp-bidding-session-details tbody');
         });
 
         $('#temp-bidding-session-details').on('click', '#delete-bidding-session', function() {
@@ -265,7 +261,6 @@
                 $('#add-bidding-session #end-date').val('');
                 $('#add-bidding-session #add-bidding-sessions').addClass('disabled');
             }
-            console.log('values of delete-bidding-session');
         });
 
         $('#add-bidding-session').on('click', '#add-acad-session-in-bidding-details', function() {
@@ -294,8 +289,6 @@
             } else {
                 alert('Select Session First');
             }
-
-            console.log('values of add-acad-session-in-bidding-details');
         });
 
         $('#bidding-sesssion-table').on('click', '#edit-bidding-session', function() {
@@ -327,8 +320,6 @@
                 let acadSessionId = $(ele).data("bidding-session-id");
                 $('#edit-academic-session-add').find(`option[value="${acadSessionId}"]`).addClass('d-none');
             });
-
-            console.log('values of edit-bidding-session');
         });
 
         $('#edit-bidding-session-modal').on('click', '#add-acad-session-edit-bidding', function() {
@@ -352,8 +343,6 @@
                     </span>`;
                 $('#edit-bidding-session-modal .add-bidding-session-val').append(selectedSpan);
             }
-
-            console.log('values of add-acad-session-edit-bidding');
         });
 
         $('#add-bidding-session').on('click', '#add-bidding-sessions', function() {
@@ -380,11 +369,12 @@
                 dataType: 'JSON'
             };
             ajaxApi(ApiObj).then(result => {
-                showSuccess(result);
+                console.log('values of result', result);
+                
+                createToastMessage(result);
             }).catch(error => {
                 showError(JSON.stringify(error.responseJSON));
             });
-            console.log('values of add-bidding-sessions');
         });
 
         $('#bidding-sesssion-table').on('click', '#delete-bidding-session', function() {
@@ -402,7 +392,6 @@
             }).catch(error => {
                 showError(JSON.stringify(error.responseJSON));
             });
-            console.log('values of delete-bidding-session');
         });
 
         $('#edit-bidding-session-modal').on('click', '#update-bidding-session', function() {
@@ -446,7 +435,6 @@
                     showError(JSON.stringify(error.responseJSON));
                 });
             }
-            console.log('values of #update-bidding-session');
         });
     });
 </script>

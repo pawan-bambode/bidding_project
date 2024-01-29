@@ -42,7 +42,7 @@
             url: obj.url,
             data: obj.data,
             beforeSend: function () {
-                $(".modal-loader").removeClass('d-none')
+              //  $(".modal-loader").removeClass('d-none')
             },
             success: data => {
                 return data
