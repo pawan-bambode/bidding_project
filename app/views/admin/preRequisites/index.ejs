@@ -164,8 +164,7 @@
    $(document).ready(function(){
     $('.select2').select2();
 
-    let active = `<%- active %>`;
-    $('#sidebar .side-menu li.' + active).addClass('active');
+    setActiveMenuItem(`<%- active %>`)
 
     $('#import-pre-requisites').on('change', function(){
         let importPreRequisites = $(this).val();

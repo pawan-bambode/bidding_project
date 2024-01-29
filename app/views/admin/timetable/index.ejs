@@ -148,8 +148,7 @@
         let roomList = JSON.parse(`<%- roomList %>`);
         let timeJson = JSON.parse(`<%- timeSlotList%>`);
 
-        let active = `<%- active %>`;
-        $('#sidebar .side-menu li.' + active).addClass('active');
+        setActiveMenuItem(`<%- active %>`)
 
         let roomslot = ``;
        

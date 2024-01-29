@@ -351,8 +351,7 @@
         let importBiddingRoundsArray = [];
         let importdata = [];
 
-        let active = `<%- active %>`;
-        $('#sidebar .side-menu li.' + active).addClass('active');
+        setActiveMenuItem(`<%- active %>`)
 
         $('#page-no').html(pageCount);
         $('#update-total-courses-bidding-rounds').on('change','.update-bidding-round-courses',function(){

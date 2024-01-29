@@ -395,5 +395,51 @@ function resetBiddingTrimester( classToRemove) {
 updateCurrentTime();
 setInterval(updateCurrentTime, 1000);  
 
+function formatDate(todayDateVal, flag, noOfMonthBeforeActivity) {
+    let fullYear = todayDateVal.getFullYear();
+    let date = todayDateVal.getDate();
+    let month = todayDateVal.getMonth() + 1;
+    let formatMonth = month < 10 ? '0' + month : month;
+    let formatDate = date < 10 ? '0' + date : date;
+    let minDate = fullYear + '-' + formatMonth + '-' + formatDate;
 
+    let maxDateYearInc = Math.floor((month + noOfMonthBeforeActivity) / 12);
+    let maxDateMonthInc = (month + noOfMonthBeforeActivity) % 12;
+    fullYear = fullYear + maxDateYearInc;
+    let formatMonthMax = maxDateMonthInc >= 10 ? maxDateMonthInc : '0' + maxDateMonthInc;
+
+    let maxDate = fullYear + '-' + formatMonthMax + '-' + formatDate;
+
+    if (flag) {
+        $('#add-bidding-session #end-date').attr('min', minDate);
+        $('#add-bidding-session #end-date').attr('max', maxDate);
+    } else {
+        $('#add-bidding-session #start-date').attr('min', minDate);
+        $('#add-bidding-session #start-date').attr('max', maxDate);
+    }
+}
+
+function isSessionDuplicate(sessionVal) {
+    let returnValue = false;
+
+    if (sessionVal != 0) {
+        if ($(`#add-bidding-session #temp-bidding-session-details .session-td .add-acad-session-in-bidding span[data-sessionLid="${sessionVal}"]`).length > 0) {
+            returnValue = true;
+        }
+    } else {
+        $(`#add-bidding-session #temp-bidding-session-details .session-td .add-acad-session-in-bidding span[data-sessionLid]`).each((index1, ele1) => {
+            return $(`#add-bidding-session #academic-session option`).each((index2, ele2) => {
+                if ($(ele1).attr('data-sessionLid') == $(ele2).val()) {
+                    returnValue = true;
+                }
+            });
+        });
+    }
+
+    return returnValue;
+}
+
+function setActiveMenuItem(active) {
+    $('#sidebar .side-menu li.' + active).addClass('active');
+}
 

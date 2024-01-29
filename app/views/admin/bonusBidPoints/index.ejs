@@ -3,32 +3,195 @@
 <%- include('../partials/header.ejs') %>
 
 <div class="main-content">
-  <div class="breadcrumbs-container">
-    <ul class="breadcrumb">
-      <% if (breadcrumbs) { %>
-        <% for (let crumbs of breadcrumbs) { %>
-          <% let crumbName = (crumbs.name === 'ADMIN') ? 'Dashboard' : crumbs.name; %>
-          <li><a href="<%- crumbs.url %>"><%- crumbName %></a></li>
-        <% } %>
-      <% } %>
-    </ul>
-  </div>
-
-  <div class="card card-custom-border-curv">
-    <div class="card-header-custom d-flex justify-content-between p-1">
-      <h3 class="ms-2">Bonus Bid Points</h3>
+    <div class="breadcrumbs-container">
+        <ul class="breadcrumb">
+            <% if (breadcrumbs) { %>
+                <% for (let crumbs of breadcrumbs) { %>
+                    <% let crumbName = (crumbs.name === 'ADMIN') ? 'Dashboard' : crumbs.name; %>
+                    <li><a href="<%- crumbs.url %>"><%- crumbName %></a></li>
+                <% } %>
+            <% } %>
+        </ul>
     </div>
 
-    <div class="card-body table-responsive">
-    
+    <div class="card card-custom-border-curv">
+        <div class="card-header-custom d-flex justify-content-between p-1">
+            <h3 class="ms-2">Bonus Bid Points </h3>
+            <button type="button" class="btn add-btn-bonus-bid me-2" data-bs-target="#add-bonus-points-modal"
+                data-bs-toggle="modal">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+        <div class="card-body table-responsive">
+            <div class="d-flex justify-content-between">
+                <div>
+
+                </div>
+                <div>
+                    <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
+                            type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                </div>
+            </div>
+
+            <table class="table custom_row table-bordered mt-4 custom-table" id="bonus-points-table">
+                <thead>
+                    <th>#</th>
+                    <th>Round Name</th>
+                    <th>Bonus Points</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                    <% let count = 1 %>
+                    <% for (let bonusPoints of bonusBidPoints) { %>
+                        <tr>
+                            <td><%- count++ %></td>
+                            <td><%- bonusPoints.round_name %></td>
+                            <td><%- bonusPoints.points_to_increase_after_demand %></td>
+                            <td><a class="edit-bonus-points" data-bs-target="#edit-bonus-points"
+                                    data-bs-toggle="modal" data-id="<%- bonusPoints.id %>"
+                                    data-round-name="<%-bonusPoints.round_name %>"
+                                    data-bonus-points="<%- bonusPoints.points_to_increase_after_demand %>"><i
+                                        class="fa fa-edit"></i></a>
+                                <a class="delete-bonus-points" data-id="<%- bonusPoints.id %>"><i
+                                        class="fa-solid fa-trash text-danger"></i></a>
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
     </div>
+</div>
+</div>
+
+<div class="modal" id="add-bonus-points-modal" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Bonus Bid Points</h3>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label mb-2" for="bonus-bid-points-input">Bonus Bid Points:</label>
+                <input class="form-control bonus-bid-points-input" id="bonus-bid-points-input">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary" id="bonus-bid-points">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="edit-bonus-points" data-bs-backdrop="static">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h3 class="modal-title">Update Bonus Points</h3>
+              <button class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <label class="mb-2 disabled" for="round-name">Round Name:</label>
+            <input type="hidden" id="bonus-id">
+            <input class="form-control" type="text" id="round-name">
+            <label class="mb-2" for="bonus-points">Bonus Points:</label>
+            <input class="form-control" type="text" id="bonus-points">     
+          </div>
+          <div class="modal-footer">
+              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button class="btn btn-primary" id="update-bonus-points">Update</button>
+          </div>
+      </div>
   </div>
 </div>
 
 <%- include('../partials/footer.ejs') %>
+
 <script>
-    $(document).ready(function(){        
+    $(document).ready(function () {
+        let active = `<%- active %>`;
+        $('#sidebar .side-menu li.' + `<%- active %>`).addClass('active');
+
+        $('#add-bonus-points-modal').on('click', '#bonus-bid-points', function () {
+            let bonusBidPoints = $('.bonus-bid-points-input').val();
+            let inputJson = {
+                round_lid: 1,
+                points_to_increase_after_demand: bonusBidPoints
+            }
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/bonus-points/add',
+                data: {
+                    InputJson: JSON.stringify(inputJson)
+                },
+                datatype: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                showSuccess(result);
+            }).catch(error => {
+                showError(JSON.stringify(error.responseJSON))
+            })
+        });
+
+        $('#bonus-points-table').on('click', '.delete-bonus-points', function () {
+            let deleteId = $(this).data('id');
+      
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/bonus-points/delete',
+                data: {
+                    Id: deleteId
+                },
+                datatype: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                showSuccess(result);
+            }).catch(error => {
+                showError(JSON.stringify(error.responseJSON))
+            })
+        });
+        
+
+      $('#bonus-points-table').on('click', '.edit-bonus-points', function () {
+        let roundName = $(this).data('round-name');
+        let bonusPoints = $(this).data('bonus-points');
+        let id = $(this).data('id');
+
+        $('#round-name').val(roundName);
+        $('#bonus-points').val(bonusPoints);
+        $('#bonus-id').val(id);
+      });
+
+     $('#edit-bonus-points').on('click', '#update-bonus-points', function () {
+        let roundName = $('#round-name').val();
+        let bonusPoints = $('#bonus-points').val().trim();
+        let bonusPointId = $('#bonus-id').val().trim();
+
+        let inputJson = {
+            id: bonusPointId,
+            points_to_increase_after_demand: bonusPoints
+        };
+
+        let ApiObj = {
+            type: 'POST',
+            url: '/admin/bonus-points/update',
+            data: {
+                inputJson: JSON.stringify(inputJson)
+            },
+            datatype: 'JSON'
+        };
+
+        ajaxApi(ApiObj)
+            .then(result => {
+                showSuccess(result);
+            })
+            .catch(error => {
+                showError(JSON.stringify(error.responseJSON));
+            });
+      });
+
+      
     })
 </script>
-  
+
 <%- include('../partials/footerEnd.ejs') %>

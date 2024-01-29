@@ -116,8 +116,7 @@
         let rowCount = $('#changeEntry').val();
         $('#page-no').html(test);
         
-        let active = `<%- active %>`;
-        $('#sidebar .side-menu li.' + active).addClass('active');
+        setActiveMenuItem(`<%- active %>`)
 
         paginationData(rowCount, parseInt(test));
     

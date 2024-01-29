@@ -190,9 +190,9 @@
 <%- include('../partials/footer.ejs') %>
 <script>
 $(document).ready(function() {
-
-    let active = `<%- active %>`;
-    $('#sidebar .side-menu li.' + active).addClass('active');
+    
+    setActiveMenuItem(`<%- active %>`);
+    
     let availableCourseList = JSON.parse(`<%- JSON.stringify(courseList) %>`);
     let concentrationId = `<%- concentrationId %>`;
     let waitListCourseList = JSON.parse(`<%- JSON.stringify(waitListCourses) %>`);

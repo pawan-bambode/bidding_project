@@ -184,9 +184,8 @@
 
       $('.select2').select2();
 
-      let active = `<%- active %>`;
-      $('#sidebar .side-menu li.' + active).addClass('active');
-
+      setActiveMenuItem(`<%- active %>`)
+      
       if($('#division-batches-table tbody tr').length > 0){
       $('#all-division-batches-checkbox').removeClass('d-none');
     }

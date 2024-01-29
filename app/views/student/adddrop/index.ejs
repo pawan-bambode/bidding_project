@@ -172,10 +172,10 @@
 <script>
 $(document).ready(function() {
     
-    let active = `<%- active %>`;
+   
     let waitListCourseList = JSON.parse(`<%- JSON.stringify(waitListCourses) %>`);
     let availableCourseList = JSON.parse(`<%- JSON.stringify(courseList) %>`);
-    $('#sidebar .side-menu li.' + active).addClass('active');
+    setActiveMenuItem(`<%- active %>`)
     let concentrationId = `<%- concentrationId %>`;
     
     avilableCourses(availableCourseList, false);

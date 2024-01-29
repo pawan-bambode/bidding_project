@@ -837,6 +837,10 @@ option:hover,
     background-color: whitesmoke !important;
     border-radius: 50% !important;   
 }
+.add-btn-bonus-bid {
+    background-color: whitesmoke !important;
+    border-radius: 50% !important;   
+}
 
 .custom-table thead th{
     background-color:var(--primary-table-bg);

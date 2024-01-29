@@ -236,8 +236,7 @@ $(document).ready(function() {
 
     paginationData(rowCount, parseInt(pageCount));
     
-    let active = `<%- active %>`;
-    $('#sidebar .side-menu li.' + active).addClass('active');
+    setActiveMenuItem(`<%- active %>`);
 
         $('#acad-session-change').on('change',function(){
             let showEntry = $('#changeEntry').val();

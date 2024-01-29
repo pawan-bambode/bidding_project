@@ -242,8 +242,7 @@
 <script>
  $(document).ready(function(){
  
-     let active = `<%- active %>`;
-     $('#sidebar .side-menu li.' + active).addClass('active');
+     setActiveMenuItem(`<%- active %>`)
 
      let confirmCourseList = `<%- JSON.stringify(confirmCourseList.length) %>`;
      let dropCouresList = `<%- JSON.stringify(dropCourseList.length) %>`;

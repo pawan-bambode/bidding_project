@@ -75,8 +75,8 @@
 <%- include('../partials/footer.ejs') %>
 <script>
 $(document).ready(function() {
-    let active = `<%- active %>`;
-    $('#sidebar .side-menu li.' + active).addClass('active');
+
+    setActiveMenuItem(`<%- active %>`)
 
     let availableCourseListData = `<%- JSON.stringify(availableCourseList) %>`;
     let availableCourseList = JSON.parse(availableCourseListData);

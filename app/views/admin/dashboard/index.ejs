@@ -291,8 +291,7 @@
 
 <script>
     $(document).ready(function(){
-        let active = `<%- active %>`;
-        $('#sidebar .side-menu li.' + active).addClass('active'); 
+        setActiveMenuItem(`<%- active %>`) 
     });
 </script>
 <%- include('../partials/footerEnd') %>

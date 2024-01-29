@@ -150,8 +150,7 @@
         $('#page-no').html(test);
         paginationData(rowCount, parseInt(test));
 
-        let active = `<%- active %>`;
-        $('#sidebar .side-menu li.' + active).addClass('active');
+        setActiveMenuItem(`<%- active %>`)
 
         $('#searchkeyword').on('input',function(){
 
