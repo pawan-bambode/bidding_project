@@ -49,29 +49,32 @@ module.exports = {
     const sheetName = excelFileDataWorkbook.SheetNames[0];
     const sheet = excelFileDataWorkbook.Sheets[sheetName];
     const studentJsonData = xlsx.utils.sheet_to_json(sheet);
-    let jsonArr = [];
+    
     const hashPasswords = async (data) => {
       const hashedPasswords = await Promise.all(
         data.map(async (item) => {
+          
           let hashedPassword = '';
           if(item.dateofBirthDate){
-           hashedPassword = await hash.hashPassword(convertExcelDateToJSDate(item.dateofBirthDate.toString()),false);
+            hashedPassword = await hash.hashPassword(convertExcelDateToJSDate(item.dateofBirthDate.toString()),false);
           }
           else{
             hashedPassword = await hash.hashPassword('pass@123');
           }
+          let defaultValue = null;
           return {
-            sap_id: item.studentSapId,
-            roll_no: item.rollNo.toString(),
-            student_name: item.studentName.replace(/\s+/g,' ').trim(),
-            email: item.email.replace(/\s+/g,' ').trim(),
-            program_id: item.programId,
-            bid_points: item.bidPoints,
-            year_of_joining: item.yearOfJoining,
-            previous_elective_credits:item.previousElectiveCredits,
-            password: hashedPassword,
-            dob: convertExcelDateToJSDate(item.dateofBirthDate.toString(),true)
+              sap_id: item.studentSapId ?? defaultValue,
+              roll_no: item.rollNo !== undefined ? item.rollNo.toString() : defaultValue,
+              student_name: item.studentName !== undefined ? item.studentName.replace(/\s+/g, ' ').trim() : defaultValue,
+              email: item.email !== undefined ? item.email.replace(/\s+/g, ' ').trim() : defaultValue,
+              program_id: item.programId ?? defaultValue,
+              bid_points: item.bidPoints ?? defaultValue,
+              year_of_joining: item.yearOfJoining ?? defaultValue,
+              previous_elective_credits: item.previousElectiveCredits ?? defaultValue,
+              password: hashedPassword,
+              dob: item.dateofBirthDate == undefined ?defaultValue: convertExcelDateToJSDate(item.dateofBirthDate.toString(), true)
           };
+
         })
       );
       return hashedPasswords;

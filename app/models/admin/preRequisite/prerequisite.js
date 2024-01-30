@@ -2,6 +2,7 @@ const {sql,poolConnection} = require('../../../../config/db')
 
 module.exports = class preRequisites {
     static uploadPreRequisites(slug, inputJson, userid, biddingId){
+    
         return poolConnection.then(pool=>{
             return pool.request()
             .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))

@@ -87,7 +87,7 @@
             </div>
             <div class="modal-body">
               <label class="form-label mb-2" for="specialization-name">Specialization Name :</label>
-              <input class="form-control" id="specialization-name">
+              <input class="form-control" id="specialization-name" autocomplete="off">
               
               </div>   
         
@@ -209,7 +209,7 @@
             datatype :'JSON'
         }
         ajaxApi(ApiObj).then(result =>{
-            showSuccess(result);
+            createToastMessage(result.description);
         }).catch(error =>{
             showError(JSON.stringify(error.responseJSON));
         })
@@ -226,7 +226,7 @@
             datatype:'JSON'
         }
         ajaxApi(ApiObj).then(result =>{
-            showSuccess(result);
+            createToastMessage(result.description);
         }).catch(error =>{
             showError(JSON.stringify(error.responseJSON));
         })
@@ -246,7 +246,7 @@
             datatype:'JSON'
         }
         ajaxApi(ApiObj).then(result =>{
-            showSuccess(result);
+            createToastMessage(result.description);
         }).catch(error =>{
             showError(JSON.stringify(error.responseJSON));
         })

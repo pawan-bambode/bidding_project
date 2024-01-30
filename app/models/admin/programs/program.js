@@ -31,7 +31,8 @@ module.exports =  class Program {
         })
     }
     
-    static getAllProgram(req,res,slug,biddingId){
+    static getAllProgram(slug, biddingId){
+       
         let showEntry = 10;
         return poolConnection.then(pool =>{
             return pool.request()
@@ -43,6 +44,7 @@ module.exports =  class Program {
     }
     
     static getCount(slug,biddingId){
+       
         return poolConnection.then(pool =>{
             return pool.request()
             .input('biddingId',sql.Int,biddingId)
@@ -51,8 +53,9 @@ module.exports =  class Program {
         })
     }
 
-    static getAllProgramFromDbo(req,res, slug, abbr, biddingId){
+    static getAllProgramFromDbo(slug, abbr, biddingId){
         abbr = 'SBM-NM-M';
+       
         return poolConnection.then(pool =>{
             return pool.request()
             .input('biddingId', sql.Int, biddingId)

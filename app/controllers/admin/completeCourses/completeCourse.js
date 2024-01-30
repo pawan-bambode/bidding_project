@@ -71,12 +71,14 @@ workbook.write(filePath, (err, stats) => {
             const sheetName = excelFileDataWorkbook.SheetNames[0];
             const sheet = excelFileDataWorkbook.Sheets[sheetName];
             const completeCoursesJsonData = xlsx.utils.sheet_to_json(sheet);
+            
             const completeCoursesWithColumnHypen = completeCoursesJsonData.map(item =>{
+             let defaultValue = null;
                             return {
-                              sap_id: item.studentSapId,
-                              acad_session: item.acadSession.replace(/\s+/g,' ').trim(),
-                              course_id: item.courseId,
-                              course_name: item.courseName.replace(/\s+/g,' ').trim()
+                              sap_id: item.studentSapId == undefined ? defaultValue : item.studentSapId,
+                              acad_session: item.acadSession == undefined ? defaultValue : item.acadSession.replace(/\s+/g,' ').trim(),
+                              course_id:  item.courseId == undefined ? defaultValue :item.courseId,
+                              course_name: item.courseName == undefined ? defaultValue : item.courseName.replace(/\s+/g,' ').trim()
                             };
                           })
             let completeCourseDataValue = {completed_courses: completeCoursesWithColumnHypen}

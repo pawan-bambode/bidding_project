@@ -305,7 +305,7 @@ $(".pagination-search").on('click','.pagination li',function(){
             }
             
             ajaxApi(ApiObj).then(result => {
-                showSuccess(result)              
+                createToastMessage(result.description);
             }).catch(error => {
                 showError(JSON.stringify(error.responseJSON))
             })
@@ -379,7 +379,7 @@ $(".pagination-search").on('click','.pagination li',function(){
                 dataType:'JSON'
             }
             ajaxApi(ApiObj).then(result =>{
-                showSuccess(result)
+                createToastMessage(result.description);
             }).catch(error =>{
                 showError(JSON.stringify(error.responseJSON));
             })

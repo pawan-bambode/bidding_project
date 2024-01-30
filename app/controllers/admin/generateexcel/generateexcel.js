@@ -3,6 +3,7 @@ const excel = require('excel4node');
 const xlsx = require('xlsx');
 const course = require('../../../models/admin/course/course');
 const isJsonString = require('../../../utils/util');
+const { NULL } = require('xlsx-populate/lib/FormulaError');
 
 module.exports = {
   generateExcel: (req, res) => {
@@ -47,15 +48,17 @@ module.exports = {
     const sheet = excelFileDataWorkbook.Sheets[sheetName];
     const courseJsonData = xlsx.utils.sheet_to_json(sheet);
     const courseDataWithColumnHypen = courseJsonData.map(item =>{
+      
+      let defaultValue =  NULL
                     return {
-                      course_name: item.courseName.replace(/\s+/g, ' ').trim(),
-                      course_id: item.courseId,
-                      credits: item.credits,
-                      program_id: item.programId,
-                      acad_session: item.acadSession.replace(/\s+/g, ' ').trim(),
-                      area_name: item.areaName.replace(/\s+/g, ' ').trim(),
-                      year_of_introduction: item.yearOfIntroduction,
-                      min_demand_criteria: item.minDemandCriteria
+                      course_name: item.areaName == undefined ?  defaultValue : item.courseName.replace(/\s+/g, ' ').trim(), 
+                      course_id: item.courseId == undefined ?  defaultValue :item.courseId,
+                      credits: item.credits == undefined ?  defaultValue :item.credits,
+                      program_id: item.programId == undefined ?  defaultValue :item.programId,
+                      acad_session: item.acadSession == undefined ?  defaultValue :item.acadSession.replace(/\s+/g, ' ').trim(),
+                      area_name: item.areaName == undefined ?  defaultValue : item.areaName.replace(/\s+/g, ' ').trim(),
+                      year_of_introduction: item.yearOfIntroduction == undefined ?  defaultValue :item.yearOfIntroduction,
+                      min_demand_criteria: item.minDemandCriteria == undefined ?  defaultValue :item.minDemandCriteria
                     };
                   })
     let courseJSON = {courses: courseDataWithColumnHypen}

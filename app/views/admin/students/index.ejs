@@ -352,7 +352,8 @@
             datatype:'JSON'
         }
         ajaxApi(ApiObj).then(result=>{
-            showSuccess(result);
+            createToastMessage(result.description);
+            
         }).catch(error =>{
             showError(JSON.stringify(error.responseJson));
         })
@@ -368,7 +369,7 @@
           processData: false,
           contentType: false,
           success: function(response) {
-            showSuccess(response);
+            createToastMessage(response.description);
           },
           error: function(xhr, status, error) {
             showError(JSON.stringify(xhr.responseJSON));
@@ -395,7 +396,7 @@
              dataType:'JSON'
             }
              ajaxApi(ApiObj).then(result =>{
-                  showSuccess(result);
+                createToastMessage(result.description);
              }).catch(error =>{
               showError(JSON.stringify(error.responseJSON))
              })

@@ -54,15 +54,17 @@ module.exports = {
             const sheetName = excelFileDataWorkbook.SheetNames[0];
             const sheet = excelFileDataWorkbook.Sheets[sheetName];
             const preRequisitesJsonData = xlsx.utils.sheet_to_json(sheet);
+            
           
             const preRequisitesWithColumnHypen = preRequisitesJsonData.map(item =>{
+              let defaultValue = null;
                             return {
-                              acad_session: item.acadSession.replace(/\s+/g,' ').trim(),
-                              course_id: item.courseId,
-                              course_name: item.courseName.replace(/\s+/g,' ').trim(),
-                              type: item.type.replace(/\s+/g,' ').trim(),
-                              pre_req_course_id: item.preRequisitesCourseId,
-                              pre_req_course_name: item.preRequisitesCourseName.replace(/\s+/g,' ').trim()
+                              acad_session: item.acadSession == undefined ? defaultValue : item.acadSession.replace(/\s+/g,' ').trim(),
+                              course_id: item.courseId == undefined ? defaultValue : item.courseId,
+                              course_name: item.courseName == undefined ? defaultValue : item.courseName.replace(/\s+/g,' ').trim(),
+                              type: item.type == undefined ? defaultValue : item.type.replace(/\s+/g,' ').trim(),
+                              pre_req_course_id: item.preRequisitesCourseId == undefined ? defaultValue : item.preRequisitesCourseId,
+                              pre_req_course_name: item.preRequisitesCourseName == undefined ? defaultValue : item.preRequisitesCourseName.replace(/\s+/g,' ').trim()
                             };
                           })
             let preRequisitesDataValue = {pre_requisites: preRequisitesWithColumnHypen}

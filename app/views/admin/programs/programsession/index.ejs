@@ -128,7 +128,7 @@
             datatype:'JSON'
         }
         ajaxApi(ApiObj).then(result=>{
-            showSuccess(result);
+            createToastMessage(result.description);
         }).catch(error =>{
             showError(JSON.stringify(error.responseJSON))
         })

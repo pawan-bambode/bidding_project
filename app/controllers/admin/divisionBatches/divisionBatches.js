@@ -23,12 +23,14 @@ module.exports = {
         const sheetName = excelFileDataWorkbook.SheetNames[0];
         const sheet = excelFileDataWorkbook.Sheets[sheetName];
         const courseJsonData = xlsx.utils.sheet_to_json(sheet);
+        
         const divisionBatchesWithColumnHypen = courseJsonData.map(item =>{
+        let defaultValue = null;
                         return {
-                          course_id: item.courseId,
-                          division: item.division,
-                          batch: item.batch,
-                          max_seats: item.maxSeats
+                          course_id: item.courseId == undefined ? defaultValue : item.courseId,
+                          division: item.division == undefined ? defaultValue : item.division,
+                          batch: item.batch == undefined ? defaultValue :item.batch,
+                          max_seats: item.maxSeats == undefined ? defaultValue : item.maxSeats
                         };
                       })
         let divisionBatches = {division_batches: divisionBatchesWithColumnHypen}

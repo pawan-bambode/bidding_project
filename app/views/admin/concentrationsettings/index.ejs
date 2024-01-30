@@ -237,7 +237,7 @@
         dataType:'JSON'
       }
       ajaxApi(ApiObj).then(result =>{
-        showSuccess(result);
+        createToastMessage(result.description);
       }).catch(error =>{
         showError(JSON.stringify(error.responseJSON));
       })
@@ -254,7 +254,7 @@ $('#concentration-settings-table').on('click','.delete-concentration-settings',f
                 dataType:'JSON'
             }
             ajaxApi(ApiObj).then(result =>{
-                showSuccess(result)
+                createToastMessage(result.description);
             }).catch(error =>{
                 showError(JSON.stringify(error.responseJSON))
             })
@@ -326,7 +326,7 @@ $('#edit-concentration-setting-modal').on('click', '#update-concentration-settin
    
   ajaxApi(ApiObj)
     .then(result => {
-      showSuccess(result);
+        createToastMessage(result.description);
     })
     .catch(error => {
        showError(JSON.stringify(error.responseJSON));

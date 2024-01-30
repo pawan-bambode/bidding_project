@@ -52,7 +52,7 @@ module.exports = {
         try {
              const sess = req.session;
                 let userData = await User.getUserDetails(req.body,res.locals.slug);
-
+                
                     if( userData.recordset.length === 0 ){
                         return res.render('login', {
                             message: "Authentication Failed"
@@ -73,6 +73,7 @@ module.exports = {
                     }    
                 
                 let isVerified = await hash.verifyPassword(req.body.password, userData.recordset[0].password);
+
                 if(isVerified == true){
                     req.session.userId = userData.recordset[0].id;
                     req.session.username = userData.recordset[0].username;

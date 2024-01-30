@@ -71,20 +71,23 @@ module.exports = {
             const sheetName = excelFileDataWorkbook.SheetNames[0];
             const sheet = excelFileDataWorkbook.Sheets[sheetName];
             const timetableJsonData = xlsx.utils.sheet_to_json(sheet);
+    
+
             const timetableDataWithColumnHypen = timetableJsonData.map(item =>{
+              const defaultValue = null;
                             return {
-                              program_id: item.programId,
-                              acad_session: item.acadSession.replace(/\s+/g, ' ').trim(),
-                              course_name: item.courseName.replace(/\s+/g,' ').trim(),
-                              division: item.division.replace(/\s+/g,' ').trim(),
-                              batch: item.batch,
-                              day: item.day,
-                              start_time : isJsonString.convertExcelTimeToHHMMSS(item.startTime),
-                              end_time : isJsonString.convertExcelTimeToHHMMSS(item.endTime),
-                              room_no :item.roomNo.toString(),
-                              faculty_id :item.facultyId.toString(),
-                              faculty_name:item.facultyName.replace(/\s+/g,' ').trim(),
-                              faculty_type_abbr:item.facultyType
+                              program_id: item.programId == undefined ? defaultValue : item.programId,
+                              acad_session: item.acadSession == undefined ? defaultValue :item.acadSession.replace(/\s+/g, ' ').trim(),
+                              course_name: item.courseName == undefined ? defaultValue : item.courseName.replace(/\s+/g,' ').trim(),
+                              division: item.division == undefined ? defaultValue : item.division.replace(/\s+/g,' ').trim(),
+                              batch: item.batch == undefined ? defaultValue :item.batch,
+                              day: item.day == undefined ? defaultValue :item.day,
+                              start_time : item.startTime == undefined ? defaultValue : isJsonString.convertExcelTimeToHHMMSS(item.startTime),
+                              end_time : item.endTime == undefined ? defaultValue : isJsonString.convertExcelTimeToHHMMSS(item.endTime),
+                              room_no : item.roomNo == undefined ? defaultValue : item.roomNo.toString(),
+                              faculty_id : item.facultyId == undefined ? defaultValue : item.facultyId.toString(),
+                              faculty_name: item.facultyName == undefined ? defaultValue :item.facultyName.replace(/\s+/g,' ').trim(),
+                              faculty_type_abbr: item.facultyType == undefined ? defaultValue :item.facultyType
                             };
                           })
                           

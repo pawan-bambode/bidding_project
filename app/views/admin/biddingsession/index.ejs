@@ -79,7 +79,7 @@
                 <div class="col-md-3 border-end custm-padd-for-imp-program custm-pad">
                     <div class="mt-4 ms-1">
                         <label class="form-label" for="bidding-name">Enter Bidding Name:</label>
-                        <input class="form-control" id="bidding-name" type="text">
+                        <input class="form-control" id="bidding-name" type="text" autocomplete="off">
                         <label class="form-label" for="start-date">Session Start Date</label>
                         <input class="form-control" type="date" name="start-date" id="start-date">
                         <label class="form-label" for="end-date">Session End Date</label>
@@ -95,7 +95,7 @@
                                         <option value="<%- acadSession.id %>"><%- acadSession.acad_session %></option>
                                     <% } %>                          
                                 </select>
-                                <button class="btn btn-primary w-50 mt-5 align-self-end" id="add-acad-session-in-bidding-details">Add AcadSession</button>
+                                <button class="btn btn-primary w-50 mt-4 align-self-end" id="add-acad-session-in-bidding-details">Add AcadSession</button>
                             </div>
                         </div>
                     </div>
@@ -152,11 +152,11 @@
                     <span class="text-danger d-none bidding-acad-session-label">Acad Session Already added</span>
                     <span class="text-danger d-none timetable-acad-session-select">Select Acad Session</span>
                     <div class="d-flex col-md-9 add-bidding-session-val"></div>
-                    <div class="d-flex justify-content-end align-items-end add-acad-session-bidding-session col-md-3">
+                    <div class="d-flex justify-content-end align-items-end add-acad-session col-md-3">
                         <span class="d-flex justify-content-center align-items-center badge bg-primary mt-1 col-md-6" style="height:35px;"><i class="fa-solid fa-circle-plus" style="font-size: large;"></i></span>
                     </div>
                 </div>
-                <div class="edit-bidding-session-acad-seession d-none d-flex">
+                <div class="acad-session-drop-down d-none d-flex">
                     <div class="col-md-8">
                         <label class="form-label">Academic Session </label>
                         <select class="form-select select2" id="edit-academic-session-add">
@@ -185,9 +185,9 @@
     $(document).ready(function() {
         $('.select2').select2();
         
-        $('#edit-academic-session-add').select2({
-            dropdownParent: $('#edit-bidding-session-modal')
-        });
+        // $('#edit-academic-session-add').select2({
+        //     dropdownParent: $('#edit-bidding-session-modal')
+        // });
 
         formatDate(new Date(), false, 6);
         setActiveMenuItem(`<%- active %>`);
@@ -209,11 +209,14 @@
             $('.left-sidebar').removeClass('d-none');
         });
 
-        $('#edit-bidding-session-modal').on('click', '.add-acad-session-bidding-session', function() {
-            $('#edit-bidding-session-modal .edit-bidding-session-acad-seession').removeClass('d-none');
+        //in Edit Bidding Session click on plus button then drop down of acad-session is open 
+        $('#edit-bidding-session-modal').on('click', '.add-acad-session', function() {
+            $('#edit-bidding-session-modal .acad-session-drop-down').removeClass('d-none');
         });
 
-        $('#add-bidding-session').on('click', '#add-acad-session-in-bidding', function(event) {
+
+        // When clicking on the red color academic session button in the table cell in the Add Bidding Session 
+        $('#add-bidding-session').on('click', '#add-acad-session-in-bidding', function (event) {
             $('#add-bidding-session #add-acad-session').removeClass('d-none');
 
             if ($(event.target).is('span.badge.bg-danger')) {
@@ -221,11 +224,15 @@
             }
         });
 
-        $('#edit-bidding-session-modal').on('click', '.bidding-acad-session-cancle', function() {
-            let acadSessionId = $(this).closest('span').attr('data-bidding-session-id');
-            $('#edit-academic-session-add').find(`option[value="${acadSessionId}"]`).removeClass('d-none');
+        // edit bidding session click on selected acad session cancle(X symbol in red color)
+        $('#edit-bidding-session-modal').on('click', '.bidding-acad-session-cancle', function () {
+            
+            let acadSessionId = $(this).closest('span').data('bidding-session-id');
+            let optionToRemove = $('#edit-academic-session-add').find(`option[value="${acadSessionId}"]`);
+            optionToRemove.removeClass('d-none');
             $(this).closest('span').remove();
         });
+
 
         $('#add-bidding-details').on('click', function() {
             let countRow = 1;
@@ -237,7 +244,7 @@
                 let endDate = $('#add-bidding-session #end-date').val();
                 
                 if(biddingName != '' && startDate != '' && endDate != ''){
-                let biddingSessionDetailRow = `<tr data-bidding-name="${biddingName}" data-start-date="${startDate}" data-end-date=${endDate}><td>${countRow++}</td><td>${biddingName}</td><td class="session-td"><div id="add-acad-session-in-bidding" class="d-flex flex-column justify-content-between align-item-center    add-acad-session-in-bidding"><span class="badge bg-danger"><i class="fa-solid fa-circle-plus"><i></span></div></td>
+                let biddingSessionDetailRow = `<tr data-bidding-name="${biddingName}" data-start-date="${startDate}" data-end-date=${endDate}><td>${countRow++}</td><td>${biddingName}</td><td class="session-td"><div id="add-acad-session-in-bidding" class="d-flex flex-column justify-content-between align-item-center add-acad-session-in-bidding"><span class="badge bg-danger"><i class="fa-solid fa-circle-plus"><i></span></div></td>
                     <td>${startDate}</td><td>${endDate}</td><td id="delete-bidding-session"><i class="fa fa-trash text-danger"></i></td>
                     </tr>`;
                 tempBiddingTable.append(biddingSessionDetailRow);
@@ -326,8 +333,10 @@
             let flagToAdd = true;
             let selBissingAcadSessionVal = $('#edit-academic-session-add option:selected');
             let selBiddingAcad = $('#edit-bidding-session-modal .add-bidding-session-val').find('span');
-            selBiddingAcad.each(function(index, prevBiddingSessionAcad) {
 
+            if(selBissingAcadSessionVal.val() != 'Select Acad Session'){
+                $('#edit-bidding-session-modal .timetable-acad-session-select').addClass('d-none');
+            selBiddingAcad.each(function(index, prevBiddingSessionAcad) {
                 if ($(prevBiddingSessionAcad).attr('data-bidding-session-id') == selBissingAcadSessionVal.val()) {
                     $('#edit-bidding-session-modal .bidding-acad-session-label').removeClass('d-none');
                     flagToAdd = false;
@@ -343,6 +352,10 @@
                     </span>`;
                 $('#edit-bidding-session-modal .add-bidding-session-val').append(selectedSpan);
             }
+        }else{
+            
+            $('#edit-bidding-session-modal .timetable-acad-session-select').removeClass('d-none');
+        }
         });
 
         $('#add-bidding-session').on('click', '#add-bidding-sessions', function() {
@@ -369,9 +382,7 @@
                 dataType: 'JSON'
             };
             ajaxApi(ApiObj).then(result => {
-                console.log('values of result', result);
-                
-                createToastMessage(result);
+                createToastMessage(result.description);
             }).catch(error => {
                 showError(JSON.stringify(error.responseJSON));
             });
@@ -388,7 +399,7 @@
                 dataType: 'JSON'
             };
             ajaxApi(ApiObj).then(result => {
-                showSuccess(result);
+                createToastMessage(result.description);
             }).catch(error => {
                 showError(JSON.stringify(error.responseJSON));
             });
