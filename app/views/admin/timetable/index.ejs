@@ -34,7 +34,7 @@
     <div class="card-body table-responsive">
         <div class="d-flex justify-content-between">
             <div class="col-md-3 ms-5">
-                <label class="form-label mb-1" for="timetable-acad-session">Select Acad Session:</label>
+                <label class="form-label mb-1" for="timetable-acad-session">Select Acad Session :</label>
                 <select class="form-select form-control select2" id="timetable-acad-session">
                     <option selected disabled>--Select Acad Session-- </option>
                      <%for(let acadSession of dropdownAcadSessionList) { %>
@@ -44,7 +44,7 @@
                 </select>
             </div>
             <div class="col-md-3 ms-5">
-                <label class="form-label mb-1" for="day-select">Select Day:</label>
+                <label class="form-label mb-1" for="day-select">Select Day :</label>
                 <select class="form-select form-control select2" id="day-select">
                     <option selected disabled>--Select Day--</option>
                     <option value="1">Monday</option>
@@ -93,7 +93,7 @@
                     <input type="submit" class="btn btn-success mt-2 d-none" id="upload-elective-timetable-button" value="Upload Elective Timetable"></input> 
                     </form> 
                 
-                <a href="/admin/timetable/generate-excel" download="sampleForImportTimetable.xlsx" name="sample-for-import-timetable" class="text-decoration-none align-self-end">Sample For Import Elective Timetable</a>
+                <a href="/admin/timetable/generate-excel" download="sampleForImportTimetable.xlsx" name="sample-for-import-timetable" class="text-decoration-none align-self-end">Sample for Import Elective Timetable</a>
                 </div>
             
             </div>
@@ -271,7 +271,7 @@
                 dataType:'JSON'
             }
             ajaxApi(ApiObj).then(result =>{
-                showSuccess(result);
+                createToastMessage(result.description);
             }).catch(error =>{
                 showError(error);
             })
@@ -287,7 +287,7 @@
             processData:false,
             contentType:false,
             success :function(response){
-               showSuccess(response);
+                createToastMessage(response.description);
             },
             error:function(xhr,status,error){
                 showError(JSON.stringify(xhr.responseJSON));

@@ -94,45 +94,46 @@
     </div>
     
 
-    <div class="modal" id="edit-concentration-setting-modal">
+    <div class="modal" id="edit-concentration-setting-modal" data-bs-backdrop="static">
       <div class="modal-dialog modal-lg">
           <div class="modal-content">
               <div class="modal-header">
-                  <h3 class="modal-title">Update Concentration Settings</h3>
-                  <button class="btn-close" data-bs-dismiss="modal"></button>
+                  <h5 class="modal-title">Update Concentration Settings</h5>
+                  <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
               </div>
               <div class="modal-body">
                   <div class="row">
                       <div class="col-md-6">
-                          <label class="mb-2 form-label" for="concentration-name">Concentration Name:</label>
+                          <label class="mb-2 form-label" for="concentration-name">Concentration Name :</label>
                           <input type="hidden" id="course-id">
                           <input class="form-control" type="text" id="concentration-name" disabled>
                       </div>
   
                       <div class="col-md-6">
-                          <label class="mb-2 form-label" for="total-elective-credits">Total Elective Credits:</label>
+                          <label class="mb-2 form-label" for="total-elective-credits">Total Elective Credits :</label>
                           <input class="form-control" type="text" id="total-elective-credits">
+                          <span id="error-total-credits" class="text-danger d-none">Total Elective Credits Allow Only Numbers!</span>
                       </div>
                   </div>
   
                   <div class="row">
                       <div class="col-md-6">
-                          <label class="form-label mb-2" for="max-credits-per-area">Maximum Credits Per Area:</label>
+                          <label class="form-label mb-2" for="max-credits-per-area">Maximum Credits Per Area :</label>
                           <input class="form-control" type="text" id="max-credits-per-area">
-                          <span id="error-max-demand-criteria" class="text-danger d-none">Max Demand Criteria Allow Only Numbers</span>
+                          <span id="error-max-demand-criteria" class="text-danger d-none">Maximum Credits Per Area Allow Only Numbers!</span>
                       </div>
                       <div class="col-md-6">
-                          <label class="mb-2 form-label" for="number-of-areas-to-cover">Number Of Areas To Cover:</label>
+                          <label class="mb-2 form-label" for="number-of-areas-to-cover">Number of Areas to Cover :</label>
                           <input class="form-control" type="text" id="number-of-areas-to-cover">
-                          <span id="error-credits" class="text-danger d-none">Credits Allow Only Numbers</span>
+                          <span id="error-number-of-areas" class="text-danger d-none">Number of Areas to Cover Allow Only Numbers!</span>
                       </div>
                   </div>
   
                   <div class="row">
                       <div class="col-md-6">
-                          <label class="form-label mb-2" for="min-credits-per-area">Minimum Credit Per Area:</label>
+                          <label class="form-label mb-2" for="min-credits-per-area">Minimum Credits Per Area :</label>
                           <input class="form-control" type="text" id="min-credits-per-area">
-                          <span id="error-min-demand-criteria" class="text-danger d-none">Min Demand Criteria Allow Only Numbers</span>
+                          <span id="error-min-credit-per-area" class="text-danger d-none">Minimum Credits Per Area Allow Only Numbers!</span>
                       </div>
                       <div class="col-md-6" id="primary-area-form">
                         <label class="mb-2 form-label" for="primary-area">Primary Area :</label>
@@ -142,19 +143,19 @@
                                 <option value="<%- area.id %>"><%- area.area_name %></option>
                             <% }%>
                         </select>
-                        <span id="error-year-of-intro" class="text-danger d-none">Invalid Year of Introduction</span>
+                        <span id="error-primary-area" class="text-danger d-none">Please Select Primary Area!</span>
                     </div>
                      
                   </div>
                   <div class="col-md-6" id="primary-area-minimum">
-                    <label class="form-label mb-2" for="min-credits-in-primary-area">Minimum Credits in Primary Area:</label>
+                    <label class="form-label mb-2" for="min-credits-in-primary-area">Minimum Credits in Primary Area :</label>
                     <input class="form-control" type="text" id="min-credits-in-primary-area">
-                    <span id="error-min-demand-criteria" class="text-danger d-none">Min Demand Criteria Allow Only Numbers</span>
+                    <span id="error-min-demand-criteria" class="text-danger d-none">Minimum Credits in Primary Area Allow Only Numbers!</span>
                 </div>
                  
               </div>
               <div class="modal-footer">
-                  <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
                   <button class="btn btn-primary" id="update-concentration-settings">Update</button>
               </div>
           </div>
@@ -300,9 +301,94 @@ $('#edit-concentration-setting-modal').on('click', '#update-concentration-settin
   let totalElectiveCredits = $('#total-elective-credits').val();
   let numberOfAreasToCover = $('#number-of-areas-to-cover').val();
   let primaryAreaOption =  $('#primary-area option:selected').text() === '--Select Primary Area--' ? null : $('#primary-area option:selected').text();
-;
 
-  if((primaryAreaOption === '--Select Primary Area--') && (editConcentration.toLowerCase() != 'general management')){
+  let isTotalElectiveCredits  = IsNumber(totalElectiveCredits);
+  let isMaxCreditsPerArea  = IsNumber(maxCreditsPerArea);
+  let isNumberOfAreasToCover = IsNumber(numberOfAreasToCover);
+  let isMinCreditsPerArea = IsNumber(minCreditsPerArea);
+  let isMinCreditsInPrimaryArea = IsNumber(minCreditsInPrimaryArea);
+  
+       
+        if(!isTotalElectiveCredits){
+            $('#edit-concentration-setting-modal #error-total-credits').removeClass('d-none');
+            return;
+        }else{
+            $('#edit-concentration-setting-modal #error-total-credits').addClass('d-none');
+        }
+        if(!isMaxCreditsPerArea){
+            $('#edit-concentration-setting-modal #error-max-demand-criteria').removeClass('d-none');
+            return;
+        }else{
+            $('#edit-concentration-setting-modal #error-max-demand-criteria').addClass('d-none');
+        }  
+        if(!isNumberOfAreasToCover){
+            $('#edit-concentration-setting-modal #error-number-of-areas').removeClass('d-none');
+            return;
+        }else{
+            $('#edit-concentration-setting-modal #error-number-of-areas').addClass('d-none');
+        } 
+        if(!isMinCreditsPerArea){
+        $('#edit-concentration-setting-modal #error-min-credit-per-area').removeClass('d-none');
+            return;
+    }else{
+            $('#edit-concentration-setting-modal #error-min-credit-per-area').addClass('d-none');
+    } 
+    
+    if(!isMinCreditsInPrimaryArea){
+        $('#edit-concentration-setting-modal #error-min-demand-criteria').removeClass('d-none');
+            return;
+    }else{
+            $('#edit-concentration-setting-modal #error-min-demand-criteria').addClass('d-none');
+    }  
+
+    if(totalElectiveCredits == ''){
+        $('#edit-concentration-setting-modal #error-total-credits').removeClass('d-none');
+            return;
+    }else{
+        $('#edit-concentration-setting-modal #error-total-credits').addClass('d-none');
+    }
+    if(maxCreditsPerArea == ''){
+        $('#edit-concentration-setting-modal #error-max-demand-criteria').removeClass('d-none');
+            return;
+    }else{
+            $('#edit-concentration-setting-modal #error-max-demand-criteria').addClass('d-none');
+    }
+    if(numberOfAreasToCover == ''){
+        $('#edit-concentration-setting-modal #error-number-of-areas').removeClass('d-none');
+            return;
+    }else{
+            $('#edit-concentration-setting-modal #error-number-of-areas').addClass('d-none');
+    }
+
+    if(minCreditsPerArea == ''){
+        $('#edit-concentration-setting-modal #error-min-credit-per-area').removeClass('d-none');
+            return;
+    }else{
+            $('#edit-concentration-setting-modal #error-min-credit-per-area').addClass('d-none');
+    }
+  
+
+    if(minCreditsInPrimaryArea == ''){
+        $('#edit-concentration-setting-modal #error-min-demand-criteria').removeClass('d-none');
+            return;
+    }else{
+            $('#edit-concentration-setting-modal #error-min-demand-criteria').addClass('d-none');
+    }
+  
+
+   if((concentrationName.toLowerCase() !== 'general management')){
+    
+    if(primaryAreaOption == null){
+        $('#edit-concentration-setting-modal #error-primary-area').removeClass('d-none');
+            return;
+    }else{
+            $('#edit-concentration-setting-modal #error-primary-area').addClass('d-none');
+    }
+   }
+
+  if((primaryAreaOption === '--Select Primary Area--') && (concentrationName.toLowerCase() != 'general management')){
+    
+   
     alert('Select Primary Area');
   }
  else{
@@ -333,6 +419,10 @@ $('#edit-concentration-setting-modal').on('click', '#update-concentration-settin
     });
 }
 });
+
+$('#edit-concentration-setting-modal').on('click', '.modal-close', function() {
+        $(this).closest('.modal-content').find(`span[id^='error']`).addClass('d-none');
+    });
    
     });
     

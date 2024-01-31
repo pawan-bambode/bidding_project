@@ -12,6 +12,7 @@ module.exports = class ProgramSession{
                     INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = @biddingId
                     INNER JOIN [${slug}].bidding_session bs ON ps.bidding_session_lid = bs.id
                     INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id  AND ps.bidding_session_lid = @biddingId  AND ps.active = 1
+                    AND p.active = 1
             `);
         })
     } 

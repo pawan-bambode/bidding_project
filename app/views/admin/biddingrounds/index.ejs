@@ -86,9 +86,9 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Select Students</h3>
+                <h5>Select Students</h5>
                 <div class="d-flex justify-content-between">
-                <h4 class="px-3">Total Selected Students  :<span id="total-selected-students">0</span></h4>
+                <h5 class="px-3">Total Selected Students  : <span id="total-selected-students">0</span></h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
             </div>
@@ -124,9 +124,9 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Update Bidding Rounds </h3>
+                <h5>Update Bidding Rounds </h5>
                 <div class="d-flex justify-content-between">
-                <h4 class="px-3">Total Selected Students  :<span id="update-total-selected-students">0</span></h4>
+                <h4 class="px-3">Total Selected Students  : <span id="update-total-selected-students">0</span></h4>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
             </div>
@@ -162,9 +162,9 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Select Courses</h3>
+                <h5>Select Courses</h5>
                 <div class="d-flex justify-content-between">
-                  <h4>Total Selected Courses :<span id="total-selected-courses">0</span></h4>
+                  <h5>Total Selected Courses : <span id="total-selected-courses">0</span></h5>
                   <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>  
             </div>
@@ -233,14 +233,14 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Select Date Time</h3>
+                <h5>Select Date Time</h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <label class="mb-2" for="start-date-time">Start date time :</label>
                 <input type="hidden" id="bidding-round-id">
                 <input class="form-control" type="datetime-local" id="start-date-time">
-                <label class="mb-2" for="end-date-time">End date time:</label>
+                <label class="mb-2" for="end-date-time">End date time :</label>
                 <input class="form-control" type="datetime-local" id="end-date-time">  
             </div>
             <div class="modal-footer">
@@ -253,7 +253,7 @@
     <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
                 <div class="modal-header">
-                  <h3>Select Bidding Rounds</h3>
+                  <h4>Select Bidding Rounds</h4>
                   <button class="btn-close full-modal-left-sidebar" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body row custum-imp-program">
@@ -301,7 +301,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Update Bidding Rounds</h3>
+                    <h5 class="modal-title">Update Bidding Rounds</h5>
                     <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -312,7 +312,7 @@
                             <input class="form-control" type="datetime-local" id="start-date-time-bidding-rounds">
                         </div>
                         <div class="col-md-6">
-                            <label class="mb-2" for="end-date-time">End date time:</label>
+                            <label class="mb-2" for="end-date-time">End date time :</label>
                             <input class="form-control" type="datetime-local" id="end-date-time-bidding-rounds"> 
                         </div>
                     </div>
@@ -731,7 +731,7 @@
           let importBiddingDetails = {
             round_setting: importBiddingRoundsArray,
             };
-             
+        
            let ApiObj = {
                 type: 'POST',
                 url: '/admin/bidding-rounds/create',
@@ -743,7 +743,8 @@
             }
            
             ajaxApi(ApiObj).then(result => {
-                showSuccess(result)              
+                createToastMessage(result.description);
+                             
             }).catch(error => {
                 showError(JSON.stringify(error.responseJSON))
             })
@@ -764,7 +765,7 @@
             }
             ajaxApi(ApiObj).then(result =>{
                 $(this).closest('tr').remove();
-                showSuccess(result)
+                createToastMessage(result.description);
             }).catch(error =>{
                 showError(JSON.stringify(error.responseJSON))
             })
@@ -819,7 +820,7 @@
                 dataType: 'JSON' 
                 }
                 ajaxApi(ApiObj).then(result => {
-                    showSuccess(result)
+                    createToastMessage(result.description);
                 }).catch(error => {
                     showError(JSON.stringify(error.responseJSON))
                 })

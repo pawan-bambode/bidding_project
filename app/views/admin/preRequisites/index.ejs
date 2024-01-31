@@ -24,7 +24,7 @@
         <div class="card-header-custom d-flex justify-content-between p-2">
             <h4 class="ms-2">Pre Requisites Data</h4>
             <div>
-            <button type="button" class="btn btn-success me-2"  data-bs-target="#upload-pre-requisites-modal" data-bs-toggle="modal">Upload Pre Requisites</button>
+            <button type="button" class="btn btn-success me-2"  data-bs-target="#upload-pre-requisites-modal" data-bs-toggle="modal">Upload Pre-Requisites</button>
             </div>
         </div>
         <div class="card-body table-responsive custom-table">
@@ -94,21 +94,21 @@
           <div class="modal-content">
          
             <div class="modal-header">
-              <h5 class="modal-title">Upload Pre Requisites</h5>
+              <h5 class="modal-title">Upload Pre-Requisites</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
             <div class="modal-body">
                     <div class="d-flex">
-                    <label class="form-label me-3">Import Pre Requisites :</label>
+                    <label class="form-label me-3">Import Pre-Requisites :</label>
                     <form enctype="multipart/form-data" action="/admin/upload-pre-requisites" method="post" id="upload-pre-requisites-form">
                     <input type="file" name="import-pre-requisites" id="import-pre-requisites" accept=".xlsx">
                     </div>
                     <div class="d-flex justify-content-between align-item-center mt-5">
-                    <input type="submit" class="btn btn-success mt-2 d-none" id="upload-pre-requisites-button" value="Upload Pre Requisites"></input> 
+                    <input type="submit" class="btn btn-success mt-2 d-none" id="upload-pre-requisites-button" value="Upload Pre-Requisites"></input> 
                     </form> 
                 
-                  <a href="/admin/generate-excel-pre-requities" download="sampleForImportPreRequisites.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample For Import Pre Requisites</a>
+                  <a href="/admin/generate-excel-pre-requities" download="sampleForImportPreRequisites.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample for Import Pre-Requisites</a>
                  </div>
              
             </div>
@@ -121,30 +121,31 @@
         </div>
       </div>
 
-      <div class="modal" id="edit-pre-requisite-modal">
+      <div class="modal" id="edit-pre-requisite-modal" data-bs-backdrop="static">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Update Pre Requisites</h3>
+                    <h5 class="modal-title">Update Pre-Requisite</h5>
                     <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                   <div class="row">
                   <div class="col-md-6">
-                  <label class="mb-2 form-label" for="course-name">Course Name:</label>
+                  <label class="mb-2 form-label" for="course-name">Course Name :</label>
                   <input type="hidden" id="pre-requisites-id">
                   <input class="form-control" type="text" id="course-name" disabled>
-                  <span class="text-danger d-none" id="error-course-name">You Enter Invalid Course Name</span>
+                  <span class="text-danger d-none" id="error-course-name">Invalid Course Name!</span>
                   </div>
                     <div class="col-md-6">
-                        <label class="mb-2 form-label" for="pre-requisites-course-name">Pre Requisites Course Name :</label>
+                        <label class="mb-2 form-label" for="pre-requisites-course-name">Pre-Requisite Course Name :</label>
                         <input class="form-control" type="text" id="pre-requisites-course-name" disabled>
                     </div>
                     </div>
                     <div class="row">
                       <div class="col-md-6">
-                         <label class="mb-2 form-label" for="pre-requisite-type">Pre Requisites Type :</label>
-                         <select class="form-control form-select select2 custom-select" id="pre-requisite-type">
+                         <label class="mb-2 form-label" for="update-pre-requisite-type">Pre-Requisite Type :</label>
+                         <select class="form-control form-select select2 custom-select" id="update-pre-requisite-type">
+                              <option value="-1" selected disabled>--Select Pre-Requisite Type--</option>
                               <option value="1">Exclusive</option>
                               <option value="2">Inclusive</option>
                         </select>
@@ -154,7 +155,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-primary" id="update-pre-requisites">Update</button>
+                    <button class="btn btn-primary" id="update-pre-requisite">Update</button>
                 </div>
             </div>
         </div>
@@ -232,7 +233,7 @@
           })
         })
         $('#edit-pre-requisite-modal').on('show.bs.modal', function (e) {
-            $('#pre-requisite-type option').each(function(index,element){
+            $('#update-pre-requisite-type option').each(function(index,element){
               if(element.textContent.toLowerCase() == $(e.relatedTarget).attr('data-pre-requites-type').toLowerCase()){
                 $(element).attr('selected','selected');
                 $(element).prop('selected', true);
@@ -240,10 +241,13 @@
          })
           
         });
-        $('#edit-pre-requisite-modal').on('click','#update-pre-requisites',function(){
+        $('#edit-pre-requisite-modal').on('click','#update-pre-requisite',function(){
             let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
             let id = $('#pre-requisites-id').val();
-            let preRequisiteType   = $('#pre-requisite-type option:selected').text();
+            let preRequisiteType   = $('#update-pre-requisite-type option:selected').text();
+
+
+            console.log('values of ', preRequisiteType);
           
             let editPreRequisites = {
               id : id,

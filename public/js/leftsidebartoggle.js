@@ -64,7 +64,7 @@ $('#update-status').on('click', function () {
     };
 
     ajaxApi(apiObj).then(result => {
-        showSuccess(result);
+        createToastMessage(result.description);
     }).catch(error => {});
 });
 
@@ -448,5 +448,7 @@ function calculateDeleteFrequency(arr) {
     });
     return areaFrequency;
 }
+
+
 
 
