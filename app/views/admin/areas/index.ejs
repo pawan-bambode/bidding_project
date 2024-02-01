@@ -31,14 +31,18 @@
             <div>
                 <label>Show Entries</label>
                 <select class="form-select" id="changeEntry">
-                    <%for(let page of locals.page_filter){%>
-                       <option value="<%-page%>"><%-page%></option>
-                    <%}%>
+                    <% for (let page of locals.page_filter) { %>
+                        <option value="<%- page %>"><%- page %></option>
+                    <% } %>
                 </select>
             </div>
             <div>
-                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                <div class="table-searchbar-container d-flex justify-content-around p-1">
+                    <button type="button" id="searchkeyword-button" class="border-0 outline-0">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+                </div>
             </div>
         </div>
 
@@ -109,7 +113,7 @@
 
         $('#searchkeyword').on('input',function(){
 
-        let areaValue = $(this).val();
+        let areaValue = $(this).val().trim();
         let showEntry = $('#changeEntry').val();
 
             $.ajax({
@@ -159,8 +163,10 @@
             }
             ajaxApi(ApiObj).then(result=>{
             paginationData(showEntry,result.length)
-                AjaxtTable(result.data)
-                $('#page-no').html(data.length);
+            AjaxtTable(result.data)
+            $('#page-no').html(result.length);
+            $('#searchkeyword').val('');
+               
             }).catch(error =>{
             showError(JSON.stringify(error.responseJSON))
             })    

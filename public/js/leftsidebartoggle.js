@@ -64,7 +64,7 @@ $('#update-status').on('click', function () {
     };
 
     ajaxApi(apiObj).then(result => {
-        showSuccess(result);
+        createToastMessage(result.description);
     }).catch(error => {});
 });
 
@@ -448,5 +448,27 @@ function calculateDeleteFrequency(arr) {
     });
     return areaFrequency;
 }
+
+$('#searchkeyword-button').on('click', function(){
+    $('#searchkeyword').focus();
+  })
+
+  function validateBiddingSessionName(modalName) {
+    let childrenCount = $(`#${modalName}`).children();
+
+    childrenCount.each(function() {
+        let inputValue = $(this).find('input').val();
+        console.log('values of inputValue',inputValue);
+    });
+    
+    // if (biddingName == '') {
+    //     $('.error-bidding-session-name').removeClass('d-none');
+    //     return false;
+    // } else {
+    //     $('.error-bidding-session-name').addClass('d-none');
+    //     return true;
+    // }
+}
+
 
 

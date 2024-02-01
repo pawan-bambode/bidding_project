@@ -2,7 +2,7 @@ const router = require('express').Router();
 const dashboard = require('../../controllers/admin/dashboard');
 
 router.get('/dashboard', dashboard.getDashboard); 
-router.get('/primary-data',dashboard.primaryData);
+router.get('/master-data',dashboard.masterData);
 router.get('/secondary-data',dashboard.secondaryData);
 router.get('/bidding-settings',dashboard.biddingSettings);
 router.get('/round-settings',dashboard.roundSettings);

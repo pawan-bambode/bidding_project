@@ -50,10 +50,14 @@
           <div class="col-md-3 mt-4">
             <select class="form-select form-control select2" id="course-name-filter"></select>
           </div>
-            <div>
-                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+          <div>
+            <div class="table-searchbar-container d-flex justify-content-around p-1">
+                <button type="button" id="searchkeyword-button" class="border-0 outline-0">
+                    <i class="fas fa-search"></i>
+                </button>
+                <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
             </div>
+        </div>
         </div>
             <table class="table custom_row table-bordered mt-4" id="course-table">
                 <thead>
@@ -124,7 +128,7 @@
                     <input type="submit" class="btn btn-success mt-2 d-none" id="upload-course-button" value="Upload Courses"></input> 
                     </form> 
                 
-                  <a href="/admin/generate-excel" download="sampleForImportCourse.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample For Import Course</a>
+                  <a href="/admin/generate-excel" download="sampleForImportCourses.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample for Import Courses</a>
                  </div>
              
             </div>
@@ -137,48 +141,50 @@
         </div>
       </div>
 
-      <div class="modal" id="edit-course-modal">
+      <div class="modal" id="edit-course-modal" data-bs-backdrop="static">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Update Course</h3>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title">Update Course</h5>
+                    <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                   <div class="row">
                   <div class="col-md-6">
-                  <label class="mb-2 form-label" for="course-name">Course Name:</label>
+                  <label class="mb-2 form-label" for="course-name">Course Name :</label>
                   <input type="hidden" id="course-id">
                   <input class="form-control" type="text" id="course-name">
-                  <span class="text-danger d-none" id="error-course-name">You Enter Invalid Course Name</span>
+                  <span class="text-danger d-none" id="error-course-name">Invalid Course Name!</span>
                   </div>
                     <div class="col-md-6">
                         <label class="mb-2 form-label" for="course-credits">Credits :</label>
                         <input class="form-control" type="text" id="course-credits">
-                        <span id="error-credits" class="text-danger d-none">Credits Allow Only Numbers</span>
+                        <span id="error-credits" class="text-danger d-none">Credits Allow Only Numbers!</span>
                     </div>
                     </div>
                     <div class="row">
-                    <div class="col-md-6">
-                      <label class="mb-2 form-label" for="year-of-introduction">Year Of Introduce :</label>
-                      <select class="form-control form-select select2 custom-select" id="year-of-introduction">
-                        <% let currentYear = new Date().getFullYear(); %>
-                        <% for(let year=2000;year<=currentYear;year++) { %>
-                          <option value="<%- year %>"><%- year %></option>
-                          <% }%>
-                      </select>
-                      <span id="error-year-of-intro" class="text-danger d-none">Invalid Year of introduction</span>
+                      <div class="col-md-6">
+                        <label class="mb-2 form-label" for="year-of-introduction">Year of Introduction :</label>
+                        <select class="form-control form-select select2 custom-select" id="year-of-introduction-select" required>
+                            <option value="-1" disabled selected>-- Select Year of Introduction --</option>
+                            <% let currentYear = new Date().getFullYear(); %>
+                            <% for (let year = 2000; year <= currentYear; year++) { %>
+                                <option value="<%- year %>"><%- year %></option>
+                            <% } %>
+                        </select>
+                        <span id="error-year-of-intro" class="text-danger d-none">Please Select Year of Introduction!</span>
                     </div>
+                    
                   
                     <div class="col-md-6">
-                      <label class="form-label mb-2" for="min-demand-criteria">Min Demand Criteria :</label>
+                      <label class="form-label mb-2" for="min-demand-criteria">Minimum Demand Criteria :</label>
                       <input class="form-control" type="text" id="min-demand-criteria">
-                      <span id="error-min-demand-criteria" class="text-danger d-none">Min Demand Creteria Allow Only Numbers</span>
+                      <span id="error-min-demand-criteria" class="text-danger d-none">Minimum Demand Criteria Allow Only Numbers!</span>
                     </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
                     <button class="btn btn-primary" id="update-course">Update</button>
                 </div>
             </div>
@@ -283,6 +289,7 @@ $('#program-name-filter').on('change', function() {
 
             $("#session-name-filter").html(sessionName);
             AjaxtTable(result.workload);
+            $('#searchkeyword').val('');
         })
         .catch(error => {
             showError(JSON.stringify(error.responseJSON));
@@ -320,6 +327,7 @@ $(document).on('change', '#session-name-filter', function() {
             $("#course-name-filter").html(courseName);
             paginationData(showEntry,result.workloadLength)
             AjaxtTable(result.workload);
+            $('#searchkeyword').val('');
         })
         .catch(error => {
             showError(JSON.stringify(error.responseJSON));
@@ -346,7 +354,8 @@ $(document).on('change', '#course-name-filter', function() {
     ajaxApi(ApiObj)
         .then(result => {
             AjaxtTable(result.workload);
-            paginationData(showEntry,result.workloadLength)
+            paginationData(showEntry,result.workloadLength);
+            $('#searchkeyword').val('');
         })
         .catch(error => {
             showError(JSON.stringify(error.responseJSON));
@@ -366,7 +375,8 @@ $(document).on('change', '#course-name-filter', function() {
         }
         ajaxApi(ApiObj).then(result=>{
           paginationData(showEntry,result.length)
-            AjaxtTable(result.data)
+            AjaxtTable(result.data);
+            $('#searchkeyword').val('');
         }).catch(error =>{
           showError(JSON.stringify(error.responseJSON));
         })    
@@ -378,7 +388,7 @@ $(document).on('change', '#course-name-filter', function() {
     paginationData(rowCount, parseInt(test));
 
         $('#searchkeyword').on('input',function(){
-         let searchValue = $(this).val();
+         let searchValue = $(this).val().trim();
          
          $.ajax({
           type:'POST',
@@ -388,7 +398,9 @@ $(document).on('change', '#course-name-filter', function() {
           },
           success:function(data){
            paginationData(rowCount,data.length)
-            AjaxtTable(data.data)
+            AjaxtTable(data.data);
+            $('#page-no').html(data.length);
+            
           }
          })
         })
@@ -405,7 +417,8 @@ $(document).on('change', '#course-name-filter', function() {
                         showEntry:showEntry
                       },
                  success:function(data){
-                 AjaxtTable(data.data)
+                 AjaxtTable(data.data);
+                 $('#page-no').html(data.length);
           }
          })
         })
@@ -440,8 +453,7 @@ $(document).on('change', '#course-name-filter', function() {
                             </td>
                         </tr>`
                 }
-            }
-            $('#page-no').val(courseList.length);        
+            }    
             $("#course-table tbody").html(AjaxTable);
         }
 
@@ -497,24 +509,54 @@ $(document).on('change', '#course-name-filter', function() {
             let id = $('#course-id').val();
             let courseName = $('#course-name').val().replace(/\s+/g,' ').trim();
             let credits = $('#course-credits').val();
-            let yearOfIntroduction = $('#year-of-introduction').val();
+            let yearOfIntroduction = $('#year-of-introduction-select').val();
             let minDemandCriteria   = $('#min-demand-criteria').val();
-            
+           
+            if(courseName == ''){
+              $('#error-course-name').removeClass('d-none');
+              return;
+            }
+            else{
+              $('#error-course-name').addClass('d-none');
+            }
+            if (credits == '') {
+              $('#error-credits').removeClass('d-none');
+              return;
+            } else {
+              $('#error-credits').addClass('d-none');
+            }
+         
+            if (minDemandCriteria == '') {
+                  $('#error-min-demand-criteria').removeClass('d-none');
+              return;
+            } else {
+              $('#error-min-demand-criteria').addClass('d-none');
+            }
             let isCredits =  IsNumber(credits);
             let isMinDemandCri  = IsNumber(minDemandCriteria);
-               if (!isCredits) {
-                  $('#error-credits').removeClass('d-none');
-                  return;
-                } else {
-                  $('#error-credits').addClass('d-none');
-                }
-
+            
+            if (!isCredits) {
+              $('#error-credits').removeClass('d-none');
+              return;
+            } else {
+              $('#error-credits').addClass('d-none');
+            }
+        
+            if(yearOfIntroduction == null){
+                $('#error-year-of-intro').removeClass('d-none');
+                return;
+              }
+              else{
+                $('#error-year-of-intro').addClass('d-none');
+              }
                 if (!isMinDemandCri) {
                   $('#error-min-demand-criteria').removeClass('d-none');
                   return;
                 } else {
                   $('#error-min-demand-criteria').addClass('d-none');
                 }
+                
+
 
             let editCourse = {
               id:id,
@@ -535,11 +577,15 @@ $(document).on('change', '#course-name-filter', function() {
                 dataType: 'JSON' 
                 }
                 ajaxApi(ApiObj).then(result => {
-                    showSuccess(result)
+                  createToastMessage(result.description);
                 }).catch(error => {
                     showError(JSON.stringify(error.responseJSON))
                 })
             
+        });
+
+        $('#edit-course-modal').on('click', '.modal-close', function() {
+            $(this).closest('.modal-content').find(`span[id^='error']`).addClass('d-none');
         });
         $('#course-table').on('click','.edit-course',function(){
           let courseName = $(this).attr('data-course-name')

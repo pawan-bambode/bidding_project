@@ -24,7 +24,7 @@
         <div class="card-header-custom d-flex justify-content-between p-2">
             <h4 class="ms-2">Completed Courses Data</h4>
             <div>
-              <button class="btn btn-danger disabled" id="delete-all-complete-coures">Delete All Completed Course</button>
+              <button class="btn btn-danger disabled" id="delete-all-complete-coures">Delete All Completed Courses</button>
             <button type="button" class="btn btn-success me-2"  data-bs-target="#upload-complete-courses-modal" data-bs-toggle="modal">Upload Completed Courses</button>
             </div>
         </div>
@@ -84,21 +84,21 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Upload Complete Courses</h5>
+              <h5 class="modal-title">Upload Completed Courses</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
             <div class="modal-body">
                     <div class="d-flex">
-                    <label class="form-label me-3">Import Complete Courses :</label>
+                    <label class="form-label me-3">Import Completed Courses :</label>
                     <form enctype="multipart/form-data" action="/admin/upload-complete-course" method="post" id="upload-complete-course-form">
                     <input type="file" name="import-complete-course" id="import-complete-course" accept=".xlsx">
                     </div>
                     <div class="d-flex justify-content-between align-item-center mt-5">
-                    <input type="submit" class="btn btn-success mt-2 d-none" id="upload-complete-course-button" value="Upload Complete Courses"></input> 
+                    <input type="submit" class="btn btn-success mt-2 d-none" id="upload-complete-course-button" value="Upload Completed Courses"></input> 
                     </form> 
                 
-                  <a href="/admin/generate-excel-complete-courses" download="sampleForImportCompleteCourses.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample For Import Complete Course</a>
+                  <a href="/admin/generate-excel-complete-courses" download="sampleForImportCompletedCourses.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample for Import Completed Courses</a>
                  </div>
              
             </div>

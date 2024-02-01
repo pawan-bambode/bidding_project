@@ -32,14 +32,18 @@
             <div>
                 <label>Show Entries</label>
                 <select class="form-select" id="changeEntry">
-                    <%for(let page of locals.page_filter){%>
-                       <option value="<%-page%>"><%-page%></option>
-                    <%}%>
+                    <% for (let page of locals.page_filter) { %>
+                        <option value="<%- page %>"><%- page %></option>
+                    <% } %>
                 </select>
             </div>
             <div>
-                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                <div class="table-searchbar-container d-flex justify-content-around p-1">
+                    <button type="button" id="searchkeyword-button" class="border-0 outline-0">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+                </div>
             </div>
         </div>
 
@@ -78,43 +82,46 @@
 </div>
 
 
-<div class="modal" id="add-specialization">
+<div class="modal" id="add-specialization" data-bs-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Add Specialization</h3>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title">Add Specialization</h5>
+                <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
               <label class="form-label mb-2" for="specialization-name">Specialization Name :</label>
               <input class="form-control" id="specialization-name" autocomplete="off">
+              <span class="d-none text-danger" id="error-specilization-name" >Add Specialization Name!</span>
               
               </div>   
         
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
                 <button class="btn btn-primary disabled" id="add-specialization-name">Add</button>
             </div>
         </div>
     </div>
  </div>       
-<div class="modal" id="edit-specialization-modal">
+<div class="modal" id="edit-specialization-modal" data-bs-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Update Specialization</h3>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title">Update Specialization</h5>
+                <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
               <label class="form-label mb-2" for="previous-specialization-name">Previous Specialization Name :</label>
               <input type="hidden" id="specialization-id">
               <input class="form-control" type="text" id="previous-specialization-name" disabled readonly>              
               <label class="form-label mb-2" for="new-specialization-name">New Specialization Name :</label>
-              <input class="form-control" type="text" id="new-specialization-name">    
+              <input class="form-control" type="text" id="new-specialization-name">
+              <span class="d-none text-danger" id="error-update-specilization-name" >Add Specialization Name!</span>
+
               </div>   
         
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
                 <button class="btn btn-primary" id="edit-specialization-button">Update</button>
             </div>
         </div>
@@ -134,7 +141,7 @@
 
         $('#searchkeyword').on('input',function(){
 
-         let specializationValue = $(this).val();
+         let specializationValue = $(this).val().trim();
          let showEntry = $('#changeEntry').val();
 
             $.ajax({
@@ -147,6 +154,7 @@
             success:function(data){
             paginationData(rowCount,data.length)
             AjaxtTable(data.data)
+            $('#page-no').html(data.length);
             }
             })
         })       
@@ -183,6 +191,8 @@
                 ajaxApi(ApiObj).then(result=>{
                     AjaxtTable(result.data)
                     paginationData(showEntry,result.length)
+                    $('#page-no').html(result.length);
+                    $('#searchkeyword').val('');
                 }).catch(error =>{
                 showError(JSON.stringify(error.responseJSON));
                 })    
@@ -199,6 +209,13 @@
 		
      $('#add-specialization-name').on('click',function(){  
         let specializationName = $('#add-specialization #specialization-name').val().replace(/\s+/g,' ').trim();
+        if(specializationName == ''){
+                $('#error-specilization-name').removeClass('d-none');
+                return;
+            }
+            else{
+                $('#error-specilization-name').addClass('d-none');
+            }
         
         let ApiObj ={
             url:'/admin/specialization/add',
@@ -235,6 +252,14 @@
     $('#edit-specialization-modal').on('click','#edit-specialization-button',function(){
         let specializationId = $('#edit-specialization-modal #specialization-id').val();
         let specializationName = $('#edit-specialization-modal #new-specialization-name').val().replace(/\s+/g,' ').trim();
+         
+        if(specializationName == ''){
+                $('#error-update-specilization-name').removeClass('d-none');
+                return;
+            }
+            else{
+                $('#error-update-specilization-name').addClass('d-none');
+            }
       
         let ApiObj = {
             url:'/admin/specialization/update',
@@ -257,6 +282,15 @@
        $('#edit-specialization-modal #specialization-id').val(specializationId);
        $('#edit-specialization-modal #previous-specialization-name').val(specializationName);
     });
+
+    $('#add-specialization').on('click', '.modal-close', function() {
+           $(this).closest('.modal-content').find(`span[id^='error']`).addClass('d-none');
+        });
+
+        $('#edit-specialization-modal').on('click', '.modal-close', function() {
+           $(this).closest('.modal-content').find(`span[id='error-update-specilization-name']`).addClass('d-none');
+        });
+        
 })
 
 

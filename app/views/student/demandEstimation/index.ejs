@@ -472,9 +472,9 @@ $(document).ready(function() {
             if (addToTable) {
                 let disabledAddButton = creditsComplete === 'true'?'disabled':'';
                 disabledAddButton = creditsCourseCompleted === 'true'?'disabled':'';
-                if(!deleteCredits){
-                    disabledAddButton = 'disabled';
-                }
+                // if(!deleteCredits){
+                //     disabledAddButton = 'disabled';
+                // }
                 
                 ajaxTable +=
                 `<tr data-course-id="${course.id}" data-area="${course.area_name}" data-course-name="${course.course_name}" data-acad-session="${course.acad_session}" data-credits="${course.credits}" data-acad-session-id="${course.sap_acad_session_id}">
@@ -777,11 +777,18 @@ $(document).ready(function() {
                   
                     let minCreditsPerArea = $('#min-credits-per-area').text();
                     let areaFrequencyCount = calculateAreaFrequency(areaAddedArray);
+                    
+                    let areaCountNumber = Object.keys(areaCount).filter(key => [key].totalCredits >= 6);
+                    
+                    console.log('values of areaCountNumber', areaCountNumber);
+
+                    console.log('values of areaCount -------->', areaFrequencyCount);
 
                    if((areaFrequencyCount[areaName] != undefined? areaFrequencyCount[areaName].totalCredits:0) < minCreditsPerArea){
                     let areaCount = Number($('#areas-count').text());
-                 
-                    if(areaCount < concentrationSettingAreaCount){
+                    console.log('values of areaCount -------->', areaCount);
+                    console.log('values of concentration', concentrationSettingAreaCount);
+                    if(areaCountNumber < concentrationSettingAreaCount){
                         $('#areas-count').text(areaCount+1);
                     }    
                    }

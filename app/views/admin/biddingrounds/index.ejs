@@ -55,7 +55,7 @@
             <tbody>
                 <% let count = 1 %>
                 <%for(let biddingRound of biddingRoundList) {%>
-                    <tr data-bidding-round-id="<%- biddingRound.id %>" data-bidding-round-lid="<%-biddingRound.round_lid %>">
+                    <tr data-bidding-round-id="<%- biddingRound.id %>" data-bidding-round-lid="<%-biddingRound.round_lid %>" data-bit-limit="<%- biddingRound.bid_limit %>">
                         <td><%- count++ %></td>
                         <td><%-biddingRound.round_name %></td>
                         <td><%- biddingRound.total_students %></td>
@@ -86,9 +86,9 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Select Students</h3>
+                <h5>Select Students</h5>
                 <div class="d-flex justify-content-between">
-                <h4 class="px-3">Total Selected Students  :<span id="total-selected-students">0</span></h4>
+                <h5 class="px-3">Total Selected Students  : <span id="total-selected-students">0</span></h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
             </div>
@@ -124,9 +124,9 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Update Bidding Rounds </h3>
+                <h5>Update Bidding Rounds </h5>
                 <div class="d-flex justify-content-between">
-                <h4 class="px-3">Total Selected Students  :<span id="update-total-selected-students">0</span></h4>
+                <h4 class="px-3">Total Selected Students  : <span id="update-total-selected-students">0</span></h4>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
             </div>
@@ -162,9 +162,9 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Select Courses</h3>
+                <h5>Select Courses</h5>
                 <div class="d-flex justify-content-between">
-                  <h4>Total Selected Courses :<span id="total-selected-courses">0</span></h4>
+                  <h5>Total Selected Courses : <span id="total-selected-courses">0</span></h5>
                   <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>  
             </div>
@@ -233,14 +233,14 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Select Date Time</h3>
+                <h5>Select Date Time</h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <label class="mb-2" for="start-date-time">Start date time :</label>
                 <input type="hidden" id="bidding-round-id">
                 <input class="form-control" type="datetime-local" id="start-date-time">
-                <label class="mb-2" for="end-date-time">End date time:</label>
+                <label class="mb-2" for="end-date-time">End date time :</label>
                 <input class="form-control" type="datetime-local" id="end-date-time">  
             </div>
             <div class="modal-footer">
@@ -253,7 +253,7 @@
     <div class="modal-dialog modal-fullscreen">
             <div class="modal-content">
                 <div class="modal-header">
-                  <h3>Select Bidding Rounds</h3>
+                  <h4>Select Bidding Rounds</h4>
                   <button class="btn-close full-modal-left-sidebar" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body row custum-imp-program">
@@ -301,7 +301,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Update Bidding Rounds</h3>
+                    <h5 class="modal-title">Update Bidding Rounds</h5>
                     <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -312,7 +312,7 @@
                             <input class="form-control" type="datetime-local" id="start-date-time-bidding-rounds">
                         </div>
                         <div class="col-md-6">
-                            <label class="mb-2" for="end-date-time">End date time:</label>
+                            <label class="mb-2" for="end-date-time">End date time :</label>
                             <input class="form-control" type="datetime-local" id="end-date-time-bidding-rounds"> 
                         </div>
                     </div>
@@ -331,6 +331,7 @@
                                 <input type="text" class="form-control" placeholder="total courses" id="total-courses"  disabled>
                             </div>
                         </div>
+                       
                   </div>  
                 </div>
                 <div class="modal-footer">
@@ -348,7 +349,7 @@
         let studentList = [];
         let courseList = [];
         let biddingRoundStudent = [];
-        let importBiddingRoundsArray = [];
+       
         let importdata = [];
 
         setActiveMenuItem(`<%- active %>`)
@@ -483,10 +484,10 @@
                 <td class="start-date-time">NA</td>
                 <td class="end-date-time">NA</td>
                 <td class="${id !== '2' && id !== '4' ? 'disabled-in-bidding-rounds' : ''}"><label for = "yes">Yes</label>
-                    <input type = "radio" name ="bid-point-limit" id = "yes" value = "Yes">
+                    <input type = "radio" name ="bid-point-limit-${id}" id = "yes" value = "Yes">
                     <input type = "text" id ="bid-point-limit-per-bid" class ="d-none" size="8" placeholder="Enter bid Points">
                     <label for = "no">No</label>
-                    <input type = "radio" name ="bid-point-limit" id = "no" value = "No">
+                    <input type = "radio" name ="bid-point-limit-${id}" id = "no" value = "No">
                     </td>
                 <td><i class="fa fa-trash text-danger delete-bidding-rounds"></i></td>
             </tr>`;
@@ -525,12 +526,15 @@
            
             let dataBiddingRoundId = $(event.relatedTarget).closest('tr').data('bidding-round-id');
             let dataBiddingRoundLid =  $(event.relatedTarget).closest('tr').data('bidding-round-lid');
+            let bitLimit = $(event.relatedTarget).closest('tr').data('bit-limit');
             $(this).attr('data-bidding-round-id',dataBiddingRoundId);
+
             if(dataBiddingRoundLid == 1){
                 $('#edit-bidding-rounds .update-total-course').removeClass('d-none');
             }
             else{
                 $('#edit-bidding-rounds .update-total-course').addClass('d-none');
+                $('#edit-bidding-rounds .bid-limit').removeClass('d-none');
             }
 
             $('#bidding-rounds-checkbox').prop('checked', false);
@@ -539,9 +543,9 @@
        
          })  
 
-         $('#import-bidding-rounds-table').on('click','input[name="bid-point-limit"]',function(){
+         $('#import-bidding-rounds-table').on('click','input[name ^="bid-point-limit"]',function(){
              
-             const checkedRadioButton = $('input[name="bid-point-limit"]:checked');
+             const checkedRadioButton = $('input[name^="bid-point-limit"]:checked');
              const checkedValue = checkedRadioButton.val();
                 if (checkedValue == 'Yes') {
                     $(this).closest('tr').find('#bid-point-limit-per-bid').removeClass('d-none');
@@ -698,6 +702,7 @@
         });
         $(document).on('click','#import-bidding-rounds',function(){
           let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
+          let importBiddingRoundsArray = [];
        
           $('.import-bidding-rounds-table tbody tr').each((index,element) => {
            
@@ -708,8 +713,9 @@
             let startDateTime     = $(element).data('start-date-time').concat(':00.000');
             let endDateTime       = $(element).data('end-date-time').concat(':00.000');
             let roundId           = $(element).data('bidding-round-id');
-            let bidPointLimit     = $('#bid-point-limit-per-bid').val() == ''?0:$('#bid-point-limit-per-bid').val();
-            let isBidLimit        = $('#bid-point-limit-per-bid').val() == ''?0:1
+            let isBidLimit = $(element).find(`input[name="bid-point-limit-${roundId}"]:checked`).val() === 'Yes' ? 1 : 0;
+            let bidPointLimit = isBidLimit === 1 ? $(element).find('#bid-point-limit-per-bid').val() : 0;
+
             let temp = []
             importBiddingRounds.round_name = biddingRoundsName;
             importBiddingRounds.total_students = totalStudentCount;
@@ -731,7 +737,7 @@
           let importBiddingDetails = {
             round_setting: importBiddingRoundsArray,
             };
-             
+        
            let ApiObj = {
                 type: 'POST',
                 url: '/admin/bidding-rounds/create',
@@ -743,7 +749,8 @@
             }
            
             ajaxApi(ApiObj).then(result => {
-                showSuccess(result)              
+                createToastMessage(result.description);
+                             
             }).catch(error => {
                 showError(JSON.stringify(error.responseJSON))
             })
@@ -764,7 +771,7 @@
             }
             ajaxApi(ApiObj).then(result =>{
                 $(this).closest('tr').remove();
-                showSuccess(result)
+                createToastMessage(result.description);
             }).catch(error =>{
                 showError(JSON.stringify(error.responseJSON))
             })
@@ -819,7 +826,7 @@
                 dataType: 'JSON' 
                 }
                 ajaxApi(ApiObj).then(result => {
-                    showSuccess(result)
+                    createToastMessage(result.description);
                 }).catch(error => {
                     showError(JSON.stringify(error.responseJSON))
                 })

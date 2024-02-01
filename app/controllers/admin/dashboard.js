@@ -27,11 +27,12 @@ module.exports = {
         })
     },
 
-    primaryData :(req, res) =>{
-        let adminPrimaryUrl = req.route.path.split('/');
-        let primary = adminPrimaryUrl[adminPrimaryUrl.length-1]
-        res.render('admin/primarydata/index',{
-        active: primary 
+    masterData :(req, res) =>{
+        let adminMasterUrl = req.route.path.split('/');
+        let master = adminMasterUrl[adminMasterUrl.length-1]
+        console.log('values of master', master);
+        res.render('admin/masterData/index',{
+        active: master 
         })
     },
     

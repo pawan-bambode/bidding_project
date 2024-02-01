@@ -7,7 +7,7 @@ module.exports = class BiddingRound
             return pool.request()
             .input('biddingId', sql.Int, biddingId)
             .query(`SELECT id, round_lid, round_name, total_students, total_courses, 
-                    FORMAT(end_date_time, 'dd MMM  yyyy, hh:mm tt') AS end_date_time, FORMAT(start_date_time, 'dd MMM yyyy, hh:mm tt') AS start_date_time 
+                    FORMAT(end_date_time, 'dd MMM  yyyy, hh:mm tt') AS end_date_time, FORMAT(start_date_time, 'dd MMM yyyy, hh:mm tt') AS start_date_time, is_bid_limit, bid_limit 
                     FROM [${slug}].round_settings WHERE bidding_session_lid = @biddingId AND active = 1`);     
         })
     }
@@ -29,7 +29,7 @@ module.exports = class BiddingRound
             .input('biddingId', sql.Int, biddingId)
             .query(`SELECT sd.id AS student_lid, * FROM [${slug}].student_data sd 
                     INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id
-                    WHERE sd.bidding_session_lid = @biddingId`);
+                    WHERE sd.bidding_session_lid = @biddingId AND p.active = 1`);
         })
     }
 
@@ -37,12 +37,13 @@ module.exports = class BiddingRound
         return poolConnection.then(pool =>{
             return pool.request()
             .input('biddingId', sql.Int, biddingId)
-            .query(`SELECT * FROM [${slug}].courses WHERE bidding_session_lid = @biddingId`)
+            .query(`SELECT c.* FROM [${slug}].courses c 
+                    INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
+                    WHERE c.bidding_session_lid = 16 AND p.active = 1`);
         })
     }
 
-    static save(inputJSON, slug, userid, biddingId) {
-        
+    static save(inputJSON, slug, userid, biddingId) {  
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), inputJSON)
@@ -65,6 +66,7 @@ module.exports = class BiddingRound
     }
 
     static update(inputJSON, slug, userid, biddingSessionId){
+
         return poolConnection.then(pool =>{
             return pool.request()
             .input('input_json', sql.NVarChar(sql.MAX), inputJSON)

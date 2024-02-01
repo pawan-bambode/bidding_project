@@ -31,14 +31,18 @@
             <div>
                 <label>Show Entries</label>
                 <select class="form-select" id="changeEntry">
-                    <%for(let page of locals.page_filter){%>
-                       <option value="<%-page%>"><%-page%></option>
-                    <%}%>
+                    <% for (let page of locals.page_filter) { %>
+                        <option value="<%- page %>"><%- page %></option>
+                    <% } %>
                 </select>
             </div>
             <div>
-                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                <div class="table-searchbar-container d-flex justify-content-around p-1">
+                    <button type="button" id="searchkeyword-button" class="border-0 outline-0">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+                </div>
             </div>
         </div>
 
@@ -64,6 +68,7 @@
                         <td><%-programSession.max_credits %></td>
                         <td><a class="edit-program-sessions" data-bs-target="#edit-program-sessions" data-bs-toggle="modal" data-id="<%-programSession.id %>" data-min-credits ="<%- programSession.min_credits %>"
                             data-max-credits ="<%- programSession.max_credits %>"
+                        data-acad-session = "<%- programSession.acad_session %>"
                             ><i class="fa fa-edit"></i></a>
                             
                         </td>
@@ -85,25 +90,27 @@
 </div>
 
 
-<div class="modal" id="edit-program-sessions">
+<div class="modal" id="edit-program-sessions" data-bs-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Add Credits</h3>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title">Update Acad Session Credits</h5>
+                <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              <label class="form-label mb-2" for="min-credits">Min Credits :</label>
+              <label for="acad-session-disabled">Acad Session :</label>
+              <input type="text" id="acad-session-disabled" class="form-control" disabled><br>
+              <label class="form-label" for="min-credits">Minimum Credits :</label>
               <input type="hidden" id="program-session-id">
-              <span  class="text-danger d-none" id="min-credits-error">Min Credits Allow Only Numbers </span>
               <input class="form-control" type="text" id="min-credits">              
-              <label class="form-label mb-2" for="max-credits">Max Credits :</label>
+              <span  class="text-danger d-none" id="min-credits-error">Minimum Credits Allow Only Numbers! </span><br>
+              <label class="form-label" for="max-credits">Maximum Credits :</label>
               <input class="form-control" type="text" id="max-credits">  
-              <span  class="text-danger d-none" id="max-credits-error">Max Credits Allow Only Numbers </span>
+              <span  class="text-danger d-none" id="max-credits-error">Maximum Credits Allow Only Numbers! </span>
               </div>   
         
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
                 <button class="btn btn-primary" id="update-program-sessions">Update</button>
             </div>
         </div>
@@ -134,6 +141,9 @@
         })
      })
 
+
+
+
      $('#update-program-sessions').on('click',function(){
         let maxCredits = $('#edit-program-sessions #max-credits').val();
         let minCredits = $('#edit-program-sessions #min-credits').val();
@@ -142,17 +152,17 @@
         let isMaxCredits  = IsNumber(maxCredits);
         let isMinCredits  = IsNumber(minCredits);
 
-        if(!isMaxCredits){
-            $('#edit-program-sessions #max-credits-error').removeClass('d-none');
-            return;
-        }else{
-            $('#edit-program-sessions #max-credits-error').addClass('d-none');
-        }
         if(!isMinCredits){
             $('#edit-program-sessions #min-credits-error').removeClass('d-none');
             return;
         }else{
             $('#edit-program-sessions #min-credits-error').addClass('d-none');
+        }
+        if(!isMaxCredits){
+            $('#edit-program-sessions #max-credits-error').removeClass('d-none');
+            return;
+        }else{
+            $('#edit-program-sessions #max-credits-error').addClass('d-none');
         }
         
         let ApiObj = {
@@ -166,25 +176,31 @@
             datatype:'JSON'
         }
         ajaxApi(ApiObj).then(result =>{
-            showSuccess(result);
+            createToastMessage(result.description);
         }).catch(error =>{
             showError(JSON.stringify(error.responseJSON));
         })
     })   
 
+    $('#edit-program-sessions').on('click', '.modal-close', function() {
+        $(this).closest('.modal-content').find(`span[id$='error']`).addClass('d-none');
+    });
+
     $('#program-sessions-table').on('click','.edit-program-sessions',function(){
-        let dataMinCredits = $(this).attr('data-min-credits');
-        let dataMaxCredits = $(this).attr('data-max-credits');
+        let minCredits = $(this).data('min-credits');
+        let maxCredits = $(this).data('max-credits');
+        let acadSession = $(this).data('acad-session')
 
        let programSessionId = $(this).closest('a').attr('data-id');
        $('#edit-program-sessions #program-session-id').val(programSessionId);
-       $('#edit-program-sessions #min-credits').val(dataMinCredits);
-       $('#edit-program-sessions #max-credits').val(dataMaxCredits);
+       $('#edit-program-sessions #min-credits').val(minCredits);
+       $('#edit-program-sessions #max-credits').val(maxCredits);
+       $('#edit-program-sessions #acad-session-disabled').val(acadSession);
     })
     $('#searchkeyword').on('input',function(){
 
         let searchValue = $(this).val();
-        let showEntry = $('#changeEntry').val();
+        let showEntry = $('#changeEntry').val().trim();
             
             $.ajax({
             type:'POST',
@@ -195,7 +211,8 @@
             },
             success:function(data){
             paginationData(rowCount,data.length)
-            AjaxtTable(data.programSessionList )
+            AjaxtTable(data.programSessionList );
+            $('#page-no').html(data.length);
             }
             })
         })       
@@ -234,7 +251,8 @@ let ApiObj = {
     ajaxApi(ApiObj).then(result=>{
     paginationData(showEntry,result.length)
     AjaxtTable(result.programSessionList)
-    $('#page-no').html(data.length)
+    $('#page-no').html(result.length)
+    $('#searchkeyword').val('');
     }).catch(error =>{
     showError(JSON.stringify(error.responseJSON));
     })    

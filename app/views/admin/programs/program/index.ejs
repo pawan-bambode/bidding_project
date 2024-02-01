@@ -32,14 +32,18 @@
             <div>
                 <label>Show Entries</label>
                 <select class="form-select" id="changeEntry">
-                    <%for(let page of locals.page_filter){%>
-                       <option value="<%-page%>"><%-page%></option>
-                    <%}%>
+                    <% for (let page of locals.page_filter) { %>
+                        <option value="<%- page %>"><%- page %></option>
+                    <% } %>
                 </select>
             </div>
             <div>
-                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                <div class="table-searchbar-container d-flex justify-content-around p-1">
+                    <button type="button" id="searchkeyword-button" class="border-0 outline-0">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+                </div>
             </div>
         </div>
 
@@ -48,7 +52,7 @@
                 <th>#</th>
                 <th>Program Code</th>
                 <th>Program Name</th>
-                <th>Abbr</th>
+                <th>Program Abbreviation</th>
                 <th>Actions</th>
             </thead>
             <tbody>
@@ -83,7 +87,7 @@
     <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header">
-              <h3>Select Program</h3>
+              <h4>Select Program</h4>
               <button class="btn-close full-modal-left-sidebar" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body row custum-imp-program">
@@ -102,7 +106,7 @@
                     <thead>
                         <th>Program Name</th>
                         <th>Program Code</th>
-                        <th>Program Abbr</th>
+                        <th>Program Abbreviation</th>
                         <th>Action</th>
                     </thead>
                     <tbody></tbody>
@@ -115,26 +119,28 @@
         </div>
     </div>
 </div>
-<div class="modal" id="edit_program">
+<div class="modal" id="edit_program" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">Update Program</h3>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title">Update Program</h5>
+                <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              <label class="mb-2" for="program_name">Program Name:</label>
+              <label class="mb-2" for="program_name">Program Name :</label>
               <input type="hidden" id="program_id">
-              <input class="form-control" type="text" id="program_name">
+              <input class="form-control" type="text" id="program_name" autocomplete="off">
+              <span  class="text-danger d-none" id="error-program-name">Program Name cannot be blank! </span>
               <div class="row">
                 <div class="col-md-6">
-                    <label class="mb-2" for="program_abbr">Program Abbr:</label>
+                    <label class="mb-2" for="program_abbr">Program Abbreviation :</label>
                     <input class="form-control" type="text" id="program_abbr">  
+                    <span  class="text-danger d-none" id="error-program-abbr">Program Abbreviation cannot be blank! </span>
                 </div>
               </div>   
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
                 <button class="btn btn-primary" id="updateProgram">Update</button>
             </div>
         </div>
@@ -155,7 +161,7 @@
         $('#searchkeyword').on('input',function(){
 
         let searchValue = $(this).val();
-        let showEntry = $('#changeEntry').val();
+        let showEntry = $('#changeEntry').val().trim();
        
             $.ajax({
             type:'POST',
@@ -166,7 +172,8 @@
             },
             success:function(data){
             paginationData(rowCount,data.length)
-            AjaxtTable(data.data)
+            AjaxtTable(data.data);
+            $('#page-no').html(data.length);
             }
             })
      })       
@@ -210,7 +217,8 @@ $(".pagination-search").on('click','.pagination li',function(){
             }
             ajaxApi(ApiObj).then(result=>{
             paginationData(showEntry,result.length)
-                AjaxtTable(result.data)
+            AjaxtTable(result.data)
+            $('#searchkeyword').val('');
             }).catch(error =>{
             showError(JSON.stringify(error.responseJSON));
             })    
@@ -347,6 +355,22 @@ $(".pagination-search").on('click','.pagination li',function(){
             let program_abbr = $('#program_abbr').val().replace(/\s+/g, ' ').trim();
             let program_id   = $('#program_id').val();
 
+            
+            if(program_name == ''){
+                $('#error-program-name').removeClass('d-none');
+                return;
+            }
+            else{
+                $('#error-program-name').addClass('d-none');
+            }
+            if(program_abbr == ''){
+              $('#error-program-abbr').removeClass('d-none');
+              return;
+            }
+            else {
+                $('#error-program-abbr').addClass('d-none');
+            }
+            
             edit_program.program_name = program_name;
             edit_program.id = program_id;
             edit_program.program_code = program_code;
@@ -360,7 +384,7 @@ $(".pagination-search").on('click','.pagination li',function(){
                 dataType: 'JSON' 
                 }
                 ajaxApi(ApiObj).then(result => {
-                    showSuccess(result)
+                    createToastMessage(result.description);
                 }).catch(error => {
                     showError(JSON.stringify(error.responseJSON))
                 })
@@ -385,6 +409,10 @@ $(".pagination-search").on('click','.pagination li',function(){
             })
 
         })
+
+        $('#edit_program').on('click', '.modal-close', function() {
+           $(this).closest('.modal-content').find(`span[id^='error']`).addClass('d-none');
+        });
 });
 function AjaxtTable(programList) {
             
@@ -411,7 +439,9 @@ function AjaxtTable(programList) {
                 }
             }      
             $("#program-table tbody").html(AjaxTable);
+            $('#searchkeyword').val();
         }
+
    
 </script>
   
