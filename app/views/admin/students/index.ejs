@@ -36,7 +36,7 @@
             </div>
             <div class="col-md-3 mt-4">
                 <select class="form-select form-control select2" id="program-name-filter">
-                    <option selected>Select Program</option>
+                    <option value="-1" selected>Select Program</option>
                     <%for(let program of programList){%>
                     <option value="<%-program.program_id%>"><%-program.program_name%></option>
                     <%}%>
@@ -44,12 +44,16 @@
             </div>
             <div class="col-md-3 mt-4">
                 <select class="form-select form-control select2" id="student-name-filter">
-                  <option value="" selected>Select Student</option>
+                  <option value="-1" selected>Select Student</option>
                 </select>
             </div>
             <div>
-                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                <div class="table-searchbar-container d-flex justify-content-around p-1">
+                    <button type="button" id="searchkeyword-button" class="border-0 outline-0">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+                </div>
             </div>
         </div>
 
@@ -69,7 +73,7 @@
              
                   <% let count = 1 %>
                   <%for(let studentData of studentDataList) {%>
-                      <tr>
+                      <tr data-id="<%-studentData.id %>" data-student-sap-id="<%-studentData.sap_id %>" data-student-roll-no="<%- studentData.roll_no %>" data-student-name = "<%- studentData.student_name %>" data-student-email ="<%- studentData.email %>" data-student-bidding-points="<%- studentData.bid_points %>" data-student-year-of-join ="<%- studentData.year_of_joining %>" data-student-pre-ele-credits  ="<%- studentData.previous_elective_credits %>">
                           <td><%- count++ %></td>
                           <td><%-studentData.sap_id %></td> 
                           <td><%-studentData.roll_no %></td> 
@@ -78,7 +82,7 @@
                           <td><%-studentData.program_name %></td> 
                           <td><%-studentData.bid_points %></td> 
                           <td><%-studentData.year_of_joining %></td> 
-                          <td><a class="edit-student-data" data-bs-target="#edit-student-data" data-bs-toggle="modal" data-id="<%-studentData.id %>" data-student-sap-id="<%-studentData.sap_id %>" data-student-roll-no="<%- studentData.roll_no %>" data-student-name = "<%- studentData.student_name %>" data-student-email ="<%- studentData.email %>" data-student-bidding-points="<%- studentData.bid_points %>" data-student-year-of-join ="<%- studentData.year_of_joining %>" data-student-pre-ele-credits  ="<%- studentData.previous_elective_credits %>" >
+                          <td><a class="edit-student-data" data-bs-target="#edit-student-data" data-bs-toggle="modal">
                             <i class="fa fa-edit"></i></a>
                             <a class="delete-student-data" data-id="<%-studentData.id %>"><i class="fa-solid fa-trash text-danger"></i></a>
                             <input class="d-none checkbox-student-data" type="checkbox" name="student-data" data-id="<%- studentData.id %>" >
@@ -108,36 +112,36 @@
                 <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="row">
+                <div class="row empty">
                     <div class="col-md-6">
-                        <label class="mb-2" for="student-name">Student Name :</label>
                         <input type="hidden" id="student-id">
-                        <input class="form-control" type="text" id="student-name">
-                        <span id="error-student-name" class="text-danger d-none">Student Name!</span>
+                        <label class="mb-2" for="student-name">Student Name :</label>
+                        <input class="form-control is-empty" type="text" id="student-name">
+                        <span class="text-danger d-none is-in-valid"></span>
                     </div>
                     <div class="col-md-6">
-                        <label class="mb-2" for="update-student-email">Email :</label>
-                        <input class="form-control" type="text" id="update-student-email">
-                        <span id="error-student-email" class="text-danger d-none">Email!</span>
+                        <label class="mb-2" for="student-email">Email :</label>
+                        <input class="form-control is-empty" type="text" id="student-email">
+                        <span class="text-danger d-none is-in-valid"></span>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row empty">
                     <div class="col-md-6">
                         <label class="mb-2" for="bidding-points">Bid Points :</label>
-                        <input class="form-control" type="text" id="bidding-points">
-                        <span id="error-bid-points" class="text-danger d-none">Bid Points Allow Only Numbers!</span>  
+                        <input class="form-control is-empty is-number" type="text" id="bidding-points">
+                        <span class="text-danger d-none is-in-valid"></span>
                     </div>
                     <div class="col-md-6">
                         <label class="mb-2" for="year-of-joining">Year of Joining :</label>
-                        <input class="form-control" type="text" id="year-of-joining"> 
-                        <span id="error-year-of-joining" class="text-danger d-none">Year of Joining Allow Only Numbers!</span>   
+                        <input class="form-control is-empty is-number" type="text" id="year-of-joining">
+                        <span class="text-danger d-none is-in-valid"></span>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row empty">
                     <div class="col-md-6">
                         <label class="mb-2" for="previous-elective-credits">Previous Elective Credits :</label>
-                        <input class="form-control" type="text" id="previous-elective-credits">  
-                        <span id="error-previous-elective-credits" class="text-danger d-none">Previous Elective Credits Allow Only Numbers!</span>  
+                        <input class="form-control is-empty is-number" type="text" id="previous-elective-credits">
+                        <span class="text-danger d-none is-in-valid"></span>  
                     </div>
                 </div>
             </div>
@@ -198,17 +202,23 @@
 
         $('#searchkeyword').on('input',function(){
 
-         let searchValue = $(this).val();
+         let searchValue = $(this).val().trim();
+         let programId = $('#program-name-filter').val();
+         let studentName = $('#student-name-filter').val();
+         let showEntry = $('#changeEntry').val();
+         
          $.ajax({
           type:'POST',
           url:'/admin/student-data/search',
           data:{
-            searchLetter:searchValue
+            searchLetter:searchValue,
+            programId:programId,
+            showEntry:showEntry
           },
           success:function(data){
         
            paginationData(rowCount,data.length)
-            AjaxtTable(data.data)
+            AjaxtTable(data.data);
           }
          })
         })
@@ -230,7 +240,7 @@
             ajaxApi(ApiObj)
                 .then(result => {
 
-                    let studentName = `<option  >Select Student Name</option>`;
+                    let studentName = `<option value="-1"  >Select Student Name</option>`;
                     if (result.studentDataSapIdList.length > 0) {
                         result.studentDataSapIdList.forEach(element => {
                             studentName += `<option value="${element.sap_id}">${element.student_name}</option>`;
@@ -240,13 +250,14 @@
                     } else {
                         studentName += `<option value="">No Session Found!</option>`;
                     }
-
+                  
                     $("#student-name-filter").html(studentName);
                     AjaxtTable(result.data);
                     $('#page-no').html(result.length);
+                    $('#searchkeyword').val('');
                 })
                 .catch(error => {
-                    showError(JSON.stringify(error.responseJSON))
+                    createToastError(JSON.stringify(error.responseJSON.description));
                 });
         });
 
@@ -269,10 +280,12 @@
             ajaxApi(ApiObj)
                 .then(result => {
                     AjaxtTable(result.data);
-                    paginationData(showEntry,result.length)
+                    paginationData(showEntry,result.length);
+                    $('#page-no').html(result.length);
+                    $('#searchkeyword').val('');
                 })
                 .catch(error => {
-                    showError(JSON.stringify(error.responseJSON))
+                    createToastError(JSON.stringify(error.responseJSON.description));
                 });
         });
         $(".pagination-search").on('click','.pagination li',function(){
@@ -297,19 +310,22 @@
 
         $('#changeEntry').on('change',function(){
         let showEntry = $(this).val();
+        let programId = $('#program-name-filter').val();
         let ApiObj = {
             type:'POST',
             url:'/admin/student-data/showEntryCouresList',
             data:{
-                showEntry:showEntry
+                showEntry:showEntry,
+                programId: programId
             },
             datatype:'JSON'
             }
             ajaxApi(ApiObj).then(result=>{
             paginationData(showEntry,result.length)
-                AjaxtTable(result.data)
+                AjaxtTable(result.data);
+                $('#searchkeyword').val('');
             }).catch(error =>{
-                showError(JSON.stringify(error.responseJSON))
+                createToastError(JSON.stringify(error.responseJSON.description));
             })    
         })
  
@@ -327,12 +343,12 @@
     });
       $('#student-data-table').on('click','.edit-student-data',function(){
        
-       let id = $(this).closest('a').attr('data-id');
-       let studentName = $(this).closest('a').attr('data-student-name');
-       let studentEmail = $(this).closest('a').attr('data-student-email');
-       let studentBiddingPoints = $(this).closest('a').attr('data-student-bidding-points');
-       let studentYearOfJoining = $(this).closest('a').attr('data-student-year-of-join');
-       let studentPreviousElectiveCredits = $(this).closest('a').attr('data-student-pre-ele-credits');
+       let id = $(this).closest('tr').data('id');
+       let studentName = $(this).closest('tr').data('student-name');
+       let studentEmail = $(this).closest('tr').data('student-email');
+       let studentBiddingPoints = $(this).closest('tr').data('student-bidding-points');
+       let studentYearOfJoining = $(this).closest('tr').data('student-year-of-join');
+       let studentPreviousElectiveCredits = $(this).closest('tr').data('student-pre-ele-credits');
 
        $('#edit-student-data #student-name').val(studentName);
        $('#edit-student-data #student-email').val(studentEmail);
@@ -360,7 +376,7 @@
             createToastMessage(result.description);
             
         }).catch(error =>{
-            showError(JSON.stringify(error.responseJson));
+            createToastError(JSON.stringify(error.responseJSON.description));
         })
      })
       $('#upload-student-data-form').on('submit', function(event) {
@@ -403,7 +419,7 @@
              ajaxApi(ApiObj).then(result =>{
                 createToastMessage(result.description);
              }).catch(error =>{
-              showError(JSON.stringify(error.responseJSON))
+              createToastError(JSON.stringify(error.responseJSON.description));
              })
         }
     });
@@ -419,7 +435,9 @@ function AjaxtTable(studentDataList) {
                 let count = 1;
                 for (studentData of studentDataList) {
                     AjaxTable +=
-                        `<tr>
+                        `<tr data-id="${studentData.id}" data-student-sap-id="${studentData.sap_id}" data-student-roll-no="${studentData.roll_no}" data-student-name = "${studentData.student_name}" data-student-email ="${studentData.email}" data-student-bidding-points=" ${studentData.bid_points}" data-student-year-of-join ="${studentData.year_of_joining}" data-student-pre-ele-credits  ="${studentData.previous_elective_credits}" >
+                            <i class="fa fa-edit"></i></a>
+                            <a class="delete-student-data" data-id="${studentData.id}">
                             <td>${count++}</td>
                             <td>${studentData.sap_id}</td>
                             <td>${studentData.roll_no}</td>
@@ -430,7 +448,7 @@ function AjaxtTable(studentDataList) {
                             <td>${studentData.year_of_joining}</td>
                             
                             <td>
-                                <a class="edit-student-data" data-bs-target="#edit-student-data" data-bs-toggle="modal" data-id="${studentData.id}" data-student-sap-id="${studentData.sap_id}" data-student-roll-no="${studentData.roll_no}" data-student-name = "${studentData.student_name}" data-student-email ="${studentData.email}" data-student-bidding-points=" ${studentData.bid_points}" data-student-year-of-join ="${studentData.year_of_joining}" data-student-pre-ele-credits  ="${studentData.previous_elective_credits}" >
+                                <a class="edit-student-data" data-bs-target="#edit-student-data" data-bs-toggle="modal">
                             <i class="fa fa-edit"></i></a>
                             <a class="delete-student-data" data-id="${studentData.id}"><i class="fa-solid fa-trash text-danger"></i></a>
                             <input class="d-none checkbox-student-data" type="checkbox" name="student-data" data-id="${studentData.id}" >
@@ -446,77 +464,15 @@ function AjaxtTable(studentDataList) {
       let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
             let id = $('#edit-student-data #student-id').val();
             let studentName = $('#edit-student-data #student-name').val().replace(/\s+/g,' ').trim();;
-            let studentEmail = $('#edit-student-data #update-student-email').val().replace(/\s+/g,' ').trim();;
+            let studentEmail = $('#edit-student-data #student-email').val().replace(/\s+/g,' ').trim();;
             let bidPoints = $('#edit-student-data #bidding-points').val();
             let yearOfJoining = $('#edit-student-data #year-of-joining').val();
             let previousElectiveCredits = $('#edit-student-data #previous-elective-credits').val();
 
-            let isBidPoints  = IsNumber(bidPoints);
-            let isYearOfJoining  = IsNumber(yearOfJoining);
-            let isPreviousElectiveCredits = IsNumber(previousElectiveCredits);
+            let isRequiredFieldsEmpty = isModalFieldEmpty('#edit-student-data .modal-body');
+            
+            if (isRequiredFieldsEmpty) {
 
-           
-
-            if(studentName == ''){
-                $('#edit-student-data #error-student-name').removeClass('d-none');
-                 return;
-            }
-            else{
-                $('#edit-student-data #error-student-name').addClass('d-none');
-            }
-            const errorElement = $('#edit-student-data #error-student-email');
-
-if (studentEmail === '') {
-    
-    errorElement.removeClass('d-none');
-    return;
-}
-
-
-errorElement.addClass('d-none');
-
-            if(!isBidPoints){
-                $('#edit-student-data #error-bid-points').removeClass('d-none');
-                 return;
-            }
-            else{
-                $('#edit-student-data #error-bid-points').addClass('d-none');
-            }
-            if(!isYearOfJoining){
-                $('#edit-student-data #error-year-of-joining').removeClass('d-none');
-                 return;
-            }
-            else{
-                $('#edit-student-data #error-year-of-joining').addClass('d-none');
-            }
-            if(!isPreviousElectiveCredits){
-                $('#edit-student-data #error-previous-elective-credits').removeClass('d-none');
-                 return;
-            }
-            else{
-                $('#edit-student-data #error-previous-elective-credits').addClass('d-none');
-            }
-           
-           
-            if(bidPoints == ''){
-                $('#edit-student-data #error-bid-points').removeClass('d-none');
-                 return;
-            }
-            else{
-                $('#edit-student-data #error-bid-points').addClass('d-none');
-            }
-            if(yearOfJoining == ''){
-                $('#edit-student-data #error-year-of-joining').removeClass('d-none');
-                return;
-            }else{
-                $('#edit-student-data #error-year-of-joining').addClass('d-none');
-            }
-            if(previousElectiveCredits == ''){
-                $('#edit-student-data #error-previous-elective-credits').removeClass('d-none');
-            }
-            else{
-                $('#edit-student-data #error-previous-elective-credits').addClass('d-none');
-            }
             
             let ApiObj = {
                 type:'POST',
@@ -536,9 +492,9 @@ errorElement.addClass('d-none');
                 ajaxApi(ApiObj).then(result => {
                     createToastMessage(result.description);
                 }).catch(error => {
-                    showError(JSON.stringify(error.responseJSON))
+                    createToastError(JSON.stringify(error.responseJSON.description));
                 })
-            
+            }
     })
     $('#student-data-table').on('click','.delete-student-data',function(){
        let studentDataId = $(this).attr('data-id');
@@ -554,14 +510,14 @@ errorElement.addClass('d-none');
             ajaxApi(ApiObj).then(result =>{
                 showSuccess(result)
             }).catch(error =>{
-                showError(JSON.stringify(error.responseJSON))
+                createToastError(JSON.stringify(error.responseJSON.description));
             })
 
         })
 
         
 $('#edit-student-data').on('click', '.modal-close', function() {
-        $(this).closest('.modal-content').find(`span[id^='error']`).addClass('d-none');
+        $(this).closest('.modal-content').find(`.is-in-valid`).addClass('d-none');
     });
 
 });

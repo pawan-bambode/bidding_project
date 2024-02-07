@@ -27,10 +27,7 @@
                 <div>
 
                 </div>
-                <div>
-                    <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                            type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
-                </div>
+            
             </div>
 
             <table class="table custom_row table-bordered mt-4 custom-table" id="bonus-points-table">
@@ -72,8 +69,10 @@
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
+                <div class="row empty">
                 <label class="form-label mb-2" for="bonus-bid-points-input">Bonus Bid Points:</label>
-                <input class="form-control bonus-bid-points-input" id="bonus-bid-points-input">
+                <input class="form-control bonus-bid-points-input is-empty is-number" id="bonus-bid-points-input" autocomplete="off">
+            </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -91,11 +90,16 @@
               <button class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-            <label class="mb-2 disabled" for="round-name">Round Name:</label>
+            <div class="row empty">
             <input type="hidden" id="bonus-id">
-            <input class="form-control" type="text" id="round-name">
-            <label class="mb-2" for="bonus-points">Bonus Points:</label>
-            <input class="form-control" type="text" id="bonus-points">     
+            <label class="mb-2 disabled" for="round-name">Round Name:</label>
+            <input class="form-control is-empty" type="text" id="round-name" autocomplete="off">
+            </div>
+            <div class="row empty">
+                <label class="mb-2" for="bonus-points">Bonus Points:</label>
+                <input class="form-control is-empty is-number" type="text" id="bonus-points" autocomplete="off">  
+            </div>
+               
           </div>
           <div class="modal-footer">
               <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -127,9 +131,9 @@
                 datatype: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
-                showSuccess(result);
+                createToastMessage(result.description);
             }).catch(error => {
-                showError(JSON.stringify(error.responseJSON))
+                createToastError(JSON.stringify(error.responseJSON.description));
             })
         });
 
@@ -145,9 +149,9 @@
                 datatype: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
-                showSuccess(result);
+                createToastMessage(result.description);
             }).catch(error => {
-                showError(JSON.stringify(error.responseJSON))
+                createToastError(JSON.stringify(error.responseJSON.description));
             })
         });
         
@@ -172,6 +176,13 @@
             points_to_increase_after_demand: bonusPoints
         };
 
+        let isValidInput = isModalFieldEmpty('#edit-bonus-points .modal-body');  
+        
+
+        if(isValidInput){
+
+        
+
         let ApiObj = {
             type: 'POST',
             url: '/admin/bonus-points/update',
@@ -183,13 +194,14 @@
 
         ajaxApi(ApiObj)
             .then(result => {
-                showSuccess(result);
+                createToastMessage(result.description);
             })
             .catch(error => {
-                showError(JSON.stringify(error.responseJSON));
+                createToastError(JSON.stringify(error.responseJSON.description));
             });
+        }
       });
-
+    
       
     })
 </script>

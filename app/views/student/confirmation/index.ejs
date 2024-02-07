@@ -176,7 +176,7 @@ $(document).ready(function() {
                 updateConfirmationDetails(result);
             })
             .catch(error => {
-                showError(JSON.stringify(error.responseJSON));
+                createToastError(JSON.stringify(error.responseJSON.description));
             });
     });
   
@@ -216,7 +216,7 @@ $(document).ready(function() {
         ajaxApi(ApiObj)
             .then(result => {})
             .catch(error => {
-                showError(JSON.stringify(error.responseJSON));
+                createToastError(JSON.stringify(error.responseJSON.description));;
             });
 
         confirmUnConfirmRow($(this), 'confirm-courses-table', 'btn btn-danger unconfirm-courses', 'fa-close', 'unConfirm');

@@ -6,5 +6,6 @@ router.post('/bidding-rounds/create',biddingRounds.create);
 router.post('/bidding-rounds/delete',biddingRounds.delete);
 router.post('/bidding-rounds/update',biddingRounds.update);
 router.post('/bidding-rounds/search',biddingRounds.search);
+router.post('/biddingRounds/round-wise-mapping', biddingRounds.roundWiseMapping)
 
 module.exports = router;

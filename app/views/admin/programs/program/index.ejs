@@ -1,11 +1,6 @@
 <%- include('../../partials/head') %>
 <%- include('../../partials/leftSidebar.ejs') %>
 <%- include('../../partials/header.ejs') %>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 
 <div class="main-content">
     <div class="breadcrumbs-container">
@@ -58,12 +53,12 @@
             <tbody>
                 <% let count = 1 %>
                 <%for(let program of programList) {%>
-                    <tr>
+                    <tr data-id="<%-program.id %>" data-program-name="<%-program.program_name %>" data-program-abbr="<%- program.abbr %>" data-program-code="<%-program.program_code %>">
                         <td><%- count++ %></td>
                         <td><%-program.program_code %></td>
                         <td><%-program.program_name %></td>
                         <td><%-program.abbr %></td>
-                        <td><a class="edit-program" data-bs-target="#edit_program" data-bs-toggle="modal" data-id="<%-program.id %>" data-program-name="<%-program.program_name %>" data-program-abbr="<%- program.abbr %>"><i class="fa fa-edit"></i></a>
+                        <td><a class="edit-program" data-bs-target="#edit_program" data-bs-toggle="modal"><i class="fa fa-edit"></i></a>
                             <a class="delete-program" data-id="<%-program.id %>"><i class="fa-solid fa-trash text-danger"></i></a>
                         </td>
                     </tr>
@@ -95,7 +90,7 @@
               <div class="col-md-3 border-end custm-padd-for-imp-program custm-padd pe-2 ps-2" >
              
                 <label class="mb-2" for="select-program" >Select Program :</label>
-                    <input type="search" class="form-control p3 mb-3 searchItemProgramCustom" placeholder="Search Program" id="search-program">
+                    <input type="search" class="form-control p3 mb-3 searchItemProgramCustom" placeholder="Search Program" id="search-program" autocomplete="off">
                     <% for(let program of programListFromDbo) { %> 
                     <div class="border p-3 mb-3 rounded program-div" data-program-name="<%- program.program_name%>"  data-program-abbr="<%- program.abbr %>" data-program-id="<%-program.program_id %>" data-program-code ="<%-program.program_name.split('-')[1] %>" ><%-program.program_name %></div>
                     <% }%>
@@ -127,15 +122,17 @@
                 <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              <label class="mb-2" for="program_name">Program Name :</label>
+            <div class="empty">
               <input type="hidden" id="program_id">
-              <input class="form-control" type="text" id="program_name" autocomplete="off">
-              <span  class="text-danger d-none" id="error-program-name">Program Name cannot be blank! </span>
-              <div class="row">
+              <label class="mb-2" for="program_name">Program Name :</label>
+              <input class="form-control is-empty" type="text" id="program_name" autocomplete="off">
+              <span  class="text-danger d-none is-in-valid"></span>
+              </div>
+              <div class="row empty">
                 <div class="col-md-6">
                     <label class="mb-2" for="program_abbr">Program Abbreviation :</label>
-                    <input class="form-control" type="text" id="program_abbr">  
-                    <span  class="text-danger d-none" id="error-program-abbr">Program Abbreviation cannot be blank! </span>
+                    <input class="form-control is-empty" type="text" id="program_abbr">  
+                    <span  class="text-danger d-none is-in-valid"></span>
                 </div>
               </div>   
             </div>
@@ -160,8 +157,8 @@
 
         $('#searchkeyword').on('input',function(){
 
-        let searchValue = $(this).val();
-        let showEntry = $('#changeEntry').val().trim();
+        let searchValue = $(this).val().trim();
+        let showEntry = $('#changeEntry').val();
        
             $.ajax({
             type:'POST',
@@ -220,7 +217,7 @@ $(".pagination-search").on('click','.pagination li',function(){
             AjaxtTable(result.data)
             $('#searchkeyword').val('');
             }).catch(error =>{
-            showError(JSON.stringify(error.responseJSON));
+           createToastError(JSON.stringify(error.responseJSON.description));;
             })    
         })
 
@@ -315,7 +312,7 @@ $(".pagination-search").on('click','.pagination li',function(){
             ajaxApi(ApiObj).then(result => {
                 createToastMessage(result.description);
             }).catch(error => {
-                showError(JSON.stringify(error.responseJSON))
+               createToastError(JSON.stringify(error.responseJSON.description));
             })
         }
         })
@@ -335,11 +332,11 @@ $(".pagination-search").on('click','.pagination li',function(){
         })
 
         $('#program-table').on('click','.edit-program',function(){
-            let program_name = $(this).data('program-name');
-            let program_code = $(this).data('program-code');
-            let program_abbr = $(this).data('program-abbr');
-            let program_id   = $(this).data('id');
-            
+            let program_name = $(this).closest('tr').data('program-name');
+            let program_code = $(this).closest('tr').data('program-code');
+            let program_abbr = $(this).closest('tr').data('program-abbr');
+            let program_id   = $(this).closest('tr').data('id');
+
             $('#program_name').val(program_name);
             $('#program_code').val(program_code);
             $('#program_abbr').val(program_abbr);
@@ -355,22 +352,11 @@ $(".pagination-search").on('click','.pagination li',function(){
             let program_abbr = $('#program_abbr').val().replace(/\s+/g, ' ').trim();
             let program_id   = $('#program_id').val();
 
+            let isRequiredFieldsEmpty = isModalFieldEmpty('#edit_program .modal-body');
+
             
-            if(program_name == ''){
-                $('#error-program-name').removeClass('d-none');
-                return;
-            }
-            else{
-                $('#error-program-name').addClass('d-none');
-            }
-            if(program_abbr == ''){
-              $('#error-program-abbr').removeClass('d-none');
-              return;
-            }
-            else {
-                $('#error-program-abbr').addClass('d-none');
-            }
-            
+            if(isRequiredFieldsEmpty){
+         
             edit_program.program_name = program_name;
             edit_program.id = program_id;
             edit_program.program_code = program_code;
@@ -386,8 +372,10 @@ $(".pagination-search").on('click','.pagination li',function(){
                 ajaxApi(ApiObj).then(result => {
                     createToastMessage(result.description);
                 }).catch(error => {
-                    showError(JSON.stringify(error.responseJSON))
+                    createToastError(JSON.stringify(error.responseJSON.description));
+                   createToastError(JSON.stringify(error.responseJSON.description));
                 })
+            }
         });
         $(document).on('click','.delete-program',function(){
             let deleteProgramRow = $(this).data('id');
@@ -405,13 +393,13 @@ $(".pagination-search").on('click','.pagination li',function(){
             ajaxApi(ApiObj).then(result =>{
                 createToastMessage(result.description);
             }).catch(error =>{
-                showError(JSON.stringify(error.responseJSON));
+               createToastError(JSON.stringify(error.responseJSON.description));;
             })
 
         })
 
         $('#edit_program').on('click', '.modal-close', function() {
-           $(this).closest('.modal-content').find(`span[id^='error']`).addClass('d-none');
+           $(this).closest('.modal-content').find(`.is-in-valid`).addClass('d-none');
         });
 });
 function AjaxtTable(programList) {
@@ -425,13 +413,13 @@ function AjaxtTable(programList) {
                 let count = 1;
                 for (program of programList) {
                     AjaxTable +=
-                        `<tr>
+                        `<tr data-id="${program.id}" data-program-code="${program.program_code}" data-program-name="${program.program_name}" data-program-abbr = "${program.abbr}">
                             <td>${count++}</td>
                             <td>${program.program_code}</td>
                             <td>${program.program_name}</td>
                             <td>${program.abbr}</td>
                             <td>
-                                <a class="edit-program-data" data-bs-target="#edit_program" data-bs-toggle="modal" data-id="${program.id}" data-program-code="${program.program_code}" data-program-name="${program.program_name}" data-program-abbr = "${program.abbr}">
+                                <a class="edit-program" data-bs-target="#edit_program" data-bs-toggle="modal" >
                             <i class="fa fa-edit"></i></a>
                             <a class="delete-program" data-id="${program.id}"><i class="fa-solid fa-trash text-danger"></i></a>
                             </td>

@@ -168,7 +168,7 @@
             $('#searchkeyword').val('');
                
             }).catch(error =>{
-            showError(JSON.stringify(error.responseJSON))
+                createToastError(JSON.stringify(error.responseJSON.description));
             })    
         })
 
@@ -183,7 +183,7 @@
         ajaxApi(ApiObj).then(result=>{
             createToastMessage(result.description);
         }).catch(error =>{
-            showError(JSON.stringify(error.responseJSON))
+            createToastError(JSON.stringify(error.responseJSON.description));
         })
      })
     })

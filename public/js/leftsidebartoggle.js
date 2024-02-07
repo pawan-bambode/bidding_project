@@ -200,6 +200,7 @@ function paginationData(rowCount, totalCount) {
 }
 
 function IsNumber(inputString) {
+
     let isNumber = false;
     for (let i = 0; i < inputString.length; i++) {
         const charCode = inputString.charCodeAt(i);
@@ -297,6 +298,37 @@ function createToastMessage(message) {
         }
     };
 }
+function createToastError(message) {
+   
+    let errorMessage = message.replace(/^"(.*)"$/, '$1');
+    const errorAlert = `
+        <div class="toast-message alert alert-danger bottom-0 end-3">
+            <div class="header d-flex justify-content-between align-item-center">
+                <h4 class="d-flex align-item-center"><i class="fa-solid fa-circle-exclamation me-3"></i> <p class="title">${errorMessage}</p></h4>
+            </i>
+            </div>
+            <div class="body">
+                <ul>
+                   
+                </ul>
+            </div>
+        </div>`;
+
+    document.body.insertAdjacentHTML('beforeend', errorAlert);
+
+    setTimeout(() => {
+        $('.toast-message').remove();
+        $('#add-bidding-session').modal('hide');
+        $('#sidebar').removeClass('d-none');
+        location.reload();
+    },3000);
+    
+    return {
+        remove: function() {
+            $('.toast-message').remove();
+        }
+    };
+}
 
 function createToast(message, className, contentColorClassName) {
     const toastDiv = document.createElement('div');
@@ -349,6 +381,8 @@ function formatDate(todayDateVal, flag, noOfMonthBeforeActivity) {
     $(targetInput).attr('min', minDate);
     $('#add-bidding-session #end-date').attr('min', minDate);
     $('#add-bidding-session #start-date').attr('min', minDate);
+    $('#edit-bidding-session-modal #start-date').attr('min', minDate);
+    $('#edit-bidding-session-modal #end-date').attr('min',minDate);
 }
 
 function isSessionDuplicate(sessionVal) {
@@ -449,26 +483,151 @@ function calculateDeleteFrequency(arr) {
     return areaFrequency;
 }
 
-$('#searchkeyword-button').on('click', function(){
+$('#searchkeyword-button').on('click', function () {
     $('#searchkeyword').focus();
-  })
+});
 
-  function validateBiddingSessionName(modalName) {
-    let childrenCount = $(`#${modalName}`).children();
-
-    childrenCount.each(function() {
-        let inputValue = $(this).find('input').val();
-        console.log('values of inputValue',inputValue);
-    });
+function isModalFieldEmpty(modalName) {
+    let isValid = true;
     
-    // if (biddingName == '') {
-    //     $('.error-bidding-session-name').removeClass('d-none');
-    //     return false;
-    // } else {
-    //     $('.error-bidding-session-name').addClass('d-none');
-    //     return true;
-    // }
+    $(`${modalName}`).find('.empty').each(function () {
+        
+        let inputValue;
+        let rowDiv = $(this).hasClass('row');
+      
+        if (rowDiv) {
+            $(this).children().each(function () {
+                let inputElement = $(this).find('.is-empty');
+                
+                if (inputElement.prop('nodeName') === 'INPUT') {
+                    inputValue = inputElement.val();
+                    if (inputValue == '' || inputValue == undefined) {
+                    
+                        let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
+                        $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} is Empty!`);
+                        $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
+                        
+                        isValid = false;
+                        return false;
+                    } else {
+                        $(this).find('.is-empty ~ span.is-in-valid').html('');
+                        $(this).find('.is-empty ~ span.is-in-valid').addClass('d-none');
+                       
+
+                        if ($(this).find('input').hasClass('is-number')) {
+                            let inputValue = $(this).find('.is-number').val();
+                            let isNumbers = isNumber(inputValue);
+                           
+                            if (isNumbers) {
+                                let message = (parseFloat(inputValue) < 0);
+
+                                if (message) {
+                                    let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
+                                    $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Not Allow Negative Number!`);
+                                    $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
+                                    isValid = false;
+                                    return false;
+                                }
+                            }
+
+                            if (!isNumber(inputValue)) {
+                                let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
+                                $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} is Allow Only Number!`);
+                                $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
+                                isValid = false;
+                                return false;
+                            } else {
+                                $(this).find('.is-empty ~ span.is-in-valid').html('');
+                                $(this).find('.is-empty ~ span.is-in-valid').addClass('d-none');
+                            }
+                        }
+                    }
+                } else {
+                    
+                    if(inputElement.parent('div').hasClass('d-none')){
+                      return true;
+                    }
+                   }
+            });
+        } else {
+            let inputElement = $(this).find('.is-empty');
+            inputValue = inputElement.val();
+            if (inputValue == '' || inputValue == undefined) {
+                let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
+                $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} is Empty!`);
+                $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
+                isValid = false;
+                return false;
+            } else {
+                $(this).find('.is-empty ~ span.is-in-valid').html('');
+                $(this).find('.is-empty ~ span.is-in-valid').addClass('d-none');
+
+                if ($(this).find('input').hasClass('is-number')) {
+                    let inputValue = $(this).find('.is-number').val();
+                    let isNumbers = isNumber(inputValue);
+
+                    if (isNumbers) {
+                        let message = (parseFloat(inputValue) < 0);
+
+                        if (message) {
+                            let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
+                            $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Not Allow Negative Number!`);
+                            $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
+                            isValid = false;
+                            return false;
+                        }
+                    }
+
+                    if (!isNumber(inputValue)) {
+                        let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
+                        $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} is Allow Only Number!`);
+                        $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
+                        isValid = false;
+                        return false;
+                    } else {
+                        $(this).find('.is-empty ~ span.is-in-valid').html('');
+                        $(this).find('.is-empty ~ span.is-in-valid').addClass('d-none');
+                    }
+                }
+            }
+        }
+    });
+
+    return isValid;
 }
+
+
+function isNumber(value) {
+    return !isNaN(parseFloat(value)) && isFinite(value);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
 
 
 

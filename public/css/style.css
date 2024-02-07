@@ -40,6 +40,7 @@ body {
     left: 0;
     top: 0;
     transition: all 0.5s ease-in-out;
+    z-index: 1001;
 }
 
 .left-400 {
@@ -894,12 +895,10 @@ option:hover,
     max-height: 400px;
 }
 
-/*!-- custum dialoag css  --> */
-
 
 #edit-bidding-session-modal .select2-dropdown{
- min-height: 200px;
- max-height: 200px;
+ min-height: 100px;
+ max-height: 400px;
 }
 .search-button-timetable{
     height:38px;
@@ -1507,7 +1506,7 @@ ul.round-wises .spacer {
     padding: 1em;
     display: flex;
     flex-direction: column;
-    z-index: 1005;
+    z-index: 10005;
 }
  
 

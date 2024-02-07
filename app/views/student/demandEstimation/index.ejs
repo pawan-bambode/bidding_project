@@ -780,14 +780,9 @@ $(document).ready(function() {
                     
                     let areaCountNumber = Object.keys(areaCount).filter(key => [key].totalCredits >= 6);
                     
-                    console.log('values of areaCountNumber', areaCountNumber);
-
-                    console.log('values of areaCount -------->', areaFrequencyCount);
-
                    if((areaFrequencyCount[areaName] != undefined? areaFrequencyCount[areaName].totalCredits:0) < minCreditsPerArea){
                     let areaCount = Number($('#areas-count').text());
-                    console.log('values of areaCount -------->', areaCount);
-                    console.log('values of concentration', concentrationSettingAreaCount);
+                    
                     if(areaCountNumber < concentrationSettingAreaCount){
                         $('#areas-count').text(areaCount+1);
                     }    
@@ -873,7 +868,7 @@ $(document).ready(function() {
                 paginationData(showEntry,result.length)
                 ajaxTable(result.data)
                 }).catch(error =>{
-                    showError(JSON.stringify(error.responseJSON))
+                    createToastError(JSON.stringify(error.responseJSON.description));
                 })    
             })
     
@@ -901,7 +896,7 @@ $(document).ready(function() {
         ajaxApi(ApiObj).then(result => {
             showSuccess(result)
         }).catch(error =>{
-            showError(JSON.stringify(error.responseJSON));
+            createToastError(JSON.stringify(error.responseJSON.description));
         })
         });
 

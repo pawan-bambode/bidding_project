@@ -3,29 +3,27 @@
 <%- include('../partials/leftSidebar.ejs') %>
 <%- include('../partials/header.ejs') %>
 
-
 <div class="main-content">
     <div class="breadcrumbs-container">
         <ul class="breadcrumb">
             <% if (breadcrumbs) { %>
                 <% for (let crumbs of breadcrumbs) { %>
-                    <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
-                     %>
+                    <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name; %>
                     <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
                 <% } %>
             <% } %>
         </ul>
     </div>
 
-    <div class="card card-custom-border-curv" >
+    <div class="card card-custom-border-curv">
         <div class="card-header-custom d-flex justify-content-between p-2">
             <h4 class="ms-2">Concentration Settings</h4>
-            <button type="button" class="btn btn-danger ms-auto me-3"  id="refresh-concentration-settings">
+            <button type="button" class="btn btn-danger ms-auto me-3" id="refresh-concentration-settings">
                 <i class="fa-solid fa-rotate p-1"></i>Refresh
-            </button> 
+            </button>
         </div>
 
-        <div class="card-body table-responsive" >
+        <div class="card-body table-responsive">
             <div class="d-flex justify-content-between">
                 <div>
                     <label>Show Entries</label>
@@ -46,49 +44,49 @@
             </div>
             <table class="table custom_row table-bordered mt-4 custom-table" id="concentration-settings-table">
                 <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Concentration</th>
-                    <th>Total Elective Credits</th>
-                    <th>Maximum Credits per Area</th>
-                    <th>No. of Areas to Cover</th>
-                    <th>Minimum Credits per Area</th>
-                    <th>Primary Area</th>
-                    <th>Minimum Credits in Primary Area</th>
-                    <th>Actions</th>
-                  </tr>
+                    <tr>
+                        <th>#</th>
+                        <th>Concentration</th>
+                        <th>Total Elective Credits</th>
+                        <th>Maximum Credits per Area</th>
+                        <th>No. of Areas to Cover</th>
+                        <th>Minimum Credits per Area</th>
+                        <th>Primary Area</th>
+                        <th>Minimum Credits in Primary Area</th>
+                        <th>Actions</th>
+                    </tr>
                 </thead>
                 <tbody>
-                  <% let count = 1 %>
-                  <% for(let concentrationSetting of concentrationSettingList) { %>
-                    <tr>
-                      <td><%- count++ %></td>
-                      <td class="concentration-name"><%- concentrationSetting.concentration_name %></td>
-                      <td><%- concentrationSetting.total_elective_credits%></td>
-                      <td><%- concentrationSetting.max_credits_per_area %></td>
-                      <td><%- concentrationSetting.no_of_areas_to_cover %></td>
-                      <td><%- concentrationSetting.min_credits_per_area %></td>
-                      <td><%- concentrationSetting.primary_area %></td>
-                      <td><%- concentrationSetting.min_credits_in_primary_area %></td>
-                      <td>
-                        <a class="edit-concentration-settings" data-concentration-setting-id="<%- concentrationSetting.id %>"    data-concen-settings-total-ele-credits = "<%- concentrationSetting.total_elective_credits %>" 
-                            data-concen-settings-max-cre-per-area = "<%- concentrationSetting.max_credits_per_area %>"
-                            data-concen-settings-no-of-area-to-cover = "<%- concentrationSetting.no_of_areas_to_cover %>"
-                            data-concen-settings-min-credits-per-area = "<%- concentrationSetting.min_credits_per_area %>"
-                            data-concen-settings-min-credits-in-primary-area="<%- concentrationSetting.min_credits_in_primary_area %>"   
-                            data-bs-toggle="modal" data-bs-target="#edit-concentration-setting-modal"><i class="fa fa-edit"></i></a>
-                        <a class="text-danger delete-concentration-settings" data-concentration-setting-id="<%- concentrationSetting.id %>"><i class="fas fa-trash"></i></a>
-                      </td>
-                      </td>
-                    </tr>
-                    
-                  <%}%>
+                    <% let count = 1 %>
+                    <% for (let concentrationSetting of concentrationSettingList) { %>
+                        <tr data-concentration-setting-id="<%- concentrationSetting.id %>"
+                            data-concen-settings-total-ele-credits="<%- concentrationSetting.total_elective_credits %>"
+                            data-concen-settings-max-cre-per-area="<%- concentrationSetting.max_credits_per_area %>"
+                            data-concen-settings-no-of-area-to-cover="<%- concentrationSetting.no_of_areas_to_cover %>"
+                            data-concen-settings-min-credits-per-area="<%- concentrationSetting.min_credits_per_area %>"
+                            data-concentration-name = "<%- concentrationSetting.concentration_name %>"
+                            data-area-id = "<%- concentrationSetting.area_Id %>"
+                            data-concen-settings-min-credits-in-primary-area="<%- concentrationSetting.min_credits_in_primary_area %>">
+
+                            <td><%- count++ %></td>
+                            <td class="concentration-name"><%- concentrationSetting.concentration_name %></td>
+                            <td><%- concentrationSetting.total_elective_credits%></td>
+                            <td><%- concentrationSetting.max_credits_per_area %></td>
+                            <td><%- concentrationSetting.no_of_areas_to_cover %></td>
+                            <td><%- concentrationSetting.min_credits_per_area %></td>
+                            <td><%- concentrationSetting.primary_area %></td>
+                            <td><%- concentrationSetting.min_credits_in_primary_area %></td>
+                            <td>
+                                <a class="edit-concentration-settings" data-bs-toggle="modal" data-bs-target="#edit-concentration-setting-modal"><i class="fa fa-edit"></i></a>
+                                <a class="text-danger delete-concentration-settings" data-concentration-setting-id="<%- concentrationSetting.id %>"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    <% } %>
                 </tbody>
-              </table>
-              <div class="d-flex justify-content-between">
+            </table>
+            <div class="d-flex justify-content-between">
                 <div>
-                    <p>Total entries :&nbsp;<span id="page-no"></span>
-                    </p>
+                    <p>Total entries :&nbsp;<span id="page-no"></span></p>
                 </div>
                 <div>
                     <p id="pagination" class="pagination-search"></p>
@@ -96,109 +94,113 @@
             </div>
         </div>
     </div>
-    
 
     <div class="modal" id="edit-concentration-setting-modal" data-bs-backdrop="static">
-      <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title">Update Concentration Settings</h5>
-                  <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
-              </div>
-              <div class="modal-body">
-                  <div class="row">
-                      <div class="col-md-6">
-                          <label class="mb-2 form-label" for="concentration-name">Concentration Name :</label>
-                          <input type="hidden" id="course-id">
-                          <input class="form-control" type="text" id="concentration-name" disabled>
-                      </div>
-  
-                      <div class="col-md-6">
-                          <label class="mb-2 form-label" for="total-elective-credits">Total Elective Credits :</label>
-                          <input class="form-control" type="text" id="total-elective-credits">
-                          <span id="error-total-credits" class="text-danger d-none">Total Elective Credits Allow Only Numbers!</span>
-                      </div>
-                  </div>
-  
-                  <div class="row">
-                      <div class="col-md-6">
-                          <label class="form-label mb-2" for="max-credits-per-area">Maximum Credits Per Area :</label>
-                          <input class="form-control" type="text" id="max-credits-per-area">
-                          <span id="error-max-demand-criteria" class="text-danger d-none">Maximum Credits Per Area Allow Only Numbers!</span>
-                      </div>
-                      <div class="col-md-6">
-                          <label class="mb-2 form-label" for="number-of-areas-to-cover">Number of Areas to Cover :</label>
-                          <input class="form-control" type="text" id="number-of-areas-to-cover">
-                          <span id="error-number-of-areas" class="text-danger d-none">Number of Areas to Cover Allow Only Numbers!</span>
-                      </div>
-                  </div>
-  
-                  <div class="row">
-                      <div class="col-md-6">
-                          <label class="form-label mb-2" for="min-credits-per-area">Minimum Credits Per Area :</label>
-                          <input class="form-control" type="text" id="min-credits-per-area">
-                          <span id="error-min-credit-per-area" class="text-danger d-none">Minimum Credits Per Area Allow Only Numbers!</span>
-                      </div>
-                      <div class="col-md-6" id="primary-area-form">
-                        <label class="mb-2 form-label" for="primary-area">Primary Area :</label>
-                        <select class="form-control form-select select2 custom-select" id="primary-area">
-                            <option value="" disabled selected>--Select Primary Area--</option>
-                            <% for(let area of areaList){ %>
-                                <option value="<%- area.id %>"><%- area.area_name %></option>
-                            <% }%>
-                        </select>
-                        <span id="error-primary-area" class="text-danger d-none">Please Select Primary Area!</span>
-                    </div>
-                     
-                  </div>
-                  <div class="col-md-6" id="primary-area-minimum">
-                    <label class="form-label mb-2" for="min-credits-in-primary-area">Minimum Credits in Primary Area :</label>
-                    <input class="form-control" type="text" id="min-credits-in-primary-area">
-                    <span id="error-min-demand-criteria" class="text-danger d-none">Minimum Credits in Primary Area Allow Only Numbers!</span>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Concentration Settings</h5>
+                    <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
                 </div>
-                 
-              </div>
-              <div class="modal-footer">
-                  <button class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
-                  <button class="btn btn-primary" id="update-concentration-settings">Update</button>
-              </div>
-          </div>
-      </div>
-  </div>
-  
-  <%- include('../partials/footer.ejs') %>          
+                <div class="modal-body">
+                    <div class="row empty">
+                        <div class="col-md-6">
+                            <label class="mb-2 form-label" for="concentration-name">Concentration Name :</label>
+                            <input type="hidden" id="course-id">
+                            <input class="form-control is-empty" type="text" id="concentration-name" autocomplete="off" disabled>
+                            <span class="text-danger d-none is-in-valid"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="mb-2 form-label" for="total-elective-credits">Total Elective Credits :</label>
+                            <input class="form-control is-empty is-number" type="text" id="total-elective-credits" autocomplete="off">
+                            <span class="text-danger d-none is-in-valid"></span>
+                        </div>
+                    </div>
+
+                    <div class="row empty">
+                        <div class="col-md-6">
+                            <label class="form-label mb-2" for="max-credits-per-area">Maximum Credits Per Area :</label>
+                            <input class="form-control is-empty is-number" type="text" id="max-credits-per-area" autocomplete="off">
+                            <span class="text-danger d-none is-in-valid"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="mb-2 form-label" for="number-of-areas-to-cover">Number of Areas to Cover :</label>
+                            <input class="form-control is-empty is-number" type="text" id="number-of-areas-to-cover" autocomplete="off">
+                            <span class="text-danger d-none is-in-valid"></span>
+                        </div>
+                    </div>
+
+                    <div class="row empty">
+                        <div class="col-md-6">
+                            <label class="form-label mb-2" for="min-credits-per-area">Minimum Credits Per Area :</label>
+                            <input class="form-control is-empty is-number" type="text" id="min-credits-per-area" autocomplete="off">
+                            <span class="text-danger d-none is-in-valid"></span>
+                        </div>
+                        <div class="col-md-6" id="primary-area-form">
+                            <label class="mb-2 form-label" for="primary-area">Primary Area :</label>
+                            <select class="form-control form-select select2 custom-select" id="primary-area">
+                                <option value="-1" disabled selected>--Select Primary Area--</option>
+                                <% for (let area of areaList) { %>
+                                    <option value="<%- area.id %>"><%- area.area_name %></option>
+                                <% } %>
+                            </select>
+                            <p id="error-primary-area" class="text-danger d-none is-in-valid">Please Select Primary Area!</p>
+                        </div>
+                    </div>
+
+                    <div class="row empty">
+                        <div class="col-md-6" id="primary-area-minimum">
+                            <label class="form-label mb-2" for="min-credits-in-primary-area">Minimum Credits in Primary Area :</label>
+                            <input class="form-control is-empty is-number" type="text" id="min-credits-in-primary-area" autocomplete="off">
+                            <span class="text-danger d-none is-in-valid"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" id="update-concentration-settings">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer.ejs') %> 
+
 <script>
-   $(document).ready(function(){
-    
-    let test = '<%- pageCount %>';
+    $(document).ready(function () {
+        $('.select2').select2();
+
+        let test = '<%- pageCount %>';
         let rowCount = $('#changeEntry').val();
         $('#page-no').html(test);
         paginationData(rowCount, parseInt(test));
 
         setActiveMenuItem(`<%- active %>`)
-        
-        $('#searchkeyword').on('input',function(){
+
+        $('#searchkeyword').on('input', function () {
 
             let concentrationSettingsValue = $(this).val().trim();
             let showEntry = $('#changeEntry').val();
 
-                $.ajax({
-                type:'POST',
-                url:'/admin/concentration-settings/search',
-                data:{
-                searchLetter:concentrationSettingsValue,
-                showEntry:showEntry
+            $.ajax({
+                type: 'POST',
+                url: '/admin/concentration-settings/search',
+                data: {
+                    searchLetter: concentrationSettingsValue,
+                    showEntry: showEntry
                 },
-                success:function(data){
-                paginationData(rowCount,data.length)
-                AjaxtTable(data.data);
-                $('#page-no').html(data.length);
+                success: function (data) {
+                    paginationData(rowCount, data.length)
+                    AjaxtTable(data.data);
+                    $('#page-no').html(data.length);
 
                 }
-                })
-         })       
+            })
+        })
 
-        $(".pagination-search").on('click','.pagination li',function(){
+        $(".pagination-search").on('click', '.pagination li', function () {
             let keyword = $("#searchkeyword").val();
             let showEntry = $('#changeEntry').val();
             let pageNo = $(this).attr('data-lp');
@@ -209,7 +211,7 @@
                 data: {
                     searchLetter: keyword,
                     pageNo: pageNo,
-                    showEntry:showEntry
+                    showEntry: showEntry
                 },
                 success: function (data) {
                     AjaxtTable(data.data);
@@ -217,233 +219,158 @@
             });
         });
 
-        $('#changeEntry').on('change',function(){
-        let showEntry = $(this).val();
-        let ApiObj = {
-            type:'POST',
-            url:'/admin/concentration-settings/showEntryConcentrationList',
-            data:{
-                showEntry:showEntry
-            },
-            datatype:'JSON'
+        $('#changeEntry').on('change', function () {
+            let showEntry = $(this).val();
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/concentration-settings/showEntryConcentrationList',
+                data: {
+                    showEntry: showEntry
+                },
+                datatype: 'JSON'
             }
-            ajaxApi(ApiObj).then(result=>{
-            paginationData(showEntry,result.length)
-            AjaxtTable(result.data);
-            $('#page-no').html(result.length);
-            $('#searchkeyword').val('');
-            }).catch(error =>{
-            showError(JSON.stringify(error.responseJSON));
-            })    
+            ajaxApi(ApiObj).then(result => {
+                paginationData(showEntry, result.length)
+                AjaxtTable(result.data);
+                $('#page-no').html(result.length);
+                $('#searchkeyword').val('');
+            }).catch(error => {
+                createToastError(JSON.stringify(error.responseJSON.description));
+            })
         })
 
-    $('#refresh-concentration-settings').on('click',function(){
+        $('#refresh-concentration-settings').on('click', function () {
 
-      let ApiObj = {
-        url:'/admin/concentration-settings/refresh',
-        type:'POST',
-        data:{},
-        dataType:'JSON'
-      }
-      ajaxApi(ApiObj).then(result =>{
-        createToastMessage(result.description);
-      }).catch(error =>{
-        showError(JSON.stringify(error.responseJSON));
-      })
-    })
-$('#concentration-settings-table').on('click','.delete-concentration-settings',function(){
-      let concentrationId = $(this).attr('data-concentration-setting-id');
-  
-      let ApiObj = {
-                url:'/admin/concentration-settings/delete',
-                type:'POST',
-                data:{
-                   id:concentrationId
-                },
-                dataType:'JSON'
+            let ApiObj = {
+                url: '/admin/concentration-settings/refresh',
+                type: 'POST',
+                data: {},
+                dataType: 'JSON'
             }
-            ajaxApi(ApiObj).then(result =>{
+            ajaxApi(ApiObj).then(result => {
                 createToastMessage(result.description);
-            }).catch(error =>{
-                showError(JSON.stringify(error.responseJSON))
+            }).catch(error => {
+                createToastError(JSON.stringify(error.responseJSON.description));
+            })
+        })
+        $('#concentration-settings-table').on('click', '.delete-concentration-settings', function () {
+            let concentrationId = $(this).attr('data-concentration-setting-id');
+
+            let ApiObj = {
+                url: '/admin/concentration-settings/delete',
+                type: 'POST',
+                data: {
+                    id: concentrationId
+                },
+                dataType: 'JSON'
+            }
+            ajaxApi(ApiObj).then(result => {
+                createToastMessage(result.description);
+            }).catch(error => {
+                createToastError(JSON.stringify(error.responseJSON.description));
             })
 
         })
 
 
-     $('#concentration-settings-table').on('click','.edit-concentration-settings',function(){
-      let editConcentration = $(this).closest('tr').find('td.concentration-name').text().trim();
-      let totalEleCredits   = $(this).attr('data-concen-settings-total-ele-credits');
-      let maxCreditsPerArea   = $(this).attr('data-concen-settings-max-cre-per-area');
-      let noOfAreaToCover   = $(this).attr('data-concen-settings-no-of-area-to-cover');
-      let minCreditsPerArea   = $(this).attr('data-concen-settings-min-credits-per-area');
-      let minCreditsInPrimaryArea   = $(this).attr('data-concen-settings-min-credits-in-primary-area');
+        $('#concentration-settings-table').on('click', '.edit-concentration-settings', function () {
+            let editConcentration = $(this).closest('tr').data('concentration-name');
+            let totalEleCredits = $(this).closest('tr').data('concen-settings-total-ele-credits');
+            let maxCreditsPerArea = $(this).closest('tr').data('concen-settings-max-cre-per-area');
+            let noOfAreaToCover = $(this).closest('tr').data('concen-settings-no-of-area-to-cover');
+            let minCreditsPerArea = $(this).closest('tr').data('concen-settings-min-credits-per-area');
+            let minCreditsInPrimaryArea = $(this).closest('tr').data('concen-settings-min-credits-in-primary-area');
+            let concentrationId = $(this).closest('tr').data('concentration-id');
+            let concentrationSettingsId = $(this).closest('tr').data('concentration-setting-id');
+            let areaId = $(this).closest('tr').data('area-id');
 
-      if(editConcentration.toLowerCase() == 'general management'){
-       $('#primary-area-minimum').addClass('d-none');
-       $('#primary-area-form').addClass('d-none');
-      
-      }
-      else{
-         $('#primary-area-minimum').removeClass('d-none');
-         $('#primary-area-form').removeClass('d-none');
-         
-      }
-      $('#edit-concentration-setting-modal #concentration-name').val(editConcentration);
-      $('#edit-concentration-setting-modal #total-elective-credits').val(totalEleCredits);
-      $('#edit-concentration-setting-modal #max-credits-per-area').val(maxCreditsPerArea);
-      $('#edit-concentration-setting-modal #number-of-areas-to-cover').val(noOfAreaToCover);
-      $('#edit-concentration-setting-modal #min-credits-per-area').val(minCreditsPerArea);
-      $('#edit-concentration-setting-modal #min-credits-in-primary-area').val(minCreditsInPrimaryArea);
+            if (editConcentration.toLowerCase() == 'general management') {
+                $('#primary-area-minimum').addClass('d-none');
+                $('#primary-area-form').addClass('d-none');
 
-      let concentrationSettingsId = $(this).attr('data-concentration-setting-id');
-      $('#edit-concentration-setting-modal #concentration-name').attr('data-id',concentrationSettingsId);
-     })
+            } else {
+                $('#primary-area-minimum').removeClass('d-none');
+                $('#primary-area-form').removeClass('d-none');
 
-$('#edit-concentration-setting-modal').on('click', '#update-concentration-settings', function(){
-  let id = $('#concentration-name').attr('data-id');
-  let concentrationName = $('#concentration-name').val();
-  let minCreditsInPrimaryArea = $('#min-credits-in-primary-area').val();
-  let maxCreditsPerArea = $('#max-credits-per-area').val();
-  let minCreditsPerArea = $('#min-credits-per-area').val();
-  let totalElectiveCredits = $('#total-elective-credits').val();
-  let numberOfAreasToCover = $('#number-of-areas-to-cover').val();
-  let primaryAreaOption =  $('#primary-area option:selected').text() === '--Select Primary Area--' ? null : $('#primary-area option:selected').text();
+            }
+           
+            $('#edit-concentration-setting-modal #concentration-name').val(editConcentration);
+            $('#edit-concentration-setting-modal #total-elective-credits').val(totalEleCredits);
+            $('#edit-concentration-setting-modal #max-credits-per-area').val(maxCreditsPerArea);
+            $('#edit-concentration-setting-modal #number-of-areas-to-cover').val(noOfAreaToCover);
+            $('#edit-concentration-setting-modal #min-credits-per-area').val(minCreditsPerArea);
+            $('#edit-concentration-setting-modal #min-credits-in-primary-area').val(minCreditsInPrimaryArea);
+            $("#primary-area").val(areaId).trigger('change');
+        
+            $('#edit-concentration-setting-modal #concentration-name').attr('data-id', concentrationSettingsId);
+        })
 
-  let isTotalElectiveCredits  = IsNumber(totalElectiveCredits);
-  let isMaxCreditsPerArea  = IsNumber(maxCreditsPerArea);
-  let isNumberOfAreasToCover = IsNumber(numberOfAreasToCover);
-  let isMinCreditsPerArea = IsNumber(minCreditsPerArea);
-  let isMinCreditsInPrimaryArea = IsNumber(minCreditsInPrimaryArea);
-  
-       
-        if(!isTotalElectiveCredits){
-            $('#edit-concentration-setting-modal #error-total-credits').removeClass('d-none');
-            return;
-        }else{
-            $('#edit-concentration-setting-modal #error-total-credits').addClass('d-none');
-        }
-        if(!isMaxCreditsPerArea){
-            $('#edit-concentration-setting-modal #error-max-demand-criteria').removeClass('d-none');
-            return;
-        }else{
-            $('#edit-concentration-setting-modal #error-max-demand-criteria').addClass('d-none');
-        }  
-        if(!isNumberOfAreasToCover){
-            $('#edit-concentration-setting-modal #error-number-of-areas').removeClass('d-none');
-            return;
-        }else{
-            $('#edit-concentration-setting-modal #error-number-of-areas').addClass('d-none');
-        } 
-        if(!isMinCreditsPerArea){
-        $('#edit-concentration-setting-modal #error-min-credit-per-area').removeClass('d-none');
-            return;
-    }else{
-            $('#edit-concentration-setting-modal #error-min-credit-per-area').addClass('d-none');
-    } 
+        $('#edit-concentration-setting-modal').on('click', '#update-concentration-settings', function () {
+            let id = $('#concentration-name').attr('data-id');
+            let concentrationName = $('#concentration-name').val();
+            let minCreditsInPrimaryArea = $('#min-credits-in-primary-area').val();
+            let maxCreditsPerArea = $('#max-credits-per-area').val();
+            let minCreditsPerArea = $('#min-credits-per-area').val();
+            let totalElectiveCredits = $('#total-elective-credits').val();
+            let numberOfAreasToCover = $('#number-of-areas-to-cover').val();
+            let primaryAreaOption = $('#primary-area option:selected').text() === '--Select Primary Area--' ? null : $('#primary-area option:selected').text();
+
+            let isRequiredFieldsEmpty = isModalFieldEmpty('#edit-concentration-setting-modal .modal-body');
+
     
-    if(!isMinCreditsInPrimaryArea){
-        $('#edit-concentration-setting-modal #error-min-demand-criteria').removeClass('d-none');
-            return;
-    }else{
-            $('#edit-concentration-setting-modal #error-min-demand-criteria').addClass('d-none');
-    }  
+            
+            if (isRequiredFieldsEmpty) {
 
-    if(totalElectiveCredits == ''){
-        $('#edit-concentration-setting-modal #error-total-credits').removeClass('d-none');
-            return;
-    }else{
-        $('#edit-concentration-setting-modal #error-total-credits').addClass('d-none');
-    }
-    if(maxCreditsPerArea == ''){
-        $('#edit-concentration-setting-modal #error-max-demand-criteria').removeClass('d-none');
-            return;
-    }else{
-            $('#edit-concentration-setting-modal #error-max-demand-criteria').addClass('d-none');
-    }
-    if(numberOfAreasToCover == ''){
-        $('#edit-concentration-setting-modal #error-number-of-areas').removeClass('d-none');
-            return;
-    }else{
-            $('#edit-concentration-setting-modal #error-number-of-areas').addClass('d-none');
-    }
+                let editConcentrationsettings = {
+                    id: id,
+                    total_elective_credits: totalElectiveCredits,
+                    max_credits_per_area: maxCreditsPerArea,
+                    no_of_areas_to_cover: numberOfAreasToCover,
+                    min_credit_per_area: minCreditsPerArea,
+                    primary_area: primaryAreaOption,
+                    min_credits_in_primary_area: minCreditsInPrimaryArea
+                };
 
-    if(minCreditsPerArea == ''){
-        $('#edit-concentration-setting-modal #error-min-credit-per-area').removeClass('d-none');
-            return;
-    }else{
-            $('#edit-concentration-setting-modal #error-min-credit-per-area').addClass('d-none');
-    }
-  
+                let ApiObj = {
+                    type: 'POST',
+                    url: '/admin/concentration-settings/update',
+                    data: {
+                        editConcentrationsettings: JSON.stringify(editConcentrationsettings)
+                    },
+                    dataType: 'JSON'
+                };
 
-    if(minCreditsInPrimaryArea == ''){
-        $('#edit-concentration-setting-modal #error-min-demand-criteria').removeClass('d-none');
-            return;
-    }else{
-            $('#edit-concentration-setting-modal #error-min-demand-criteria').addClass('d-none');
-    }
-  
+                ajaxApi(ApiObj)
+                    .then(result => {
+                        createToastMessage(result.description);
+                    })
+                    .catch(error => {
+                        createToastError(JSON.stringify(error.responseJSON.description));
+                    });
+            }
+        });
 
-   if((concentrationName.toLowerCase() !== 'general management')){
-    
-    if(primaryAreaOption == null){
-        $('#edit-concentration-setting-modal #error-primary-area').removeClass('d-none');
-            return;
-    }else{
-            $('#edit-concentration-setting-modal #error-primary-area').addClass('d-none');
-    }
-   }
+        $('#edit-concentration-setting-modal').on('click', '.modal-close', function () {
+            $(this).closest('.modal-content').find(`.is-in-valid`).addClass('d-none');
+        });
 
-  if((primaryAreaOption === '--Select Primary Area--') && (concentrationName.toLowerCase() != 'general management')){
-    
-   
-    alert('Select Primary Area');
-  }
- else{
-    
-  let editConcentrationsettings = {
-    id:id,
-    total_elective_credits: totalElectiveCredits,
-    max_credits_per_area: maxCreditsPerArea,
-    no_of_areas_to_cover: numberOfAreasToCover,
-    min_credit_per_area: minCreditsPerArea,
-    primary_area: primaryAreaOption,
-    min_credits_in_primary_area: minCreditsInPrimaryArea
-  };
-
-  let ApiObj = {
-    type: 'POST',
-    url: '/admin/concentration-settings/update',
-    data:{  editConcentrationsettings : JSON.stringify(editConcentrationsettings)},
-    dataType: 'JSON'
-  };
-   
-  ajaxApi(ApiObj)
-    .then(result => {
-        createToastMessage(result.description);
-    })
-    .catch(error => {
-       showError(JSON.stringify(error.responseJSON));
     });
-}
-});
 
-$('#edit-concentration-setting-modal').on('click', '.modal-close', function() {
-        $(this).closest('.modal-content').find(`span[id^='error']`).addClass('d-none');
-    });
-   
-    });
-    
-   
-
-            function AjaxtTable(concentrationSettingList) {
-           $("#concentration-settings-table tbody").empty();
-           let AjaxTable = ``;
-           if (concentrationSettingList.length > 0) {
-               let count = 1;
-               for (concentrationSetting of concentrationSettingList) {
-                   AjaxTable +=
-                       `<tr>
+    function AjaxtTable(concentrationSettingList) {
+        $("#concentration-settings-table tbody").empty();
+        let AjaxTable = ``;
+        if (concentrationSettingList.length > 0) {
+            let count = 1;
+            for (concentrationSetting of concentrationSettingList) {
+                AjaxTable +=
+                    `<tr data-concentration-setting-id="${concentrationSetting.id}"
+                            data-concen-settings-total-ele-credits="${concentrationSetting.total_elective_credits}"
+                            data-concen-settings-max-cre-per-area="${concentrationSetting.max_credits_per_area}"
+                            data-concen-settings-no-of-area-to-cover="${concentrationSetting.no_of_areas_to_cover}"
+                            data-concen-settings-min-credits-per-area="${concentrationSetting.min_credits_per_area}"
+                            data-concen-settings-min-credits-in-primary-area="${concentrationSetting.min_credits_in_primary_area}"
+                            data-concentration-name = "${concentrationSetting.concentration_name}"
+                            data-area-id = "${concentrationSetting.area_Id}">
                            <td>${count++}</td>
                            <td>${concentrationSetting.concentration_name}</td>
                            <td>${concentrationSetting.total_elective_credits}</td>
@@ -453,17 +380,19 @@ $('#edit-concentration-setting-modal').on('click', '.modal-close', function() {
                            <td>${concentrationSetting.primary_area}</td>
                            <td>${concentrationSetting.min_credits_in_primary_area}</td>
                            <td>
-                               <a class="edit-concentration-settings" data-bs-target="#edit-concentration-setting-modal" data-bs-toggle="modal" data-id="${concentrationSetting.id}">
+                               <a class="edit-concentration-settings" data-bs-target="#edit-concentration-setting-modal" data-bs-toggle="modal">
                            <i class="fa fa-edit"></i></a>
-                           <a class="delete-concentration-settings" data-id="${concentrationSetting.id}"><i class="fa-solid fa-trash text-danger"></i></a>
+                           <a class="delete-concentration-settings"><i class="fa-solid fa-trash text-danger"></i></a>
                            </td>
                        </tr>`
-               }
-           }        
-           $("#concentration-settings-table tbody").html(AjaxTable);
-       }
+            }
+        }
+        $("#concentration-settings-table tbody").html(AjaxTable);
+    }
 
 </script>
-<%- include('../partials/footer.ejs') %>
+
 <%- include('../partials/footerEnd.ejs') %>
+
+
 

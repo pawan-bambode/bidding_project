@@ -102,7 +102,7 @@
                           <td><%- waitListCourse.faculty_name %></td>
                           <td><%- waitListCourse.available_seats %></td>
                           <td class="student-previous-bid-point"><%- waitListCourse.bid_points %></td>
-                          <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15'>
+                          <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
                               <button class="btn border border-dark ms-2 add-wait-list-points">
                                   <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
                               </button>
@@ -252,7 +252,7 @@ $(document).ready(function() {
                         <td>${facultyName}</td>
                         <td>${availableSeats}</td>
                         <td class="student-previous-bid-point">0</td>
-                        <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15'>
+                        <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
                             <button class="btn border border-dark ms-2 add-wait-list-points">
                                 <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
                             </button>
@@ -509,7 +509,7 @@ $(document).ready(function() {
                 <td class="student-previous-bid-point">${biddingCourse.bid_points}</td>
             
                 <td class="d-flex">
-                    <input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15'>
+                    <input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
                     <button class="btn border border-dark ms-2 add-wait-list-points">
                         <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
                     </button>

@@ -11,10 +11,9 @@ module.exports = class Students {
         return poolConnection.then(pool => {
             return pool.request()
             .input('biddingId',sql.Int,biddingId)
-            .query(`
-            SELECT TOP ${showEntry} sd.id, sd.sap_id, sd.roll_no, sd.student_name, sd.email, p.program_name, sd.bid_points, sd.year_of_joining, sd.previous_elective_credits
+            .query(`SELECT TOP ${showEntry} sd.id, sd.sap_id, sd.roll_no, sd.student_name, sd.email, p.program_name, sd.bid_points, sd.year_of_joining, sd.previous_elective_credits
             FROM [${slug}].student_data sd 
-            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1  AND p.bidding_session_lid= @biddingId  AND sd.bidding_session_lid = @biddingId`)
+            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId  AND sd.bidding_session_lid = @biddingId AND p.active = 1`)
         })
     }
 

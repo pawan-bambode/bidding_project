@@ -2,10 +2,6 @@
 <%- include('../partials/head') %>
 <%- include('../partials/leftSidebar.ejs') %>
 <%- include('../partials/header.ejs') %>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
 
 <div class="main-content">
    <div class="breadcrumbs-container">
@@ -41,8 +37,12 @@
             </div>
      
             <div>
-                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+              <div class="table-searchbar-container d-flex justify-content-around p-1">
+                <button type="button" id="searchkeyword-button" class="border-0 outline-0">
+                    <i class="fas fa-search"></i>
+                </button>
+                <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+            </div>
             </div>
         </div>
             <table class="table custom_row table-bordered mt-4" id="complete-courses-table">
@@ -111,7 +111,7 @@
         </div>
       </div>
 
-   
+      <%- include('../partials/footer.ejs') %> 
 <script>
    $(document).ready(function(){
     $('.select2').select2();
@@ -160,7 +160,7 @@
              ajaxApi(ApiObj).then(result =>{
               createToastMessage(result.description);
              }).catch(error =>{
-              showError(JSON.stringify(error.responseJSON));
+              createToastError(JSON.stringify(error.responseJSON.description));
              })
         }
     });
@@ -199,7 +199,7 @@ $('#program-name-filter').on('change', function() {
             AjaxtTable(result.workload);
         })
         .catch(error => {
-            showError(JSON.stringify(error.responseJSON));
+          createToastError(JSON.stringify(error.responseJSON.description));
         });
 });
 
@@ -236,7 +236,7 @@ $(document).on('change', '#session-name-filter', function() {
             AjaxtTable(result.workload);
         })
         .catch(error => {
-            showError(JSON.stringify(error.responseJSON));
+          createToastError(JSON.stringify(error.responseJSON.description));
         });
 });
 $(document).on('change', '#course-name-filter', function() {
@@ -263,7 +263,7 @@ $(document).on('change', '#course-name-filter', function() {
             paginationData(showEntry,result.workloadLength)
         })
         .catch(error => {
-            showError(JSON.stringify(error.responseJSON));
+          createToastError(JSON.stringify(error.responseJSON.description));
         });
 });
 
@@ -280,9 +280,10 @@ $(document).on('change', '#course-name-filter', function() {
           }
            ajaxApi(ApiObj).then(result=>{
            paginationData(showEntry,result.length)
-             AjaxtTable(result.data)
+             AjaxtTable(result.data);
+             $('#searchkeyword').val('');
            }).catch(error =>{
-            showError(JSON.stringify(error.responseJSON));
+            createToastError(JSON.stringify(error.responseJSON.description));
          })    
      })
  
@@ -292,7 +293,7 @@ $(document).on('change', '#course-name-filter', function() {
       paginationData(rowCount, parseInt(test));
   
          $('#searchkeyword').on('input',function(){
-           let searchValue = $(this).val();
+           let searchValue = $(this).val().trim();
            let pageNo = $(this).attr('data-lp');
            let showEntry = $('#changeEntry').val();
 
@@ -393,7 +394,7 @@ $(document).on('change', '#course-name-filter', function() {
         ajaxApi(ApiObj).then(result=>{
           createToastMessage(result.description);
         }).catch(error =>{
-          showError(JSON.stringify(error.responseJSON));
+          createToastError(JSON.stringify(error.responseJSON.description));
         })
       })
       $('#edit-course-modal').on('click','#update-course',function(){
@@ -441,7 +442,7 @@ $(document).on('change', '#course-name-filter', function() {
                 ajaxApi(ApiObj).then(result => {
                   createToastMessage(result.description);
                 }).catch(error => {
-                    showError(JSON.stringify(error.responseJSON))
+                  createToastError(JSON.stringify(error.responseJSON.description));
                 })
             
         });
@@ -516,6 +517,6 @@ $(document).on('change', '#course-name-filter', function() {
    })
 
 </script>
-<%- include('../partials/footer.ejs') %>
+
 <%- include('../partials/footerEnd.ejs') %>
 

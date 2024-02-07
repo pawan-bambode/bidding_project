@@ -2,10 +2,6 @@
 <%- include('../partials/head') %>
 <%- include('../partials/leftSidebar.ejs') %>
 <%- include('../partials/header.ejs') %>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
 
 <div class="main-content">
     <div class="breadcrumbs-container">
@@ -15,7 +11,7 @@
               <%} }%>
       </ul>
     </div>
-    <div class="card card-custom-border-curv" >
+    <div class="card card-custom-border-curv" id="course-modal">
         <div class="card-header-custom d-flex justify-content-between p-2">
             <h4 class="ms-2">Course</h4>
             <div>
@@ -36,7 +32,7 @@
             </div>
             <div class="col-md-3 mt-4">
               <select class="form-select form-control select2" id="program-name-filter">
-                  <option selected>Select Program</option>
+                  <option value="-1" selected >Select Program</option>
                   <%for(let prog of programList){%>
                   <option value="<%-prog.program_id%>"><%-prog.program_name%></option>
                   <%}%>
@@ -44,11 +40,13 @@
           </div>
           <div class="col-md-2 mt-4">
               <select class="form-select form-control select2" id="session-name-filter">
-                <option value="" selected>Select Session</option>
+                <option value="-1" selected>Select Acad Session</option>
               </select>
           </div>
           <div class="col-md-3 mt-4">
-            <select class="form-select form-control select2" id="course-name-filter"></select>
+            <select class="form-select form-control select2" id="course-name-filter">
+              <option value="-1" selected>Select Course</option>
+            </select>
           </div>
           <div>
             <div class="table-searchbar-container d-flex justify-content-around p-1">
@@ -76,7 +74,9 @@
                 <tbody>
                   <% let count = 1 %>
                   <% for(let course of courseList) { %>
-                    <tr>
+                    <tr data-id="<%- course.id %>"
+                      data-course-name="<%- course.course_name%>"  data-credits="<%- course.credits %>" data-year-of-introduction ="<%- course.year_of_introduction %>" data-min-demand-criteria="<%- course.min_demand_criteria %>"
+                      >
                       <td><%- count++ %></td>
                       <td><%- course.course_name %></td>
                       <td><%- course.credits %></td>
@@ -86,8 +86,7 @@
                       <td><%- course.year_of_introduction %></td>
                       <td><%- course.min_demand_criteria %></td>
                       <td>
-                      <a class="edit-course" data-bs-target="#edit-course-modal" data-bs-toggle="modal" data-id="<%- course.id %>"
-                        data-course-name="<%- course.course_name%>"  data-credits="<%- course.credits %>" data-year-of-introduction ="<%- course.year_of_introduction %>" data-min-demand-criteria="<%- course.min_demand_criteria %>"
+                      <a class="edit-course" data-bs-target="#edit-course-modal" data-bs-toggle="modal" 
                         ><i class="fa fa-edit"></i></a>
                       <a data-id="<%- course.id %>" class="delete-course" ><i class="fas fa-trash text-danger"></i>
                       </a>
@@ -149,20 +148,19 @@
                     <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                  <div class="row">
+                  <div class="row empty">
                   <div class="col-md-6">
                   <label class="mb-2 form-label" for="course-name">Course Name :</label>
-                  <input type="hidden" id="course-id">
-                  <input class="form-control" type="text" id="course-name">
-                  <span class="text-danger d-none" id="error-course-name">Invalid Course Name!</span>
+                  <input class="form-control is-empty" type="text" id="course-name">
+                  <span class="text-danger d-none is-in-valid" ></span>
                   </div>
                     <div class="col-md-6">
                         <label class="mb-2 form-label" for="course-credits">Credits :</label>
-                        <input class="form-control" type="text" id="course-credits">
-                        <span id="error-credits" class="text-danger d-none">Credits Allow Only Numbers!</span>
+                        <input class="form-control is-empty is-number" type="text" id="course-credits">
+                        <span  class="text-danger d-none is-in-valid"></span>
                     </div>
                     </div>
-                    <div class="row">
+                    <div class="row empty">
                       <div class="col-md-6">
                         <label class="mb-2 form-label" for="year-of-introduction">Year of Introduction :</label>
                         <select class="form-control form-select select2 custom-select" id="year-of-introduction-select" required>
@@ -172,14 +170,14 @@
                                 <option value="<%- year %>"><%- year %></option>
                             <% } %>
                         </select>
-                        <span id="error-year-of-intro" class="text-danger d-none">Please Select Year of Introduction!</span>
+                        <p id="error-year-of-intro" class="text-danger d-none is-in-valid">Please Select Year of Introduction!</p>
                     </div>
                     
                   
                     <div class="col-md-6">
                       <label class="form-label mb-2" for="min-demand-criteria">Minimum Demand Criteria :</label>
-                      <input class="form-control" type="text" id="min-demand-criteria">
-                      <span id="error-min-demand-criteria" class="text-danger d-none">Minimum Demand Criteria Allow Only Numbers!</span>
+                      <input class="form-control is-empty is-number" type="text"  id="min-demand-criteria">
+                      <span  class="text-danger d-none is-in-valid"></span>
                     </div>
                     </div>
                 </div>
@@ -214,6 +212,7 @@
         </div>
       </div>
     </div>
+    <%- include('../partials/footer.ejs') %>
 <script>
    $(document).ready(function(){
     $('.select2').select2();
@@ -252,7 +251,7 @@
              ajaxApi(ApiObj).then(result =>{
               createToastMessage(result.description);
              }).catch(error =>{
-              showError(JSON.stringify(error.responseJSON));
+              createToastError(JSON.stringify(error.responseJSON.description));;
              })
         }
     });
@@ -276,7 +275,7 @@ $('#program-name-filter').on('change', function() {
     ajaxApi(ApiObj)
         .then(result => {
       
-            let sessionName = `<option  >Select Session</option>`;
+            let sessionName = `<option value="-1" >Select Session</option>`;
             if (result.sessionList.length > 0) {
                 result.sessionList.forEach(element => {
                     sessionName += `<option value="${element.sap_acad_session_id}">${element.acad_session}</option>`;
@@ -289,10 +288,11 @@ $('#program-name-filter').on('change', function() {
 
             $("#session-name-filter").html(sessionName);
             AjaxtTable(result.workload);
+            $('#page-no').html(result.workloadLength);
             $('#searchkeyword').val('');
         })
         .catch(error => {
-            showError(JSON.stringify(error.responseJSON));
+            createToastError(JSON.stringify(error.responseJSON.description));;
         });
 });
 
@@ -314,23 +314,24 @@ $(document).on('change', '#session-name-filter', function() {
 
     ajaxApi(ApiObj)
         .then(result => {
-            let courseName = `<option>Select Session</option>`;
+            let courseName = `<option>Select Course</option>`;
             if (result.moduleList.length > 0) {
                 result.moduleList.forEach(element => {
                   courseName += `<option value="${element.course_id}">${element.course_name}</option>`;
                 });
                 AjaxtTable(result.workload);
             } else {
-              courseName += `<option value="">No Session Found!</option>`;
+              courseName += `<option value="">No Course Found!</option>`;
             }
 
             $("#course-name-filter").html(courseName);
             paginationData(showEntry,result.workloadLength)
             AjaxtTable(result.workload);
+            $('#page-no').html(result.workloadLength);
             $('#searchkeyword').val('');
         })
         .catch(error => {
-            showError(JSON.stringify(error.responseJSON));
+            createToastError(JSON.stringify(error.responseJSON.description));;
         });
 });
 $(document).on('change', '#course-name-filter', function() {
@@ -356,9 +357,10 @@ $(document).on('change', '#course-name-filter', function() {
             AjaxtTable(result.workload);
             paginationData(showEntry,result.workloadLength);
             $('#searchkeyword').val('');
+            $('#page-no').html(result.workloadLength);
         })
         .catch(error => {
-            showError(JSON.stringify(error.responseJSON));
+            createToastError(JSON.stringify(error.responseJSON.description));;
         });
 });
 
@@ -378,7 +380,7 @@ $(document).on('change', '#course-name-filter', function() {
             AjaxtTable(result.data);
             $('#searchkeyword').val('');
         }).catch(error =>{
-          showError(JSON.stringify(error.responseJSON));
+          createToastError(JSON.stringify(error.responseJSON.description));;
         })    
     })
  
@@ -387,14 +389,20 @@ $(document).on('change', '#course-name-filter', function() {
     $('#page-no').html(test);
     paginationData(rowCount, parseInt(test));
 
-        $('#searchkeyword').on('input',function(){
+        $('#course-modal').on('input', '#searchkeyword', function(){
          let searchValue = $(this).val().trim();
-         
+         let programId = $('#program-name-filter').val();
+         let acadSessionId = $('#session-name-filter').val();
+         let showEntry = $('#changeEntry').val();
+
          $.ajax({
           type:'POST',
           url:'/admin/course/search',
           data:{
-            searchLetter:searchValue
+            searchLetter:searchValue,
+            programId:programId,
+            acadSessionId:acadSessionId,
+            showEntry:showEntry
           },
           success:function(data){
            paginationData(rowCount,data.length)
@@ -404,6 +412,7 @@ $(document).on('change', '#course-name-filter', function() {
           }
          })
         })
+
         $(".pagination-search").on('click', '.pagination li', function () {
                 let pageNo = $(this).attr('data-lp')
                 let searchValue = $(this).val();
@@ -432,7 +441,7 @@ $(document).on('change', '#course-name-filter', function() {
                 let count = 1;
                 for (course of courseList) {
                     AjaxTable +=
-                        `<tr>
+                        `<tr  data-course-name="${course.course_name}"  data-credits="${course.credits}" data-year-of-introduction ="${course.year_of_introduction}" data-min-demand-criteria="${course.min_demand_criteria}" data-id="${course.id}">
                             <td>${count++}</td>
                             <td>${course.course_name}</td>
                             <td>${course.credits}</td>
@@ -443,7 +452,7 @@ $(document).on('change', '#course-name-filter', function() {
                             <td>${course.min_demand_criteria}</td>
                             <td>
                                 <a class="edit-course" data-bs-target="#edit-course-modal" data-bs-toggle="modal" data-id="${course.id}"
-                                    data-course-name="${course.course_name}"  data-credits="${course.credits}" data-year-of-introduction ="${course.year_of_introduction}" data-min-demand-criteria="${course.min_demand_criteria}">
+                              >
                                     <i class="fa fa-edit"></i>
                                 </a>
                                 <a data-id="${course.id}" class="delete-course">
@@ -501,63 +510,20 @@ $(document).on('change', '#course-name-filter', function() {
         ajaxApi(ApiObj).then(result=>{
           showSuccess(result);
         }).catch(error =>{
-          showError(JSON.stringify(error.responseJSON));
+          createToastError(JSON.stringify(error.responseJSON.description));;
         })
       })
       $('#edit-course-modal').on('click','#update-course',function(){
             let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
-            let id = $('#course-id').val();
+            let id = $('#course-name').data('id');
             let courseName = $('#course-name').val().replace(/\s+/g,' ').trim();
             let credits = $('#course-credits').val();
             let yearOfIntroduction = $('#year-of-introduction-select').val();
             let minDemandCriteria   = $('#min-demand-criteria').val();
            
-            if(courseName == ''){
-              $('#error-course-name').removeClass('d-none');
-              return;
-            }
-            else{
-              $('#error-course-name').addClass('d-none');
-            }
-            if (credits == '') {
-              $('#error-credits').removeClass('d-none');
-              return;
-            } else {
-              $('#error-credits').addClass('d-none');
-            }
-         
-            if (minDemandCriteria == '') {
-                  $('#error-min-demand-criteria').removeClass('d-none');
-              return;
-            } else {
-              $('#error-min-demand-criteria').addClass('d-none');
-            }
-            let isCredits =  IsNumber(credits);
-            let isMinDemandCri  = IsNumber(minDemandCriteria);
-            
-            if (!isCredits) {
-              $('#error-credits').removeClass('d-none');
-              return;
-            } else {
-              $('#error-credits').addClass('d-none');
-            }
-        
-            if(yearOfIntroduction == null){
-                $('#error-year-of-intro').removeClass('d-none');
-                return;
-              }
-              else{
-                $('#error-year-of-intro').addClass('d-none');
-              }
-                if (!isMinDemandCri) {
-                  $('#error-min-demand-criteria').removeClass('d-none');
-                  return;
-                } else {
-                  $('#error-min-demand-criteria').addClass('d-none');
-                }
-                
-
-
+            let isValidInput = isModalFieldEmpty('#edit-course-modal .modal-body'); 
+             
+            if(isValidInput){
             let editCourse = {
               id:id,
               course_name: courseName,
@@ -566,7 +532,7 @@ $(document).on('change', '#course-name-filter', function() {
               min_demand_criteria : minDemandCriteria
             }
             
-     
+    
             let ApiObj = {
                 type:'POST',
                 url:'/admin/course/update',
@@ -579,25 +545,27 @@ $(document).on('change', '#course-name-filter', function() {
                 ajaxApi(ApiObj).then(result => {
                   createToastMessage(result.description);
                 }).catch(error => {
-                    showError(JSON.stringify(error.responseJSON))
+                    createToastError(JSON.stringify(error.responseJSON.description));
                 })
+              }     
             
         });
 
         $('#edit-course-modal').on('click', '.modal-close', function() {
-            $(this).closest('.modal-content').find(`span[id^='error']`).addClass('d-none');
+            $(this).closest('.modal-content').find(`.is-in-valid`).addClass('d-none');
         });
+
         $('#course-table').on('click','.edit-course',function(){
-          let courseName = $(this).attr('data-course-name')
-          let credits = $(this).attr('data-credits');
-          let dataYearOfIntroduction = $(this).attr('data-year-of-introduction');
-          let dataMinDemandCriteria =  $(this).attr('data-min-demand-criteria');
-          let id = $(this).attr('data-id');
+          let courseName = $(this).closest('tr').data('course-name')
+          let credits = $(this).closest('tr').data('credits');
+          let yearOfIntroduction = $(this).closest('tr').data('year-of-introduction');
+          let dataMinDemandCriteria =  $(this).closest('tr').data('min-demand-criteria');
+          let id = $(this).closest('tr').data('id');
           
-          $('#edit-course-modal #course-id').val(id);
+          $('#edit-course-modal #course-name').attr('data-id',id);
           $('#edit-course-modal #course-name').val(courseName);
-          $('#edit-course-modal #course-credits').val(credits);
-          $('#edit-course-modal #year-of-introduction').val(dataYearOfIntroduction);
+          $('#edit-course-modal #course-credits').val(credits);  
+          $("#year-of-introduction-select").val(yearOfIntroduction).trigger('change');
           $('#edit-course-modal #min-demand-criteria').val(dataMinDemandCriteria);
         })
 
@@ -656,6 +624,6 @@ $(document).on('change', '#course-name-filter', function() {
 }
    })
 </script>
-<%- include('../partials/footer.ejs') %>
+
 <%- include('../partials/footerEnd.ejs') %>
 

@@ -1,29 +1,33 @@
-const timetable = require('../../../models/admin/timetable/timetable')
+const timetable = require('../../../models/admin/timetable/timetable');
 const isJsonString = require('../../../utils/util');
 const excel = require('excel4node');
 const xlsx = require('xlsx');
 
 module.exports = {
-    getTimetablePage : (req, res) => {
-      
-       Promise.all([timetable.getProgramList(res.locals.slug,res.locals.biddingId),timetable.getMinAndMaxTimetableTime(res.locals.slug,res.locals.biddingId),timetable.getRoomList(res.locals.slug,res.locals.biddingId),timetable.getTimeslot(),timetable.getDropdownAcadSessionList(res.locals.slug,res.locals.biddingId)]).then(result =>{    
-        res.render('admin/timetable/index.ejs',{
-          
-             programList:result[0].recordset,
-             minMaxTimetableSlot:JSON.stringify(result[1].recordset[0]),
-             roomList:JSON.stringify(result[2].recordset),
-             timeSlotList:JSON.stringify(result[3].recordset),
-             dropdownAcadSessionList:result[4].recordset,
-             active:'dashboard',
-             breadcrumbs: req.breadcrumbs    
-            })   
-          })
+    getTimetablePage: (req, res) => {
+        Promise.all([
+            timetable.getProgramList(res.locals.slug, res.locals.biddingId),
+            timetable.getMinAndMaxTimetableTime(res.locals.slug, res.locals.biddingId),
+            timetable.getRoomList(res.locals.slug, res.locals.biddingId),
+            timetable.getTimeslot(),
+            timetable.getDropdownAcadSessionList(res.locals.slug, res.locals.biddingId)
+        ]).then(result => {
+            res.render('admin/timetable/index.ejs', {
+                programList: result[0].recordset,
+                minMaxTimetableSlot: JSON.stringify(result[1].recordset[0]),
+                roomList: JSON.stringify(result[2].recordset),
+                timeSlotList: JSON.stringify(result[3].recordset),
+                dropdownAcadSessionList: result[4].recordset,
+                active: 'dashboard',
+                breadcrumbs: req.breadcrumbs
+            });
+        });
     },
 
     generateExcel: (req, res) => {
         const workbook = new excel.Workbook();
         const worksheet = workbook.addWorksheet('Sheet1');
-       
+
         worksheet.column(1).setWidth(15);
         worksheet.column(2).setWidth(15);
         worksheet.column(3).setWidth(15);
@@ -48,116 +52,112 @@ module.exports = {
         worksheet.cell(1, 9).string('roomNo').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
         worksheet.cell(1, 10).string('facultyId').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
         worksheet.cell(1, 11).string('facultyName').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-        worksheet.cell(1, 12).string('facultyType').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });     
+        worksheet.cell(1, 12).string('facultyType').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
+
         const filePath = __dirname + '/sampleForImportTimetable.xlsx';
 
-           workbook.write(filePath, (err, stats) => {
-             if (err) {
-               return res.status(500).send('Error generating Excel file');
-             }
-             res.sendFile(filePath, (err) => {
-               if (err) {
-                 return res.status(500).send('Error sending Excel file');
-               }
-             });
-           });
-         },
-       
- 
-         upload :(req,res) =>{
-            let excelFileBufferData = req.file.buffer;
-            let biddingId = res.locals.biddingId;
-            let excelFileDataWorkbook = xlsx.read(excelFileBufferData);
-            const sheetName = excelFileDataWorkbook.SheetNames[0];
-            const sheet = excelFileDataWorkbook.Sheets[sheetName];
-            const timetableJsonData = xlsx.utils.sheet_to_json(sheet);
-    
+        workbook.write(filePath, (err, stats) => {
+            if (err) {
+                return res.status(500).send('Error generating Excel file');
+            }
+            res.sendFile(filePath, (err) => {
+                if (err) {
+                    return res.status(500).send('Error sending Excel file');
+                }
+            });
+        });
+    },
 
-            const timetableDataWithColumnHypen = timetableJsonData.map(item =>{
-              const defaultValue = null;
-                            return {
-                              program_id: item.programId == undefined ? defaultValue : item.programId,
-                              acad_session: item.acadSession == undefined ? defaultValue :item.acadSession.replace(/\s+/g, ' ').trim(),
-                              course_name: item.courseName == undefined ? defaultValue : item.courseName.replace(/\s+/g,' ').trim(),
-                              division: item.division == undefined ? defaultValue : item.division.replace(/\s+/g,' ').trim(),
-                              batch: item.batch == undefined ? defaultValue :item.batch,
-                              day: item.day == undefined ? defaultValue :item.day,
-                              start_time : item.startTime == undefined ? defaultValue : isJsonString.convertExcelTimeToHHMMSS(item.startTime),
-                              end_time : item.endTime == undefined ? defaultValue : isJsonString.convertExcelTimeToHHMMSS(item.endTime),
-                              room_no : item.roomNo == undefined ? defaultValue : item.roomNo.toString(),
-                              faculty_id : item.facultyId == undefined ? defaultValue : item.facultyId.toString(),
-                              faculty_name: item.facultyName == undefined ? defaultValue :item.facultyName.replace(/\s+/g,' ').trim(),
-                              faculty_type_abbr: item.facultyType == undefined ? defaultValue :item.facultyType
-                            };
-                          })
-                          
-            let timetableDataValue = JSON.stringify({timetable: timetableDataWithColumnHypen})
-          
-            timetable.uploadTimetable(res.locals.slug,timetableDataValue,res.locals.userId,biddingId).then(result =>{
-    
+    upload: (req, res) => {
+        let excelFileBufferData = req.file.buffer;
+        let biddingId = res.locals.biddingId;
+        let excelFileDataWorkbook = xlsx.read(excelFileBufferData);
+        const sheetName = excelFileDataWorkbook.SheetNames[0];
+        const sheet = excelFileDataWorkbook.Sheets[sheetName];
+        const timetableJsonData = xlsx.utils.sheet_to_json(sheet);
+
+        const timetableDataWithColumnHypen = timetableJsonData.map(item => {
+            const defaultValue = null;
+            return {
+                program_id: item.programId == undefined ? defaultValue : item.programId,
+                acad_session: item.acadSession == undefined ? defaultValue : item.acadSession.replace(/\s+/g, ' ').trim(),
+                course_name: item.courseName == undefined ? defaultValue : item.courseName.replace(/\s+/g, ' ').trim(),
+                division: item.division == undefined ? defaultValue : item.division.replace(/\s+/g, ' ').trim(),
+                batch: item.batch == undefined ? defaultValue : item.batch,
+                day: item.day == undefined ? defaultValue : item.day,
+                start_time: item.startTime == undefined ? defaultValue : isJsonString.convertExcelTimeToHHMMSS(item.startTime),
+                end_time: item.endTime == undefined ? defaultValue : isJsonString.convertExcelTimeToHHMMSS(item.endTime),
+                room_no: item.roomNo == undefined ? defaultValue : item.roomNo.toString(),
+                faculty_id: item.facultyId == undefined ? defaultValue : item.facultyId.toString(),
+                faculty_name: item.facultyName == undefined ? defaultValue : item.facultyName.replace(/\s+/g, ' ').trim(),
+                faculty_type_abbr: item.facultyType == undefined ? defaultValue : item.facultyType
+            };
+        });
+
+        let timetableDataValue = JSON.stringify({ timetable: timetableDataWithColumnHypen });
+
+        timetable.uploadTimetable(res.locals.slug, timetableDataValue, res.locals.userId, biddingId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json));
-           }).catch(error =>{
-               if(isJsonString.isJsonString(error.originalError.info.message)){
+        }).catch(error => {
+            if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message));
-               }
-               else{
+            } else {
                 res.status(500).json({
-                  status:500,
-                  description:error.originalError.info.message,
-                  data:[]
-                })
-               }
-           })   
-          },
-        
-            getDeleteTimetableModal : (req,res) =>{
-              Promise.all([timetable.getAcadSessionList(res.locals.slug,res.locals.biddingId,req.body.programId)]).then(result =>{
-                res.json({
-                  stats:'200',
-                  message:'Result Fetched',
-                  acadSessionList:result[0].recordset
-                })
-              })
-            },
-
-            delete: (req, res) => {
-
-              timetable.delete(req.body.deleteTimetable,req.body.deleteRadioButton, res.locals.slug, res.locals.userId,res.locals.biddingId)
-                  .then(result => {
-                      res.status(200).json(JSON.parse(result.output.output_json));
-                  })
-                  .catch(error => {
-                      if ((isJsonString.isJsonString(error.originalError.info.message))) {
-                          res.status(500).json(JSON.parse(error.originalError.info.message));
-                      } else {
-                          res.status(500).json({
-                              status: 500,
-                              description: error.originalError.info.message,
-                              data: []
-                          });
-                      }
-                  });
-          },
-          
-          getTimetableByDay: (req, res) => {
-            timetable.getTimetableByDayId(req.body.id,req.body.acadSessionId, res.locals.slug,res.locals.biddingId)
-                .then(result => {
-                  res.json({
-                    courseList:result.recordset,
-                    data:{},
-                    status:'200',
-                  })
-                })
-                .catch(error => {
-                    if ((isJsonString.isJsonString(error.originalError.info.message))) {
-                        res.status(500).json(JSON.parse(error.originalError.info.message));
-                    } else {
-                        res.status(500).json({
-                            status: 500,
-                            description: error.originalError.info.message,
-                            data: []
-                        });
-                    }
+                    status: 500,
+                    description: error.originalError.info.message,
+                    data: []
                 });
-        }        
-}   
+            }
+        });
+    },
+
+    getDeleteTimetableModal: (req, res) => {
+        Promise.all([timetable.getAcadSessionList(res.locals.slug, res.locals.biddingId, req.body.programId)]).then(result => {
+            res.json({
+                stats: '200',
+                message: 'Result Fetched',
+                acadSessionList: result[0].recordset
+            });
+        });
+    },
+
+    delete: (req, res) => {
+        timetable.delete(req.body.deleteTimetable, req.body.deleteRadioButton, res.locals.slug, res.locals.userId, res.locals.biddingId)
+            .then(result => {
+                res.status(200).json(JSON.parse(result.output.output_json));
+            })
+            .catch(error => {
+                if ((isJsonString.isJsonString(error.originalError.info.message))) {
+                    res.status(500).json(JSON.parse(error.originalError.info.message));
+                } else {
+                    res.status(500).json({
+                        status: 500,
+                        description: error.originalError.info.message,
+                        data: []
+                    });
+                }
+            });
+    },
+
+    getTimetableByDay: (req, res) => {
+        timetable.getTimetableByDayId(req.body.id, req.body.acadSessionId, res.locals.slug, res.locals.biddingId)
+            .then(result => {
+                res.json({
+                    courseList: result.recordset,
+                    data: {},
+                    status: '200',
+                });
+            })
+            .catch(error => {
+                if ((isJsonString.isJsonString(error.originalError.info.message))) {
+                    res.status(500).json(JSON.parse(error.originalError.info.message));
+                } else {
+                    res.status(500).json({
+                        status: 500,
+                        description: error.originalError.info.message,
+                        data: []
+                    });
+                }
+            });
+    }
+};

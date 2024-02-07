@@ -36,15 +36,19 @@
                 </select>
             </div>
             <div>
-                <div class="table-searchbar-container"><button type="button"><i class="fas fa-search"></i> </button><input
-                    type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar"></div>
+                <div class="table-searchbar-container d-flex justify-content-around p-1">
+                    <button type="button" id="searchkeyword-button" class="border-0 outline-0">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+                </div>
             </div>
         </div>
 
         <table class="table custom_row table-bordered mt-4 custom-table" id="bidding-rounds-table">
             <thead>
                 <th>#</th>
-                <th>Term Name</th>
+                <th>Round Name</th>
                 <th>Total Students</th>
                 <th>Total Courses</th>
                 <th>Start Time</th>
@@ -54,8 +58,12 @@
             </thead>
             <tbody>
                 <% let count = 1 %>
-                <%for(let biddingRound of biddingRoundList) {%>
-                    <tr data-bidding-round-id="<%- biddingRound.id %>" data-bidding-round-lid="<%-biddingRound.round_lid %>" data-bit-limit="<%- biddingRound.bid_limit %>">
+                <%for(let biddingRound of biddingRoundList)
+                
+                {%>
+                    <tr data-bidding-round-id="<%- biddingRound.id %>" data-bidding-round-lid="<%-biddingRound.round_lid %>" data-bit-limit="<%- biddingRound.bid_limit %>" data-start-time="<%- biddingRound.start_date_time_attr %>" data-end-time="<%- biddingRound.end_date_time_attr %>" 
+                    data-total-students="<%- biddingRound.total_students %>" data-total-course="<%- biddingRound.total_courses %>" data-is-bid-limit="<%- biddingRound.is_bid_limit %>" data-bid-limit-points="<%- biddingRound.bid_limit %>"
+                    data-round-name="<%-biddingRound.round_name %>">
                         <td><%- count++ %></td>
                         <td><%-biddingRound.round_name %></td>
                         <td><%- biddingRound.total_students %></td>
@@ -94,7 +102,7 @@
             </div>
             <div class="modal-body">
                
-                <table class="table table-responsive custom_row table-bordered mt-4 custom-table">
+                <table class="table table-responsive custom_row table-bordered mt-4 custom-table" >
                     <thead>
                         <th>Id <input type="checkbox" name="bidding-rounds-checkbox" id="bidding-rounds-checkbox"></th>
                         <th>Name</th>
@@ -132,7 +140,7 @@
             </div>
             <div class="modal-body">
                
-                <table class="table table-responsive custom_row table-bordered mt-4 custom-table">
+                <table class="table table-responsive custom_row table-bordered mt-4 custom-table" id ="course-list-checked">
                     <thead>
                         <th>Id <input type="checkbox" name="bidding-rounds-checkbox" id="update-bidding-rounds-checkbox"></th>
                         <th>Name</th>
@@ -142,7 +150,7 @@
                 <tbody>
               <% for(let student of biddingRoundsStudents) { %>
                   <tr data-student-id = "<%- student.student_lid %>">
-                    <td><input type="checkbox" class="d-none update-student-sap-id-bidding-rounds"><%- student.sap_id %></td>
+                    <td><input type="checkbox" class="update-student-sap-id-bidding-rounds"><%- student.sap_id %></td>
                     <td><%- student.student_name %></td>
                     <td><%- student.email %></td>
                     <td><%- student.program_name %></td>
@@ -152,7 +160,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-success disabled" data-bs-dismiss="modal" id="update-total-student">Update</button>
+                <button class="btn btn-success" data-bs-dismiss="modal" id="update-total-student">Update</button>
             </div>
         </div>
     </div>
@@ -176,7 +184,8 @@
                         <th>Action <input type="checkbox" name="bidding-rounds-checkbox" id="bidding-rounds-course-checkbox"></th>
                     </thead>
                 <tbody>
-              <% for(let biddingRoundCourse of biddingRoundCourseList) { %>
+              <% for(let biddingRoundCourse of biddingRoundCourseList) { 
+                %>
                   <tr data-course-id="<%- biddingRoundCourse.id %>">
                     <td class="d-none"><%-biddingRoundCourse.id %></td>
                     <td><%- biddingRoundCourse.course_name %></td>
@@ -194,6 +203,7 @@
     </div>
   </div>
 
+  
   <div class="modal" id="update-total-courses-bidding-rounds" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -224,7 +234,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-success disabled" id="update-course-bidding-rounds" data-bs-dismiss="modal">Update</button>
+                <button class="btn btn-success" id="update-course-bidding-rounds" data-bs-dismiss="modal">Update</button>
             </div>
         </div>
     </div>
@@ -305,34 +315,65 @@
                     <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                      <input type="hidden" id="bidding-rounds">
+                    <input type="hidden" id="bidding-rounds">
                     <div class="row">
+                    <div class="col-md-12">
+                        <label class="form-label" for="round-name">Round Name :</label>
+                        <input class="form-control" type="text" id="round-name" disabled>
+                    </div>
+                    </div>
+                      
+                    <div class="row empty">
                         <div class="col-md-6">
                             <label class="mb-2" for="start-date-time">Start date time :</label>
-                            <input class="form-control" type="datetime-local" id="start-date-time-bidding-rounds">
+                            <input class="form-control is-empty" type="datetime-local" id="start-date-time-bidding-rounds">
+                            <span class="text-danger d-none is-in-valid" ></span>
                         </div>
                         <div class="col-md-6">
                             <label class="mb-2" for="end-date-time">End date time :</label>
-                            <input class="form-control" type="datetime-local" id="end-date-time-bidding-rounds"> 
+                            <input class="form-control is-empty" type="datetime-local" id="end-date-time-bidding-rounds"> 
+                            <span class="text-danger d-none is-in-valid" ></span>
                         </div>
                     </div>
                    
-                    <div class="row mt-4">
+                    <div class="row empty mt-4">
                         <div class="col-md-6 d-flex">          
                             
-                                <div class="input-group  mb-3">
+                                <div class="input-group mb-3">
                                     <button class="btn btn-danger text-white" type="button"  data-bs-target="#update-total-student-bidding-rounds" data-bs-toggle="modal" >Total Students</button>
-                                    <input type="text" class="form-control" placeholder="total students" id="total-students"  disabled>
+                                    <input type="text" class="form-control is-empty is-number" placeholder="total students" id="total-students"  autocomplete="off" disabled>
+                                    <span class="text-danger d-none is-in-valid" ></span>
                                 </div>
                          </div>
-                        <div class="col-md-6 d-none update-total-course">
+                        <div class="col-md-6 d-none update-total-course round-wise-hide">
                             <div class="input-group mb-3">
                                 <button class="btn btn-danger text-white" type="button" data-bs-target="#update-total-courses-bidding-rounds" data-bs-toggle="modal" >Total Courses</button>
-                                <input type="text" class="form-control" placeholder="total courses" id="total-courses"  disabled>
+                                <input type="text" class="form-control is-empty is-number" placeholder="total courses" id="total-courses" autocomplete="off"  disabled>
+                                <span class="text-danger d-none is-in-valid" ></span>
                             </div>
                         </div>
-                       
-                  </div>  
+                        <div class="is-bid-limit round-wise-hide col-md-6 d-none">
+                            <div>
+                                <label for="bid-point-limit-per-bid" class="form-label">Bid Point Limit Per Bid :</label>
+                                <div class="d-flex is-bid-limit-check">
+                                    <div class="d-flex pe-4 justify-content-around">
+                                        <label for="yes" class="px-2">Yes</label>
+                                        <input type="radio" name="bid-point-limit" id="yes" value="Yes" class="px-2">
+                                       
+                                        <input type="text" class="form-control bid-point-limit-per-bid is-number d-none" size="8" placeholder="Enter bid Points" id="edit-bid-limit-points">
+                                        </div>
+                                        <span class="text-danger d-none is-in-valid" >Enter Bid Points</span>
+                                    
+                                    <div>
+                                        <label for="no">No</label>
+                                        <input type="radio" name="bid-point-limit" id="no" value="No">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                
+                
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -349,12 +390,14 @@
         let studentList = [];
         let courseList = [];
         let biddingRoundStudent = [];
-       
+        let updateBiddingRoundStudent = [];
+        let updateBiddingCourseList = [];
         let importdata = [];
 
         setActiveMenuItem(`<%- active %>`)
 
         $('#page-no').html(pageCount);
+
         $('#update-total-courses-bidding-rounds').on('change','.update-bidding-round-courses',function(){
             $('#update-course-bidding-rounds').removeClass('disabled');
         })   
@@ -365,6 +408,9 @@
              let totalCourseBiddingRounds =  $('#update-total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
             $('#update-total-selected-courses').html(totalCourseBiddingRounds);
            }
+           else{
+            $('.update-bidding-round-courses').prop('checked', false);
+           }
         })
         $('#update-total-student-bidding-rounds').on('change','#update-bidding-rounds-checkbox',function(){
            if(this.checked){
@@ -374,7 +420,7 @@
              let totalStudentBiddingRounds =  $('#update-total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
             $('#update-total-selected-students').html(totalStudentBiddingRounds);
            }else{
-            $('.update-student-sap-id-bidding-rounds').addClass('d-none');
+            $('.update-student-sap-id-bidding-rounds').prop('checked', false);
            }
         })
         $('#total-student-bidding-rounds').on('change','#bidding-rounds-checkbox', function() {
@@ -522,26 +568,83 @@
            $('.left-sidebar').removeClass('d-none');
           });
 
-         $('#edit-bidding-rounds').on('show.bs.modal',function(event){
-           
+          $('#edit-bidding-rounds').on('show.bs.modal', function(event) {
             let dataBiddingRoundId = $(event.relatedTarget).closest('tr').data('bidding-round-id');
-            let dataBiddingRoundLid =  $(event.relatedTarget).closest('tr').data('bidding-round-lid');
+            let dataBiddingRoundLid = $(event.relatedTarget).closest('tr').data('bidding-round-lid');
             let bitLimit = $(event.relatedTarget).closest('tr').data('bit-limit');
-            $(this).attr('data-bidding-round-id',dataBiddingRoundId);
+            let totalStudent = $(event.relatedTarget).closest('tr').data('total-students');
+            let totalCourses = $(event.relatedTarget).closest('tr').data('total-course');
+            let startDate = $(event.relatedTarget).closest('tr').data('start-time');
+            let endDate = $(event.relatedTarget).closest('tr').data('end-time');
+            let isBidLimit = $(event.relatedTarget).closest('tr').data('is-bid-limit');
+            let bidLimitPoints = $(event.relatedTarget).closest('tr').data('bid-limit-points');
+            let roundName = $(event.relatedTarget).closest('tr').data('round-name');
 
-            if(dataBiddingRoundLid == 1){
-                $('#edit-bidding-rounds .update-total-course').removeClass('d-none');
+            
+
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/biddingRounds/round-wise-mapping',
+                data: {
+                    roundId: dataBiddingRoundLid
+                },
+                datatype: 'JSON'
+            };
+            ajaxApi(ApiObj).then(result => {
+                let studentList = result.studentMappingList;
+                let courseList = result.courseMappingList;
+
+                $('#update-total-student-bidding-rounds #update-total-selected-students').html(studentList.length);
+                $('#update-total-selected-courses').html(courseList.length);
+
+                $(`#update-total-courses-bidding-rounds .table tbody tr`).find('.update-bidding-round-courses').prop('checked', false);
+                $(`#update-total-student-bidding-rounds #course-list-checked tbody tr`).find('input[type="checkbox"]').prop('checked', false);
+                
+                studentList.forEach(student => {
+                    $(`#update-total-student-bidding-rounds #course-list-checked tbody tr[data-student-id=${student.student_lid}] input[type="checkbox"]`).prop('checked', true);
+                });
+
+                courseList.forEach(course => {
+                    $(`#update-total-courses-bidding-rounds .table tbody tr[data-course-id=${course.course_lid}]`).find('.update-bidding-round-courses').prop('checked', true);
+                });
+            }).catch(error => {
+                
+            });
+
+            if (isBidLimit == '1') {
+                $('#edit-bidding-rounds .is-bid-limit').removeClass('d-none');
+                $('#edit-bidding-rounds #edit-bid-limit-points').val(bidLimitPoints);
+                $('#edit-bidding-rounds input[value="Yes"]').prop('checked',true);
+                $('#edit-bidding-rounds #edit-bid-limit-points').removeClass('d-none');
+
+            } else {
+                $('#edit-bidding-rounds .is-bid-limit').addClass('d-none');
+                $('#edit-bidding-rounds input[value="No"]').prop('checked',false);
+                
+
             }
-            else{
+
+            $('#edit-bidding-rounds #start-date-time-bidding-rounds').val(startDate).trigger('input');
+            $('#edit-bidding-rounds #end-date-time-bidding-rounds').val(endDate).trigger('input');
+            $('#edit-bidding-rounds #round-name').val(roundName);
+
+            $('#edit-bidding-rounds #total-students').val(totalStudent);
+            $('#edit-bidding-rounds #total-courses').val(totalCourses);
+
+            $(this).attr('data-bidding-round-id', dataBiddingRoundId);
+
+            if (dataBiddingRoundLid == 1) {
+                $('#edit-bidding-rounds .update-total-course').removeClass('d-none');
+            } else {
                 $('#edit-bidding-rounds .update-total-course').addClass('d-none');
                 $('#edit-bidding-rounds .bid-limit').removeClass('d-none');
             }
 
             $('#bidding-rounds-checkbox').prop('checked', false);
             $('#bidding-rounds').val(dataBiddingRoundId);
-            $('#bidding-rounds').attr('round-lid',dataBiddingRoundLid)
-       
-         })  
+            $('#bidding-rounds').attr('round-lid', dataBiddingRoundLid);
+        });
+
 
          $('#import-bidding-rounds-table').on('click','input[name ^="bid-point-limit"]',function(){
              
@@ -551,15 +654,120 @@
                     $(this).closest('tr').find('#bid-point-limit-per-bid').removeClass('d-none');
                     $(this).closest('tr').find('#bid-point-limit-per-bid').focus();     
                 } else {
+                    $(this).closest('tr').find('#bid-point-limit-per-bid').val(0);
                     $(this).closest('tr').find('#bid-point-limit-per-bid').addClass('d-none');
+                   
                 }
          })
-
+         
+         $('#edit-bidding-rounds').on('click','input[name ="bid-point-limit"]',function(){
+            
+             const checkedRadioButton = $('input[name="bid-point-limit"]:checked');
+             const checkedValue = checkedRadioButton.val();
+            
+                if (checkedValue == 'Yes') {
+                
+                    $(this).closest('div').find('.bid-point-limit-per-bid').removeClass('d-none');
+                    $(this).closest('div').find('.bid-point-limit-per-bid').focus();     
+                } else {
+             
+                    $(this).closest('div.is-bid-limit-check').find('.bid-point-limit-per-bid').addClass('d-none');
+                }
+         })
          $('#bidding-rounds-add-date-time').on('change','#end-date-time',function(){
             $('#save-bidding-rounds-date-time').removeClass('disabled');
             $('#add-bidding-rounds-modal #import-bidding-rounds').removeClass('disabled');
          })
+         
+         $('#update-total-student-bidding-rounds').on('click','#update-total-student',function(){
+            updateBiddingRoundStudent = [];
+           
+        let totalStudentBiddingRoundsCounts =  $('#update-total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+       
+        $('#update-total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
+          studentList.push($(selectedElement).closest('tr').data('student-id'));
+          
+        });
+           
+        let dataBiddingRoundId =  $('#total-student-bidding-rounds').attr('data-bidding-round-id');
+               
+         $('#add-bidding-rounds-modal .modal-body .table-responsive tbody tr').each(function(index,element) {      
+          
+                let biddingRoundId = $(element).attr('data-bidding-round-id');
+                if(($(element).attr('data-bidding-round-id')) == dataBiddingRoundId){
+                $(this).attr('data-total-student-counts', totalStudentBiddingRoundsCounts);
+                $(element).children('td.total-course-count').removeClass('disabled');
+                $(this).children('td.total-students-count').html(totalStudentBiddingRoundsCounts)        
+                }
+            });
+              if(Number(dataBiddingRoundId)> 1){
+                 $('#add-date-time').removeClass('d-none');
+                 $('#add-date-time').attr('data-bidding-round-id',dataBiddingRoundId);
+              }
+            
+              updateBiddingRoundStudent.push(studentList);
+       })
 
+         $('#total-student-bidding-rounds').on('click','#import-total-student-bidding-rounds',function(){
+        let totalStudentBiddingRoundsCounts =  $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+        $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
+          studentList.push($(selectedElement).closest('tr').data('student-id'));
+        });
+           
+        let dataBiddingRoundId =  $('#total-student-bidding-rounds').attr('data-bidding-round-id');
+               
+         $('#add-bidding-rounds-modal .modal-body .table-responsive tbody tr').each(function(index,element) {      
+          
+                let biddingRoundId = $(element).attr('data-bidding-round-id');
+                if(($(element).attr('data-bidding-round-id')) == dataBiddingRoundId){
+                $(this).attr('data-total-student-counts', totalStudentBiddingRoundsCounts);
+                $(element).children('td.total-course-count').removeClass('disabled');
+                $(this).children('td.total-students-count').html(totalStudentBiddingRoundsCounts)        
+                }
+            });
+              if(Number(dataBiddingRoundId)> 1){
+                 $('#add-date-time').removeClass('d-none');
+                 $('#add-date-time').attr('data-bidding-round-id',dataBiddingRoundId);
+              }
+             
+              biddingRoundStudent.push(studentList);
+       })
+
+       $('#update-total-student-bidding-rounds').on('click','#update-total-student-bidding-rounds',function(){
+        let totalStudentBiddingRoundsCounts =  $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+        let dataBiddingRoundId =  $('#total-student-bidding-rounds').attr('data-bidding-round-id');
+     
+         $('#add-bidding-rounds-modal .modal-body .table-responsive tbody tr').each(function(index,element) {
+                let biddingRoundId = $(element).attr('data-bidding-round-id');
+                if(($(element).attr('data-bidding-round-id')) == dataBiddingRoundId){
+                $(this).attr('data-total-student-counts', totalStudentBiddingRoundsCounts);
+                $(element).children('td.total-course-count').removeClass('disabled');
+                $(this).children('td.total-students-count').html(totalStudentBiddingRoundsCounts)        
+                }
+            });  
+       })
+       $('#total-courses-bidding-rounds').on('click','#total-course-bidding-rounds',function(){
+        let totalCoursesBiddingRoundsCounts =  $('#total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+        
+        $('#total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
+          courseList.push($(selectedElement).closest('tr').data('course-id'));
+        });
+
+        let dataBiddingRoundId =  $('#total-student-bidding-rounds').attr('data-bidding-round-id');
+         $('#add-bidding-rounds-modal .modal-body .table-responsive tbody tr').each(function(index,element) {
+               
+                let biddingRoundId = $(element).attr('data-bidding-round-id');
+                if(($(element).attr('data-bidding-round-id')) == dataBiddingRoundId){
+                $(this).attr('data-total-courses-counts', totalCoursesBiddingRoundsCounts);
+                $(this).children('td.total-course-count').html(totalCoursesBiddingRoundsCounts);
+                $('#add-date-time').removeClass('d-none');
+                $('#add-date-time').attr('data-bidding-round-id',biddingRoundId);
+                }
+            });  
+          
+            importdata.push(courseList);
+       })
+       
        $('#total-student-bidding-rounds').on('click','#import-total-student-bidding-rounds',function(){
         let totalStudentBiddingRoundsCounts =  $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
         $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
@@ -597,7 +805,9 @@
                 }
             });  
        })
+
        $('#total-courses-bidding-rounds').on('click','#total-course-bidding-rounds',function(){
+        
         let totalCoursesBiddingRoundsCounts =  $('#total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
         
         $('#total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
@@ -605,7 +815,7 @@
         });
 
         let dataBiddingRoundId =  $('#total-student-bidding-rounds').attr('data-bidding-round-id');
-         $('#add-bidding-rounds-modal .modal-body .table-responsive tbody tr').each(function(index,element) {
+         $('#course-list-checked tbody tr').each(function(index,element) {
                
                 let biddingRoundId = $(element).attr('data-bidding-round-id');
                 if(($(element).attr('data-bidding-round-id')) == dataBiddingRoundId){
@@ -615,8 +825,29 @@
                 $('#add-date-time').attr('data-bidding-round-id',biddingRoundId);
                 }
             });  
-          
             importdata.push(courseList);
+           
+       })
+
+       $('#update-total-courses-bidding-rounds').on('click','#update-course-bidding-rounds',function(){
+        let totalCoursesBiddingRoundsCounts =  $('#update-total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+        
+        $('#update-total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
+          courseList.push($(selectedElement).closest('tr').data('course-id'));
+        });
+
+        let dataBiddingRoundId =  $('#update-total-courses-bidding-rounds').attr('data-bidding-round-id');
+         $('#add-bidding-rounds-modal .modal-body .table-responsive tbody tr').each(function(index,element) {
+            updateBiddingCourseList = [];
+                let biddingRoundId = $(element).attr('data-bidding-round-id');
+                if(($(element).attr('data-bidding-round-id')) == dataBiddingRoundId){
+                $(this).attr('data-total-courses-counts', totalCoursesBiddingRoundsCounts);
+                $(this).children('td.total-course-count').html(totalCoursesBiddingRoundsCounts);
+                $('#add-date-time').removeClass('d-none');
+                $('#add-date-time').attr('data-bidding-round-id',biddingRoundId);
+                }
+            });  
+            updateBiddingCourseList.push(courseList);
        })
 
        $('#bidding-rounds-add-date-time').on('click','#save-bidding-rounds-date-time',function(){
@@ -752,7 +983,7 @@
                 createToastMessage(result.description);
                              
             }).catch(error => {
-                showError(JSON.stringify(error.responseJSON))
+                createToastError(JSON.stringify(error.responseJSON.description));
             })
         })
 
@@ -773,24 +1004,13 @@
                 $(this).closest('tr').remove();
                 createToastMessage(result.description);
             }).catch(error =>{
-                showError(JSON.stringify(error.responseJSON))
+                createToastError(JSON.stringify(error.responseJSON.description));
             })
 
         })
-        $('#edit-bidding-rounds').on('click','#update-bidding-rounds',function(){
-           
-            let bidPointLimit     = $('#bid-point-limit-per-bid').val() == ''?0:$('#bid-point-limit-per-bid').val();
-            let isBidLimit        = $('#bid-point-limit-per-bid').val() == ''?0:1
 
-            let error = {};
-            let startDate = $('#start-date-time-bidding-rounds').val();
-            let  selectedDate = new Date(startDate);
-            let currentDate = new Date();
+        $('#edit-bidding-rounds').on('click','#update-bidding-rounds',function(){
             
-            if (selectedDate < currentDate) {
-                error.description = 'Invalid date time';
-                showError(error)
-            } else {
             let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
            
             let startDateTime = $('#start-date-time-bidding-rounds').val().replace('T',' ').concat(':00.000');
@@ -799,7 +1019,20 @@
             let totalCourses   = $('#total-courses').val();
             let id             = $('#bidding-rounds').val();
             let roundLid  = $('#bidding-rounds').attr('round-lid');
+            let bidPoints = $('.bid-point-limit-per-bid').val();
+            let isBidLimit = 0;
+            if(bidPoints > 0){
+                isBidLimit = 1; 
+            }
+            let importBiddingRounds = {};
             let temp = [];
+           
+            if(updateBiddingRoundStudent.length == 0){
+                $("#update-total-student").trigger('click');
+            }
+            if(updateBiddingCourseList.length == 0){
+                $("#update-course-bidding-rounds").trigger('click');
+            }
            
             let editBiddingRounds = {
                 id: id,
@@ -808,15 +1041,16 @@
                 total_courses: totalCourses,
                 start_date_time: startDateTime,
                 end_date_time: endDateTime,
-                student_list: biddingRoundStudent[0],
-                course_list: importdata[0],
+                student_list:   updateBiddingRoundStudent[0],
+                course_list: updateBiddingCourseList[0],
                 div_batch_list: temp,
-                bid_limit: 0,
-                is_bid_limit: 0
+                bid_limit: bidPoints,
+                is_bid_limit: isBidLimit
             }
             let updateBiddingDetails = {
             round_setting: editBiddingRounds,
             };
+    
             let ApiObj = {
                 type:'POST',
                 url:'/admin/bidding-rounds/update',
@@ -828,15 +1062,15 @@
                 ajaxApi(ApiObj).then(result => {
                     createToastMessage(result.description);
                 }).catch(error => {
-                    showError(JSON.stringify(error.responseJSON))
+                    createToastError(JSON.stringify(error.responseJSON.description));
                 })
-            }
+        
         });
 
         
         $('#searchkeyword').on('input',function(){
 
-            let areaValue = $(this).val();
+            let areaValue = $(this).val().trim();
             let showEntry = $('#changeEntry').val();
 
                 $.ajax({
@@ -847,6 +1081,7 @@
                 showEntry:showEntry
                 },
                 success:function(data){
+                 
                 paginationData(showEntry,data.length)
                 AjaxtTable(data.data)
                 $('#page-no').html(data.length);
@@ -885,8 +1120,11 @@
             if (roundSettingList.length > 0) {
                 let count = 1;
                 for (roundsetting of roundSettingList) {
+                    
                     AjaxTable +=
-                        `<tr>
+                        `<tr data-bidding-round-id="${roundsetting.id}" data-bidding-round-lid="${roundsetting.round_lid}" data-bit-limit="${roundsetting.id}" data-start-time="${roundsetting.start_date_time_attr}" data-end-time="${roundsetting.end_date_time_attr}" 
+                    data-total-students="${roundsetting.total_students}" data-total-course="${roundsetting.total_courses}" data-is-bid-limit="${roundsetting.total_students}" data-bid-limit-points="${roundsetting.id}" data-is-bid-limit="${roundsetting.is_bid_limit}"
+                    data-round-name="${roundsetting.round_name}">
                             <td>${count++}</td>
                             <td>${roundsetting.round_name}</td>
                             <td>${roundsetting.total_students}</td>

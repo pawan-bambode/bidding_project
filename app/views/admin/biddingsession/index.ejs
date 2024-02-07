@@ -130,20 +130,20 @@
                 <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label">Bidding Name :</label>
+                <div class="mb-3 empty">
                     <input type="hidden" name="bidding-id" id="bidding-id">
-                    <input type="text" class="form-control" name="bidding-session-name" id="bidding-name-val">
-                    <span class="text-danger d-none error-bidding-session-name">Enter the Bidding Name!</span>
+                    <label for="exampleFormControlInput1" class="form-label">Bidding Name :</label>
+                    <input type="text" class="form-control is-empty" name="bidding-session-name" id="bidding-name-val" autocomplete="off">
+                    <span class="text-danger d-none is-in-valid">Enter the Bidding Name!</span>
                 </div>
-                <div class="row">
+                <div class="row empty">
                     <div class="mb-3 col-md-6">
                         <label class="form-label">Start Date :</label>
-                        <input type="date" class="form-control" name="start-date" id="start-date">
+                        <input type="date" class="form-control is-empty" name="start-date" id="start-date" >
                     </div>
                     <div class="mb-3 col-md-6">
                         <label for="exampleFormControlInput1" class="form-label">End Date :</label>
-                        <input type="date" class="form-control" name="end-date" id="end-date">
+                        <input type="date" class="form-control is-empty" name="end-date" id="end-date">
                     </div>
                 </div>
                 <div class="row">
@@ -161,7 +161,7 @@
                     <div class="col-md-8">
                         <label class="form-label">Academic Session </label>
                         <select class="form-select select2" id="edit-academic-session-add">
-                            <option class="disabled" selected>Select Acad Session</option>
+                            <option selected disabled>Select Acad Session</option>
                             <% for(let acadSession of acadSessionList) {  %>
                                 <option value="<%- acadSession.id %>"><%- acadSession.acad_session %></option>
                             <%} %>
@@ -186,9 +186,9 @@
     $(document).ready(function() {
         $('.select2').select2();
         
-        // $('#edit-academic-session-add').select2({
-        //     dropdownParent: $('#edit-bidding-session-modal')
-        // });
+        $('#edit-academic-session-add').select2({
+             dropdownParent: $('#edit-bidding-session-modal')
+         });
 
         formatDate(new Date(), false, 6);
         setActiveMenuItem(`<%- active %>`);
@@ -392,7 +392,7 @@
             ajaxApi(ApiObj).then(result => {
                 createToastMessage(result.description);
             }).catch(error => {
-                showError(JSON.stringify(error.responseJSON));
+                createToastError(JSON.stringify(error.responseJSON.description));
             });
         });
 
@@ -409,7 +409,7 @@
             ajaxApi(ApiObj).then(result => {
                 createToastMessage(result.description);
             }).catch(error => {
-                showError(JSON.stringify(error.responseJSON));
+                createToastError(JSON.stringify(error.responseJSON.description));
             });
         });
 
@@ -420,9 +420,9 @@
             let endDate = $('#edit-bidding-session-modal #end-date').val();
             let biddingSessionAcadId = [];
             
-            let isValid = validateBiddingSessionName('edit-bidding-session-modal modal-body');
-
-            if(isNotValid){
+            let isRequiredFieldsEmpty = isModalFieldEmpty('#edit-bidding-session-modal .modal-body');
+         
+            if(isRequiredFieldsEmpty){
             let acadSession = $('#edit-bidding-session-modal .add-bidding-session-val').find('span');
 
             acadSession.each(function(index, acadSessionElement) {
@@ -454,7 +454,7 @@
                 ajaxApi(ApiObj).then(result => {
                     createToastMessage(result.description);
                 }).catch(error => {
-                    showError(JSON.stringify(error.responseJSON));
+                    createToastError(JSON.stringify(error.responseJSON.description))
                 });
             } }
         });
