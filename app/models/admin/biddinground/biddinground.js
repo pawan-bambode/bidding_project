@@ -16,7 +16,7 @@ module.exports = class BiddingRound {
         });
     }
 
-    static getPredefineBiddingRounds(slug) {
+    static roundList(slug) {
         return poolConnection.then(pool => {
             return pool.request()
                 .query(`SELECT esr.id, esr.round_name FROM [dbo].elective_selection_rounds esr 
@@ -27,7 +27,7 @@ module.exports = class BiddingRound {
         });
     }
 
-    static getStudentsBiddingRounds(slug, biddingId) {
+    static studentList(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -37,7 +37,7 @@ module.exports = class BiddingRound {
         });
     }
 
-    static getCouresBiddingRounds(slug, biddingId) {
+    static courseList(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -78,7 +78,7 @@ module.exports = class BiddingRound {
         }
     }
 
-    static getCountSearch(slug, biddingId, letterSearch, pageNo, showEntry) {
+    static searchCount(slug, biddingId, letterSearch) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -109,7 +109,7 @@ module.exports = class BiddingRound {
     }
 
     // Procedures code starts from here.
-    static save(inputJSON, slug, userid, biddingId) {
+    static create(inputJSON, slug, userid, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), inputJSON)

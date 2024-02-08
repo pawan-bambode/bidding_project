@@ -2,7 +2,7 @@ const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class Area {
 
-    static getAreaList(slug, biddingId) {
+    static getList(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -18,7 +18,7 @@ module.exports = class Area {
         });
     }
 
-    static showEntryAreaList(slug, biddingId, showEntry, pageNo) {
+    static showEntry(slug, biddingId, showEntry, pageNo) {
         if (pageNo) {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -37,7 +37,7 @@ module.exports = class Area {
         }
     }
 
-    static getCountsOfShowEntry(slug, biddingId) {
+    static showEntryCount(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -69,7 +69,7 @@ module.exports = class Area {
         }
     }
 
-    static getCountOfSearch(slug, biddingId, pageNo, letterSearch, showEntry) {
+    static searchCount(slug, biddingId, pageNo, letterSearch, showEntry) {
         showEntry = showEntry ? showEntry : 10;
         return poolConnection.then(pool => {
             return pool.request()

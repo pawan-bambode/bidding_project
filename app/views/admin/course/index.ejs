@@ -120,7 +120,7 @@
             <div class="modal-body">
                     <div class="d-flex">
                     <label class="form-label me-3">Import Courses :</label>
-                    <form enctype="multipart/form-data" action="/admin/upload-course" method="post" id="upload-course-form">
+                    <form enctype="multipart/form-data" action="/admin/course/upload" method="post" id="upload-course-form">
                     <input type="file" name="import-course" id="import-course" accept=".xlsx">
                     </div>
                     <div class="d-flex justify-content-between align-item-center mt-5">
@@ -264,7 +264,7 @@ $('#program-name-filter').on('change', function() {
 
     let ApiObj = {
         type: 'POST',
-        url: '/admin/course/filter-by/programId',
+        url: '/admin/course/program-id',
         data: {
             programId: programId,
             showEntry: showEntry
@@ -303,7 +303,7 @@ $(document).on('change', '#session-name-filter', function() {
 
     let ApiObj = {
         type: 'POST',
-        url: '/admin/course/filter-by/session-id',
+        url: '/admin/course/session-id',
         data: {
             programId: programId,
             showEntry: showEntry,
@@ -343,7 +343,7 @@ $(document).on('change', '#course-name-filter', function() {
 
     let ApiObj = {
         type: 'POST',
-        url: '/admin/course/filter-by/course-id',
+        url: '/admin/course/course-id',
         data: {
             programId: programId,
             showEntry: showEntry,
@@ -369,7 +369,7 @@ $(document).on('change', '#course-name-filter', function() {
       let showEntry = $(this).val();
       let ApiObj = {
           type:'POST',
-          url:'/admin/course/showEntryCouresList',
+          url:'/admin/course/showEntry',
           data:{
             showEntry:showEntry
           },
@@ -483,7 +483,7 @@ $(document).on('change', '#course-name-filter', function() {
 
         $.ajax({
           type: 'POST',
-          url: '/admin/upload-course', 
+          url: '/admin/course/upload', 
           data: formData,
           processData: false,
           contentType: false,
@@ -501,7 +501,7 @@ $(document).on('change', '#course-name-filter', function() {
         $(this).closest('tr').remove();
         let ApiObj = {
           type:'POST',
-          url:'/admin/delete-course',
+          url:'/admin/course/delete',
           data:{
             id:id
           },

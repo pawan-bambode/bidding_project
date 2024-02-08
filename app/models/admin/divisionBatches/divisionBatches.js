@@ -2,7 +2,7 @@ const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class DivisionBatches {
 
-    static getDivisionBatches(slug, biddingId) {
+    static getList(slug, biddingId) {
         let showEntry = 10;
         return poolConnection.then(pool => {
             return pool.request()
@@ -17,7 +17,7 @@ module.exports = class DivisionBatches {
         });
     }
 
-    static getCountOfDivisionBatches(slug, biddingId) {
+    static getCount(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -28,7 +28,7 @@ module.exports = class DivisionBatches {
         });
     }
 
-    static getProgramList(slug, biddingId) {
+    static programList(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('bidding_session_lid', sql.Int, biddingId)
@@ -85,7 +85,7 @@ module.exports = class DivisionBatches {
         }
     }
     
-    static getCountSearch(slug, biddingId, letterSearch, programId, acadSessionId) {
+    static searchCount(slug, biddingId, letterSearch, programId, acadSessionId) {
         if (programId != '-1' && acadSessionId != '-1') {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -128,7 +128,7 @@ module.exports = class DivisionBatches {
         }
     }
     
-    static showEntryDivisionBatchesList(slug, biddingId, showEntry, pageNo) {
+    static showEntry(slug, biddingId, showEntry, pageNo) {
         if (pageNo) {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -157,7 +157,7 @@ module.exports = class DivisionBatches {
         }
     }
     
-    static getCounts(slug, biddingId) {
+    static showEntryCount(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -170,7 +170,7 @@ module.exports = class DivisionBatches {
         });
     }
        
-    static filterByProgramId(slug, biddingId, programId, showEntry) {
+    static listByProgramId(slug, biddingId, programId, showEntry) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -185,7 +185,7 @@ module.exports = class DivisionBatches {
         });
     }
     
-    static getCountfilterByProgramId(slug, biddingId, programId) {
+    static listByProgramIdCount(slug, biddingId, programId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -210,7 +210,7 @@ module.exports = class DivisionBatches {
         });
     }
     
-    static filterBySessionId(slug, biddingId, programId, sessionId, showEntry) {
+    static listBySessionId(slug, biddingId, programId, sessionId, showEntry) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -226,7 +226,7 @@ module.exports = class DivisionBatches {
         });
     }
     
-    static getCountFilterBySessionId(slug, biddingId, programId, sessionId) {
+    static listBySessionIdCount(slug, biddingId, programId, sessionId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -442,7 +442,7 @@ module.exports = class DivisionBatches {
     
 
     //Procedures code starts from here.
-    static uploadDivisionBatches(slug, inputJson, userid, biddingId){
+    static upload(slug, inputJson, userid, biddingId){
         return poolConnection.then(pool=>{
             return pool.request()
             .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))

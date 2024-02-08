@@ -1,8 +1,7 @@
 const excel = require('excel4node');
 const xlsx = require('xlsx');
-const course = require('../../../models/admin/course/course');
-const isJsonString = require('../../../utils/util');
-const { NULL } = require('xlsx-populate/lib/FormulaError');
+const course = require('../../../../models/admin/course/course');
+const isJsonString = require('../../../../utils/util');
 
 module.exports = {
   generateExcel: (req, res) => {
@@ -40,7 +39,7 @@ module.exports = {
     });
   },
 
-  readExcelFile: (req, res) => {
+  upload: (req, res) => {
     let excelFileBufferData = req.file.buffer;
     let biddingId = res.locals.biddingId;
     let excelFileDataWorkbook = xlsx.read(excelFileBufferData);
@@ -48,7 +47,7 @@ module.exports = {
     const sheet = excelFileDataWorkbook.Sheets[sheetName];
     const courseJsonData = xlsx.utils.sheet_to_json(sheet);
     const courseDataWithColumnHypen = courseJsonData.map(item => {
-      let defaultValue =  NULL;
+      let defaultValue =  null;
       return {
         course_name: item.areaName == undefined ?  defaultValue : item.courseName.replace(/\s+/g, ' ').trim(), 
         course_id: item.courseId == undefined ?  defaultValue : item.courseId,
@@ -63,7 +62,7 @@ module.exports = {
     
     let courseJSON = { courses: courseDataWithColumnHypen };
     
-    course.uploadCourse(res.locals.slug, courseJSON, res.locals.userId, biddingId)
+    course.upload(res.locals.slug, courseJSON, res.locals.userId, biddingId)
       .then(result => {
         res.status(200).json(JSON.parse(result.output.output_json));
       })

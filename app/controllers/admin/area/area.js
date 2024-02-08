@@ -4,7 +4,7 @@ const isJsonString = require('../../../utils/util');
 module.exports = {
     getPage: (req, res) => {
         Promise.all([
-            biddingSession.getAreaList(res.locals.slug, res.locals.biddingId),
+            biddingSession.getList(res.locals.slug, res.locals.biddingId),
             biddingSession.getCount(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
             res.render('admin/areas/index.ejs', {
@@ -16,7 +16,7 @@ module.exports = {
         });
     },
 
-    refreshArea: (req, res) => {
+    refresh: (req, res) => {
         biddingSession.refresh(res.locals.slug, res.locals.biddingId, res.locals.userId).then(result => {
             res.status(200).json(JSON.parse(result.output.output_json));
         }).catch(error => {
@@ -32,10 +32,10 @@ module.exports = {
         });
     },
 
-    showEntryAreaList: (req, res) => {
+    showEntry: (req, res) => {
         Promise.all([
-            biddingSession.showEntryAreaList(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.pageNo),
-            biddingSession.getCountsOfShowEntry(res.locals.slug, res.locals.biddingId)
+            biddingSession.showEntry(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.pageNo),
+            biddingSession.showEntryCount(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
             res.json({
                 status: '200',
@@ -48,10 +48,10 @@ module.exports = {
         });
     },
 
-    areaSearch: (req, res) => {
+    search: (req, res) => {
         Promise.all([
             biddingSession.search(res.locals.slug, res.locals.biddingId, req.body.pageNo, req.body.searchLetter, req.body.showEntry),
-            biddingSession.getCountOfSearch(res.locals.slug, res.locals.biddingId, req.body.pageNo, req.body.searchLetter)
+            biddingSession.searchCount(res.locals.slug, res.locals.biddingId, req.body.pageNo, req.body.searchLetter)
         ]).then(result => {
             res.json({
                 status: '200',

@@ -2,7 +2,7 @@ const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class BonusBidPoints {
 
-    static getBonusBidPointList(slug, biddingId) {
+    static getList(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -13,7 +13,7 @@ module.exports = class BonusBidPoints {
     }
     
     // Procedures code starts from here
-    static addBonusBidPoints(slug, userid, biddingId, inputJson) {
+    static add(slug, userid, biddingId, inputJson) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), inputJson)

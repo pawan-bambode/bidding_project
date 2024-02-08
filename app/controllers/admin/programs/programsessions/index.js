@@ -7,7 +7,7 @@ module.exports = {
     
     getPage: (req, res) => {
         Promise.all([
-            programSession.getAllProgramSessions(req, res, res.locals.slug, res.locals.biddingId),
+            programSession.getList(res.locals.slug, res.locals.biddingId),
             programSession.getCount(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
             res.render('admin/programs/programsession/index.ejs', {
@@ -58,7 +58,7 @@ module.exports = {
     search: (req, res) => {
         Promise.all([
             programSession.search(req.body.pageNo, req.body.searchLetter, req.body.showEntry, res.locals.slug, res.locals.biddingId, res.locals.userId),
-            programSession.getCounts(req.body.pageNo, req.body.searchLetter, res.locals.slug, res.locals.biddingId, res.locals.userId)
+            programSession.searchCount(req.body.pageNo, req.body.searchLetter, res.locals.slug, res.locals.biddingId, res.locals.userId)
         ]).then(result => {
             res.json({
                 status: '200',
@@ -79,10 +79,10 @@ module.exports = {
         });
     },
 
-    showEntryProgramSessionList: (req, res) => {
+    showEntry: (req, res) => {
         Promise.all([
-            programSession.showEntryProgramSessionList(req.body.showEntry, res.locals.slug, res.locals.biddingId, req.body.pageNo),
-            programSession.getCountsProgramSession(req.body.showEntry, res.locals.slug, res.locals.biddingId, req.body.pageNo)
+            programSession.showEntry(req.body.showEntry, res.locals.slug, res.locals.biddingId, req.body.pageNo),
+            programSession.showEntryCount(res.locals.slug, res.locals.biddingId, req.body.pageNo)
         ]).then(result => {
             res.json({
                 status: '200',

@@ -115,14 +115,14 @@
             <div class="modal-body">
                     <div class="d-flex">
                     <label class="form-label me-3">Import Division Batches :</label>
-                    <form enctype="multipart/form-data" action="/admin/upload-division-batches" method="post" id="upload-division-batches-form">
+                    <form enctype="multipart/form-data" action="/admin/division-batches/upload" method="post" id="upload-division-batches-form">
                     <input type="file" name="import-division-batches" id="import-division-batches" accept=".xlsx">
                     </div>
                     <div class="d-flex justify-content-between align-item-center mt-5">
                     <input type="submit" class="btn btn-success mt-2 d-none" id="upload-division-batches-button" value="Upload Division Batches"></input> 
                     </form> 
                 
-                  <a href="/admin/generate-excel-for-division-batches" download="sampleForImportDivisionBatches.xlsx" name="sample-for-import-division-batches" class="text-decoration-none align-self-end">Sample for Import Division Batches</a>
+                  <a href="/admin/division-batches/generate-excel" download="sampleForImportDivisionBatches.xlsx" name="sample-for-import-division-batches" class="text-decoration-none align-self-end">Sample for Import Division Batches</a>
                  </div>
             </div>
             <div class="modal-footer">
@@ -228,7 +228,7 @@
 
           $.ajax({
             type: 'POST',
-            url: '/admin/upload-division-batches', 
+            url: '/admin/division-batches/upload', 
             data: formData,
             processData: false,
             contentType: false,
@@ -360,7 +360,7 @@
       
       let ApiObj = {
           type:'POST',
-          url:'/admin/division-batches/showEntryDivisionBatchesList',
+          url:'/admin/division-batches/showEntry',
           data:{
             showEntry:showEntry
           },

@@ -1,6 +1,6 @@
 
 module.exports = {
-    getDashboard: (req, res) => {
+    getPage: (req, res) => {
         let adminDashboardUrl = req.route.path.split('/');
         let dashboard = adminDashboardUrl[adminDashboardUrl.length - 1];
             res.render('admin/dashboard/index', {

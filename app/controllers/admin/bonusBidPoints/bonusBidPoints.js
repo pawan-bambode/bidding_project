@@ -4,7 +4,7 @@ const isJsonString = require('../../../utils/util');
 module.exports = {
     
     getPage: (req, res) => {
-        Promise.all([bonusBidPoints.getBonusBidPointList(res.locals.slug, res.locals.biddingId)])
+        Promise.all([bonusBidPoints.getList(res.locals.slug, res.locals.biddingId)])
             .then(result => {
                 res.render('admin/bonusBidPoints/index', {
                     active: 'dashboard',
@@ -15,7 +15,7 @@ module.exports = {
     },
 
     add: (req, res) => {
-        bonusBidPoints.addBonusBidPoints(res.locals.slug, res.locals.userId, res.locals.biddingId, req.body.InputJson)
+        bonusBidPoints.add(res.locals.slug, res.locals.userId, res.locals.biddingId, req.body.InputJson)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })

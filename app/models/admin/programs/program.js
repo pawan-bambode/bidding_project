@@ -1,7 +1,7 @@
 const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class Program {
-    static getAllProgram(slug, biddingId) {
+    static getList(slug, biddingId) {
         let showEntry = 10;
         return poolConnection.then(pool => {
             return pool.request()
@@ -21,7 +21,7 @@ module.exports = class Program {
         });
     }
 
-    static getAllProgramFromDbo(slug, abbr, biddingId) {
+    static getListFromDbo(slug, abbr, biddingId) {
         abbr = 'SBM-NM-M';
         return poolConnection.then(pool => {
             return pool.request()
@@ -62,9 +62,8 @@ module.exports = class Program {
         }
     }
 
-    static getCountOfSearch(slug, biddingId, pageNo, userId, letterSearch, showEntry) {
-        showEntry = showEntry ? showEntry : 10;
-
+    static searchCount(slug, biddingId, pageNo, userId, letterSearch) {
+       
         if (pageNo) {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -88,7 +87,7 @@ module.exports = class Program {
         }
     }
 
-    static showEntryProgramList(slug, biddingId, showEntry) {
+    static showEntry(slug, biddingId, showEntry) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -98,7 +97,7 @@ module.exports = class Program {
         });
     }
 
-    static getCounts(slug, biddingId, showEntry) {
+    static showEntryCount(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -108,7 +107,7 @@ module.exports = class Program {
     }
 
     // Procedures code starts from here.
-    static save(inputJSON, slug, userid, biddingId) {
+    static create(inputJSON, slug, userid, biddingId) {
         return poolConnection.then(pool => {
             return pool.request().input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJSON))
                 .input('last_modified_by', sql.Int, userid)

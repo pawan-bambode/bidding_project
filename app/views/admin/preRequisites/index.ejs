@@ -101,14 +101,14 @@
             <div class="modal-body">
                     <div class="d-flex">
                     <label class="form-label me-3">Import Pre-Requisites :</label>
-                    <form enctype="multipart/form-data" action="/admin/upload-pre-requisites" method="post" id="upload-pre-requisites-form">
+                    <form enctype="multipart/form-data" action="/admin/pre-requities/upload" method="post" id="upload-pre-requisites-form">
                     <input type="file" name="import-pre-requisites" id="import-pre-requisites" accept=".xlsx">
                     </div>
                     <div class="d-flex justify-content-between align-item-center mt-5">
                     <input type="submit" class="btn btn-success mt-2 d-none" id="upload-pre-requisites-button" value="Upload Pre-Requisites"></input> 
                     </form> 
                 
-                  <a href="/admin/generate-excel-pre-requities" download="sampleForImportPreRequisites.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample for Import Pre-Requisites</a>
+                  <a href="/admin/pre-requisites/generate-excel" download="sampleForImportPreRequisites.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample for Import Pre-Requisites</a>
                  </div>
              
             </div>
@@ -182,7 +182,7 @@
 
         $.ajax({
           type: 'POST',
-          url: '/admin/pre-requities/upload', 
+          url: '/admin/pre-requisites/upload', 
           data: formData,
           processData: false,
           contentType: false,
@@ -264,7 +264,7 @@
       let showEntry = $(this).val();
       let ApiObj = {
           type:'POST',
-          url:'/admin/pre-requisites/showEntryList',
+          url:'/admin/pre-requisites/showEntry',
           data:{
             showEntry:showEntry
           },

@@ -1,7 +1,7 @@
 const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class Specialization {
-    static getAllSpecialization(slug, biddingId, showEntry) {
+    static getList(slug, biddingId, showEntry) {
         showEntry = showEntry ? showEntry : 10;
         return poolConnection.then(pool => {
             return pool.request()
@@ -43,7 +43,7 @@ module.exports = class Specialization {
         }
     }
 
-    static getCountOfSearch(slug, biddingId, pageNo, letterSearch, showEntry) {
+    static searchCount(slug, biddingId, pageNo, letterSearch, showEntry) {
         showEntry = showEntry ? showEntry : 10;
         return poolConnection.then(pool => {
             return pool.request()
@@ -55,7 +55,7 @@ module.exports = class Specialization {
         });
     }
 
-    static showEntrySpecializationList(slug, biddingId, showEntry, pageNo) {
+    static showEntry(slug, biddingId, showEntry, pageNo) {
         if (pageNo) {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -74,6 +74,18 @@ module.exports = class Specialization {
             });
         }
     }
+
+    static showEntryCount(slug, biddingId) {
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .input('pageNo', sql.Int, pageNo)
+                .query(`SELECT COUNT(*) 
+                        FROM [${slug}].concentration c 
+                        WHERE c.active = 1 AND c.bidding_session_lid = @biddingId `);
+        });
+    }
+    
 
     // Procedures code starts from here.
     static add(specializationName, biddingId, userId, slug) {

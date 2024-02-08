@@ -229,7 +229,7 @@
 
             let ApiObj = {
                 type: 'POST',
-                url: '/admin/student-data/filter-by/programId',
+                url: '/admin/student-data/program-id',
                 data: {
                     programId: programId,
                     showEntry: showEntry
@@ -255,6 +255,7 @@
                     AjaxtTable(result.data);
                     $('#page-no').html(result.length);
                     $('#searchkeyword').val('');
+                   
                 })
                 .catch(error => {
                     createToastError(JSON.stringify(error.responseJSON.description));
@@ -268,7 +269,7 @@
 
             let ApiObj = {
                 type: 'POST',
-                url: '/admin/student-data/filter-by/student-sap-id',
+                url: '/admin/student-data/student-id',
                 data: {
                     programId: programId,
                     showEntry: showEntry,
@@ -279,6 +280,7 @@
 
             ajaxApi(ApiObj)
                 .then(result => {
+                    console.log('values of resu', result);
                     AjaxtTable(result.data);
                     paginationData(showEntry,result.length);
                     $('#page-no').html(result.length);
@@ -313,7 +315,7 @@
         let programId = $('#program-name-filter').val();
         let ApiObj = {
             type:'POST',
-            url:'/admin/student-data/showEntryCouresList',
+            url:'/admin/student-data/showEntry',
             data:{
                 showEntry:showEntry,
                 programId: programId

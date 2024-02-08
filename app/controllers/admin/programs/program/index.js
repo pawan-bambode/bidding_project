@@ -5,9 +5,9 @@ module.exports = {
 
     getPage: (req, res) => {
         Promise.all([
-        program.getAllProgram(res.locals.slug, res.locals.biddingId),
+        program.getList(res.locals.slug, res.locals.biddingId),
         program.getCount(res.locals.slug, res.locals.biddingId),
-        program.getAllProgramFromDbo(res.locals.slug, res.locals.biddingId)
+        program.getListFromDbo(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
         res.render('admin/programs/program/index.ejs', {
             programList: result[0].recordset,
@@ -23,7 +23,7 @@ module.exports = {
         let object = {
         import_programs: JSON.parse(req.body.inputJSON)
         };
-        program.save(object, res.locals.slug, res.locals.userId, req.body.biddingSessionId)
+        program.create(object, res.locals.slug, res.locals.userId, req.body.biddingSessionId)
         .then(result => {
             res.status(200).json(JSON.parse(result.output.output_json));
         })
@@ -77,10 +77,10 @@ module.exports = {
         });
     },
 
-    programSearch: (req, res) => {
+    search: (req, res) => {
         Promise.all([
         program.search(res.locals.slug, res.locals.biddingId, req.body.pageNo, res.locals.userId, req.body.searchLetter, req.body.showEntry),
-        program.getCountOfSearch(res.locals.slug, res.locals.biddingId, req.body.pageNo, res.locals.userId, req.body.searchLetter)
+        program.searchCount(res.locals.slug, res.locals.biddingId, req.body.pageNo, res.locals.userId, req.body.searchLetter)
         ]).then(result => {
         res.json({
             status: '200',
@@ -101,10 +101,10 @@ module.exports = {
         });
     },
 
-    showEntryProgramList: (req, res) => {
+    showEntry: (req, res) => {
         Promise.all([
-        program.showEntryProgramList(res.locals.slug, res.locals.biddingId, req.body.showEntry),
-        program.getCounts(res.locals.slug, res.locals.biddingId, req.body.showEntry)
+        program.showEntry(res.locals.slug, res.locals.biddingId, req.body.showEntry),
+        program.showEntryCount(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
         res.json({
             status: '200',

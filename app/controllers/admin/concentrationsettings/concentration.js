@@ -5,9 +5,9 @@ const isJsonString = require('../../../utils/util');
 module.exports = {
     getPage: (req, res) => {
         Promise.all([
-            concentrationSettings.getConcentrationSettingsList(res.locals.slug, res.locals.biddingId), 
+            concentrationSettings.getList(res.locals.slug, res.locals.biddingId), 
             concentrationSettings.getCount(res.locals.slug, res.locals.biddingId), 
-            Areas.getAreaList(res.locals.slug, res.locals.biddingId)
+            Areas.getList(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
             res.render('admin/concentrationsettings/index.ejs', {
                 concentrationSettingList: result[0].recordset,
@@ -67,10 +67,10 @@ module.exports = {
         });
     },
 
-    showEntryConcentrationSettingList: (req, res) => {
+    showEntry : (req, res) => {
         Promise.all([
-            concentrationSettings.showEntryConcentrationSettingList(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.pageNo), 
-            concentrationSettings.getCountsOfShowEntry(res.locals.slug, res.locals.biddingId)
+            concentrationSettings.showEntry(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.pageNo), 
+            concentrationSettings.showEntryCount(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
             res.json({
                 status: '200',
@@ -83,10 +83,10 @@ module.exports = {
         });
     },
 
-    concentrationSettingsSearch: (req, res) => {
+    search : (req, res) => {
         Promise.all([
-            concentrationSettings.concentrationSettingsSearch(res.locals.slug, res.locals.biddingId, req.body.pageNo, req.body.searchLetter, req.body.showEntry), 
-            concentrationSettings.getCountOfSearch(res.locals.slug, res.locals.biddingId, req.body.pageNo, req.body.searchLetter)
+            concentrationSettings.search(res.locals.slug, res.locals.biddingId, req.body.pageNo, req.body.searchLetter, req.body.showEntry), 
+            concentrationSettings.searchCount(res.locals.slug, res.locals.biddingId, req.body.pageNo, req.body.searchLetter)
         ]).then(result => {
             res.json({
                 status: '200',

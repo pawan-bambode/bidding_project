@@ -1,23 +1,8 @@
 const { sql, poolConnection } = require('../../../../config/db');
 
-module.exports = class completeCourses {
+module.exports = class completedCourses {
 
-    static deleteAll(slug, biddingId, userId, deleteCompletedCoursesIdJson) {
-        deleteCompletedCoursesIdJson = Object.keys(deleteCompletedCoursesIdJson).map(key => {
-            const id = deleteCompletedCoursesIdJson[key];
-            return { id: parseInt(id) }; 
-        });
-        return poolConnection.then(pool => {
-            return pool.request()
-                .input('last_modified_by', sql.Int, userId)
-                .input('bidding_session_lid', sql.Int, biddingId)
-                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(deleteCompletedCoursesIdJson))
-                .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[sp_delete_all_completed_courses]`);
-        });
-    }
-
-    static getCompleteCourseList(slug, biddingId, showEntry) {
+    static getList(slug, biddingId, showEntry) {
         showEntry = showEntry ? showEntry : 10;
         return poolConnection.then(pool => {
             return pool.request() 
@@ -38,7 +23,7 @@ module.exports = class completeCourses {
         });
     }
 
-    static getCountSearch(slug, biddingId, letterSearch, pageNo, showEntry) {
+    static searchCount(slug, biddingId, letterSearch, pageNo, showEntry) {
         if (pageNo) {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -107,7 +92,7 @@ module.exports = class completeCourses {
         }
     }
 
-    static getCounts(slug, biddingId) {
+    static showEntryCount(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request() 
                 .input('biddingId', sql.Int, biddingId)
@@ -235,7 +220,7 @@ module.exports = class completeCourses {
     }
 
     // Procedures code starts from here
-    static uploadCompleteCoursesData(slug, inputJson, userId, biddingId) {
+    static upload(slug, inputJson, userId, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))
@@ -265,6 +250,21 @@ module.exports = class completeCourses {
                 .input('input_json', sql.NVarChar(sql.MAX), inputJson)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_update_courses]`);
+        });
+    }
+
+    static deleteAll(slug, biddingId, userId, deleteCompletedCoursesIdJson) {
+        deleteCompletedCoursesIdJson = Object.keys(deleteCompletedCoursesIdJson).map(key => {
+            const id = deleteCompletedCoursesIdJson[key];
+            return { id: parseInt(id) }; 
+        });
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('last_modified_by', sql.Int, userId)
+                .input('bidding_session_lid', sql.Int, biddingId)
+                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(deleteCompletedCoursesIdJson))
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_delete_all_completed_courses]`);
         });
     }
 

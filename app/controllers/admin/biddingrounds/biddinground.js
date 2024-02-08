@@ -5,9 +5,9 @@ module.exports = {
     getPage: (req, res) => {
         Promise.all([
             biddingRound.getBiddingRounds(res.locals.slug, res.locals.biddingId),
-            biddingRound.getPredefineBiddingRounds(res.locals.slug, res.locals.biddingId),
-            biddingRound.getStudentsBiddingRounds(res.locals.slug, res.locals.biddingId),
-            biddingRound.getCouresBiddingRounds(res.locals.slug, res.locals.biddingId)
+            biddingRound.roundList(res.locals.slug, res.locals.biddingId),
+            biddingRound.studentList(res.locals.slug, res.locals.biddingId),
+            biddingRound.courseList(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
             res.render('admin/biddingrounds/index.ejs', {
                 biddingRoundList: result[0].recordset,
@@ -22,7 +22,7 @@ module.exports = {
     },
 
     create: (req, res) => {
-        biddingRound.save(req.body.inputJSON, res.locals.slug, res.locals.userId, res.locals.biddingId)
+        biddingRound.create(req.body.inputJSON, res.locals.slug, res.locals.userId, res.locals.biddingId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
@@ -78,7 +78,7 @@ module.exports = {
     search: (req, res) => {
         Promise.all([
             biddingRound.search(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.pageNo, req.body.showEntry),
-            biddingRound.getCountSearch(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.pageNo, req.body.showEntry)
+            biddingRound.searchCount(res.locals.slug, res.locals.biddingId, req.body.searchLetter)
         ]).then(result => {
             res.json({
                 status: "200",

@@ -1,7 +1,42 @@
 const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class StudentsData {
-    static showEntryCouresList(slug, biddingId, showEntry, programId) {
+
+    static getList(slug,biddingId) {
+        let showEntry = 10;
+       return poolConnection.then(pool => {
+           return pool.request()
+           .input('biddingId',sql.Int,biddingId)
+           .query(`SELECT TOP ${showEntry} sd.id, sd.sap_id, sd.roll_no, sd.student_name, sd.email, 
+                   p.program_name, sd.bid_points, sd.year_of_joining, sd.previous_elective_credits
+                   FROM [${slug}].student_data sd 
+                   INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND 
+                   p.bidding_session_lid= @biddingId  AND sd.bidding_session_lid = @biddingId AND p.active = 1`)
+       })
+   }
+
+   static getCount(slug,biddingId) {
+        return poolConnection.then(pool => {
+            return pool.request()
+            .input('biddingId',sql.Int,biddingId)
+            .query(`SELECT COUNT(*) 
+                    FROM [${slug}].student_data sd 
+                    INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND  p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId`)
+        })
+    }
+    static programList(slug,biddingId) {
+    return poolConnection.then(pool => {
+        return pool.request()
+        .input('biddingId',sql.Int,biddingId)
+        .query(`SELECT p.program_id,p.program_name
+                FROM [${slug}].student_data sd 
+                INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND 
+                p.bidding_session_lid = @biddingId AND sd.bidding_session_lid = @biddingId GROUP BY p.program_id,p.program_name`)
+    })
+    }
+
+
+    static showEntry(slug, biddingId, showEntry, programId) {
         if (programId) {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -16,15 +51,15 @@ module.exports = class StudentsData {
             return poolConnection.then(pool => {
                 return pool.request()
                     .input('biddingId', sql.Int, biddingId)
-                    .query(`SELECT TOP ${showEntry} sd.id, sd.sap_id, sd.roll_no, sd.student_name, sd.email,
-                            p.program_name, sd.bid_points,sd.year_of_joining, sd.previous_elective_credits
+                    .query(`SELECT TOP ${showEntry} sd.id, sd.sap_id, sd.roll_no, sd.student_name, 
+                            sd.email, p.program_name, sd.bid_points,sd.year_of_joining, sd.previous_elective_credits
                             FROM [${slug}].student_data sd 
                             INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId`);
             });
         }
     }
 
-    static getCounts(slug, biddingId, programId) {
+    static showEntryCount(slug, biddingId, programId) {
         if (programId) {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -44,8 +79,15 @@ module.exports = class StudentsData {
             });
         }
     }
-
-    static searchStudentData(slug, biddingId, letterSearch, programId, pageNo, showEntry) {
+    
+    static updatePassword(userName, newPassword) {
+        return poolConnection.then(pool => {
+            return pool.request().
+            query(`UPDATE users SET password = '${newPassword}' WHERE username = '${userName}'`)
+        })
+    }
+    
+    static search(slug, biddingId, letterSearch, programId, pageNo, showEntry) {
         showEntry = showEntry ? showEntry : 10;
         if (programId !== '-1') {
             return poolConnection.then(pool => {
@@ -71,7 +113,7 @@ module.exports = class StudentsData {
         }
     }
 
-    static getCountSearch(slug, biddingId, letterSearch, programId) {
+    static searchCount(slug, biddingId, letterSearch, programId) {
         if (programId !== '-1') {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -94,7 +136,7 @@ module.exports = class StudentsData {
         }
     }
 
-    static searchStudentDataByletter(slug, biddingId, letterSearch, pageNo, showEntry) {
+    static searchByletter(slug, biddingId, letterSearch, pageNo, showEntry) {
         if (pageNo) {
             if (letterSearch) {
                 return poolConnection.then(pool => {
@@ -136,7 +178,7 @@ module.exports = class StudentsData {
         }
     }
 
-    static getCountsStudentDataByletter(slug, biddingId, letterSearch, pageNo) {
+    static searchByletterCount(slug, biddingId, letterSearch, pageNo) {
         if (pageNo) {
             if (letterSearch) {
                 return poolConnection.then(pool => {
@@ -174,7 +216,7 @@ module.exports = class StudentsData {
         }
     }
 
-    static studentDataFilterByProgramId(slug, biddingId, programId, showEntry) {
+    static listByProgramId(slug, biddingId, programId, showEntry) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -187,7 +229,7 @@ module.exports = class StudentsData {
         });
     }
 
-    static studentSapIdByProgramId(slug, biddingId, programId) {
+    static studentIdByProgramId(slug, biddingId, programId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -199,7 +241,7 @@ module.exports = class StudentsData {
         });
     }
 
-    static getCountfilterByProgramId(slug, biddingId, programId) {
+    static listByProgramIdCount(slug, biddingId, programId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -211,7 +253,7 @@ module.exports = class StudentsData {
         });
     }
 
-    static studentDataFilterByStudentId(slug, biddingId, programId, showEntry, sapId) {
+    static listByStudentId(slug, biddingId, programId, showEntry, sapId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -225,7 +267,7 @@ module.exports = class StudentsData {
         });
     }
 
-    static getCountfilterByStudentId(slug, biddingId, programId, sapId) {
+    static listByStudentIdCount(slug, biddingId, programId, sapId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)

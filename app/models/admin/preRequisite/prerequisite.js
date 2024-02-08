@@ -1,7 +1,7 @@
 const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class preRequisites {
-    static getPreRequities(slug, biddingId, showEntry) {
+    static getList(slug, biddingId, showEntry) {
         showEntry = showEntry ? showEntry : 10;
         return poolConnection.then(pool => {
             return pool.request()
@@ -24,7 +24,7 @@ module.exports = class preRequisites {
         });
     }
 
-    static getCountSearch(slug, biddingId, letterSearch, userId) {
+    static searchCount(slug, biddingId, letterSearch, userId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
@@ -67,7 +67,7 @@ module.exports = class preRequisites {
         }
     }
 
-    static showEntryList(slug, biddingId, showEntry, pageNo) {
+    static showEntry(slug, biddingId, showEntry, pageNo) {
         if (pageNo) {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -93,7 +93,7 @@ module.exports = class preRequisites {
         }
     }
 
-    static getCounts(slug, biddingId) {
+    static showEntryCount(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -105,7 +105,7 @@ module.exports = class preRequisites {
     }
  
     //Procedures code starts from here.
-    static uploadPreRequisites(slug, inputJson, userid, biddingId) {
+    static upload(slug, inputJson, userid, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))

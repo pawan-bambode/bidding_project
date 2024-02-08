@@ -1,8 +1,7 @@
 const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class ProgramSession {
-    static getAllProgramSessions(req, res, slug, biddingId) {
-        let showEntry = 10;
+    static getList(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -29,7 +28,7 @@ module.exports = class ProgramSession {
         })
     }
 
-    static getProgramSessionCreditsPoint(slug, biddingId) {
+    static creditsPoint(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -85,7 +84,7 @@ module.exports = class ProgramSession {
         }
     }
 
-    static getCounts(pageNo, letterSearch, slug, biddingId, userId) {
+    static searchCount(pageNo, letterSearch, slug, biddingId, userId) {
         if (pageNo) {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -116,7 +115,7 @@ module.exports = class ProgramSession {
         }
     }
 
-    static showEntryProgramSessionList(showEntry, slug, biddingId, pageNo) {
+    static showEntry(showEntry, slug, biddingId, pageNo) {
         if (pageNo) {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -145,7 +144,7 @@ module.exports = class ProgramSession {
         }
     }
 
-    static getCountsProgramSession(showEntry, slug, biddingId) {
+    static showEntryCount(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)

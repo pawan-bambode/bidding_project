@@ -1,155 +1,46 @@
-const fs = require('fs');
-const xlsx = require('xlsx');
-const Students = require('../../../models/Students');
+const StudentData = require('../../../models/Students');
 const hash = require('../../../utils/hash');
-const crypto = require('../../../utils/crypto');
-const User = require('../../../models/User')
-
+const User = require('../../../models/User');
 
 module.exports = {
-    getStudentPage: (req, res) => {
-        Promise.all([Students.getStudentDataList(res.locals.slug,res.locals.biddingId),Students.getCount(res.locals.slug,res.locals.biddingId),Students.getProgramList(res.locals.slug,res.locals.biddingId)]).then(result => {
-            res.render('admin/students/index.ejs', {
-                studentDataList: result[0].recordset,
-                pageCount: result[1].recordset[0][''],
-                programList: result[2].recordset,
-                active:'dashboard',
-                breadcrumbs: req.breadcrumbs
-            })
-        })
-        
-    },
-
-    readExcelFile : (req, res) => {
-        const excelFileBuffer = req.file.buffer;
-        const workbook = xlsx.read(excelFileBuffer);
-
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
-
-        const jsonData = xlsx.utils.sheet_to_json(sheet);
-        
-        let jsonArr = JSON.stringify(jsonData);
-       
-        Students.saveStudentDetails(jsonArr).then(data => { 
-            res.redirect('/admin/student')
-            
-        })
-       
-    },
-
-    getStudentDetails: (req, res) => {
-        Students.fetchAllStudentDetails().then(data => {
-            var output = {
-                'draw' : 1,
-                'iTotalRecords' : 3363,
-                'iTotalDisplayRecords' : 3363,
-                'aaData' : data
-            };
     
-            res.json(output);
-
-        })
+    getPage: (req, res) => {
+        Promise.all([
+        StudentData.getList(res.locals.slug, res.locals.biddingId),
+        StudentData.getCount(res.locals.slug, res.locals.biddingId),
+        StudentData.programList(res.locals.slug, res.locals.biddingId)
+        ]).then(result => {
+        res.render('admin/studentData/index.ejs', {
+            studentDataList: result[0].recordset,
+            pageCount: result[1].recordset[0][''],
+            programList: result[2].recordset,
+            active: 'dashboard',
+            breadcrumbs: req.breadcrumbs
+        });
+        });
     },
 
-    getStudentDetailsById : (req, res) => {
-        Students.fetchStudentDetailsById(req.body.studentId).then(data => {
-            res.status(200).json({
-                data: data.recordset,
-                message: 'success'
-            })
-        })
-    },
-
-    updateStudentDetailsById : (req, res) => {
-        let updatedBody = {
-            "firstName": req.body.firstName,
-            "lastName": req.body.lastName,
-            "studentEmail": req.body.studentEmail,
-            "studentPhone": req.body.studentPhone,
-            "studentId": req.body.studentId,
-        }
-        Students.updateStudentDetails(req.body.firstName, req.body.lastName, req.body.studentEmail, req.body.studentPhone, req.body.studentId).then(data => {
-            res.status(200).json({
-                data: updatedBody,
-                message: 'success'
-            })
-        })
-    },
-
-
-    getStudentInfoByFirstname : (req, res) => {
-
-        Students.getDetailsByFirstname(req.body.firstName).then(data => {
-            var output = {
-                'draw' : 1,
-                'iTotalRecords' : 10,
-                'iTotalDisplayRecords' : 10,
-                'aaData' : data
-            };
-    
-            res.status(200).json(output);
-        })
-    },
-
-    generateStudentCredentials : async (req, res) => {
-       
-        let studentData = await Students.getStudentsData();
-        let jsonArr = [];
-        
-        for(let data of studentData.recordset){
-            jsonArr.push({
-                firstName: data.first_name,
-                lastName: data.last_name,
-                username: data.email,
-                password: await hash.hashPassword(data.dob)
-            })
-        }
-
-        Students.createStudentCredentials(jsonArr).then(data => {
-            res.status(200).json({
-                status: JSON.parse(data.output.output_json).status
-            })
-        })
-    },
-
-
-    checkOldPassword : async (req, res) => {
-
+    checkOldPassword: async (req, res) => {
         let checkUserData = await User.getUserDetails(req.body.userName);
-
         let isVerified = await hash.verifyPassword(req.body.oldPass, checkUserData.recordset[0].password);
-
         res.status(200).json({
-            verifiedStatus: isVerified ? true : false
-        })
-       
+        verifiedStatus: isVerified ? true : false
+        });
     },
 
-    updatePassword : async (req, res) => {
+    updatePassword: async (req, res) => {
         let userName = req.body.userName;
         let encryptPass = await hash.hashPassword(req.body.newPassword);
-
         Students.updatePassword(userName, encryptPass).then(data => {
-            if(data.rowsAffected.length > 0) {
-                res.status(200).json({
-                    status: 'S'
-                })
-            } else {
-                res.status(400).json({
-                    status: 'F'
-                })
-            }
-        })
-
+        if (data.rowsAffected.length > 0) {
+            res.status(200).json({
+            status: 'S'
+            });
+        } else {
+            res.status(400).json({
+            status: 'F'
+            });
+        }
+        });
     }
-
-
-
-
-
-
-
-
-    
-}
+};

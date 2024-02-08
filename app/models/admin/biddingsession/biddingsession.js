@@ -2,7 +2,7 @@ const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class BiddingSession {
   
-    static getAllBiddingSession(slug, status) {
+    static allBiddingSession(slug, status) {
         if (status) { 
             return poolConnection.then(pool => {
                 return pool.request()
@@ -34,7 +34,7 @@ module.exports = class BiddingSession {
         }
     }
 
-    static getAcadSessionList(biddingId) {
+    static acadSessionList(biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingSessionId', sql.Int, biddingId)
@@ -42,7 +42,7 @@ module.exports = class BiddingSession {
         });
     }
 
-    static getBiddingSessionList(slug) {
+    static activeList(slug) {
         return poolConnection.then(pool => {
             return pool.request()
                 .query(`SELECT id, bidding_name ,active, status FROM [${slug}].bidding_session WHERE active = 1`);
@@ -50,7 +50,7 @@ module.exports = class BiddingSession {
     }
 
     // Procedures code starts from here
-    static save(inputJSON, slug, userid) {
+    static create(inputJSON, slug, userid) {
         return poolConnection.then(pool => { 
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), inputJSON)
@@ -81,7 +81,7 @@ module.exports = class BiddingSession {
         });
     }
 
-    static updateBiddingSession(slug, inputJSON, userId) {  
+    static updateStatus(slug, inputJSON, userId) {  
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), inputJSON)

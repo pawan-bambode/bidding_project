@@ -19,8 +19,8 @@ module.exports = {
             roundSetting.getRoundLid(res.locals.slug, res.locals.biddingId),
             roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId, roundId),
             demandEstimation.getSelectedCourses(res.locals.slug, res.locals.biddingId, res.locals.studentId),
-            concentrationSetting.getStudentConcentrationSettings(res.locals.slug, res.locals.biddingId, res.locals.username),
-            concentrationSetting.getTotalCreditsCounts(res.locals.slug, res.locals.biddingId)
+            concentrationSetting.studentList(res.locals.slug, res.locals.biddingId, res.locals.username),
+            concentrationSetting.totalCreditCount(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
             res.render('student/demandEstimation/index', {
                 active: demandEstimationActive,

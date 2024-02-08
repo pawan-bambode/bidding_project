@@ -2,7 +2,7 @@ const {sql,poolConnection} = require('../../../../config/db')
 
 module.exports = class course {
 
-    static getCourseList(slug, biddingId) {
+    static getList(slug, biddingId) {
         let showEntry = 10;
         return poolConnection.then(pool => {
             return pool.request()
@@ -15,7 +15,7 @@ module.exports = class course {
         });
     }
     
-    static getCount(slug, biddingId) {
+    static listCount(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -62,7 +62,7 @@ module.exports = class course {
         }
     }
     
-    static getCountSearch(slug, biddingId, letterSearch, programId, acadSessionId) {
+    static searchCount(slug, biddingId, letterSearch, programId, acadSessionId) {
         if (programId !== '-1' && acadSessionId !== '-1') {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -122,7 +122,7 @@ module.exports = class course {
         }
     }
     
-    static showEntryCouresList(slug, biddingId, showEntry, pageNo) {
+    static showEntry(slug, biddingId, showEntry, pageNo) {
         if (pageNo) {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -148,7 +148,7 @@ module.exports = class course {
         }
     }
     
-    static getCounts(slug, biddingId, showEntry) {
+    static showEntryCount(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -159,7 +159,7 @@ module.exports = class course {
         })
     }
     
-    static getProgramList(slug, biddingId) {
+    static programList(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('bidding_session_lid', sql.Int, biddingId)
@@ -170,7 +170,7 @@ module.exports = class course {
         });
     }
     
-    static filterByProgramId(slug, biddingId, programId, showEntry) {
+    static listByProgramId(slug, biddingId, programId, showEntry) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -184,7 +184,7 @@ module.exports = class course {
         });
     }
     
-    static getCountfilterByProgramId(slug, biddingId, programId) {
+    static listByProgramIdCount(slug, biddingId, programId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -209,7 +209,7 @@ module.exports = class course {
         });
     }
     
-    static filterBySessionId(slug, biddingId, programId, sessionId, showEntry) {
+    static listBySessionId(slug, biddingId, programId, sessionId, showEntry) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -223,7 +223,7 @@ module.exports = class course {
         });
     }
     
-    static getCountFilterBySessionId(slug, biddingId, programId, sessionId) {
+    static listBySessionIdCount(slug, biddingId, programId, sessionId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -248,7 +248,7 @@ module.exports = class course {
         });
     }
     
-    static filterByCourseId(slug, biddingId, programId, sessionId, courseId, showEntry) {
+    static listByCourseId(slug, biddingId, programId, sessionId, courseId, showEntry) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -263,7 +263,7 @@ module.exports = class course {
         });
     }
     
-    static getCountFilterByCourseId(slug, biddingId, programId, sessionId, courseId) {
+    static listByCourseIdCount(slug, biddingId, programId, sessionId, courseId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -310,7 +310,7 @@ module.exports = class course {
     }
 
     // Procedures code starts from here.
-    static uploadCourse(slug, inputJson, userid, biddingId) { 
+    static upload(slug, inputJson, userid, biddingId) { 
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))

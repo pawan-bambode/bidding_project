@@ -26,7 +26,7 @@ module.exports = class Timetable {
         });
     }
 
-    static getMinAndMaxTimetableTime(slug, biddingId) {
+    static getMinAndMaxTime(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -67,7 +67,7 @@ module.exports = class Timetable {
         });
     }
 
-    static getTimetableByDayId(dayId, acadSession, slug, biddingId) {
+    static getListByDayId(dayId, acadSession, slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -95,7 +95,7 @@ module.exports = class Timetable {
     }
 
     // Procedures code starts from here.
-    static uploadTimetable(slug, electiveTimetable, userId, biddingId) {
+    static upload(slug, electiveTimetable, userId, biddingId) {
         electiveTimetable = JSON.parse(electiveTimetable);
         return poolConnection.then(pool => {
             return pool.request()

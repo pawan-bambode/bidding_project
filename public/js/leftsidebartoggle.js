@@ -24,7 +24,7 @@ $('.session-name').on('click', function () {
     let ulList = ``;
     let apiObj = {
         type: 'POST',
-        url: '/admin/bidding-session/get-bidding-session-list',
+        url: '/admin/bidding-session/active-list',
         dataType: 'JSON'
     };
 
@@ -55,7 +55,7 @@ $('#update-status').on('click', function () {
 
     let apiObj = {
         type: 'POST',
-        url: '/admin/bidding-session/update-bidding-session-status',
+        url: '/admin/bidding-session/update-status',
         data: {
             id: biddingSessionLid,
             bidding_name: biddingName
@@ -79,7 +79,7 @@ $('body').on('click', '#check-password-btn', function () {
 
     let apiObj = {
         type: 'POST',
-        url: '/admin/check-old-password',
+        url: '/admin/student-data/check-old-password',
         data: {
             oldPass: oldPass,
             userName: userName
@@ -105,7 +105,7 @@ $('body').on('click', '#update-password-btn', function () {
     if (newPassword === confirmPassword && newPassword != '' && confirmPassword != '') {
         let apiObj = {
             type: 'POST',
-            url: '/admin/update-student-password',
+            url: '/admin/student-data/update-password',
             data: {
                 userName: userName,
                 newPassword: newPassword

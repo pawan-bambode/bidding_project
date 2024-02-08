@@ -9,15 +9,15 @@ module.exports = {
       let studentHomePage = studentHomePageUrl[studentHomePageUrl.length - 1];
 
       Promise.all([
-        programSession.getProgramSessionCreditsPoint(res.locals.slug, res.locals.biddingId),
-        student.getStudentDetail(res.locals.slug, res.locals.biddingId, res.locals.username),
-        student.getConcentrationList(res.locals.slug, res.locals.biddingId),
-        student.getConfirmaCourseList(res.locals.slug, res.locals.biddingId, res.locals),
-        student.getDropCourseList(res.locals.slug, res.locals.biddingId, res.locals),
-        student.getWinningCourseList(res.locals.slug, res.locals.biddingId),
-        student.getWaitListCouresList(res.locals.slug, res.locals.biddingId),
-        student.getConfirmCreditsCounts(res.locals.slug, res.locals.biddingId),
-        student.getCompleteCourese(res.locals.slug, res.locals.biddingId, res.locals.useSapId)
+        programSession.creditsPoint(res.locals.slug, res.locals.biddingId),
+        student.studentDetail(res.locals.slug, res.locals.biddingId, res.locals.username),
+        student.concentrationList(res.locals.slug, res.locals.biddingId),
+        student.confirmaCourseList(res.locals.slug, res.locals.biddingId, res.locals),
+        student.dropCourseList(res.locals.slug, res.locals.biddingId, res.locals),
+        student.winningCourseList(res.locals.slug, res.locals.biddingId),
+        student.waitListCouresList(res.locals.slug, res.locals.biddingId),
+        student.confirmCreditsCounts(res.locals.slug, res.locals.biddingId),
+        student.completedCourseList(res.locals.slug, res.locals.biddingId, res.locals.useSapId)
       ]).then(result => {
         res.render('student/dashboard/index', {
           active: studentHomePage,
@@ -38,8 +38,8 @@ module.exports = {
   showtimetable: (req, res) => {
     Promise.all([
       student.getSlotForShowTimetable(),
-      student.getCountOfCourses(res.locals.slug, res.locals.biddingId),
-      student.fetchAllCourseSelByStudent('15048'),
+      student.coursesCount(res.locals.slug, res.locals.biddingId),
+      student.couresListSelectedByStudent(res.locals.userId),
       course.getDropdownAcadSessionList(res.locals.slug, res.locals.biddingId)
     ]).then(result => {
       res.render('admin/students/showTimetableStudent.ejs', {

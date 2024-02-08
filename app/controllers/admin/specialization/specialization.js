@@ -5,7 +5,7 @@ module.exports = {
 
     getPage: (req, res) => {
         Promise.all([
-            specialization.getAllSpecialization(res.locals.slug, res.locals.biddingId, req.body.showEntry),
+            specialization.getList(res.locals.slug, res.locals.biddingId, req.body.showEntry),
             specialization.getCount(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
             res.render('admin/specialization/index.ejs', {
@@ -71,10 +71,10 @@ module.exports = {
             });
     },
 
-    showEntrySpecializationList: (req, res) => {
+    showEntry: (req, res) => {
         Promise.all([
-            specialization.showEntrySpecializationList(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.pageNo),
-            specialization.getCountOfSearch(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.pageNo)
+            specialization.showEntry(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.pageNo),
+            specialization.showEntryCount(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.pageNo)
         ]).then(result => {
             res.json({
                 status: '200',
@@ -87,10 +87,10 @@ module.exports = {
         });
     },
 
-    specializationSearch: (req, res) => {
+    search: (req, res) => {
         Promise.all([
             specialization.search(res.locals.slug, res.locals.biddingId, req.body.pageNo, req.body.searchLetter, req.body.showEntry),
-            specialization.getCountOfSearch(res.locals.slug, res.locals.biddingId, req.body.pageNo, req.body.searchLetter)
+            specialization.searchCount(res.locals.slug, res.locals.biddingId, req.body.pageNo, req.body.searchLetter)
         ]).then(result => {
             res.json({
                 status: '200',

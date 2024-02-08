@@ -85,7 +85,7 @@ async function  generateExcel (req, res) {
     
       worksheet.cell(i, 2).string('').style({ dataValidation: { showDropDown: true } });
 
-    workbook.write('C:/Users/suraj.pal.ext/Desktop/8November/bidding_project_working (1)/bidding_project_working/excelFile/'+'sampleForImportCompleteCourses.xlsx', (err, stats) => {
+    workbook.write('C:/Users/suraj.pal.ext/Desktop/8November/bidding_project_working (1)/bidding_project_working/excelFile/'+'sampleForImportCompletedCourses.xlsx', (err, stats) => {
       if (err) {
    
       } else {

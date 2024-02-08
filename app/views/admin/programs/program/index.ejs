@@ -206,7 +206,7 @@ $(".pagination-search").on('click','.pagination li',function(){
         let showEntry = $(this).val();
         let ApiObj = {
             type:'POST',
-            url:'/admin/program/showEntryProgramList',
+            url:'/admin/program/showEntry',
             data:{
                 showEntry:showEntry
             },

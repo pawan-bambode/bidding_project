@@ -161,7 +161,7 @@
             if(isRequiredFieldsEmpty){
          
         let ApiObj = {
-            url:'/admin/program-session/update-credits',
+            url:'/admin/program-session/update',
             type:'POST',
             data:{
                 id:programSessionId,
@@ -240,7 +240,7 @@ $('#changeEntry').on('change',function(){
 let showEntry = $(this).val();
 let ApiObj = {
     type:'POST',
-    url:'/admin/program-sessions/showEntryProgramList',
+    url:'/admin/program-sessions/showEntry',
     data:{
         showEntry:showEntry
     },

@@ -1,12 +1,11 @@
 const excel = require('excel4node');
-const xlsxPopulate = require('xlsx-populate');
 const xlsx = require('xlsx');
-const studentRawData = require('../../../models/admin/student/student');
-const isJsonString = require('../../../utils/util');
-const hash = require('../../../utils/hash');
+const studentRawData = require('../../../../models/admin/studentData/studentData');
+const hash = require('../../../../utils/hash');
+const isJsonString = require('../../../../utils/util');
 
 module.exports = {
-    generateExcelStudent: (req, res) => {
+    generateExcel: (req, res) => {
         const workbook = new excel.Workbook();
         const worksheet = workbook.addWorksheet('Sheet1');
 
@@ -44,7 +43,7 @@ module.exports = {
         });
     },
 
-    readExcelFile: async (req, res) => {
+    upload: async (req, res) => {
         let excelFileBufferData = req.file.buffer;
         let biddingId = res.locals.biddingId;
         let excelFileDataWorkbook = xlsx.read(excelFileBufferData);
@@ -103,123 +102,8 @@ module.exports = {
         }).catch(error => {
             handleErrorResponse(error, res);
         });
-    },
-
-    refresh: (req, res) => {
-        studentRawData.refresh(res.locals.slug, res.locals.biddingId, res.locals.userId).then(result => {
-            res.status(200).json(JSON.parse(result.output.output_json));
-        }).catch(error => {
-            handleErrorResponse(error, res);
-        });
-    },
-
-    update: (req, res) => {
-        studentRawData.update(res.locals.slug, res.locals.biddingId, res.locals.userId, req.body).then(result => {
-            res.status(200).json(JSON.parse(result.output.output_json));
-        }).catch(error => {
-            handleErrorResponse(error, res);
-        });
-    },
-
-    delete: (req, res) => {
-        studentRawData.delete(req.body.studentDataId, res.locals.slug, res.locals.userId, res.locals.biddingId)
-            .then(result => {
-                res.status(200).json(JSON.parse(result.output.output_json));
-            })
-            .catch(error => {
-                handleErrorResponse(error, res);
-            });
-    },
-
-    deleteAll: (req, res) => {
-        studentRawData.deleteAll(req.body, res.locals.slug, res.locals.userId, res.locals.biddingId)
-            .then(result => {
-                res.status(200).json(JSON.parse(result.output.output_json));
-            })
-            .catch(error => {
-                handleErrorResponse(error, res);
-            });
-    },
-
-    searchStudentData: (req, res) => {
-      Promise.all([
-          studentRawData.searchStudentData(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.programId, req.body.pageNo, req.body.showEntry),
-          studentRawData.getCountSearch(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.programId)
-      ]).then(result => {
-          res.json({
-              status: "200",
-              message: "Result fetched",
-              data: result[0].recordset,
-              length: result[1].recordset[0]['']
-          });
-      }).catch(error => {
-          throw error;
-      });
-  },
-  
-  searchStudentDataByletter: (req, res) => {
-      Promise.all([
-          studentRawData.searchStudentDataByletter(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.pageNo, req.body.showEntry),
-          studentRawData.getCounts(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.pageNo)
-      ]).then(result => {
-          res.json({
-              status: '200',
-              message: 'Result fetched',
-              data: result[0].recordset,
-              length: result[1].recordset[0]['']
-          });
-      }).catch(error => {
-          throw error;
-      });
-  },
-  
-  showEntryStudentDataList: (req, res) => {
-      Promise.all([
-          studentRawData.showEntryCouresList(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.programId),
-          studentRawData.getCounts(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.programId)
-      ]).then(result => {
-          res.json({
-              status: '200',
-              message: 'Result fetched',
-              data: result[0].recordset,
-              length: result[1].recordset[0]['']
-          });
-      }).catch(error => {
-          throw error;
-      });
-  },
-  
-  studentDataFilterByProgramId: (req, res) => {
-      Promise.all([
-          studentRawData.studentDataFilterByProgramId(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.showEntry),
-          studentRawData.studentSapIdByProgramId(res.locals.slug, res.locals.biddingId, req.body.programId),
-          studentRawData.getCountfilterByProgramId(res.locals.slug, res.locals.biddingId, req.body.programId)
-      ]).then(result => {
-          res.json({
-              status: '200',
-              message: 'Result Fetched',
-              data: result[0].recordset,
-              studentDataSapIdList: result[1].recordset,
-              length: result[2].recordset[0]['']
-          });
-      });
-  },
-  
-  studentDataFilterByStudentSapId: (req, res) => {
-      Promise.all([
-          studentRawData.studentDataFilterByStudentId(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.showEntry, req.body.studentSapId),
-          studentRawData.getCountfilterByStudentId(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.studentSapId)
-      ]).then(result => {
-          res.json({
-              status: '200',
-              message: 'Result Fetched',
-              data: result[0].recordset,
-              length: result[1].recordset[0]['']
-          });
-      });
-  }
-}  
-
+    }
+}
 function handleErrorResponse(error, res) {
     if (isJsonString.isJsonString(error.originalError.info.message)) {
         res.status(500).json(JSON.parse(error.originalError.info.message));
@@ -230,5 +114,4 @@ function handleErrorResponse(error, res) {
             data: []
         });
     }
-}
-
+}   

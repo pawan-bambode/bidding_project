@@ -2,7 +2,7 @@ const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class ConcentrationSettings {
   
-    static getConcentrationSettingsList(slug, biddingId) {
+    static getList(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -27,7 +27,7 @@ module.exports = class ConcentrationSettings {
         });
     }
 
-    static showEntryConcentrationSettingList(slug, biddingId, showEntry, pageNo) {
+    static showEntry(slug, biddingId, showEntry, pageNo) {
         if (pageNo) {
             return poolConnection.then(pool => {
                 return pool.request() 
@@ -59,7 +59,7 @@ module.exports = class ConcentrationSettings {
         }
     }
 
-    static getCountsOfShowEntry(slug, biddingId) {
+    static showEntryCount(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request() 
                 .input('biddingId', sql.Int, biddingId)
@@ -67,7 +67,7 @@ module.exports = class ConcentrationSettings {
         });
     }
 
-    static concentrationSettingsSearch(slug, biddingId, pageNo, letterSearch, showEntry) {
+    static search(slug, biddingId, pageNo, letterSearch, showEntry) {
         showEntry = showEntry ? showEntry : 10;
         if (pageNo) {
             return poolConnection.then(pool => {
@@ -103,7 +103,7 @@ module.exports = class ConcentrationSettings {
         }
     }
 
-    static getCountOfSearch(slug, biddingId, pageNo, letterSearch, showEntry) {
+    static searchCount(slug, biddingId, pageNo, letterSearch, showEntry) {
         showEntry = showEntry ? showEntry : 10;
         return poolConnection.then(pool => {
             return pool.request()
@@ -115,7 +115,7 @@ module.exports = class ConcentrationSettings {
         });
     }
 
-    static getStudentConcentrationSettings(slug, biddingId, studentEmail) {
+    static studentList(slug, biddingId, studentEmail) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -128,7 +128,7 @@ module.exports = class ConcentrationSettings {
         });
     }
 
-    static getTotalCreditsCounts(slug, biddingId) {
+    static totalCreditCount(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)

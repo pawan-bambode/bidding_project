@@ -2,10 +2,10 @@ const biddingSession = require('../../../models/admin/biddingsession/biddingsess
 const isJsonString = require('../../../utils/util');
 
 module.exports = {
-    getBiddingSessionPage: (req, res) => {
+    getPage: (req, res) => {
         Promise.all([
-            biddingSession.getAllBiddingSession(res.locals.slug, res.locals.status),
-            biddingSession.getAcadSessionList(res.locals.biddingId)
+            biddingSession.allBiddingSession(res.locals.slug, res.locals.status),
+            biddingSession.acadSessionList(res.locals.biddingId)
         ]).then(result => {
             res.render('admin/biddingsession/index.ejs', {
                 biddingSessionList: result[0].recordset,
@@ -17,7 +17,7 @@ module.exports = {
     },
 
     create: (req, res) => {
-        biddingSession.save(req.body.inputJSON, res.locals.slug, res.locals.userId)
+        biddingSession.create(req.body.inputJSON, res.locals.slug, res.locals.userId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
@@ -70,8 +70,8 @@ module.exports = {
             });
     },
 
-    getBiddingSessionList: (req, res) => {
-        biddingSession.getBiddingSessionList(res.locals.slug)
+    activeList: (req, res) => {
+        biddingSession.activeList(res.locals.slug)
             .then(result => {
                 res.json({
                     status: 200,
@@ -87,8 +87,8 @@ module.exports = {
             });
     },
 
-    updateBiddingSession: (req, res) => {
-        biddingSession.updateBiddingSession(res.locals.slug, JSON.stringify(req.body), res.locals.userId)
+    updateStatus: (req, res) => {
+        biddingSession.updateStatus(res.locals.slug, JSON.stringify(req.body), res.locals.userId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })

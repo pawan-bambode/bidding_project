@@ -2,11 +2,11 @@ const course = require('../../../models/admin/course/course');
 const isJsonString = require('../../../utils/util');
 
 module.exports = {
-    getCourse: (req, res) => {
+    getList: (req, res) => {
         Promise.all([
-            course.getCourseList(res.locals.slug, res.locals.biddingId),
-            course.getCount(res.locals.slug, res.locals.biddingId),
-            course.getProgramList(res.locals.slug, res.locals.biddingId)
+            course.getList(res.locals.slug, res.locals.biddingId),
+            course.listCount(res.locals.slug, res.locals.biddingId),
+            course.programList(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
             res.render('admin/course/index.ejs', {
                 courseList: result[0].recordset,
@@ -55,7 +55,7 @@ module.exports = {
     search: (req, res) => {
         Promise.all([
             course.search(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.programId, req.body.acadSessionId, req.body.showEntry),
-            course.getCountSearch(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.programId, req.body.acadSessionId)
+            course.searchCount(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.programId, req.body.acadSessionId)
         ]).then(result => {
             res.json({
                 status: "200",
@@ -81,10 +81,10 @@ module.exports = {
         });
     },
 
-    showEntryCouresList: (req, res) => {
+    showEntry: (req, res) => {
         Promise.all([
-            course.showEntryCouresList(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.pageNo),         
-            course.getCounts(res.locals.slug, res.locals.biddingId)
+            course.showEntry(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.pageNo),         
+            course.showEntryCount(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
             res.json({
                 status: '200',
@@ -113,11 +113,11 @@ module.exports = {
         });
     },
 
-    filterByProgramId: (req, res) => {
+    listByProgramId: (req, res) => {
         Promise.all([
-            course.filterByProgramId(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.showEntry), 
+            course.listByProgramId(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.showEntry), 
             course.sessionByProgramId(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.showEntry),
-            course.getCountfilterByProgramId(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.showEntry)
+            course.listByProgramIdCount(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.showEntry)
         ]).then(result => {
             res.json({
                 status: "200",
@@ -139,11 +139,11 @@ module.exports = {
         });
     },
 
-    filterBySessionId: (req, res) => {
+    listBySessionId: (req, res) => {
         Promise.all([
-            course.filterBySessionId(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.sessionId, req.body.showEntry),
+            course.listBySessionId(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.sessionId, req.body.showEntry),
             course.moduleBySessionId(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.sessionId, req.body.showEntry),
-            course.getCountFilterBySessionId(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.sessionId)
+            course.listBySessionIdCount(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.sessionId)
         ]).then(result => {
             res.json({
                 status: "200",
@@ -165,10 +165,10 @@ module.exports = {
         });
     },
 
-    filterByCourseId: (req, res) => {
+    listByCourseId: (req, res) => {
         Promise.all([
-            course.filterByCourseId(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.sessionId, req.body.courseId, req.body.showEntry),
-            course.getCountFilterByCourseId(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.sessionId, req.body.courseId)
+            course.listByCourseId(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.sessionId, req.body.courseId, req.body.showEntry),
+            course.listByCourseIdCount(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.sessionId, req.body.courseId)
         ]).then(result => {
             res.json({
                 status: "200",
