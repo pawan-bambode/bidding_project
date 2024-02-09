@@ -280,7 +280,6 @@
 
             ajaxApi(ApiObj)
                 .then(result => {
-                    console.log('values of resu', result);
                     AjaxtTable(result.data);
                     paginationData(showEntry,result.length);
                     $('#page-no').html(result.length);
@@ -294,7 +293,7 @@
                     let keyword = $("#searchkeyword").val();
                     let pageNo = $(this).attr('data-lp');
                     let showEntry = $('#changeEntry').val();
-
+                
                     $.ajax({
                         type: "POST",
                         url: "/admin/student-data/search-by-letter",
@@ -510,7 +509,7 @@ function AjaxtTable(studentDataList) {
                 dataType:'JSON'
             }
             ajaxApi(ApiObj).then(result =>{
-                showSuccess(result)
+                createToastMessage(result.description);
             }).catch(error =>{
                 createToastError(JSON.stringify(error.responseJSON.description));
             })

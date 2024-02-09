@@ -112,7 +112,7 @@
                 <tbody>
               <% for(let student of biddingRoundsStudents) { %>
                   <tr data-student-id="<%- student.student_lid %>">
-                    <td><input type="checkbox" class="d-none student-sap-id-bidding-rounds"><%- student.sap_id %></td>
+                    <td><input type="checkbox" class="student-sap-id-bidding-rounds"><%- student.sap_id %></td>
                     <td><%- student.student_name %></td>
                     <td><%- student.email %></td>
                     <td><%- student.program_name %></td>
@@ -356,10 +356,11 @@
                             <div>
                                 <label for="bid-point-limit-per-bid" class="form-label">Bid Point Limit Per Bid :</label>
                                 <div class="d-flex is-bid-limit-check">
-                                    <div class="d-flex pe-4 justify-content-around">
+                                    <div class="d-flex pe-4 justify-content-between">
+                                        <div class="d-flex justify-content-between pe-4">
                                         <label for="yes" class="px-2">Yes</label>
                                         <input type="radio" name="bid-point-limit" id="yes" value="Yes" class="px-2">
-                                       
+                                        </div>
                                         <input type="text" class="form-control bid-point-limit-per-bid is-number d-none" size="8" placeholder="Enter bid Points" id="edit-bid-limit-points">
                                         </div>
                                         <span class="text-danger d-none is-in-valid" >Enter Bid Points</span>
@@ -423,6 +424,7 @@
             $('.update-student-sap-id-bidding-rounds').prop('checked', false);
            }
         })
+        
         $('#total-student-bidding-rounds').on('change','#bidding-rounds-checkbox', function() {
         if (this.checked) {
            $('.student-sap-id-bidding-rounds').removeClass('d-none');
@@ -431,7 +433,7 @@
            let count = $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
            $('#total-selected-students').html(count);
         } else {
-          $('.student-sap-id-bidding-rounds').addClass('d-none');
+        $('.student-sap-id-bidding-rounds').prop('checked', false);
            $('.delete-course').removeClass('d-none');  
            $('#import-total-student-bidding-rounds').addClass('disabled');  
            $('#total-selected-students').html(0);
@@ -441,6 +443,7 @@
     $('#total-student-bidding-rounds').on('change','.student-sap-id-bidding-rounds',function(){
         let count = $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
            $('#total-selected-students').html(count);
+           $('#import-total-student-bidding-rounds').removeClass('disabled');
     })
 
    
@@ -579,7 +582,8 @@
             let isBidLimit = $(event.relatedTarget).closest('tr').data('is-bid-limit');
             let bidLimitPoints = $(event.relatedTarget).closest('tr').data('bid-limit-points');
             let roundName = $(event.relatedTarget).closest('tr').data('round-name');
-
+            $(`#update-total-courses-bidding-rounds .table tbody tr`).find('.update-bidding-round-courses').prop('checked', false);
+                $(`#update-total-student-bidding-rounds #course-list-checked tbody tr`).find('input[type="checkbox"]').prop('checked', false);
             
 
             let ApiObj = {
@@ -597,8 +601,7 @@
                 $('#update-total-student-bidding-rounds #update-total-selected-students').html(studentList.length);
                 $('#update-total-selected-courses').html(courseList.length);
 
-                $(`#update-total-courses-bidding-rounds .table tbody tr`).find('.update-bidding-round-courses').prop('checked', false);
-                $(`#update-total-student-bidding-rounds #course-list-checked tbody tr`).find('input[type="checkbox"]').prop('checked', false);
+               
                 
                 studentList.forEach(student => {
                     $(`#update-total-student-bidding-rounds #course-list-checked tbody tr[data-student-id=${student.student_lid}] input[type="checkbox"]`).prop('checked', true);
@@ -664,11 +667,11 @@
             
              const checkedRadioButton = $('input[name="bid-point-limit"]:checked');
              const checkedValue = checkedRadioButton.val();
-            
+           
                 if (checkedValue == 'Yes') {
                 
-                    $(this).closest('div').find('.bid-point-limit-per-bid').removeClass('d-none');
-                    $(this).closest('div').find('.bid-point-limit-per-bid').focus();     
+                    $(this).closest('div.is-bid-limit-check').find('.bid-point-limit-per-bid').removeClass('d-none');
+                    $(this).closest('div.is-bid-limit-check').find('.bid-point-limit-per-bid').focus();     
                 } else {
              
                     $(this).closest('div.is-bid-limit-check').find('.bid-point-limit-per-bid').addClass('d-none');
@@ -708,30 +711,7 @@
               updateBiddingRoundStudent.push(studentList);
        })
 
-         $('#total-student-bidding-rounds').on('click','#import-total-student-bidding-rounds',function(){
-        let totalStudentBiddingRoundsCounts =  $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
-        $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
-          studentList.push($(selectedElement).closest('tr').data('student-id'));
-        });
-           
-        let dataBiddingRoundId =  $('#total-student-bidding-rounds').attr('data-bidding-round-id');
-               
-         $('#add-bidding-rounds-modal .modal-body .table-responsive tbody tr').each(function(index,element) {      
-          
-                let biddingRoundId = $(element).attr('data-bidding-round-id');
-                if(($(element).attr('data-bidding-round-id')) == dataBiddingRoundId){
-                $(this).attr('data-total-student-counts', totalStudentBiddingRoundsCounts);
-                $(element).children('td.total-course-count').removeClass('disabled');
-                $(this).children('td.total-students-count').html(totalStudentBiddingRoundsCounts)        
-                }
-            });
-              if(Number(dataBiddingRoundId)> 1){
-                 $('#add-date-time').removeClass('d-none');
-                 $('#add-date-time').attr('data-bidding-round-id',dataBiddingRoundId);
-              }
-             
-              biddingRoundStudent.push(studentList);
-       })
+ 
 
        $('#update-total-student-bidding-rounds').on('click','#update-total-student-bidding-rounds',function(){
         let totalStudentBiddingRoundsCounts =  $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
@@ -792,6 +772,7 @@
              
               biddingRoundStudent.push(studentList);
        })
+
        $('#update-total-student-bidding-rounds').on('click','#update-total-student-bidding-rounds',function(){
         let totalStudentBiddingRoundsCounts =  $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
         let dataBiddingRoundId =  $('#total-student-bidding-rounds').attr('data-bidding-round-id');
@@ -946,7 +927,6 @@
             let roundId           = $(element).data('bidding-round-id');
             let isBidLimit = $(element).find(`input[name="bid-point-limit-${roundId}"]:checked`).val() === 'Yes' ? 1 : 0;
             let bidPointLimit = isBidLimit === 1 ? $(element).find('#bid-point-limit-per-bid').val() : 0;
-
             let temp = []
             importBiddingRounds.round_name = biddingRoundsName;
             importBiddingRounds.total_students = totalStudentCount;
@@ -980,7 +960,7 @@
             }
            
             ajaxApi(ApiObj).then(result => {
-                createToastMessage(result.description);
+            createToastMessage(result.description);
                              
             }).catch(error => {
                 createToastError(JSON.stringify(error.responseJSON.description));

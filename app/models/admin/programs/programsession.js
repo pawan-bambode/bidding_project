@@ -73,7 +73,7 @@ module.exports = class ProgramSession {
                     .input('bidding_session_lid', sql.Int, biddingId)
                     .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
                     .query(`SELECT DISTINCT ps.id, p.program_name, ad.acad_session, bs.year, 
-                            IIF(ps.min_credits IS NULL, 0, ps.min_credits),
+                            IIF(ps.min_credits IS NULL, 0, ps.min_credits) AS min_credits,
                             IIF(ps.max_credits IS NULL, 0, ps.max_credits) AS max_credits
                             FROM [${slug}].program_sessions ps 
                             INNER JOIN [${slug}].programs p ON ps.program_id = p.program_id AND p.bidding_session_lid = @bidding_session_lid

@@ -33,7 +33,7 @@ module.exports = class BiddingRound {
                 .input('biddingId', sql.Int, biddingId)
                 .query(`SELECT sd.id AS student_lid, * FROM [${slug}].student_data sd 
                         INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id
-                        WHERE sd.bidding_session_lid = @biddingId AND p.active = 1`);
+                        WHERE sd.bidding_session_lid = @biddingId AND sd.active = 1 AND p.bidding_session_lid = @biddingId AND p.active = 1`);
         });
     }
 
@@ -43,7 +43,7 @@ module.exports = class BiddingRound {
                 .input('biddingId', sql.Int, biddingId)
                 .query(`SELECT c.* FROM [${slug}].courses c 
                         INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
-                        WHERE c.bidding_session_lid = @biddingId AND p.active = 1`);
+                        WHERE c.bidding_session_lid = @biddingId AND c.active = 1 AND p.bidding_session_lid = @biddingId AND p.active = 1`);
         });
     }
 

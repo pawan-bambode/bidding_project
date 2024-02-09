@@ -11,7 +11,7 @@ module.exports = class preRequisites {
                         FROM [${slug}].pre_requisites pr
                         INNER JOIN [${slug}].courses c ON  pr.course_id = c.course_id AND c.bidding_session_lid = @biddingId
                         INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId
-                        WHERE pr.active = 1 AND pr.bidding_session_lid = @biddingId`);
+                        WHERE pr.active = 1 AND pr.bidding_session_lid = @biddingId AND c.active = 1 AND c.bidding_session_lid = @biddingId AND p.active = 1 AND p.bidding_session_lid = @biddingId`);
         });
     }
 

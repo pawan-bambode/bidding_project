@@ -105,8 +105,8 @@
                 <div class="modal-body">
                     <div class="row empty">
                         <div class="col-md-6">
-                            <label class="mb-2 form-label" for="concentration-name">Concentration Name :</label>
                             <input type="hidden" id="course-id">
+                            <label class="mb-2 form-label" for="concentration-name">Concentration Name :</label>
                             <input class="form-control is-empty" type="text" id="concentration-name" autocomplete="off" disabled>
                             <span class="text-danger d-none is-in-valid"></span>
                         </div>
@@ -139,10 +139,10 @@
                         </div>
                         <div class="col-md-6" id="primary-area-form">
                             <label class="mb-2 form-label" for="primary-area">Primary Area :</label>
-                            <select class="form-control form-select select2 custom-select" id="primary-area">
-                                <option value="-1" disabled selected>--Select Primary Area--</option>
+                            <select class="form-control form-select select2 custom-select is-empty" id="primary-area">
+                                <option  value="-1" selected>--Select Primary Area--</option>
                                 <% for (let area of areaList) { %>
-                                    <option value="<%- area.id %>"><%- area.area_name %></option>
+                                    <option value="<%- area.id %>" ><%- area.area_name %></option>
                                 <% } %>
                             </select>
                             <p id="error-primary-area" class="text-danger d-none is-in-valid">Please Select Primary Area!</p>
@@ -181,14 +181,14 @@
 
         $('#searchkeyword').on('input', function () {
 
-            let concentrationSettingsValue = $(this).val().trim();
+            let searchValue = $(this).val().trim();
             let showEntry = $('#changeEntry').val();
 
             $.ajax({
                 type: 'POST',
                 url: '/admin/concentration-settings/search',
                 data: {
-                    searchLetter: concentrationSettingsValue,
+                    searchLetter: searchValue,
                     showEntry: showEntry
                 },
                 success: function (data) {
@@ -283,7 +283,7 @@
             let concentrationId = $(this).closest('tr').data('concentration-id');
             let concentrationSettingsId = $(this).closest('tr').data('concentration-setting-id');
             let areaId = $(this).closest('tr').data('area-id');
-
+            
             if (editConcentration.toLowerCase() == 'general management') {
                 $('#primary-area-minimum').addClass('d-none');
                 $('#primary-area-form').addClass('d-none');
@@ -300,7 +300,10 @@
             $('#edit-concentration-setting-modal #number-of-areas-to-cover').val(noOfAreaToCover);
             $('#edit-concentration-setting-modal #min-credits-per-area').val(minCreditsPerArea);
             $('#edit-concentration-setting-modal #min-credits-in-primary-area').val(minCreditsInPrimaryArea);
-            $("#primary-area").val(areaId).trigger('change');
+          
+           if(areaId){
+               $("#primary-area").val(areaId).trigger('change');
+           }
         
             $('#edit-concentration-setting-modal #concentration-name').attr('data-id', concentrationSettingsId);
         })
@@ -316,11 +319,9 @@
             let primaryAreaOption = $('#primary-area option:selected').text() === '--Select Primary Area--' ? null : $('#primary-area option:selected').text();
 
             let isRequiredFieldsEmpty = isModalFieldEmpty('#edit-concentration-setting-modal .modal-body');
-
-    
-            
+                    
             if (isRequiredFieldsEmpty) {
-
+  
                 let editConcentrationsettings = {
                     id: id,
                     total_elective_credits: totalElectiveCredits,

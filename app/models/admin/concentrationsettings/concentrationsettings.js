@@ -83,7 +83,7 @@ module.exports = class ConcentrationSettings {
                             IIF(primary_area IS NULL, 'NA', primary_area) AS primary_area,
                             IIF(min_credits_in_primary_area IS NULL, 0, min_credits_in_primary_area) AS min_credits_in_primary_area 
                             FROM [${slug}].concentration_settings cs
-                            LEFT JOIN [${slug}].areas a ON a.area_name = cs.primary_area AND cs.active = 1 AND cs.bidding_session_lid = @bidding_session_lid AND a.active = 1 AND a.bidding_session_lid = @bidding_session_lid WHERE (cs.concentration_name LIKE @letterSearch)`);
+                            LEFT JOIN [${slug}].areas a ON a.area_name = cs.primary_area AND cs.active = 1 AND cs.bidding_session_lid = @bidding_session_lid AND a.active = 1 AND a.bidding_session_lid = @bidding_session_lid WHERE cs.concentration_name LIKE @letterSearch OR cs.total_elective_credits LIKE @letterSearch OR cs.max_credits_per_area LIKE @letterSearch OR cs.no_of_areas_to_cover LIKE @letterSearch OR cs.min_credits_per_area LIKE @letterSearch OR cs.primary_area LIKE @letterSearch OR cs.min_credits_in_primary_area LIKE @letterSearch`);
             });
         } else {
             return poolConnection.then(pool => {
@@ -98,7 +98,7 @@ module.exports = class ConcentrationSettings {
                             IIF(primary_area IS NULL, 'NA', primary_area) AS primary_area,
                             IIF(min_credits_in_primary_area IS NULL, 0, min_credits_in_primary_area) AS min_credits_in_primary_area  
                             FROM [${slug}].concentration_settings cs
-                            LEFT JOIN [${slug}].areas a ON a.area_name = cs.primary_area AND cs.active = 1 AND cs.bidding_session_lid = @bidding_session_lid AND a.active = 1 AND a.bidding_session_lid = @bidding_session_lid WHERE (cs.concentration_name LIKE @letterSearch)`);
+                            LEFT JOIN [${slug}].areas a ON a.area_name = cs.primary_area AND cs.active = 1 AND cs.bidding_session_lid = @bidding_session_lid AND a.active = 1 AND a.bidding_session_lid = @bidding_session_lid WHERE cs.concentration_name LIKE @letterSearch OR cs.total_elective_credits LIKE @letterSearch OR cs.max_credits_per_area LIKE @letterSearch OR cs.no_of_areas_to_cover LIKE @letterSearch  OR cs.min_credits_per_area LIKE @letterSearch OR cs.primary_area LIKE @letterSearch OR cs.min_credits_in_primary_area LIKE @letterSearch`);
             });
         }
     }

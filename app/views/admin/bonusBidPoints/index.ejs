@@ -70,8 +70,11 @@
             </div>
             <div class="modal-body">
                 <div class="row empty">
+                <div class="col-md-12">
                 <label class="form-label mb-2" for="bonus-bid-points-input">Bonus Bid Points:</label>
                 <input class="form-control bonus-bid-points-input is-empty is-number" id="bonus-bid-points-input" autocomplete="off">
+                <span class="text-danger d-none is-in-valid" ></span>
+           </div>
             </div>
             </div>
             <div class="modal-footer">
@@ -91,13 +94,18 @@
           </div>
           <div class="modal-body">
             <div class="row empty">
+            <div>
             <input type="hidden" id="bonus-id">
             <label class="mb-2 disabled" for="round-name">Round Name:</label>
             <input class="form-control is-empty" type="text" id="round-name" autocomplete="off">
             </div>
+            </div>
             <div class="row empty">
+                <div class="col-md-12">
                 <label class="mb-2" for="bonus-points">Bonus Points:</label>
                 <input class="form-control is-empty is-number" type="text" id="bonus-points" autocomplete="off">  
+                <span class="text-danger d-none is-in-valid" ></span>
+                </div>
             </div>
                
           </div>
@@ -118,6 +126,11 @@
 
         $('#add-bonus-points-modal').on('click', '#bonus-bid-points', function () {
             let bonusBidPoints = $('.bonus-bid-points-input').val();
+
+            let isValidInput = isModalFieldEmpty('#add-bonus-points-modal .modal-body');  
+    
+        if(isValidInput){
+
             let inputJson = {
                 round_lid: 1,
                 points_to_increase_after_demand: bonusBidPoints
@@ -135,6 +148,7 @@
             }).catch(error => {
                 createToastError(JSON.stringify(error.responseJSON.description));
             })
+        }
         });
 
         $('#bonus-points-table').on('click', '.delete-bonus-points', function () {

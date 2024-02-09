@@ -508,7 +508,7 @@ $(document).on('change', '#course-name-filter', function() {
           datatype:'JSON'
         }
         ajaxApi(ApiObj).then(result=>{
-          showSuccess(result);
+          createToastMessage(result.description);
         }).catch(error =>{
           createToastError(JSON.stringify(error.responseJSON.description));;
         })

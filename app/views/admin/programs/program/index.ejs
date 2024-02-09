@@ -267,7 +267,7 @@ $(".pagination-search").on('click','.pagination li',function(){
             let importProgramSelDropFlag = $(`#importProgram .custm-padd-for-imp-program .program-div[data-program-id=${programId}]`).length == 0;
 
             if(importProgramTableFlag && importProgramSelDropFlag){
-                $('#importProgram .custm-padd-for-imp-program').append(programDiv);
+                $('#import-program-modal .custm-padd-for-imp-program').append(programDiv);
             }
            
         });

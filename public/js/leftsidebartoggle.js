@@ -491,18 +491,15 @@ function isModalFieldEmpty(modalName) {
     let isValid = true;
     
     $(`${modalName}`).find('.empty').each(function () {
-        
         let inputValue;
         let rowDiv = $(this).hasClass('row');
-      
         if (rowDiv) {
             $(this).children().each(function () {
                 let inputElement = $(this).find('.is-empty');
-                
                 if (inputElement.prop('nodeName') === 'INPUT') {
                     inputValue = inputElement.val();
+    
                     if (inputValue == '' || inputValue == undefined) {
-                    
                         let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
                         $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} is Empty!`);
                         $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
@@ -510,10 +507,10 @@ function isModalFieldEmpty(modalName) {
                         isValid = false;
                         return false;
                     } else {
+                        if(!$(this).hasClass('d-none')) {
                         $(this).find('.is-empty ~ span.is-in-valid').html('');
                         $(this).find('.is-empty ~ span.is-in-valid').addClass('d-none');
-                       
-
+                            
                         if ($(this).find('input').hasClass('is-number')) {
                             let inputValue = $(this).find('.is-number').val();
                             let isNumbers = isNumber(inputValue);
@@ -528,6 +525,16 @@ function isModalFieldEmpty(modalName) {
                                     isValid = false;
                                     return false;
                                 }
+                           
+                                if((parseFloat(inputValue) == 0)){
+                                    let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
+                                    $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Not Allow Zero!`);
+                                    $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
+                                    isValid = false;
+                                    return false;
+                                }
+                                    
+
                             }
 
                             if (!isNumber(inputValue)) {
@@ -540,13 +547,22 @@ function isModalFieldEmpty(modalName) {
                                 $(this).find('.is-empty ~ span.is-in-valid').html('');
                                 $(this).find('.is-empty ~ span.is-in-valid').addClass('d-none');
                             }
-                        }
+                          }  }
                     }
                 } else {
-                    
                     if(inputElement.parent('div').hasClass('d-none')){
-                      return true;
-                    }
+                        return true;
+                      }
+                      else{
+                         inputValue = inputElement.select2('data')[0].id;
+                      if (inputValue == -1 || inputValue == undefined) {
+                          $(this).find('p').removeClass('d-none');
+                          isValid = false;
+                          return false;
+                      } else {
+                          $(this).find('p').addClass('d-none');
+                      }
+                  }
                    }
             });
         } else {
@@ -576,8 +592,16 @@ function isModalFieldEmpty(modalName) {
                             isValid = false;
                             return false;
                         }
+                        
+                        if((parseFloat(inputValue) == 0)){
+                            let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
+                            $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Not Allow Zero!`);
+                            $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
+                            isValid = false;
+                            return false;
+                        }
+                        
                     }
-
                     if (!isNumber(inputValue)) {
                         let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
                         $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} is Allow Only Number!`);
@@ -589,6 +613,7 @@ function isModalFieldEmpty(modalName) {
                         $(this).find('.is-empty ~ span.is-in-valid').addClass('d-none');
                     }
                 }
+               
             }
         }
     });
@@ -601,6 +626,15 @@ function isNumber(value) {
     return !isNaN(parseFloat(value)) && isFinite(value);
 }
 
+
+function validateAlphanumeric(inputStr) {
+    var pattern = /^[a-zA-Z]*[a-zA-Z0-9]+[a-zA-Z]*$/;
+    if (pattern.test(inputStr) && /[a-zA-Z]/.test(inputStr)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 
 

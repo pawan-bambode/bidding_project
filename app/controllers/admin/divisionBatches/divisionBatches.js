@@ -75,6 +75,7 @@ module.exports = {
     },
 
     search: (req, res) => {  
+        
         Promise.all([
             divisionBatch.search(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.programId, req.body.acadSessionId, req.body.showEntry, req.body.pageNo),
             divisionBatch.searchCount(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.programId, req.body.acadSessionId)
@@ -91,9 +92,10 @@ module.exports = {
     },
 
     showEntry : (req, res) => {
+
         Promise.all([
-            divisionBatch.showEntry(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.pageNo),
-            divisionBatch.showEntryCount(res.locals.slug, res.locals.biddingId)
+            divisionBatch.showEntry(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.programId, req.body.acadSessionId),
+            divisionBatch.showEntryCount(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.acadSessionId)
         ]).then(result => {
             res.json({
                 status: '200',

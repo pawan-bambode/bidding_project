@@ -40,50 +40,109 @@ module.exports = class DivisionBatches {
     }
 
     static search(slug, biddingId, letterSearch, programId, acadSessionId, showEntry, pageNo) {
-        if (programId != '-1' && acadSessionId != '-1') {
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
-                    .input('biddingId', sql.Int, biddingId)
-                    .input('programId', sql.Int, programId)
-                    .input('acadSessionId', sql.Int, acadSessionId)
-                    .query(`SELECT TOP ${showEntry} db.id, p.program_name, ad.acad_session, c.course_name, 
-                            db.division, db.batch, max_seats 
-                            FROM [${slug}].division_batches db 
-                            INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
-                            INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId AND p.program_id = @programId  
-                            INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id 
-                            WHERE db.active = 1 AND db.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId AND (p.program_name LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR c.course_name LIKE  @letterSearch OR db.division LIKE @letterSearch OR db.batch LIKE @letterSearch OR db.max_seats LIKE @letterSearch)`);
-            });
-        } else if (programId != '-1') {
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
-                    .input('biddingId', sql.Int, biddingId)
-                    .input('programId', sql.Int, programId)
-                    .query(`SELECT TOP ${showEntry} db.id, p.program_name, ad.acad_session, c.course_name, 
-                            db.division, db.batch, max_seats 
-                            FROM [${slug}].division_batches db 
-                            INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
-                            INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId AND p.program_id = @programId
-                            INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id 
-                            WHERE db.active = 1 AND db.bidding_session_lid = @biddingId AND (p.program_name LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR c.course_name LIKE  @letterSearch OR db.division LIKE @letterSearch OR db.batch LIKE @letterSearch OR db.max_seats LIKE @letterSearch )`);
-            });
+          
+        if (pageNo) {
+            
+            if ((programId != -1) && (acadSessionId != -1)) {
+                
+                return poolConnection.then(pool => {
+                    return pool.request()
+                        .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+                        .input('biddingId', sql.Int, biddingId)
+                        .input('programId', sql.Int, programId)
+                        .input('acadSessionId', sql.Int, acadSessionId)
+                        .input('pageNo', sql.Int, pageNo)
+                        .query(`SELECT db.id, p.program_name, ad.acad_session, 
+                                c.course_name, db.division, db.batch, max_seats 
+                                FROM [${slug}].division_batches db 
+                                INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
+                                INNER JOIN [${slug}].programs p ON p.program_id = c.program_id   
+                                INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id 
+                                WHERE db.active = 1 AND db.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId AND p.program_id = @programId
+                                AND p.bidding_session_lid = @biddingId AND p.active = 1 
+                                AND (p.program_name LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR c.course_name LIKE @letterSearch OR db.division LIKE @letterSearch OR db.batch LIKE @letterSearch OR db.max_seats LIKE @letterSearch) ORDER BY c.id DESC OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`);
+                });
+            } else if (programId != -1) {
+                
+                return poolConnection.then(pool => {
+                    return pool.request()
+                        .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+                        .input('biddingId', sql.Int, biddingId)
+                        .input('programId', sql.Int, programId)
+                        .input('pageNo', sql.Int, pageNo)
+                        .query(`SELECT db.id, p.program_name, ad.acad_session, 
+                                c.course_name, db.division, db.batch, max_seats 
+                                FROM [${slug}].division_batches db 
+                                INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
+                                INNER JOIN [${slug}].programs p ON p.program_id = c.program_id 
+                                INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id 
+                                WHERE db.active = 1 AND db.bidding_session_lid = @biddingId
+                                AND p.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.program_id = @programId AND (p.program_name LIKE @letterSearch) OR (ad.acad_session LIKE @letterSearch) OR (c.course_name LIKE @letterSearch) OR (db.division LIKE @letterSearch) OR db.batch LIKE @letterSearch OR db.max_seats LIKE @letterSearch) ORDER BY c.id DESC OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`);
+                });
+            } else {
+               
+                return poolConnection.then(pool => {
+                    return pool.request()
+                        .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+                        .input('biddingId', sql.Int, biddingId)
+                        .input('pageNo', sql.Int, pageNo)
+                        .query(`SELECT db.id, p.program_name, ad.acad_session, c.course_name, 
+                                db.division, db.batch, max_seats 
+                                FROM [${slug}].division_batches db 
+                                INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
+                                INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId
+                                INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id 
+                                WHERE db.active = 1 AND db.bidding_session_lid = @biddingId
+                                AND(p.program_name LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR c.course_name LIKE @letterSearch OR db.division LIKE @letterSearch OR db.batch LIKE @letterSearch OR db.max_seats LIKE @letterSearch) ORDER BY c.id DESC OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`);
+                });
+            }
         } else {
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
-                    .input('biddingId', sql.Int, biddingId)
-                    .query(`SELECT TOP ${showEntry} db.id, p.program_name, ad.acad_session, c.course_name, 
-                            db.division, db.batch, max_seats 
-                            FROM [${slug}].division_batches db 
-                            INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
-                            INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId
-                            INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id 
-                            WHERE db.active = 1 AND db.bidding_session_lid = @biddingId AND (p.program_name LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR c.course_name LIKE  @letterSearch OR db.division LIKE @letterSearch OR db.batch LIKE @letterSearch OR db.max_seats LIKE @letterSearch )`);
-            });
+            if (programId != '-1' && acadSessionId != '-1') {
+                return poolConnection.then(pool => {
+                    return pool.request()
+                        .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+                        .input('biddingId', sql.Int, biddingId)
+                        .input('programId', sql.Int, programId)
+                        .input('acadSessionId', sql.Int, acadSessionId)
+                        .query(`SELECT TOP ${showEntry} db.id, p.program_name, ad.acad_session, 
+                                c.course_name, db.division, db.batch, max_seats 
+                                FROM [${slug}].division_batches db 
+                                INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
+                                INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId AND p.program_id = @programId  
+                                INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id 
+                                WHERE db.active = 1 AND db.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId AND (p.program_name LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR c.course_name LIKE @letterSearch OR db.division LIKE @letterSearch OR db.batch LIKE @letterSearch OR db.max_seats LIKE @letterSearch)`);
+                });
+            } else if (programId != '-1') {
+                return poolConnection.then(pool => {
+                    return pool.request()
+                        .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+                        .input('biddingId', sql.Int, biddingId)
+                        .input('programId', sql.Int, programId)
+                        .query(`SELECT TOP ${showEntry} db.id, p.program_name, ad.acad_session, c.course_name, 
+                                db.division, db.batch, max_seats 
+                                FROM [${slug}].division_batches db 
+                                INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
+                                INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId AND p.program_id = @programId
+                                INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id 
+                                WHERE db.active = 1 AND db.bidding_session_lid = @biddingId AND (p.program_name LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR c.course_name LIKE @letterSearch OR db.division LIKE @letterSearch OR db.batch LIKE @letterSearch OR db.max_seats LIKE @letterSearch )`);
+                });
+            } else {
+                return poolConnection.then(pool => {
+                    return pool.request()
+                        .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+                        .input('biddingId', sql.Int, biddingId)
+                        .query(`SELECT db.id, p.program_name, ad.acad_session, c.course_name, 
+                                db.division, db.batch, max_seats 
+                                FROM [${slug}].division_batches db 
+                                INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
+                                INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId
+                                INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id 
+                                WHERE db.active = 1 AND db.bidding_session_lid = @biddingId AND (p.program_name LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR c.course_name LIKE @letterSearch OR db.division LIKE @letterSearch OR db.batch LIKE @letterSearch OR db.max_seats LIKE @letterSearch )`);
+                });
+            }
         }
     }
+    
     
     static searchCount(slug, biddingId, letterSearch, programId, acadSessionId) {
         if (programId != '-1' && acadSessionId != '-1') {
@@ -128,21 +187,40 @@ module.exports = class DivisionBatches {
         }
     }
     
-    static showEntry(slug, biddingId, showEntry, pageNo) {
-        if (pageNo) {
+    static showEntry(slug, biddingId, showEntry, programId, acadSessionId) {
+        
+        if (programId != - 1 && acadSessionId != -1) {
+        
             return poolConnection.then(pool => {
                 return pool.request()
                     .input('biddingId', sql.Int, biddingId)
-                    .input('pageNo', sql.Int, pageNo)
-                    .query(`SELECT db.id,p.program_name,ad.acad_session, c.course_name, db.division,
-                            db.batch, max_seats 
+                    .input('programId', sql.Int, programId)
+                    .input('acadSessionId', sql.Int, acadSessionId)
+                    .query(`SELECT TOP ${showEntry} db.id, p.program_name,ad.acad_session, c.course_name, 
+                            db.division, db.batch, max_seats 
                             FROM [${slug}].division_batches db 
                             INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
                             INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId
-                            INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id WHERE c.active = 1 AND c.bidding_session_lid = @biddingId
-                            ORDER BY c.id DESC OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`);
+                            INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id 
+                            WHERE c.active = 1 AND c.bidding_session_lid = @biddingId AND p.program_id = @programId AND c.sap_acad_session_id = @acadSessionId
+                            ORDER BY c.id DESC`);
             });
-        } else {
+        }
+            else if (acadSessionId != -1) {
+                return poolConnection.then(pool => {
+                    return pool.request()
+                        .input('biddingId', sql.Int, biddingId)
+                        .input('acadSessionId', sql.Int, acadSessionId)
+                        .query(`SELECT TOP ${showEntry} db.id,p.program_name,ad.acad_session,
+                                c.course_name, db.division, db.batch, max_seats 
+                                FROM [${slug}].division_batches db 
+                                INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
+                                INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId
+                                INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id WHERE c.active = 1 AND c.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId
+                                ORDER BY `);
+                });
+            }
+    else {
             return poolConnection.then(pool => {
                 return pool.request()
                     .input('biddingId', sql.Int, biddingId)
@@ -157,17 +235,46 @@ module.exports = class DivisionBatches {
         }
     }
     
-    static showEntryCount(slug, biddingId) {
-        return poolConnection.then(pool => {
-            return pool.request()
-                .input('biddingId', sql.Int, biddingId)
-                .query(`SELECT COUNT(*) 
-                        FROM [${slug}].division_batches db 
-                        INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
-                        INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId
-                        INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
-                        WHERE c.active = 1 AND c.bidding_session_lid = @biddingId`);
-        });
+    static showEntryCount(slug, biddingId, programId, acadSessionId) {
+        if (programId != - 1 && acadSessionId != -1) {
+           
+            return poolConnection.then(pool => {
+                return pool.request()
+                    .input('biddingId', sql.Int, biddingId)
+                    .input('programId', sql.Int, programId)
+                    .input('acadSessionId', sql.Int, acadSessionId)
+                    .query(`SELECT COUNT(*)
+                            FROM [${slug}].division_batches db 
+                            INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
+                            INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId
+                            INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id 
+                            WHERE c.active = 1 AND c.bidding_session_lid = @biddingId AND p.program_id = @programId AND c.sap_acad_session_id = @acadSessionId`);
+            });
+        }
+            else if (acadSessionId != -1) {
+                return poolConnection.then(pool => {
+                    return pool.request()
+                        .input('biddingId', sql.Int, biddingId)
+                        .input('acadSessionId', sql.Int, acadSessionId)
+                        .query(`SELECT COUNT(*)
+                                FROM [${slug}].division_batches db 
+                                INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
+                                INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId
+                                INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id WHERE c.active = 1 AND c.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId`);
+                });
+            }
+    else {
+            return poolConnection.then(pool => {
+                return pool.request()
+                    .input('biddingId', sql.Int, biddingId)
+                    .query(`SELECT COUNT(*)
+                            FROM [${slug}].division_batches db 
+                            INNER JOIN [${slug}].courses c ON db.course_lid = c.id  
+                            INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId
+                            INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
+                            WHERE c.active = 1 AND c.bidding_session_lid = @biddingId`);
+            });
+        }
     }
        
     static listByProgramId(slug, biddingId, programId, showEntry) {

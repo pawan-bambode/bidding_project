@@ -33,8 +33,8 @@ module.exports = class course {
                     .input('bidding_session_lid', sql.Int, biddingId)
                     .input('programId', sql.Int, programId)
                     .input('acadSessionId', sql.Int, acadSessionId)
-                    .query(`SELECT TOP ${showEntry} c.id, course_name, credits, program_id, ad.acad_session, 
-                            area_name, min_demand_criteria, year_of_introduction 
+                    .query(`SELECT TOP ${showEntry} c.id, course_name, credits, program_id, 
+                            ad.acad_session, area_name, min_demand_criteria, year_of_introduction 
                             FROM [${slug}].courses c 
                             INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id WHERE c.bidding_session_lid = @bidding_session_lid AND active = '1' AND c.program_id = @programId AND c.sap_acad_session_id = @acadSessionId AND (course_name LIKE @letterSearch OR credits LIKE @letterSearch OR program_id LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR area_name LIKE @letterSearch OR year_of_introduction LIKE @letterSearch OR min_demand_criteria LIKE @letterSearch)`);
             });
@@ -44,8 +44,8 @@ module.exports = class course {
                     .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
                     .input('bidding_session_lid', sql.Int, biddingId)
                     .input('programId', sql.Int, programId)
-                    .query(`SELECT TOP ${showEntry} c.id, course_name, credits, program_id, ad.acad_session, 
-                            area_name, min_demand_criteria, year_of_introduction 
+                    .query(`SELECT TOP ${showEntry} c.id, course_name, credits, program_id, 
+                            ad.acad_session, area_name, min_demand_criteria, year_of_introduction 
                             FROM [${slug}].courses c 
                             INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id WHERE c.bidding_session_lid = @bidding_session_lid AND active = '1' AND c.program_id = @programId  AND (course_name LIKE @letterSearch OR credits LIKE @letterSearch OR program_id LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR area_name LIKE @letterSearch OR year_of_introduction LIKE @letterSearch OR min_demand_criteria LIKE @letterSearch)`);
             });
@@ -54,8 +54,8 @@ module.exports = class course {
                 return pool.request()
                     .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
                     .input('bidding_session_lid', sql.Int, biddingId)
-                    .query(`SELECT TOP ${showEntry} c.id, course_name, credits, program_id, ad.acad_session, 
-                            area_name, min_demand_criteria, year_of_introduction 
+                    .query(`SELECT TOP ${showEntry} c.id, course_name, credits, program_id, 
+                            ad.acad_session, area_name, min_demand_criteria, year_of_introduction 
                             FROM [${slug}].courses c 
                             INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id WHERE c.bidding_session_lid = @bidding_session_lid AND active = '1' AND (course_name LIKE @letterSearch OR credits LIKE @letterSearch OR program_id LIKE @letterSearch OR ad.acad_session LIKE @letterSearch OR area_name LIKE @letterSearch OR year_of_introduction LIKE @letterSearch OR min_demand_criteria LIKE @letterSearch)`);
             });
@@ -98,6 +98,7 @@ module.exports = class course {
     static searchByLetter(slug, biddingId, letterSearch, pageNo, showEntry) {
         if (pageNo) {
             return poolConnection.then(pool => {
+            
                 return pool.request()
                     .input('pageNo', sql.Int, pageNo)
                     .input('bidding_session_lid', sql.Int, biddingId)
@@ -128,7 +129,8 @@ module.exports = class course {
                 return pool.request()
                     .input('biddingId', sql.Int, biddingId)
                     .input('pageNo', sql.Int, pageNo)
-                    .query(`SELECT TOP ${showEntry} c.id, course_name, credits, program_id, ad.acad_session,
+                    .query(`SELECT TOP ${showEntry} c.id, course_name, credits, 
+                            program_id, ad.acad_session,
                             area_name, min_demand_criteria, year_of_introduction
                             FROM [${slug}].courses c
                             INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
