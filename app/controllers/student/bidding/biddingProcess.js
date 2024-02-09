@@ -7,14 +7,17 @@ module.exports.respond = async (socket, io) => {
     });
 
     socket.on('addBidding', async biddingDetails => {
+        
         try {
             const { slugName, studentLid, round_lid, courseLid, divisionBatchLid, concentration_lid, biddingSessionId, userId } = biddingDetails;
 
             const result = await bidding.addBidding(slugName, studentLid, round_lid, courseLid, concentration_lid, divisionBatchLid, userId, biddingSessionId);
             const parsedMessage = JSON.parse(result.output.output_json);
-
+           
             if (parsedMessage.status === 1) {
+                
                 const detailsResult = await bidding.getAddBiddingDetails(slugName, biddingSessionId, divisionBatchLid);
+                
                 io.emit("addBiddingResponse", {
                     message: parsedMessage,
                     biddingDetails: detailsResult[0].recordset,

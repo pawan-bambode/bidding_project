@@ -12,17 +12,17 @@ module.exports = {
           
           Promise.all([
               confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),
-              roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId),
+              roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId),
               addDrop.getWaitListCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
-              course.getDropdownAcadSessionList(res.locals.slug, res.locals.biddingId),
-              divisionBatch.getAreaList(res.locals.slug, res.locals.biddingId),
-              divisionBatch.getBiddingCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+              course.acadSessionList(res.locals.slug, res.locals.biddingId),
+              divisionBatch.areaList(res.locals.slug, res.locals.biddingId),
+              divisionBatch.biddingCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
               waitList.getStudentDetails(res.locals.slug, res.locals.biddingId, res.locals.studentId)
           ]).then(result => {
               res.render('student/adddrop/index', {
                   active: addDropActive,
                   confirmCourseList: result[0].recordset,
-                  startAndEndTime: result[1].recordset,
+                  startAndEndTime: result[1].recordset[0] != undefined? result[1].recordset[0] : '',
                   waitListCourses: result[2].recordset,
                   dropdownAcadSessionList: result[3].recordset,
                   areaList: result[4].recordset,
@@ -38,14 +38,14 @@ module.exports = {
         Promise.all([
             confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             confirmation.winningCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),
-            roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId, req.body.roundId)
+            roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, req.body.roundId)
         ]).then(result => {
             res.json({
                 status: "200",
                 active: 'add-drop',
                 confirmCourseList: result[0].recordset,
                 waitListCouresList: result[1].recordset,
-                startAndEndTime: result[2].recordset[0]
+                startAndEndTime: result[2].recordset[0] != undefined? result[1].recordset[0] : '',
             });
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message));

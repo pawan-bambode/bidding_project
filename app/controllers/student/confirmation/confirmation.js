@@ -11,13 +11,14 @@ module.exports = {
         Promise.all([
             confirmation.winningCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, roundId),
             confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, roundId),
-            roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId, roundId)
+            roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, roundId)
         ]).then(result => {
+            
             res.render('student/confirmation/index', {
                 active: confirmationActive,
                 winningCourseList: result[0].recordset,
                 confirmCourseList: result[1].recordset,
-                startAndEndTime: result[2].recordset[0]
+                startAndEndTime: result[2].recordset[0] != undefined? result[1].recordset[0] : '',
             });
         });
     },
@@ -27,14 +28,14 @@ module.exports = {
         Promise.all([
             confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, req.body.roundId),
             confirmation.winningCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, roundId),
-            roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId, req.body.roundId)
+            roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, req.body.roundId)
         ]).then(result => {
             res.json({
                 status: "200",
                 active: 'confirmation',
                 confirmCourseList: result[0].recordset,
                 winningCourseList: result[1].recordset,
-                startAndEndTime: result[2].recordset[0]
+                startAndEndTime: result[2].recordset[0] != undefined? result[1].recordset[0] : '',
             });
         }).catch(error => {
             res.status(500).json(JSON.parse(error.originalError.info.message));

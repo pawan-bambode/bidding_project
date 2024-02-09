@@ -1,15 +1,16 @@
 const { max } = require('moment');
 const { sql, poolConnection } = require('../../../../config/db');
+const s = require('connect-redis');
 
 module.exports = class Bidding {
 
-    static getConsiderationSet(slug, biddingId, studentLid) {
+    static considerationSet(slug, biddingId, studentLid) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('studentLid', sql.Int, studentLid)
                 .query(`SELECT seb.div_batch_lid, seb.id, c.area_name, c.course_name, 
-                        rtb.available_seats, rtb.total_bidders, rtb.min_req_bid, seb.is_winning, t.division_batch_lid, c.course_id, c.acad_session, c.credits, db.max_seats
+                        rtb.available_seats, rtb.total_bidders, rtb.min_req_bid, seb.is_winning, t.division_batch_lid, c.course_id, c.acad_session, c.credits, db.max_seats,
                         STRING_AGG(CONCAT(d.day_name, ' (', CONVERT(VARCHAR, sit.start_time, 100), ' to ', CONVERT(VARCHAR, sit1.end_time, 100), ') ', t.faculty_name), ', ') AS faculty_date_time, c.sap_acad_session_id, RTRIM(LTRIM(db.division)) AS division,c.id AS course_lid, t.faculty_id , t.faculty_name, seb.round_lid, seb.bid_points
                         FROM [${slug}].timetable t
                         INNER JOIN [${slug}].student_elective_bidding seb ON seb.div_batch_lid = t.division_batch_lid
@@ -20,11 +21,11 @@ module.exports = class Bidding {
                         INNER JOIN [${slug}].courses c ON c.id = db.course_lid
                         INNER JOIN [dbo].days d ON d.id = t.day_lid
                         WHERE seb.bidding_session_lid = @biddingId AND seb.active = 1 AND seb.student_lid = @studentLid AND t.division_batch_lid IN (SELECT div_batch_lid FROM [${slug}].student_elective_bidding WHERE student_lid = @studentLid) 
-                        GROUP BY seb.id, c.area_name, c.course_name, acad_session, c.credits, seb.div_batch_lid, rtb.available_seats, rtb.total_bidders, rtb.min_req_bid, seb.is_winning, t.division_batch_lid, c.course_id, c.acad_session, c.sap_acad_session_id, c.credits, db.max_seats, RTRIM(LTRIM(db.division)), c.id, t.faculty_id , t.faculty_name, seb.round_lid, seb.bid_points`);
+                        GROUP BY seb.id, c.area_name, c.course_name, acad_session, c.credits, seb.div_batch_lid, rtb.available_seats, rtb.total_bidders, rtb.min_req_bid, seb.is_winning, t.division_batch_lid, c.course_id, c.acad_session, c.sap_acad_session_id, c.credits, db.max_seats, RTRIM(LTRIM(db.division)), c.id, t.faculty_id, t.faculty_name, seb.round_lid, seb.bid_points`);
         });
     }
 
-    static getStudentBidPoints(slug, biddingId, studentLid) {
+    static studentBidPoints(slug, biddingId, studentLid) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -34,7 +35,7 @@ module.exports = class Bidding {
         });
     }
 
-    static getUpdateBidPoints(slug, biddingId, studentLid) {
+    static updateBidPoints(slug, biddingId, studentLid) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -64,6 +65,7 @@ module.exports = class Bidding {
     }
 
     static getAddBiddingDetails(slug, biddingId, divisionId) {
+      
         return poolConnection.then(pool => {
             return pool.request()
                 .input('div_batch_lid', sql.Int, divisionId)

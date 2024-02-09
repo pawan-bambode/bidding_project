@@ -10,10 +10,10 @@ module.exports = {
         let availableCourse = availableCourseUrl[availableCourseUrl.length - 1];
 
         Promise.all([
-            course.getDropdownAcadSessionList(res.locals.slug, res.locals.biddingId),
-            divisionBatch.getAreaList(res.locals.slug, res.locals.biddingId),
-            divisionBatch.getCourseNameForFilter(res.locals.slug, res.locals.biddingId),
-            divisionBatch.getBiddingCourse(res.locals.slug, res.locals.biddingId),
+            course.acadSessionList(res.locals.slug, res.locals.biddingId),
+            divisionBatch.areaList(res.locals.slug, res.locals.biddingId),
+            divisionBatch.courseList(res.locals.slug, res.locals.biddingId),
+            divisionBatch.biddingCourse(res.locals.slug, res.locals.biddingId),
             favouriteCourse.getFavouriteCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId)
         ]).then(result => {
             res.render('student/availablecourse/index', {

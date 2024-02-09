@@ -278,7 +278,7 @@ module.exports = class course {
         });
     }
     
-    static getDropdownAcadSessionList(slug, biddingId) {
+    static acadSessionList(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)

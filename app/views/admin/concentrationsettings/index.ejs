@@ -181,14 +181,14 @@
 
         $('#searchkeyword').on('input', function () {
 
-            let searchValue = $(this).val().trim();
+            let concentrationSettingsValue = $(this).val().trim();
             let showEntry = $('#changeEntry').val();
 
             $.ajax({
                 type: 'POST',
                 url: '/admin/concentration-settings/search',
                 data: {
-                    searchLetter: searchValue,
+                    searchLetter: concentrationSettingsValue,
                     showEntry: showEntry
                 },
                 success: function (data) {
@@ -319,9 +319,10 @@
             let primaryAreaOption = $('#primary-area option:selected').text() === '--Select Primary Area--' ? null : $('#primary-area option:selected').text();
 
             let isRequiredFieldsEmpty = isModalFieldEmpty('#edit-concentration-setting-modal .modal-body');
-                    
+            
+            
             if (isRequiredFieldsEmpty) {
-  
+
                 let editConcentrationsettings = {
                     id: id,
                     total_elective_credits: totalElectiveCredits,

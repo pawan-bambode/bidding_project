@@ -189,8 +189,7 @@ module.exports = class DivisionBatches {
     
     static showEntry(slug, biddingId, showEntry, programId, acadSessionId) {
         
-        if (programId != - 1 && acadSessionId != -1) {
-        
+        if (programId != - 1 && acadSessionId != -1) {  
             return poolConnection.then(pool => {
                 return pool.request()
                     .input('biddingId', sql.Int, biddingId)
@@ -348,7 +347,7 @@ module.exports = class DivisionBatches {
         });
     }
     
-    static getBiddingCourse(slug, biddingId, studentId) {
+    static biddingCourse(slug, biddingId, studentId) {
         let roundId = 2;
         return poolConnection.then(pool => {
             return pool.request()
@@ -372,7 +371,7 @@ module.exports = class DivisionBatches {
         });
     }
     
-    static getAreaList(slug, biddingId) {
+    static areaList(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -490,7 +489,7 @@ module.exports = class DivisionBatches {
         }
     }
     
-    static getCourseNameForFilter(slug, biddingId, acadSessionId) {
+    static courseList(slug, biddingId, acadSessionId) {
         if (acadSessionId) {
             return poolConnection.then(pool => {
                 return pool.request()

@@ -14,23 +14,23 @@ module.exports = {
         let slug = res.locals.slug;
 
         Promise.all([
-            course.getDropdownAcadSessionList(res.locals.slug, res.locals.biddingId),
+            course.acadSessionList(res.locals.slug, res.locals.biddingId),
             programSession.getCredits(res.locals.slug, res.locals.biddingId),
-            roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId, 2),
-            divisionBatch.getBiddingCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
-            divisionBatch.getCourseNameForFilter(res.locals.slug, res.locals.biddingId),
-            concentrationSetting.getStudentConcentrationSettings(res.locals.slug, res.locals.biddingId, res.locals.username),
-            divisionBatch.getAreaList(res.locals.slug, res.locals.biddingId),
-            roundSetting.getBiddingRoundLid(res.locals.slug, res.locals.biddingId),
-            biddingClass.getConsiderationSet(res.locals.slug, res.locals.biddingId, res.locals.studentId),
-            biddingClass.getStudentBidPoints(res.locals.slug, res.locals.biddingId, res.locals.studentId),
-            biddingClass.getUpdateBidPoints(res.locals.slug, res.locals.biddingId, res.locals.studentId)
+            roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, 2),
+            divisionBatch.biddingCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+            divisionBatch.courseList(res.locals.slug, res.locals.biddingId),
+            concentrationSetting.getList(res.locals.slug, res.locals.biddingId),
+            divisionBatch.areaList(res.locals.slug, res.locals.biddingId),
+            roundSetting.roundId(res.locals.slug, res.locals.biddingId),
+            biddingClass.considerationSet(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+            biddingClass.studentBidPoints(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+            biddingClass.updateBidPoints(res.locals.slug, res.locals.biddingId, res.locals.studentId)
         ]).then(result => {
             res.render('student/bidding/index', {
                 active: bidding,
-                dropdownAcadSessionList: result[0].recordset,
+                acadSessions: result[0].recordset,
                 creditList: result[1].recordset,
-                startAndEndTime: result[2].recordset[0] !== '' ? result[2].recordset[0] : 0,
+                startAndEndTime: result[1].recordset[0] != undefined? result[1].recordset[0] : '',
                 biddingCourseList: result[3].recordset,
                 courseList: result[4].recordset,
                 concentrationSetting: result[5].recordset[0],
@@ -46,10 +46,11 @@ module.exports = {
     },
 
     getCourseByAcadSession: (req, res) => {
-        Promise.all([divisionBatch.getBiddingCourseByAcadSession(res.locals.slug, res.locals.biddingId, 
-                     req.body.acadSessionId),
-                     divisionBatch.getCourseNameForFilter(res.locals.slug, res.locals.biddingId, 
-                     req.body.acadSessionId)
+        Promise.all([
+            divisionBatch.getBiddingCourseByAcadSession(res.locals.slug, res.locals.biddingId, 
+            req.body.acadSessionId),
+            divisionBatch.getCourseNameForFilter(res.locals.slug, res.locals.biddingId, 
+            req.body.acadSessionId)
         ]).then(result => {
             res.json({
                 status: '200',

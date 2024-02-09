@@ -30,7 +30,7 @@
     </div>
   
     <div class="row ps-5 pe-5">
-            <%for(let acadSession of dropdownAcadSessionList) { %>
+            <%for(let acadSession of acadSessions) { %>
                 <div class="col-md-4">
                     <h6><%- acadSession.acad_session %> Selected Credits :&nbsp;<span class="current-credit-points" data-id="<%- acadSession.sap_acad_session_id %>" id="credits-points-<%- acadSession.sap_acad_session_id %>">0</span></h6>
                 </div>
@@ -135,7 +135,7 @@
  
     <div class="card-body table-responsive">
         <div class="d-flex">
-          <% for(let acadSession of dropdownAcadSessionList) { %>
+          <% for(let acadSession of acadSessions) { %>
             <div class="col-sm-4 p-2">
               <button class="btn btn-light w-100 border bidding-trimester bidding-trimester-selected"  data-acad-session-id = "<%- acadSession.sap_acad_session_id %>">
                 <%-acadSession.acad_session %>
@@ -213,12 +213,11 @@ $(document).ready(function() {
     let concentrationSettingData = JSON.parse(`<%- JSON.stringify(concentrationSetting) %>`);
     let concentrationSettingOfStudent = concentrationSettingData;
     let biddingCourseList = JSON.parse(`<%- JSON.stringify(biddingCourseList) %>`);
-    let dropdownAcadSessionList = JSON.parse(`<%- JSON.stringify(dropdownAcadSessionList) %>`);
+    let acadSessionList = JSON.parse(`<%- JSON.stringify(acadSessions) %>`);
     let creditsList = JSON.parse(`<%- JSON.stringify(creditList) %>`)
     let roundId = JSON.parse(`<%- JSON.stringify(roundId) %>`)
     let considerationSet = JSON.parse(`<%- JSON.stringify(considerationSetList) %>`);
     
-    let studentId = concentrationSettingData.studentId;
     let concentrationId = concentrationSettingData.concentration_lid;
     let biddingSessionId = concentrationSettingData.bidding_session_lid;
     let concentrationName = concentrationSettingData.concentration_name;
@@ -403,6 +402,7 @@ $(document).ready(function() {
       let totalSelectedCredits = 0;
       let biddingTable = $('#bidding-table tbody');
       let tableId = $('#bidding-table tbody tr').length;
+      let studentId = $('#student-data').data('student-lid');
       let areaSwap = '';
 
       let areaNameAndCredits = {
@@ -610,6 +610,7 @@ $(document).ready(function() {
     let credits = $(this).closest('tr').data('credits');
     let bidPoints = $(this).closest('tr').find('.student-previous-bid-point').html();
     let totalBidPoints = Number($('#remaining-bid-points').html());
+    let studentId = $('#student-data').data('data-student-lid');
 
     $('#remaining-bid-points').html(totalBidPoints + Number(bidPoints));
   

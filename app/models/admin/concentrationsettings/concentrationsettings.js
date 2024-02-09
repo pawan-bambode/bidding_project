@@ -6,7 +6,8 @@ module.exports = class ConcentrationSettings {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .query(`SELECT cs.id, a.id AS area_Id, concentration_name, 
+                .query(`SELECT cs.id, a.id AS area_Id, concentration_name, concentration_lid, 
+                        cs.bidding_session_lid,
                         IIF(total_elective_credits IS NULL, 0, total_elective_credits) AS total_elective_credits,
                         IIF(max_credits_per_area IS NULL, 0, max_credits_per_area) AS max_credits_per_area,
                         IIF(no_of_areas_to_cover IS NULL, 0, no_of_areas_to_cover) AS no_of_areas_to_cover,

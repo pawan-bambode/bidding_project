@@ -15,7 +15,7 @@ module.exports = class RoundSettings {
         });
     }
 
-    static getStartEndTime(slug, biddingId, roundlid) {
+    static startAndEndTime(slug, biddingId, roundlid) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -27,7 +27,7 @@ module.exports = class RoundSettings {
         });
     }
 
-    static getBiddingRoundLid(slug, biddingId) {
+    static roundId(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)

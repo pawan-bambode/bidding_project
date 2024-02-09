@@ -38,10 +38,11 @@
             <div class="card-body table-responsive">
                 <div class="row ps-5 pe-5">
                     <div class="col-md-4">
-                        <h6>Start Time :&nbsp;<span id="start-time"><%- startAndEndTime.startTime %></span></h6>
+                        <h6>Start Time: <span id="start-time"><% if (startAndEndTime && startAndEndTime !== '0') { %><%- startAndEndTime.startTime %><% } else { %> <% } %></span></h6>
+
                     </div>
                     <div class="col-md-4">
-                        <h6>End Time :&nbsp;<span id="end-time"><%-startAndEndTime.endTime %></span></h6>
+                        <h6>Start Time: <span id="start-time"><% if (startAndEndTime && startAndEndTime !== '0') { %><%- startAndEndTime.endTime %><% } else { %> <% } %></span></h6>
                     </div>
                     <div class="col-md-4">
                         <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>

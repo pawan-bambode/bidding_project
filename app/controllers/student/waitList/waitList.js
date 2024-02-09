@@ -11,17 +11,17 @@ module.exports = {
         let roundId = 6;
         Promise.all([
             confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),
-            roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId, roundId),
-            course.getDropdownAcadSessionList(res.locals.slug, res.locals.biddingId),
-            divisionBatch.getAreaList(res.locals.slug, res.locals.biddingId),
-            divisionBatch.getBiddingCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+            roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, roundId),
+            course.acadSessionList(res.locals.slug, res.locals.biddingId),
+            divisionBatch.areaList(res.locals.slug, res.locals.biddingId),
+            divisionBatch.biddingCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             waitList.getStudentDetails(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             waitList.getWaitListCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId)
         ]).then(result => {
             res.render('student/waitlist/index', {
                 active: wait,
                 confirmCourseList: result[0].recordset,
-                startAndEndTime: result[1].recordset[0],
+                startAndEndTime: result[1].recordset[0] != undefined? result[1].recordset[0] : '',
                 dropdownAcadSessionList: result[2].recordset,
                 areaList: result[3].recordset,
                 courseList: result[4].recordset,

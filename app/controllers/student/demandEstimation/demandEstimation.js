@@ -14,10 +14,10 @@ module.exports = {
             demandEstimation.getDemandEstimationRoundList(res.locals.slug, res.locals.biddingId),
             course.getAvailableCourseList(res.locals.slug, res.locals.biddingId),
             course.getAvailableCourseCount(res.locals.slug, res.locals.biddingId),
-            course.getDropdownAcadSessionList(res.locals.slug, res.locals.biddingId),
+            course.acadSessionList(res.locals.slug, res.locals.biddingId),
             programSession.getCredits(res.locals.slug, res.locals.biddingId),
             roundSetting.getRoundLid(res.locals.slug, res.locals.biddingId),
-            roundSetting.getStartEndTime(res.locals.slug, res.locals.biddingId, roundId),
+            roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, roundId),
             demandEstimation.getSelectedCourses(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             concentrationSetting.studentList(res.locals.slug, res.locals.biddingId, res.locals.username),
             concentrationSetting.totalCreditCount(res.locals.slug, res.locals.biddingId)
@@ -30,7 +30,7 @@ module.exports = {
                 dropdownAcadSessionList: result[3].recordset,
                 creditList: result[4].recordset,
                 roundLid: result[5].recordset[0].round_lid,
-                startAndEndTime: result[6].recordset[0],
+                startAndEndTime: result[6].recordset[0] != undefined? result[1].recordset[0] : '',
                 selectCourse: result[7].recordset,
                 concentrationSettings: (result[8].recordset && result[8].recordset.length !== 0) ? result[8].recordset[0] : 0,
                 totalCreditsCounts: result[9].recordset[0].totalCount
