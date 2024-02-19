@@ -13,12 +13,12 @@ module.exports = {
             confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId, roundId),
             roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, roundId)
         ]).then(result => {
-            
+          
             res.render('student/confirmation/index', {
                 active: confirmationActive,
                 winningCourseList: result[0].recordset,
                 confirmCourseList: result[1].recordset,
-                startAndEndTime: result[2].recordset[0] != undefined? result[1].recordset[0] : '',
+                startAndEndTime: result[2].recordset[0] != undefined? result[2].recordset[0] : '',
             });
         });
     },

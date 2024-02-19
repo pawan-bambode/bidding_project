@@ -122,8 +122,15 @@ if (process.env.APP_ENV === 'PRODUCTION' || process.env.APP_ENV === 'DEV') {
 else {
       const server = http.createServer(app).listen(process.env.APP_PORT);
       const io = socketIO(server);
+
+     
+    
       io.on('connection', (socket) => {
         biddingResponse.respond(socket, io);
+
+        socket.on('clientEvent', (data) => {
+            console.log('Received from client:', data);
+        });
     });
     
 }

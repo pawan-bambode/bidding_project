@@ -2,7 +2,7 @@ $(document).on('click', '.fa-angles-left', function() {
     $('.left-sidebar').addClass('hide');
     $('.main').css('left', '80px');
     $('.top-navbar').css('left', '80px');
-    $('.footer').css('left', '80px');
+    $('.student-footer').css('left', '80px');
     $('.nmims-logo').addClass('d-none');
     $('.nmims-logo-small').removeClass('d-none');
     $(this).removeClass('fa-angles-left').addClass('fa-angles-right');
@@ -13,7 +13,7 @@ $(document).on('click', '.fa-angles-right', function() {
     $('.left-sidebar').removeClass('hide');
     $('.main').css('left', '260px');
     $('.top-navbar').css('left', '260px');
-    $('.footer').css('left', '260px');
+    $('.student-footer').css('left', '260px');
     $('.nmims-logo').removeClass('d-none');
     $('.nmims-logo-small').addClass('d-none');
     $(this).addClass('fa-angles-left').removeClass('fa-angles-right');
@@ -217,6 +217,7 @@ function updateCurrentTime() {
     let currentDate = new Date();
     let formattedDateTime = currentDate.toLocaleString();
     $('#current-date-time').text(convertDateFormat(formattedDateTime)); 
+    demandEstimationTimeCountDown();
 }
 
 function withdrawBidding(arr, key, credits) {
@@ -449,9 +450,10 @@ function convertMillisecondsToReadableTime(milliseconds) {
 }
 
 function calculateAreaFrequency(arr) {
+    
     let areaFrequency = {};
     arr.forEach((obj) => {
-        let area = obj.areaName;
+        let area = obj.area;
         if (areaFrequency[area]) {
             areaFrequency[area].name = area;
             areaFrequency[area].frequency++;
@@ -465,6 +467,159 @@ function calculateAreaFrequency(arr) {
         }
     });
     return areaFrequency;
+}
+
+function cancleAreaFrequency(arr, area) {
+  
+    let filteredArr = arr.filter(obj => obj.id !== area.id);
+    let areaFrequency = {};
+    filteredArr.forEach(obj => {
+        let areaName = obj.areaName;
+        if (areaFrequency[areaName]) {
+            areaFrequency[areaName].name = areaName;
+            areaFrequency[areaName].frequency++;
+            areaFrequency[areaName].totalCredits += obj.credit;
+        } else {
+            areaFrequency[areaName] = {
+                frequency: 1,
+                totalCredits: obj.credit,
+                name: areaName
+            };
+        }
+    });
+
+    return areaFrequency;
+}
+
+function calculateAreahighest(arr) {
+
+    const areaTotals = arr.reduce((acc, obj) => {
+        const { area, credit } = obj;
+        acc[area] = (acc[area] || 0) + credit;
+        return acc;
+    }, {});
+
+    const maxTotalCredits = Math.max(...Object.values(areaTotals));
+    const highestAreaName = Object.keys(areaTotals).find(key => areaTotals[key] === maxTotalCredits);
+
+    return {
+        primaryAreaName: arr.find(obj => obj.area === highestAreaName),
+        totalCredits: maxTotalCredits
+    };
+}
+
+
+
+function cancelacadSessionCounttyper(arr, area) {
+    let filteredArr = arr.filter(obj => obj.id !== area.id);
+    let acadSessionFrequency = {};
+    filteredArr.forEach((obj) => {
+        let acadSession = obj.acadSessionId;
+        if (acadSessionFrequency[acadSession]) {
+            acadSessionFrequency[acadSession].acadSession = acadSession;
+            acadSessionFrequency[acadSession].frequency++;
+            acadSessionFrequency[acadSession].totalCredits += obj.credit;
+           
+        } else {
+            acadSessionFrequency[acadSession] = {
+                frequency: 1,
+                acadSession: acadSession,
+                totalCredits: obj.credit,
+            };
+        }
+    });
+    return acadSessionFrequency;
+}
+
+function acadSessionCounttyper(arr) {
+   
+    let acadSessionFrequency = {};
+    arr.forEach((obj) => {
+        let acadSession = obj.acadSessionId;
+        if (acadSessionFrequency[acadSession]) {
+            acadSessionFrequency[acadSession].acadSession = acadSession;
+            acadSessionFrequency[acadSession].frequency++;
+            acadSessionFrequency[acadSession].totalCredits += obj.credit;
+           
+        } else {
+            acadSessionFrequency[acadSession] = {
+                frequency: 1,
+                acadSession: acadSession,
+                totalCredits: obj.credit,
+            };
+        }
+    });
+    return acadSessionFrequency;
+}
+
+let completeAreaArray = [];
+
+function calculateCompletedArea(arr, minCredits) {
+   
+    let areaFrequency = {};
+    arr.forEach((obj) => {
+        
+        let area = obj.area;
+        if (areaFrequency[area]) {
+            areaFrequency[area].frequency++;
+            areaFrequency[area].totalCredits += obj.credit;
+        } else {
+            areaFrequency[area] = {
+                frequency: 1,
+                totalCredits: obj.credit,
+                name: area
+            };
+        }
+    });
+
+    let completeAreaArray = [];
+    let keys = Object.keys(areaFrequency);
+    keys.forEach(key => {
+        if (areaFrequency[key].totalCredits >= minCredits) {
+            completeAreaArray.push(areaFrequency[key]); 
+        }
+        
+    });
+
+    
+    let maxTotalCreditsObject = completeAreaArray.reduce((maxObj, obj) => {
+        return obj.totalCredits > maxObj.totalCredits ? obj : maxObj;
+    }, completeAreaArray);
+    
+    return maxTotalCreditsObject;
+}
+
+function cancelCompletedArea(arr, minCredits) {
+
+    let areaFrequency = {};
+    arr.forEach((obj) => {
+        let area = obj.area;
+        if (areaFrequency[area]) {
+            areaFrequency[area].frequency++;
+            areaFrequency[area].totalCredits += obj.credits;
+        } else {
+            areaFrequency[area] = {
+                frequency: 1,
+                totalCredits: obj.credits,
+                name: area
+            };
+        }
+    });
+
+    let completeAreaArray = [];
+    let keys = Object.keys(areaFrequency);
+    keys.forEach(key => {
+        if (areaFrequency[key].totalCredits >= minCredits) {
+            completeAreaArray.push(areaFrequency[key]); 
+        }
+    });
+
+    
+    let maxTotalCreditsObject = completeAreaArray.reduce((maxObj, obj) => {
+        return obj.totalCredits > maxObj.totalCredits ? obj : maxObj;
+    }, completeAreaArray);
+
+    return maxTotalCreditsObject;
 }
 
 function calculateDeleteFrequency(arr) {
@@ -482,6 +637,7 @@ function calculateDeleteFrequency(arr) {
     });
     return areaFrequency;
 }
+
 
 $('#searchkeyword-button').on('click', function () {
     $('#searchkeyword').focus();
@@ -636,6 +792,114 @@ function validateAlphanumeric(inputStr) {
     }
 }
 
+function demandEstimationTimeCountDown(){
+
+
+  
+    let endTime = $('#end-time').text();
+    let startTime = $('#start-time').text(); 
+
+    if(startTime == '' && endTime == ''){
+        $('.empty-bidding-round-wise').find('p').html('No Bidding Round Present');
+        $('.empty-bidding-round-wise').removeClass('d-none');
+    }
+    let endDateTime = new Date(endTime);
+    let startDateTime = new Date(startTime);
+    
+    let currentDateTime = new Date();
+
+    if(startDateTime < currentDateTime){
+    let dateSubtraction = endDateTime - currentDateTime;
+    let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
+    $('.time-remaining').text(`Round ends in ${dateSubtractionValue}`);
+ 
+
+    }
+ 
+    if(endDateTime == currentDateTime){
+        let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
+    $('.time-remaining').text(`Round ends in ${dateSubtractionValue}`);
+    
+
+    }
+    if(endDateTime < currentDateTime){
+        let roundId = $('.round-name').data('id');
+         console.log('values of roundId', roundId);
+     
+       
+        $('.time-remaining').text(`Round ended`);
+        
+        $('.time-remaining').attr('data-round-status','end');
+        $('.save-select-course').addClass('d-none');
+        $('.demand-estimation-status').addClass('d-none');
+        $('.demand-estimation-modal').addClass('d-none');
+        
+       
+    }
+    
+    if(startDateTime > currentDateTime){
+    
+        $('.time-remaining').text(`Round has not started yet`);
+        $('.time-remaining').attr('data-round-status','not-started');
+        $('.save-select-course').addClass('d-none');
+        $('.demand-estimation-status').addClass('d-none');
+        $('.time-remaining').removeClass('btn-danger');
+        $('.time-remaining').addClass('btn-success');
+    }
+
+} 
+
+function calculateAcadSessionTotals(data) {
+    
+    const dataArray = Object.values(data);
+    const acadSessionTotals = {};
+    dataArray.forEach(item => {
+        if (!acadSessionTotals[item.acadSession]) {
+            acadSessionTotals[item.acadSession] = { frequency: 0, acadSession: item.acadSession, totalCredits: 0 };
+        }
+        acadSessionTotals[item.acadSession].frequency += item.frequency;
+        acadSessionTotals[item.acadSession].totalCredits += item.totalCredits;
+    });
+
+    const acadSessionTotalsArray = Object.values(acadSessionTotals);
+
+    return acadSessionTotalsArray;
+}
+
+function getHighestTotalCreditsBySession(acadSessionTotalsArray) {
+    let highestCreditsBySession = {};
+
+    acadSessionTotalsArray.forEach(obj => {
+        if (!highestCreditsBySession.hasOwnProperty(obj.acadSession) || highestCreditsBySession[obj.acadSession].totalCredits < obj.totalCredits) {
+            highestCreditsBySession[obj.acadSession] = obj;
+        }
+    });
+
+    return Object.values(highestCreditsBySession);
+}
+
+
+// function updateUI(startAndEndTime, roundName) {
+
+//     const startTime = startAndEndTime !== '' ? startAndEndTime.startTime : '';
+//     const endTime = startAndEndTime !== '' ? startAndEndTime.endTime : '';
+//     let timeRemaining = $('.time-remaining').text().trim();
+//     let message = `${roundName} Not Created Yet`;
+
+//     $('#start-time').html('');
+//     $('#end-time').html('');
+
+//     if (startTime === '') {
+//         $('.round-not-created').html(message);
+//         $('.round-not-created').removeClass('d-none');
+//         $('.time-remaining').addClass('d-none');
+//     } else {
+//         $('#start-time').html(startTime);
+//         $('#end-time').html(endTime);
+//         $('.round-not-created').addClass('d-none');
+//         $('.time-remaining').removeClass('d-none');
+//     }
+// }
 
 
 

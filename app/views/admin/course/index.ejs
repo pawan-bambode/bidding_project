@@ -127,7 +127,7 @@
                     <input type="submit" class="btn btn-success mt-2 d-none" id="upload-course-button" value="Upload Courses"></input> 
                     </form> 
                 
-                  <a href="/admin/generate-excel" download="sampleForImportCourses.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample for Import Courses</a>
+                  <a href="/admin/course/generate-excel" download="sampleForImportCourses.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample for Import Courses</a>
                  </div>
              
             </div>
@@ -365,13 +365,18 @@ $(document).on('change', '#course-name-filter', function() {
 });
 
 
-    $('#changeEntry').on('change',function(){
+    			
+	$('#changeEntry').on('change',function(){
       let showEntry = $(this).val();
+      let sessionId = $('#session-name-filter').val();
+      let programId = $('#program-name-filter').val();
       let ApiObj = {
           type:'POST',
           url:'/admin/course/showEntry',
           data:{
-            showEntry:showEntry
+            showEntry:showEntry,
+            programId: programId,
+            acadSessionId: sessionId
           },
           datatype:'JSON'
         }
@@ -380,6 +385,7 @@ $(document).on('change', '#course-name-filter', function() {
             AjaxtTable(result.data);
             $('#searchkeyword').val('');
         }).catch(error =>{
+          
           createToastError(JSON.stringify(error.responseJSON.description));;
         })    
     })
@@ -416,6 +422,8 @@ $(document).on('change', '#course-name-filter', function() {
         $(".pagination-search").on('click', '.pagination li', function () {
                 let pageNo = $(this).attr('data-lp')
                 let searchValue = $(this).val();
+                let programId = $('#program-name-filter').val();
+                let acadSessionId = $('#session-name-filter').val();
                 let showEntry = $('#changeEntry').val();
                   $.ajax({
                       type:'POST',
@@ -423,11 +431,13 @@ $(document).on('change', '#course-name-filter', function() {
                       data:{
                         searchLetter:searchValue,
                         pageNo:pageNo,
-                        showEntry:showEntry
+                        showEntry:showEntry,
+                        programId:programId,
+                        acadSessionId:acadSessionId
                       },
                  success:function(data){
                  AjaxtTable(data.data);
-                 $('#page-no').html(data.length);
+                 
           }
          })
         })

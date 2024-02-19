@@ -7,7 +7,8 @@
 <div class="main-content">
 
     <ul class="d-flex round-wises justify-content-between align-items-end">
-        <li class="ms-5" data-id="3">
+        <li class="ms-5 active" data-id="3" style="height: 58px;">
+
             <a href="#" class="text-decoration-none text-dark">
                 <div class="d-flex flex-column justify-content-center align-items-center h-100">
                     <div class="d-flex justify-content-between align-items-center active-div">
@@ -18,7 +19,7 @@
             </a>
         </li>
     
-        <li class="ms-5" data-id="5">
+        <li class="ms-5" data-id="5" style="height: 58px;">
             <a href="#" class="text-decoration-none text-dark">
                 <div class="d-flex justify-content-center align-items-center h-100">
                     <div class="d-flex justify-content-between align-items-center active-div">
@@ -30,7 +31,7 @@
         </li>
     </ul>
 
-    <div class="main-div-round-wise card-custom-border-curv p-2 mt-4">
+    <div class="main-div-round-wise card-custom-border-curv p-2">
         <div class="card card-custom-border-curv mt-2">
             <div class="card-header-custom d-flex justify-content-center p-1">
                 <h3 class="confirmation-rounds"></h3>
@@ -38,11 +39,11 @@
             <div class="card-body table-responsive">
                 <div class="row ps-5 pe-5">
                     <div class="col-md-4">
-                        <h6>Start Time: <span id="start-time"><% if (startAndEndTime && startAndEndTime !== '0') { %><%- startAndEndTime.startTime %><% } else { %> <% } %></span></h6>
+                        <h6>Start Time: <span id="start-time"><% if (startAndEndTime && startAndEndTime !== '0') { %><%- startAndEndTime.startTime %><% } else { %> <% } %></span><span class="round-not-created d-none">Confirmation Rounds Not Created Yet</span></h6>
 
                     </div>
                     <div class="col-md-4">
-                        <h6>Start Time: <span id="start-time"><% if (startAndEndTime && startAndEndTime !== '0') { %><%- startAndEndTime.endTime %><% } else { %> <% } %></span></h6>
+                        <h6>Start Time: <span id="start-time"><% if (startAndEndTime && startAndEndTime !== '0') { %><%- startAndEndTime.endTime %><% } else { %> <% } %></span><span class="round-not-created d-none">Confirmation Rounds Not Created Yet</span></h6>
                     </div>
                     <div class="col-md-4">
                         <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
@@ -122,45 +123,34 @@
             </div>
         </div>
     </div>
-    
-    <footer class="student-footer">
-        <div class="student-footer-div">
-            <div class="d-flex justify-content-center align-items-center" style="height: 40px;">
-                <div class="d-flex justify-content-between align-items-center">
-                    <button class="btn btn-success text-light">Remaining Bid Points:&nbsp;<span id="remaining-bid-points"></span></button>
-                </div>
-            </div>
-        </div>
-    </footer>
-    
+       
 <%- include('../partials/footer.ejs') %>
 <script>
 $(document).ready(function() {
  
     let active = `<%- active %>`;
     let startTime = '<%- startAndEndTime %>';
+    let timeRemaing = $('.time-remaining').text().trim();
 
     $('#sidebar .side-menu li.' + `<%- active %>`).addClass('active');
     let outerWidth = $('.round-wises li.active').innerWidth() + Number(10);
     $('.round-wises li.active::before').css('--active-element-width', outerWidth + 'px');
-    
+
+		    
+    updateUI(startTime, 'Confirmation');
 
     $('ul.round-wises li').on('click', function () {  
         $('ul.round-wises li').removeClass('active');
-        $('.spacer').remove();
+      
         $(this).addClass('active');
         
         let roundId = $(this).data('id');
-        let divElement = $('<div></div>').addClass('spacer');
-        let spacerWidth = $('li.active .active-div').innerWidth() - Number(40) + 7;
+        let roundName = $(this).text();
+       
         let outerWidth = Number($(this).outerWidth(true));
 
         $(':root').css('--active-right-width', outerWidth + 'px');
-        $(':root').css('--active-spacer-width', spacerWidth + 'px');
-
-        $(this).append(divElement);
-        $(this).css('height', '60px');
-
+     
         $('.confirmation-rounds').html($(this).find('h4').html());
        
         let ApiObj = {
@@ -174,7 +164,9 @@ $(document).ready(function() {
 
         ajaxApi(ApiObj)
             .then(result => {
+          
                 updateConfirmationDetails(result);
+                updateUI(result, roundName);
             })
             .catch(error => {
                 createToastError(JSON.stringify(error.responseJSON.description));

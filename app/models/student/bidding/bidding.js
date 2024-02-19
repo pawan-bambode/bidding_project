@@ -35,6 +35,28 @@ module.exports = class Bidding {
         });
     }
 
+    static checkRoundId(slug, roundId, roundIId)  {
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('roundId', sql.Int, roundId)
+                .input('roundIId', sql.Int, roundIId)
+                .query(`IF (SELECT COUNT(*) 
+                FROM [${slug}].round_settings 
+                WHERE round_lid = @roundId AND end_date_time >= GETDATE()) > 0
+                    BEGIN
+                        SELECT round_lid
+                        FROM [${slug}].round_settings 
+                        WHERE round_lid = @roundIId
+                    END
+                ELSE
+                    BEGIN
+                        SELECT round_lid
+                        FROM [${slug}].round_settings 
+                        WHERE round_lid = @roundId
+                    END`)
+        })
+    };
+
     static updateBidPoints(slug, biddingId, studentLid) {
         return poolConnection.then(pool => {
             return pool.request()

@@ -152,7 +152,7 @@
       ConfirmationForAllDelete('Are you sure to delete the selected Completed Courses ?').then(result =>{
       if(result){
         let ApiObj = {
-             url:'/admin/complete-course/delete-all',
+             url:'/admin/completed-courses/delete-all',
              type:'POST',
              data:{deleteCompleteCourseArray},
              dataType:'JSON'

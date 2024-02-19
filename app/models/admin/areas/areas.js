@@ -6,7 +6,7 @@ module.exports = class Area {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .query(`SELECT * FROM [${slug}].areas WHERE bidding_session_lid = @biddingId`);
+                .query(`SELECT * FROM [${slug}].areas WHERE bidding_session_lid = @biddingId AND active = 1`);
         });
     }
 
@@ -14,7 +14,7 @@ module.exports = class Area {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .query(`SELECT COUNT(*) FROM [${slug}].areas WHERE bidding_session_lid = @biddingId`);
+                .query(`SELECT COUNT(*) FROM [${slug}].areas WHERE bidding_session_lid = @biddingId AND active = 1`);
         });
     }
 

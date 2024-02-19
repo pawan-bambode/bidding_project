@@ -7,7 +7,7 @@
 <div class="main-content">
 
     <ul class="d-flex round-wises justify-content-between align-items-end">
-        <li class="ms-5" data-id="7">
+        <li class="ms-5" data-id="7" style="height: 58px;">
             <a href="#" class="text-decoration-none text-dark">
                 <div class="d-flex flex-column justify-content-center align-items-center h-100">
                     <div class="d-flex justify-content-between align-items-center active-div">
@@ -17,7 +17,7 @@
             </a>
         </li>
     
-        <li class="ms-5" data-id="8">
+        <li class="ms-5" data-id="8" style="height: 58px;">
             <a href="#" class="text-decoration-none text-dark">
                 <div class="d-flex justify-content-center align-items-center h-100">
                     <div class="d-flex justify-content-between align-items-center active-div">
@@ -28,7 +28,7 @@
         </li>
     </ul>
 
-    <div class="main-div-round-wise card-custom-border-curv p-2 mt-4">
+    <div class="main-div-round-wise card-custom-border-curv p-2">
         <div class="card card-custom-border-curv mt-2">
             <div class="card-header-custom d-flex justify-content-center p-1">
                 <h3 class="add-drop-rounds"></h3>
@@ -36,10 +36,10 @@
             <div class="card-body table-responsive">
                 <div class="row ps-5 pe-5">
                     <div class="col-md-4">
-                        <h6>Start Time :&nbsp;<span id="start-time"><%- startAndEndTime.startTime %></span></h6>
+                        <h6>Start Time :&nbsp;<span id="start-time"><%- startAndEndTime.startTime %></span><span class="round-not-created d-none">Add Drop Not Created Yet</span></h6>
                     </div>
                     <div class="col-md-4">
-                        <h6>End Time :&nbsp;<span id="end-time"><%-startAndEndTime.endTime %></span></h6>
+                        <h6>End Time :&nbsp;<span id="end-time"><%-startAndEndTime.endTime %></span><span class="round-not-created d-none">Add Drop Not Created Yet</span></h6>
                     </div>
                     <div class="col-md-4">
                         <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
@@ -157,16 +157,6 @@
             </table>
         </div>
     </div>
-
-    <footer class="student-footer">
-        <div class="student-footer-div">
-            <div class="d-flex justify-content-center align-items-center" style="height: 40px;">
-                <div class="d-flex justify-content-between align-items-center">
-                    <button class="btn btn-success text-light">Remaining Bid Points:&nbsp;<span id="remaining-bid-points"></span></button>
-                </div>
-            </div>
-        </div>
-    </footer>
     
 <%- include('../partials/footer.ejs') %>
 <script>
@@ -181,21 +171,31 @@ $(document).ready(function() {
     avilableCourses(availableCourseList, false);
     waitListConsiderationSet(waitListCourseList, false, 'wait-list-course-table');
 
+
+    let startTime = JSON.parse('<%- JSON.stringify(startAndEndTime) %>');
+    let timeRemaing = $('.time-remaining').text().trim();
+		    
+    if (startTime.trim() === '') {
+        $('.round-not-created').removeClass('d-none');
+        $('.time-remaining').addClass('d-none');
+    } else {
+        $('.round-not-created').addClass('d-none');
+        $('.time-remaining').removeClass('d-none');
+    }
+	
+
     $('ul.round-wises li').on('click', function () {  
         $('ul.round-wises li').removeClass('active');
-        $('.spacer').remove();
+  
         $(this).addClass('active');
         
         let roundId = $(this).data('id');
-        let divElement = $('<div></div>').addClass('spacer');
-        let spacerWidth = $('li.active .active-div').innerWidth() - Number(40) + 7;
+        
+       
         let outerWidth = Number($(this).outerWidth(true));
 
-        $(':root').css('--active-right-width', outerWidth + 'px');
-        $(':root').css('--active-spacer-width', spacerWidth + 'px');
-
         $(this).append(divElement);
-        $(this).css('height', '60px');
+        $(this).css('height', '58px');
 
         $('.add-drop-rounds').html($(this).find('h4').html());
 

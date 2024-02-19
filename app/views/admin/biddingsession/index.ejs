@@ -194,7 +194,7 @@
         setActiveMenuItem(`<%- active %>`);
        
         $('#add-bidding-session').on('change', '#start-date', function() {
-            formatDate(new Date($(this).val()), true, 15);
+            formatDate(new Date(), true, 15);
             $('#end-date').prop('disabled', false);
         });
 

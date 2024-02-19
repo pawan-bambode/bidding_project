@@ -1,173 +1,194 @@
 <%- include('../partials/head') %>
-
 <%- include('../partials/leftSidebarForStudent.ejs') %>
 <%- include('../partials/header.ejs') %>
+
 <div class="main-content">
-  <div class="card card-custom-border-curv">
-    <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-2"> Bidding</h3>  
-    </div>
-    <div class="card-body table-responsive">
-          
-      
-      <div class="row ps-5 pe-5">
-        <div class="col-md-4">
-            <h6>Total Bid Points :&nbsp;<span id="total-bid-points"> <%- studentBidsPoints.student_bid_points %></span></h6>
-        </div>    
-        <div class="col-md-4">
-            <h6>Remaining Bid Points :&nbsp;<span id="remaining-bid-points"><%- remaingBidPoints.student_bid_points %></h6>
-        </div>
-        <div class="col-md-4">
-            <h6>Credits Winning : &nbsp;<span id="credits-winning"></span></h6>
-        </div>
-    </div>
-      <div class="row ps-5 pe-5">
-        <%for(let credit of creditList) { %>
-            <div class="col-md-4">
-                <h6><%- credit.acad_session %> Credits :&nbsp;<span class="credits-point-target" id="credits-points-target-<%- credit.sap_acad_session_id %>" data-id="<%-credit.sap_acad_session_id %>"></span></h6>
+    <% if (roundDetails) { %>
+      <ul class="d-flex round-wises justify-content-between align-items-end">
+        <li class="ms-5 active" style="height: 58px;">
+          <a class="text-decoration-none text-dark">
+            <div class="d-flex flex-column justify-content-center align-items-center h-100">
+              <div class="d-flex justify-content-between align-items-center active-div">
+                <h4 class="ms-2 round-label"><%= roundDetails.roundName.trim() %></h4>
+              </div>
             </div>
-        <% } %>
-    </div>
-  
-    <div class="row ps-5 pe-5">
-            <%for(let acadSession of acadSessions) { %>
+          </a>
+        </li>
+      </ul>
+    <% } %>
+
+    <div class="main-div-round-wise card-custom-border-curv p-3">
+      <div class="bidding-round-wise">
+        <div class="card card-custom-border-curv">
+          <div class="card-header-custom d-flex justify-content-between p-1">
+              <h5 class="ms-2 round-name" data-id="<%= roundDetails.round_lid %>">  <% if (roundDetails) { %><%= roundDetails.roundName.trim() %> <% } %></h5>
+            <button class="btn btn-danger time-remaining me-5"></button>
+          </div>
+          <div class="card-body table-responsive">
+            <div class="row ps-5 pe-5">
+              <div class="col-md-4">
+                <h6>Total Bid Points :&nbsp;<span id="total-bid-points"> <%- studentBidsPoints.student_bid_points %></span></h6>
+              </div>
+              <div class="col-md-4">
+                <h6>Remaining Bid Points :&nbsp;<span id="remaining-bid-points"><%- remaingBidPoints.student_bid_points %></h6>
+              </div>
+              <div class="col-md-4">
+                <h6>Credits Winning : &nbsp;<span id="credits-winning"></span></h6>
+              </div>
+            </div>
+            <div class="row ps-5 pe-5">
+              <% for (let credit of creditList) { %>
                 <div class="col-md-4">
-                    <h6><%- acadSession.acad_session %> Selected Credits :&nbsp;<span class="current-credit-points" data-id="<%- acadSession.sap_acad_session_id %>" id="credits-points-<%- acadSession.sap_acad_session_id %>">0</span></h6>
+                  <h6><%- credit.acad_session %> Credits :&nbsp;<span class="credits-point-target" id="credits-points-target-<%- credit.sap_acad_session_id %>" data-id="<%-credit.sap_acad_session_id %>"></span></h6>
                 </div>
-            <% } %>
-    </div>
-
-    <div class="row ps-5 pe-5">
-        <div class="col-md-4">
-            <h6>Start Time :&nbsp;<span id="start-time"><%-startAndEndTime.startTime %></span></h6>
-        </div>    
-        <div class="col-md-4">
-            <h6>End Time :&nbsp;<span id="end-time"><%-startAndEndTime.endTime %></h6>
-        </div>
-        <div class="col-md-4">
-            <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
-        </div>
-    </div>
-    </div>
-  </div>
-
-  <div class="card card-custom-border-curv mt-5">
-    <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-2">Confirmation Courses</h3>  
-    </div>
-    <div class="card-body table-responsive">
-     
-    </div>
-  </div>
-  <div class="card card-custom-border-curv mt-5">
-    <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-2">Bidding Course</h3>  
-    </div>
-    <div class="col-md-3 mt-4 ms-5">
-      <select class="form-select form-control select2 d-none" id="bidding-acad-session-filter">
-        <option value="" selected>Select Acad Session</option>
-        <option value="1">Select All</option>
-        <option value="34">Trimester IV</option>
-        <option value="35">Trimester V</option>
-        <option value="36">Trimester VI</option>
-        
-      </select>
-     </div>
-    <div class="card-body table-responsive">
-      <table class="table custom_row table-bordered mt-4 custom-table" id="bidding-table">
-        <thead>
-            <th>#</th>
-            <th>Area</th>
-            <th>Course</th>
-            <th>Acad Session</th>
-            <th>Faculty</th>
-            <th>Credits</th>
-            <th>Available Seats</th>
-            <th>Total Bidders</th>
-            <th>MRB</th>
-            <th>Winning status</th>
-            <th>Your Bid</th>
-            <th>Change Bid</th>
-            <th>Withdraw</th>
-        </thead>
-        <tbody>
-          <% let count = 1; %>
-          <% considerationSetList.forEach((considerationSet) => { %>
-             
-            <tr 
-            data-id= "<%= considerationSet.id %>" data-division-batch-lid = "<%- considerationSet.div_batch_lid %>"
-            data-area-name = "<%- considerationSet.area_name %>" data-course-name = "<%- considerationSet.course_name %>" data-acad-session = "<%- considerationSet.acad_session %>"  data-round-lid ="<%- considerationSet.round_lid %>"
-            data-faculty-id = "<%- considerationSet.faculty_id %>" data-faculty-name="<%- considerationSet.faculty_name %>" data-course-time="<%-considerationSet.faculty_date_time %>" data-credits = "<%- considerationSet.credits %>" 
-            
-            data-max-seats ="<%- considerationSet.available_seats %>" data-course-time ="${courseTime}" data-acad-session-id = "<%- considerationSet.sap_acad_session_id %>" data-course-id ="<%- considerationSet.course_id %>" data-course-lid="<%- considerationSet.course_lid %>">
-              <td class="id-column"><%= count++ %></td>
-              <td><%= considerationSet.area_name %></td>
-              <td><%= considerationSet.course_name %>-<%= considerationSet.division %></td>
-              <td><%= considerationSet.acad_session %></td>
-              <td><%= considerationSet.faculty_name %></td>
-              <td><%= considerationSet.credits %></td>
-              <td class="available-count"><%= considerationSet.available_seats %></td>
-                        <td class="total-bidder-counts"><%= considerationSet.total_bidders %></td>
-                        <td class="mrb-points"><%= considerationSet.min_req_bid %></td>
-                        <% if (considerationSet.is_winning) { %>
-                          <td class="winning-status winning">Yes</td>
-                        <% } else { %>
-                          <td class="winning-status losing">No</td>
-                         <% } %>
-                        <td class="student-previous-bid-point"><%= considerationSet.bid_points %></td>
-                        <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
-                          <button class="btn border border-dark ms-2 add-bidding-points">
-                          <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
-                          </button> </td>
-                        <td>
-                          <button class="btn border border-danger withdraw-bidding mt-1" data-area="${areaName}"><img src='/image/student/body-part-image/bidding-round-image/withdraw.png' </button></td>
-            </tr>
-          <% }); %>    
-        </tbody>
-     </table>
-    </div>
-  </div>
-  
-  <div class="card card-custom-border-curv mt-5 bidding-modal" id="bidding-modal">
-    <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-2">Available Courses</h3>
-    </div>
- 
-    <div class="card-body table-responsive">
-        <div class="d-flex">
-          <% for(let acadSession of acadSessions) { %>
-            <div class="col-sm-4 p-2">
-              <button class="btn btn-light w-100 border bidding-trimester bidding-trimester-selected"  data-acad-session-id = "<%- acadSession.sap_acad_session_id %>">
-                <%-acadSession.acad_session %>
-              </button>
-            </div>
-          <% } %>
-        </div> 
-        
-       <div class="row">
-          <div class="col-md-3 mt-4 ms-2">
-            <select class="form-select form-control select2 d-none" id="area-filter">
-              <option value="" selected>Select Area</option>
-              <option value="All">Select All Areas</option>
-              <% for(let area of areaList) { %>
-                <option value="<%-area.area_name %>" ><%-area.area_name %></option>
               <% } %>
-            </select>
-         </div>
-          <div class="col-md-3 mt-4 ms-2">
-              <select class="form-select form-control select2 d-none" id="course-filter">
-                <option value="" selected>Select Course</option>
-                <option value="All">Select All Courses</option>
-                
-                <% for(let biddingCourse of courseList) { %>
-                  <option value="<%-biddingCourse.course_id %>" ><%-biddingCourse.course_name %></option>
-                <% } %>
-              </select>
+            </div>
+            <div class="row ps-5 pe-5">
+              <% for (let acadSession of acadSessions) { %>
+                <div class="col-md-4">
+                  <h6><%- acadSession.acad_session %> Selected Credits :&nbsp;<span class="current-credit-points" data-id="<%- acadSession.sap_acad_session_id %>" id="credits-points-<%- acadSession.sap_acad_session_id %>">0</span></h6>
+                </div>
+              <% } %>
+            </div>
+            <div class="row ps-5 pe-5">
+              <div class="col-md-4">
+                <h6>Start Time :&nbsp;<span id="start-time">  <% if (roundDetails) { %> <%= roundDetails.startTime %> <% } %></span><span class="round-not-created d-none"></span></h6>
+              </div>
+              <div class="col-md-4">
+                <h6>End Time :&nbsp;<span id="end-time">  <% if (roundDetails) { %><%= roundDetails.endTime %> <% } %></span><span class="round-not-created d-none"></span></h6>
+              </div>
+              <div class="col-md-4">
+                <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
+              </div>
+            </div>
           </div>
         </div>
-        
-        <table class="table custom_row table-bordered mt-4 custom-table" id="bidding-trimester-select-table">
-            <thead>
+
+        <div class="card card-custom-border-curv mt-5">
+          <div class="card-header-custom d-flex justify-content-between p-1">
+            <h3 class="ms-2">Confirmation Courses</h3>
+          </div>
+          <div class="card-body table-responsive">
+
+          </div>
+        </div>
+
+        <div class="card card-custom-border-curv mt-5">
+          <div class="card-header-custom d-flex justify-content-between p-1">
+            <h3 class="ms-2">Bidding Course</h3>
+          </div>
+          <div class="col-md-3 mt-4 ms-5">
+            <select class="form-select form-control select2 d-none" id="bidding-acad-session-filter">
+              <option value="" selected>Select Acad Session</option>
+              <option value="1">Select All</option>
+              <option value="34">Trimester IV</option>
+              <option value="35">Trimester V</option>
+              <option value="36">Trimester VI</option>
+            </select>
+          </div>
+          <div class="card-body table-responsive">
+            <table class="table custom_row table-bordered mt-4 custom-table" id="bidding-table">
+              <thead>
+                <th>#</th>
+                <th>Area</th>
+                <th>Course</th>
+                <th>Acad Session</th>
+                <th>Faculty</th>
+                <th>Credits</th>
+                <th>Available Seats</th>
+                <th>Total Bidders</th>
+                <th>MRB</th>
+                <th>Winning status</th>
+                <th>Your Bid</th>
+                <th>Change Bid</th>
+                <th>Withdraw</th>
+              </thead>
+              <tbody>
+                <% let count = 1; %>
+                <% considerationSetList.forEach((considerationSet) => { %>
+                  <tr data-id="<%= considerationSet.id %>"
+                      data-division-batch-lid="<%- considerationSet.div_batch_lid %>" 
+                      data-area-name="<%- considerationSet.area_name %>" 
+                      data-course-name="<%- considerationSet.course_name %>" 
+                      data-acad-session="<%- considerationSet.acad_session %>" 
+                      data-round-lid="<%- considerationSet.round_lid %>" 
+                      data-faculty-id="<%- considerationSet.faculty_id %>" 
+                      data-faculty-name="<%- considerationSet.faculty_name %>"
+                      data-course-time="<%-considerationSet.faculty_date_time %>" 
+                      data-credits="<%- considerationSet.credits %>" 
+                      data-max-seats="<%- considerationSet.available_seats %>" 
+                      data-course-time="${courseTime}" 
+                      data-acad-session-id="<%- considerationSet.sap_acad_session_id %>" 
+                      data-course-id="<%- considerationSet.course_id %>" 
+                      data-course-lid="<%- considerationSet.course_lid %>">
+                    <td class="id-column"><%= count++ %></td>
+                    <td><%= considerationSet.area_name %></td>
+                    <td><%= considerationSet.course_name %>-<%= considerationSet.division %></td>
+                    <td><%= considerationSet.acad_session %></td>
+                    <td><%= considerationSet.faculty_name %></td>
+                    <td><%= considerationSet.credits %></td>
+                    <td class="available-count"><%= considerationSet.available_seats %></td>
+                    <td class="total-bidder-counts"><%= considerationSet.total_bidders %></td>
+                    <td class="mrb-points"><%= considerationSet.min_req_bid %></td>
+                    <% if (considerationSet.is_winning) { %>
+                      <td class="winning-status winning">Yes</td>
+                    <% } else { %>
+                      <td class="winning-status losing">No</td>
+                    <% } %>
+                    <td class="student-previous-bid-point"><%= considerationSet.bid_points %></td>
+                    <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
+                      <button class="btn border border-dark ms-2 add-bidding-points">
+                        <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
+                      </button>
+                    </td>
+                    <td>
+                      <button class="btn border border-danger withdraw-bidding mt-1" data-area="${areaName}"><img src='/image/student/body-part-image/bidding-round-image/withdraw.png' </button>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card card-custom-border-curv mt-5 bidding-modal" id="bidding-modal">
+          <div class="card-header-custom d-flex justify-content-between p-1">
+            <h3 class="ms-2">Available Courses</h3>
+          </div>
+          <div class="card-body table-responsive">
+            <div class="d-flex">
+              <% for (let acadSession of acadSessions) { %>
+                <div class="col-sm-4 p-2">
+                  <button class="btn btn-light w-100 border bidding-trimester bidding-trimester-selected" data-acad-session-id="<%- acadSession.sap_acad_session_id %>">
+                    <%-acadSession.acad_session %>
+                  </button>
+                </div>
+              <% } %>
+            </div>
+
+            <div class="row">
+              <div class="col-md-3 mt-4 ms-2">
+                <select class="form-select form-control select2 d-none" id="area-filter">
+                  <option value="" selected>Select Area</option>
+                  <option value="All">Select All Areas</option>
+                  <% for (let area of areaList) { %>
+                    <option value="<%-area.area_name %>"><%-area.area_name %></option>
+                  <% } %>
+                </select>
+              </div>
+              <div class="col-md-3 mt-4 ms-2">
+                <select class="form-select form-control select2 d-none" id="course-filter">
+                  <option value="" selected>Select Course</option>
+                  <option value="All">Select All Courses</option>
+                  <% for (let biddingCourse of courseList) { %>
+                    <option value="<%-biddingCourse.course_id %>"><%-biddingCourse.course_name %></option>
+                  <% } %>
+                </select>
+              </div>
+            </div>
+
+            <table class="table custom_row table-bordered mt-4 custom-table" id="bidding-trimester-select-table">
+              <thead>
                 <th>#</th>
                 <th>Area</th>
                 <th>Course</th>
@@ -178,20 +199,27 @@
                 <th>Total Bidders</th>
                 <th>MRB</th>
                 <th>Action</th>
-            </thead>
-            <tbody>     
-         </table>
-  </div>
-</div>
-<footer class="footer">
-  <div class="footer-div">
-      <div class="d-flex justify-content-around align-items-center" style="height: 40px;">
-          <div class="d-flex align-items-center">
-              <button class="btn btn-success">Remaining Bid Points:&nbsp;<span id="remaining-bid-points"><%- remaingBidPoints.student_bid_points %></span></button>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
           </div>
+        </div>
       </div>
+    </div>
+</div>
+
+  <div class="card card-custom-border-curv empty-bidding-round-wise">
+    <div class="card-header-custom d-flex justify-content-between">
+      <h4 class="ms-2">Bidding</h4>
+    </div>
+    <div class="card-body table-responsive d-flex justify-content-center align-items-center">
+      <p>There is not any bidding Rounds</p>
+    </div>
   </div>
-</footer>
+
+
+
 <%- include('../partials/footer.ejs') %>
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -201,7 +229,12 @@ $(document).ready(function() {
     $('.select2').select2({
     dropdownParent: $('#bidding-modal')
     });
-   
+
+    let  roundsDetails = `<%- JSON.stringify(roundDetails) %>`;
+
+
+    
+    demandEstimationTimeCountDown();
     let userId = `<%- locals.userId %>`;
     $('#sidebar .side-menu li.' + `<%- active %>`).addClass('active');
 
@@ -221,10 +254,21 @@ $(document).ready(function() {
     let concentrationId = concentrationSettingData.concentration_lid;
     let biddingSessionId = concentrationSettingData.bidding_session_lid;
     let concentrationName = concentrationSettingData.concentration_name;
+       
+    let socket = io();
     
 
-    
-    let socket = io();
+    socket.emit('biddingPageLoaded', { 
+              biddingTime: JSON.parse(`<%- JSON.stringify(roundSettingTime) %>`),
+           
+            });  
+    if(localStorage.getItem('reloadFlag') === 'true') {
+        localStorage.removeItem('reloadFlag');
+        $('.bidding-round-wise').addClass('d-none');
+        $('.empty-bidding-round-wise').find('p').html('Bidding Round Completed');
+        $('.empty-bidding-round-wise').removeClass('d-none');
+
+    }
      
     let trimesterWiseTargetCreditPoints = {};
     let trimesterWiseTargetCreditsComparing = {};
@@ -242,7 +286,11 @@ $(document).ready(function() {
     
     biddingCourses(biddingCourseList, false);
 
+    let startTime = JSON.parse('<%- JSON.stringify(startAndEndTime) %>');  
+    let timeRemaing = $('.time-remaining').text().trim();
+
     socket.on('connect', () => {
+      
       });
 
      
@@ -330,6 +378,7 @@ $(document).ready(function() {
       
     });
      
+
     $('#area-filter').on('change', function() {
   
       let areaName = $(this).val();
@@ -384,6 +433,13 @@ $(document).ready(function() {
 
       });
 
+      const myFunction = () => {
+          console.log('Function called at specific date and time!');
+      };
+
+
+     
+
   $('#bidding-trimester-select-table').on('click','.add-bidding',function(){
 
       let areaName = $(this).closest('tr').data('area-name');
@@ -403,22 +459,24 @@ $(document).ready(function() {
       let biddingTable = $('#bidding-table tbody');
       let tableId = $('#bidding-table tbody tr').length;
       let studentId = $('#student-data').data('student-lid');
+      let id = $(this).closest('tr').data('id');
+      let roundLid = $(this).closest('tr').data('round-lid');
       let areaSwap = '';
 
       let areaNameAndCredits = {
-        areaName:areaName,
+        area:areaName,
         credit:credits,
         id:courseId
       }
+    
+      biddingDetails.push(areaNameAndCredits);
+      areaDetails = calculateAreaFrequency(biddingDetails);
+      
+      areadetails = areaDetails[areaName].totalCredits;
       
       concentrationSettingOfStudent.max_credits_per_area -= +credits;
       concentrationSettingOfStudent.min_credits_in_primary_area -= +credits;
       concentrationSettingOfStudent.total_elective_credits -= +credits;
-
-      biddingDetails.push(areaNameAndCredits);
-      areaDetails = calculateAreaFrequency(biddingDetails);
-      areadetails = areaDetails[areaName].totalCredits;
-      
     
       const targetCredits = Number(trimesterWiseTargetCreditPoints[`${acadSessionId}`].max_credits);
   
@@ -440,7 +498,7 @@ $(document).ready(function() {
 
       updateCreditsPointTargets(trimesterWiseTargetCreditPoints);
 
-      let biddingRow = `<tr data-area-name ="${areaName}" data-course-name ="${courseName}" 
+      let biddingRow = `<tr data-id= "${id}" data-round-lid ="${roundLid}" data-area-name ="${areaName}" data-course-name ="${courseName}" 
                         data-acad-session ="${acadSession}" data-division-batch-lid ="${divisionBatchId}" data-faculty-id =${facultyId} data-credits = "${credits}" data-max-seats ="${available}" data-course-time ="${courseTime}" data-acad-session-id = "${acadSessionId}" data-course-id ="${courseId}" data-course-lid="${courseLid}">
                         <td class="id-column">${++tableId}</td>
                         <td>${areaName}</td>
@@ -448,8 +506,8 @@ $(document).ready(function() {
                         <td>${acadSession}</td>
                         <td>${facultName}</td>
                         <td>${credits}</td>
-                        <td class="available-count"></td>
-                        <td class="total-bidder-counts"></td>
+                        <td class="available-count">0</td>
+                        <td class="total-bidder-counts">0</td>
                         <td class="mrb-points"></td>
                         <td class="winning-status winning">Yes</td>
                         <td class="student-previous-bid-point">0</td>
@@ -464,9 +522,6 @@ $(document).ready(function() {
 
             $(this).closest('tr').remove();
             arrangeTableId('bidding-trimester-select-table');
-
-            
-            
 
             let keys = Object.keys(trimesterWiseTargetCreditsComparing);
             let currentKeys = Object.keys(currentCreditsPoints);
@@ -570,8 +625,17 @@ $(document).ready(function() {
             });            
   })
 
+
+  socket.on('biddingVisibleToStudent', function(){
+
+   $('.bidding-round-wise').removeClass('d-none');
+   $('.empty-bidding-round-wise').addClass('d-none');
+
+  
+  })
+
   socket.on('addBiddingResponse', function(biddingReponseResult) {
-    
+   
     let isErrorResponse = biddingReponseResult.message.status === 0;
     let biddingResponseToUser = biddingReponseResult.message.description;
     if(isErrorResponse){
@@ -610,7 +674,7 @@ $(document).ready(function() {
     let credits = $(this).closest('tr').data('credits');
     let bidPoints = $(this).closest('tr').find('.student-previous-bid-point').html();
     let totalBidPoints = Number($('#remaining-bid-points').html());
-    let studentId = $('#student-data').data('data-student-lid');
+    let studentId = $('#student-data').data('student-lid');
 
     $('#remaining-bid-points').html(totalBidPoints + Number(bidPoints));
   
@@ -668,8 +732,9 @@ $(document).ready(function() {
       let previousBid = $(this).closest('tr').find('.student-previous-bid-point').html();
       let id = $(this).closest('tr').data('id');
       let totalBidPoints = Number($('#total-bid-points').html());
+      let remainingBidPoints = Number($('#remaining-bid-points').html())
 
-      $('#remaining-bid-points').html(totalBidPoints - Number(bidPoints));
+      $('#remaining-bid-points').html(remainingBidPoints - Number(bidPoints));
      
 
       let bidJson = {
@@ -677,6 +742,8 @@ $(document).ready(function() {
         previous_bid : previousBid,
         bid_points: bidPoints
       }
+
+  
       socket.emit('studentBidding', {
           slugName: "<%- slug %>",
           studentId: studentId,
@@ -712,6 +779,8 @@ $(document).ready(function() {
           
           curentStudentBitPoints = curentStudentBitPoints !== '' ? curentStudentBitPoints : 0;
           targetRow.find('.student-previous-bid-point').html(curentStudentBitPoints)
+
+          targetRow.find('.student-previous-bid-point').html(0)
         
           mrbPointsElement.html(mrbPoint);
           if (winningStudent == userId) {
@@ -799,7 +868,7 @@ $(document).ready(function() {
     let minimumRequireBits = userSpecificWinningStatus.mrb;
     let totalBidders = userSpecificWinningStatus.total_bidders;
     let isWinning = userSpecificWinningStatus.is_winning;
-
+    
     let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchLidReponse}"]`);
     
     if (targetRow.length > 0) {
@@ -815,9 +884,11 @@ $(document).ready(function() {
         mrbPointsElement.html(minimumRequireBits);
 
         if (isWinning) {
+     
             winningStatusElement.html('Yes');
             winningStatusElement.removeClass('losing').addClass('winning');
         } else {
+       
             winningStatusElement.html('No');
             winningStatusElement.removeClass('winning').addClass('losing');
         }

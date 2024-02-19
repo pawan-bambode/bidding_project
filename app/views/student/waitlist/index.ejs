@@ -15,10 +15,14 @@
 
           <div class="row ps-5 pe-5">
               <div class="col-md-4">
-                  <h6>Start Time :&nbsp;<span id="start-time"><%- startAndEndTime.startTime %></span></h6>
+                  <h6>Start Time :&nbsp;<span id="start-time"><%- startAndEndTime.startTime %></span>
+                    <span class="round-not-created d-none">Wait List Rounds Not Created Yet</span>
+                </h6>
               </div>
               <div class="col-md-4">
-                  <h6>End Time :&nbsp;<span id="end-time"><%- startAndEndTime.endTime %></h6>
+                  <h6>End Time :&nbsp;<span id="end-time"><%- startAndEndTime.endTime %>
+                    <span class="round-not-created d-none">Wait List Rounds Not Created Yet</span>
+                </h6>
               </div>
               <div class="col-md-4">
                   <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
@@ -175,18 +179,6 @@
   </div>
 </div>
 
-<footer class="student-footer">
-  <div class="student-footer-div">
-      <div class="d-flex justify-content-center align-items-center" style="height: 40px;">
-          <div class="d-flex justify-content-between align-items-center">
-              <button class="btn btn-success text-light">
-                  Remaining Bid Points:&nbsp;<span id="remaining-bid-points"></span>
-              </button>
-          </div>
-      </div>
-  </div>
-</footer>
-
 <%- include('../partials/footer.ejs') %>
 <script>
 $(document).ready(function() {
@@ -199,6 +191,18 @@ $(document).ready(function() {
 
     biddingCourses(availableCourseList, false);
     waitListConsiderationSet(waitListCourseList, false, 'wait-list-table');
+
+    
+   let startTime = JSON.parse('<%- JSON.stringify(startAndEndTime) %>');
+    let timeRemaing = $('.time-remaining').text().trim();
+		    
+    if (startTime.trim() === '') {
+        $('.round-not-created').removeClass('d-none');
+        $('.time-remaining').addClass('d-none');
+    } else {
+        $('.round-not-created').addClass('d-none');
+        $('.time-remaining').removeClass('d-none');
+    }
 
     $('#wait-list-availale-table').on('click', '.add-wait-list', function() {
         let areaName = $(this).closest('tr').data('area-name');

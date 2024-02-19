@@ -6,7 +6,7 @@
 <div class="main-content">
 
   <ul class="d-flex round-wises justify-content-between">
-    <li>
+    <li style="height: 58px;">
       <a href="#" class="text-decoration-none text-dark" data-id="3">
         
           <div class="d-flex flex-column justify-content-center align-items-center h-100 upper-div">
@@ -128,15 +128,7 @@
     </div>
   </div>  
 </div>
-<footer class="footer">
-  <div class="footer-div">
-      <div class="d-flex justify-content-center align-items-center" style="height: 40px;">
-          <div class="d-flex justify-content-between align-items-center">
-           <button class="btn btn-success text-light">Remaining Bid Points:&nbsp;<span id="remaining-bid-points"></span></button>
-          </div>
-      </div>
-  </div>
-</footer>
+
 <%- include('../../partials/footer.ejs') %>
 <script>
 $(document).ready(function() {
@@ -157,11 +149,12 @@ $(document).ready(function() {
     }
   
     $('ul.round-wises li').on('click', function() {
+
         $('ul.round-wises li').removeClass('active');
-        let outerWidth = Number($(this).outerWidth(true))+Number(30);  
+        let outerWidth = Number($(this).outerWidth(true));  
         $(':root').css('--active-right-width', outerWidth + 'px');
         $(this).addClass('active');
-        $(this).css('height','82px');
+       
   
     });
 

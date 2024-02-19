@@ -357,12 +357,17 @@
 
      $('#changeEntry').on('change',function(){
       let showEntry = $(this).val();
+      let programId = $('#program-name-filter').val();
+      let acadSessionId = $('#session-name-filter').val();
+
       
       let ApiObj = {
           type:'POST',
           url:'/admin/division-batches/showEntry',
           data:{
-            showEntry:showEntry
+            showEntry:showEntry,
+            programId: programId,
+            acadSessionId: acadSessionId
           },
           datatype:'JSON'
         }
@@ -397,7 +402,6 @@
             acadSessionId: acadSessionId
           },
           success:function(data){
-            
             paginationData(rowCount,data.length)
             AjaxtTable(data.data);
            
@@ -408,13 +412,17 @@
                 let pageNo = $(this).attr('data-lp')
                 let searchValue = $(this).val();
                 let showEntry = $('#changeEntry').val();
+                let programId = $('#program-name-filter').val();
+                let acadSessionId = $('#session-name-filter').val();
                   $.ajax({
                       type:'POST',
                       url:'/admin/division-batches/search',
                       data:{
                         searchLetter:searchValue,
                         pageNo:pageNo,
-                        showEntry:showEntry
+                        showEntry:showEntry,
+                        programId: programId,
+                       acadSessionId: acadSessionId
                       },
                  success:function(data){
                  AjaxtTable(data.data)

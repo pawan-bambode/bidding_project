@@ -530,13 +530,9 @@ option:hover,
     background-color: rgb(166, 175, 183);
     min-height: 200px;
     max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-    justify-content: space-evenly;
     position: absolute;
-    right: 10px;
-    bottom: 10px;    
+    right: 30px;
+    bottom: 40px;    
 }
 
 .dialogHeading {
@@ -1240,7 +1236,7 @@ option:hover,
     animation: concentration-not-selected 1s infinite;
     color: red;
 }
-.demand-estimation-not-created {
+.round-not-created {
  animation: concentration-not-selected 1s infinite;
     color: red;   
 }
@@ -1420,8 +1416,8 @@ box-shadow: -30px -30px 0 var(--primary-white);
     width: 60px;
     height: 60px;
     bottom: 40px;
-    border-radius: 50%;
-    box-shadow: -30px 30px 0 var(--primary-white);
+    border-radius: 38%;
+    box-shadow: -24px 42px 0 var(--primary-white);
 }
 
 .student-footer{
@@ -1444,58 +1440,52 @@ studet-footer .footer-div {
 }
 
 ul.round-wises {
-    background-color: var(--primary-bg);
-    height: 73px;
+    background-color:var(--primary-bg);
+    height: 60px;
     width: 95%;
     list-style-type: none;
     margin-inline-start: 0px;
     margin-inline-end: 0px;
-    padding-inline-start: 0px;
-    margin-bottom: 0px;
+    padding-inline-start: 0px; 
+    position: relative;
+    top:16px;
+
 }
 
 ul.round-wises li.active {
     background-color: white;
     position: relative;
-    border-radius: 16px;
+    border-radius: 16px 16px 0px 0px;
+    padding: 10px;
 }
 
-.active-div {
-    padding-inline-end: 5px;
-    padding-inline-start: 5px;
-}
+
 
 ul.round-wises li.active::before {
     content: "";
     position: absolute;
-    top: 54px;
-    left: -16px;
-    width: 30px;
-    height: 30px;
+    top: 40px;
+    left: -25px;
+    width: 25px;
+    height: 18px;
     border-radius: 50%;
     background-color: var(--primary-bg);
-    box-shadow: 10px 1px 0 var(--primary-white);
-}
+    box-shadow: 9px 7px 0 var(--primary-white);
 
+}
 ul.round-wises li.active::after {
     content: "";
     position: absolute;
-    top: 54px;
-    right: -16px;
-    width: 30px;
-    height: 30px;
+    top: 40px;
+    right: -17px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    box-shadow: -10px 1px 0 white;
-}
+    background-color: var(--primary-bg);
+    box-shadow: -5px 13px 0 var(--primary-white);
+} 
 
-ul.round-wises .spacer {
-    position: absolute;
-    top: 47px;
-    left: 17px;
-    width: var(--active-spacer-width);
-    height: 43px;
-    background-color: white;
-}
+
 
 .toast-message {
     position: fixed !important;

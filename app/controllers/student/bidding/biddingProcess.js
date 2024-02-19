@@ -1,10 +1,36 @@
 const bidding = require('../../../models/student/bidding/bidding');
+const cron = require('node-cron');
+const roundSetting = require('../../../models/admin/roundSettings/roundSettings');
+
+
 
 module.exports.respond = async (socket, io) => {
 
     socket.on('join', function (data) {
         // Join room logic
     });
+      
+    socket.on('biddingPageLoaded', (data) => {
+        let startDateTime = data.biddingTime.start_date_time;
+
+        const datetime = new Date(startDateTime);
+    
+        const minute = datetime.getUTCMinutes();
+        const hour = datetime.getUTCHours();
+        const date = datetime.getUTCDate()-1;
+        const month = datetime.getUTCMonth() + 1;
+        const year = datetime.getUTCFullYear();
+
+        const cronSchedule = `${minute} ${hour} ${date} ${month} *`; 
+        cron.schedule(cronSchedule, () => {
+            io.emit('biddingVisibleToStudent');
+        });
+    });
+    
+        
+    
+    
+    
 
     socket.on('addBidding', async biddingDetails => {
         
@@ -15,12 +41,10 @@ module.exports.respond = async (socket, io) => {
             const parsedMessage = JSON.parse(result.output.output_json);
            
             if (parsedMessage.status === 1) {
-                
                 const detailsResult = await bidding.getAddBiddingDetails(slugName, biddingSessionId, divisionBatchLid);
-                
                 io.emit("addBiddingResponse", {
                     message: parsedMessage,
-                    biddingDetails: detailsResult[0].recordset,
+                    biddingDetails: detailsResult.recordset,
                     userId: userId
                 });
             } else {
@@ -30,6 +54,7 @@ module.exports.respond = async (socket, io) => {
                 });
             }
         } catch (error) {
+           
             io.emit("addBiddingResponse", {
                 message: JSON.parse(error.originalError.info.message),
                 userId: biddingDetails.userId

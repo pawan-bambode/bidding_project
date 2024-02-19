@@ -69,7 +69,8 @@ module.exports = {
     },
 
     searchByLetter: (req, res) => {
-        course.searchByLetter(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.pageNo, req.body.showEntry).then(result => {
+    
+        course.searchByLetter(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.pageNo, req.body.showEntry, req.body.programId, req.body.acadSessionId).then(result => {
             res.json({
                 status: '200',
                 message: 'Result fetched',
@@ -82,9 +83,10 @@ module.exports = {
     },
 
     showEntry: (req, res) => {
+        
         Promise.all([
-            course.showEntry(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.pageNo),         
-            course.showEntryCount(res.locals.slug, res.locals.biddingId)
+            course.showEntry(res.locals.slug, res.locals.biddingId, req.body.showEntry, req.body.programId, req.body.acadSessionId),         
+            course.showEntryCount(res.locals.slug, res.locals.biddingId, req.body.programId, req.body.acadSessionId)
         ]).then(result => {
             res.json({
                 status: '200',

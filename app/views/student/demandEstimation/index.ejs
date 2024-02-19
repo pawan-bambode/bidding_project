@@ -2,9 +2,6 @@
 <%- include('../partials/leftSidebarForStudent.ejs') %>
 <%- include('../partials/header.ejs') %>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
 <div class="main-content">
    <div class="card card-custom-border-curv">
         <div class="card-header-custom d-flex justify-content-between p-1">
@@ -24,16 +21,16 @@
            
             <div class="row ps-5 pe-5">
                 <%for(let credit of creditList) { %>
-                    <div class="col-md-4">
-                        <h6><%- credit.acad_session %> Credits :&nbsp;<span class="credits-point-target" id="credits-points-target-<%- credit.sap_acad_session_id %>"><%- credit.min_credits %></span></h6>
+                    <div class="col-md-4 credits-point-target">
+                        <h6><%- credit.acad_session %> Credits :&nbsp;<span  id="credits-points-target-<%- credit.sap_acad_session_id %>"><%- credit.min_credits %></span></h6>
                     </div>
                 <% } %>
             </div>
 
             <div class="row ps-5 pe-5">
                     <%for(let acadSession of dropdownAcadSessionList) { %>
-                        <div class="col-md-4">
-                            <h6><%- acadSession.acad_session %> Selected Credits :&nbsp;<span class="credit-points" id="credits-points-<%- acadSession.sap_acad_session_id %>">0</span></h6>
+                        <div class="col-md-4 credit-points">
+                            <h6><%- acadSession.acad_session %> Selected Credits :&nbsp;<span id="credits-points-<%- acadSession.sap_acad_session_id %>">0</span></h6>
                         </div>
                     <% } %>
             </div>
@@ -58,19 +55,19 @@
             <h3 class="ms-2">Selected Courses</h3>
             <div class="me-3 d-flex demand-estimation-status">
                 
-                <button class="btn btn-secondary me-3 selected-credits"><h6>Selected Course Credits :&nbsp;
+                <button class="btn btn-danger me-3 selected-credits"><h6>Selected Course Credits :&nbsp;
                     <% if (selectCourse.length > 0) { %>
-                        <span id="selected-course-credits-count"><%- concentrationSettings.total_elective_credits %></span></h6></button>
+                        <span id="selected-course-credits"><%- concentrationSettings.total_elective_credits %></span></h6></button>
                      <% }  else {%>
-                    <span id="selected-course-credits-count">0</span></h6></button>
+                    <span id="selected-course-credits">0</span></h6></button>
                      <% } %>
-                     <button class="btn btn-secondary me-3 areas-count"><h6>No.of Areas to cover :&nbsp;<span id="areas-count"><%- concentrationSettings.no_of_areas_to_cover %></span></h6></button>
-                <button class="btn btn-secondary me-3 min-credits-per-area"><h6>Min Credits per Area :&nbsp;<span id="min-credits-per-area"><%- concentrationSettings.min_credits_per_area %></span></h6></button>
+                     <button class="btn btn-danger me-3 areas-count"><h6>No.of Areas to cover :&nbsp;<span id="areas-count"><%- concentrationSettings.no_of_areas_to_cover %></span></h6></button>
+                <button class="btn btn-success me-3"><h6>Min Credits per Area :&nbsp;<span id="min-credits-per-area"><%- concentrationSettings.min_credits_per_area %></span></h6></button>
                 <button class="btn btn-success me-3 max-credits-per-area"><h6>Max Credits per Area :&nbsp;<span id="max-credits-per-area">
                     <%- concentrationSettings.max_credits_per_area %>
                 </span></h6></button>
                 <%if(concentrationSettings.min_credits_in_primary_area > 0) { %>
-                    <button class="btn btn-secondary me-3"><h6>Min Credits in Primary Area :&nbsp;<span id="min-credits-in-primary-area">
+                    <button class="btn btn-danger me-3 min-credits-in-primary-area"><h6>Min Credits in Primary Area :&nbsp;<span id="min-credits-in-primary-area">
                         <%- concentrationSettings.min_credits_in_primary_area %>
                     </span></h6></button>
                     <% }%>
@@ -98,7 +95,7 @@
                               <td><%- selectedCourse.course_name %></td>
                               <td><%- selectedCourse.acad_session %></td>
                               <td><%- selectedCourse.credits %></td>
-                              <td class="hide-column-after-round-over"><a class="delete-selected-course" data-id="<%-selectedCourseIndex.id %>"><i class="fa fa-trash text-danger"></i></a></td>
+                              <td><button class="btn btn-danger cancel-course">Cancel</button></td>
                             </tr>
                           <% } %>
                         <% } %>                  
@@ -115,18 +112,11 @@
    
       <div class="card-body table-responsive">
           <div class="d-flex">
-            <div>
-                <label>Show Entries</label>
-                <select class="form-select" id="changeEntry">
-                    <%for(let page of locals.page_filter){%>
-                       <option value="<%-page%>"><%-page%></option>
-                    <%}%>
-                </select>
-            </div>
+       
               <div class="col-md-3 ms-5">
                   <label class="form-label mb-1" for="acad-session-change">Select Acad Session:</label>
                   <select class="form-select form-control select2" id="acad-session-change">
-                      <option selected disabled>--Select Acad Session-- </option>
+                      <option selected disabled value="-1">--Select Acad Session-- </option>
                        <%for(let acadSession of dropdownAcadSessionList) { %>
                           <option value="<%- acadSession.sap_acad_session_id %>"><%- acadSession.acad_session %></option>
                       <% } %>    
@@ -135,7 +125,7 @@
                   <div class="col-md-3 ms-5">
                     <label class="form-label mb-1" for="area-change">Select Area:</label>
                   <select class="form-select form-control select2" id="area-change">
-                    <option selected disabled>--Select Area-- </option>   
+                    <option selected disabled value="-1">--Select Area-- </option>   
                 </select>
               </div>
           </div>
@@ -170,751 +160,569 @@
                     <p>Total entries :&nbsp;<span id="page-no"></span>
                     </p>
                 </div>
-                <div>
-                    <p id="pagination" class="pagination-search"></p>
-                </div>
+                
             </div>
           </div>
       </div>     
 </div>
 
-<footer class="footer">
-    <div class="footer-div">
-        <div class="d-flex justify-content-center align-items-center" style="height: 40px;">
-            <div class="d-flex justify-content-between align-items-center">
-             <button class="btn btn-success text-light">Remaining Bid Points:&nbsp;<span id="remaining-bid-points"></button>
-            </div>
-        </div>
-    </div>
-</footer>
-<%- include('../partials/footerEnd.ejs') %>
 <%- include('../partials/footer.ejs') %>
 <script>
 $(document).ready(function() {
-    
+
     demandEstimationTimeCountDown();
     setInterval(demandEstimationTimeCountDown, 1000);
+    setActiveMenuItem(`<%- active %>`);
 
-    let concentrationSettings = '<%- concentrationSettings%>'.trim();
+    let concentrationSettings = JSON.parse('<%- JSON.stringify(concentrationSettings) %>');
+    let minCreditsPerAreas = concentrationSettings.min_credits_per_area;
+    let numOfAeaToCover = concentrationSettings.no_of_areas_to_cover;
+    let maxCreditsPerAreas = concentrationSettings.max_credits_per_area;
+    let totalCredits = concentrationSettings.total_elective_credits;
+    let selectedCourse = JSON.parse('<%- JSON.stringify(selectCourse) %>');
+
+    let creditsList = `<%- JSON.stringify(creditList) %>`;
+    let parsedCreditsList = JSON.parse(creditsList);
+    let comparingCredits = parsedCreditsList;
+    let creditsObject = {};
+    parsedCreditsList.forEach(item => {
+        creditsObject[item.sap_acad_session_id] = item;
+    });
+    let areaAddedArray = [];
+    let acadSessionArray = [];
+    let areaCountFrequency = 0;
+    let completedAreaCount = [];
+    let completeAreaCountMore = [];
+    let totalCreditsPoints = 0;
+    let currentObject =  [];
+    let completedArea;
+
+    parsedCreditsList.forEach(item => {    
+        let current = {
+            acadSession: item.sap_acad_session_id,
+            totalCredits: 0,
+        }
+        currentObject.push(current);
+    });
+
+
+    selectedCourse.forEach(obj => {
+        totalCreditsPoints += Number(obj.credits);
+    });
+
+    if (selectedCourse.length > 0) {
+        
+        selectedCourse.forEach(course => {
+            let CourseCredits = {
+                area: course.area_name,
+                credit: course.credits,
+                id: course.id
+            };
+
+            let acadSesionsObject = {
+                acadSessionId: course.sap_acad_session_id,
+                acadSession: course.acad_session,
+                credit: course.credits,
+                id: course.id
+            };
+
+            areaAddedArray.push(CourseCredits);
+            acadSessionArray.push(acadSesionsObject);
+        });
+
+        completedArea = calculateCompletedArea(areaAddedArray, minCreditsPerAreas);
+
+        if ((completedArea.length) < numOfAeaToCover) {
+            $('#areas-count').text(Number(numOfAeaToCover) - completedArea.length);
+            $('.areas-count').addClass('btn-danger');
+            $('.areas-count').removeClass('btn-success');
+        } else if ((completedArea.length) >= numOfAeaToCover) {
+            $('#areas-count').text(Number(0));
+            $('.areas-count').removeClass('btn-danger');
+            $('.areas-count').addClass('btn-success');
+        }
+    }
+
+    if (totalCredits === totalCreditsPoints) {
+        $('#available-course-table tbody tr').find('.add-course').addClass('disabled');
+        $('.selected-credits').removeClass('btn-danger');
+        $('.min-credits-in-primary-area').removeClass('btn-danger');
+        $('.selected-credits').addClass('btn-success');
+        $('.min-credits-in-primary-area').addClass('btn-success');
+        parsedCreditsList.forEach(item => {
+            $('#selected-course-table tbody').attr(`credit-complete-${item.sap_acad_session_id}`, true);
+        });
+    }
+
     let startTime = '<%- startAndEndTime %>'.trim();
     let timeRemaing = $('.time-remaining').text().trim();
 
-    
-        if (timeRemaing.trim() == 'Round Ended') {
-            $('.hide-column-after-round-over').addClass('d-none');
-        }
+    if (timeRemaing.trim() == 'Round Ended') {
+        $('.hide-column-after-round-over').addClass('d-none');
+    }
 
-       if (startTime.trim() === '') {
-         $('.demand-estimation-not-created').removeClass('d-none');
-         $('.time-remaining').addClass('d-none');
-       } else {
-        
-         $('.demand-estimation-not-created').addClass('d-none');
+    if (startTime.trim() === '') {
+        $('.demand-estimation-not-created').removeClass('d-none');
+        $('.time-remaining').addClass('d-none');
+    } else {
+        $('.demand-estimation-not-created').addClass('d-none');
         $('.time-remaining').removeClass('d-none');
-      }
- 
-     if(concentrationSettings == 0){
+    }
+
+    if (concentrationSettings == 0) {
         $('.concentration-not-selected').removeClass('d-none');
         $('#concentration-name').addClass('d-none');
-     }
-     else{
+    } else {
         $('.concentration-not-selected').addClass('d-none');
         $('#concentration-name').removeClass('d-none');
-     }
+    }
 
-    let rowCount = $('#changeEntry').val();
-    let pageCount = '<%- pageCount %>';
     let acadSessionCount = '<%- dropdownAcadSessionList.length %>';
     let completedCreditsCount = 0;
     let selectedCourseList = ('<%- selectCourse.length %>');
-    let count = 1; 
+    let count = 1;
 
-    if(selectedCourseList > 0){
-     $('.add-course').addClass('disabled');
-     $('.demand-estimation-status').addClass('d-none');
-    }
+    $('#available-course-table').on('click', '.add-course', function () {
 
-    paginationData(rowCount, parseInt(pageCount));
-    
-    setActiveMenuItem(`<%- active %>`);
+        let courseId = $(this).closest('tr').data('course-id');
+        let area = $(this).closest('tr').data('area');
+        let course = $(this).closest('tr').data('course-name');
+        let acadSession = $(this).closest('tr').data('acad-session');
+        let credits = $(this).closest('tr').data('credits');
+        let acadSessionId = $(this).closest('tr').data('acad-session-id');
+        let selectedCourseCredit = $('#selected-course-credits').text();
+        let maxCreditPerArea = $('#max-credits-per-area').text();
+        let rowId = $(this).closest('tr').find('td:first-child').text();
+        let selectedTableLenght = $('#selected-course-table tbody tr').length;
+        count = selectedTableLenght + 1;
+      
+        
 
-        $('#acad-session-change').on('change',function(){
-            let showEntry = $('#changeEntry').val();
-            let acadSessionId = $(this).val();
-            
-            let ApiObj = {
-                url:'/student/demand-estimation/courses-by-acad-session-id',
-                type:'POST',
-                data:{
-                    showEntry:showEntry,    
-                    acadSessionId:acadSessionId
-                },
-                dataType:'JSON'
-            }
+        let areaCountText = concentrationSettings.no_of_areas_to_cover;
 
-            ajaxApi(ApiObj).then(result => { 
-              let areaName = `<option selected disabled >Select Area</option>`;
-                if (result.areaList.length > 0) {
-                    result.areaList.forEach(area => {
-                        areaName += `<option value="${area.area_name}">${area.area_name}</option>`;
-                    });
-                    
-                } else {
-                    areaName += `<option value="">No Area Found!</option>`;
+        let CourseCredits = {
+            area: area,
+            credit: credits,
+            id: courseId
+        };
+        let acadSesionsObject = {
+            acadSessionId: acadSessionId,
+            acadSession: acadSession,
+            credit: credits,
+            id: courseId
+        };
+        let areaObject = {
+            area: area,
+            credit: credits,
+            id: courseId
+        };
+
+        $('#selected-course-credits').text(Number(selectedCourseCredit) + Number(credits));
+
+        areaAddedArray.push(CourseCredits);
+        acadSessionArray.push(acadSesionsObject);
+        completedAreaCount.push(areaObject);
+
+
+      
+
+        let acadSEssionCount = acadSessionCounttyper(acadSessionArray);
+
+        const acadSessionTotalsArray = calculateAcadSessionTotals(acadSEssionCount);
+        acadSessionTotalsArray.filter(obj =>{
+            currentObject.filter(current =>{ 
+                if(current.acadSession == obj.acadSession){
+                    current.totalCredits = obj.totalCredits;
                 }
-
-                $("#area-change").html(areaName);
-                ajaxTable(result.courseList);
-                deleteSelectedCourse();
-                $('#page-no').html(result.courseCount);
-                paginationData(rowCount,result.courseCount)
-            });
-
-        }); 
-        
-        $('#area-change').on('change',function(){
-           let showEntry = $('#changeEntry').val();
-           let acadSessionId = $('#acad-session-change').val();
-           let areaName = $(this).val();
-        
-           let ApiObj = {
-            url:'/student/demand-estimation/courses-by-area-name',
-            type:'POST',
-            data:{
-                showEntry:showEntry,
-                acadSessionId:acadSessionId,
-                areaName:areaName
-            },
-            dataType:'JSON'
-           }
-           ajaxApi(ApiObj).then(result =>{
-             ajaxTable(result.courseList);
-             deleteSelectedCourse();
-             $('#page-no').html(result.courseCount);
-             paginationData(rowCount,result.courseCount);
-             
-           })
+            }) 
         })
-        let deleteAcadSession = [];
-        let countArea = 0;
-        $('#selected-course-table').on('click', '.delete-selected-course', function () {
-       
-            let acadSessionId = $(this).closest('tr').data('acad-session-id');
-            let areaName = $(this).closest('tr').data('area');
-            let numberOfAreaToCover = Number($('#areas-count').text());
-            let minimumCreditPoint = Number($('#min-credits-per-area').text());
-            $('.demand-estimation-status').removeClass('d-none');
-            let credits = Number($(this).closest('tr').data('credits'));
-            let previousCredits = Number($(`#credits-points-${acadSessionId}`).text());
-            let updateCredits = previousCredits - credits;
-            $(`#credits-points-${acadSessionId}`).text(updateCredits); 
-            let idColumn = Number($(this).closest('tr').children(':first-child').text());
-            $('.add-course').removeClass('disabled');
-            deleteSelectedCourse(idColumn);
-            let selectedCredit = Number($('#selected-course-credits-count').text());
-            $('#selected-course-credits-count').text(selectedCredit - credits);
-            count = $('#selected-course-table tbody tr').length + 1;
-            $(this).closest('tr').remove();
-            let areaFrequency = {};
-            let countAreaFrequency = 0;
-            
-            $('.add-course').removeClass('disabled');
-            $('#selected-course-table tbody tr').each(function() {
-                let dataArea = $(this).data('area');
-                let credits = parseFloat($(this).data('credits'));
 
-                if (dataArea) {
-                    areaFrequency[dataArea] = areaFrequency[dataArea] || { frequency: 0, credits: 0 };
-                    areaFrequency[dataArea].frequency++;
-                    areaFrequency[dataArea].credits += credits;
-                }
+        $('.credit-points').each((index, element) => {
+            currentObject.forEach(obj => {
+                $(element).find(`#credits-points-${obj.acadSession}`).html(obj.totalCredits);
             });
-        
-            Object.keys(areaFrequency).forEach(function(key) {
-             if(areaFrequency[key].credits >=  minimumCreditPoint){
-                countAreaFrequency++;
-             }
-           });
-
-            
-            if (areaFrequency[areaName] && areaFrequency[areaName].credits !== undefined) {
-                if ( Number(areaFrequency[areaName].credits) < minimumCreditPoint) {
-                    if ((countAreaFrequency < `<%-concentrationSettings.no_of_areas_to_cover %>`) && (countArea <  `<%-concentrationSettings.no_of_areas_to_cover %>`) ) {
-                         countArea++;
-                    $('#areas-count').text(countArea);
-                    }
-                   
-                }
-            }
-            
-            if( Number($('#areas-count').text()) == 0){
-                $('.areas-count').removeClass('btn-secondary');
-                $('.areas-count').addClass('btn-success');
-                $('.min-credits-per-area').removeClass('btn-secondary');
-                $('.min-credits-per-area').addClass('btn-success');
-                
-              }
-              else{
-                $('.areas-count').addClass('btn-secondary');
-                $('.areas-count').removeClass('btn-success');
-                $('.min-credits-per-area').addClass('btn-secondary');
-                $('.min-credits-per-area').removeClass('btn-success');
-              }
-
-            let deleteCourse = {
-            areaName:areaName,
-            acadSession:acadSessionId
-        }
-        deleteAcadSession.push(deleteCourse);
-           EnableAcadSession();
         });
 
-        function deleteSelectedCourse(deleteColumnId) {
-
-            $('#selected-course-table tbody tr').each(function (){
-                let columnId = Number($(this).children(':first-child').text());
-            
-                if (columnId > deleteColumnId) {
-                    $(this).children(':first-child').text(columnId - 1);
-                }  
-            })
-
-            $('#available-course-table tbody tr').each(function() {
-                let currentAcadSessionId = $(this).data('acad-session-id');
-                let creditPoint = Number($(`#credits-points-${currentAcadSessionId}`).text());
-                let targetCreditsPoint = Number($(`#credits-points-target-${currentAcadSessionId}`).text());
-                let diabledElement = $('#selected-course-table tbody').attr(`max-credit-area`) == undefined ?'':$('#selected-course-table tbody').attr(`max-credit-area`);
-                
-                if(diabledElement != undefined){
-                    if (creditPoint < targetCreditsPoint) {
-                    $(this).find(`.add-course:not([data-area="${diabledElement}"])`).removeClass('disabled');
-                }} else if ((creditPoint < targetCreditsPoint)){
-                    $(this).find(`.add-course)`).removeClass('disabled');
-                }else{
-                    $(this).find('.add-course').addClass('disabled');
-                }
-              
+        if (acadSEssionCount[acadSessionId].totalCredits == creditsObject[acadSessionId].min_credits) {
+            $('#available-course-table tbody tr').each((index, availableCourse) => {
+                $(availableCourse).find('.add-course').addClass('disabled');
+                $('#selected-course-table tbody').attr(`credit-complete-${acadSessionId}`, true);
             });
         }
-        function EnableAcadSession(acadSessionId) {
-            $('#selected-course-table tbody tr').each(function() {
-                let currentAcadSessionId = $(this).data('acad-session-id');
-                let targetCreditPoints = $(`#credits-points-target-${currentAcadSessionId}`).text();
-                let creditPoints = $(`#credits-points-${currentAcadSessionId}`).text();
-                if(targetCreditPoints != creditPoints){
-                  let deleteAcadSession =  $('#selected-course-table tbody').attr(`delete-acad-session-${currentAcadSessionId}`);
-                  if(deleteAcadSession == undefined){
-                    $('#selected-course-table tbody').attr(`delete-acad-session-${currentAcadSessionId}`,true);
-                  }
+
+        completedArea = calculateCompletedArea(areaAddedArray, minCreditsPerAreas);
+
+        if (completedArea.length > 0) {
+            completedArea.forEach((completedCourse) => {
+               
+                    if (Number($('#areas-count').text()) > 0) {
+                        $('#areas-count').text(Number(areaCountText) - completedArea.length);
+                        areaCountTextVariance = $('#areas-count').val();
+                    }
+                
+
+                if (completedCourse.totalCredits === Number(maxCreditPerArea)) {
+                    $(`#available-course-table tbody tr[data-area="${completedCourse.name}"]`).each((index, availableCourse) => {
+                        $(availableCourse).find('.add-course').addClass('disabled');
+                        $('#selected-course-table tbody').attr(`max-credits-one-area`, completedCourse.name);
+                    });
                 }
-            })
+            });
         }
+
+        let ajaxTable = `
+                <tr data-course-id="${courseId}" data-area="${area}" data-course-name="${course}" data-acad-session="${acadSession}" data-credits="${credits}" data-acad-session-id="${acadSessionId}">
+                    <td class="index-row-demand-estimation">${count++}</td>
+                    <td>${area}</td>
+                    <td>${course}</td>
+                    <td>${acadSession}</td>
+                    <td>${credits}</td>
+                    <td><button class="btn btn-danger cancel-course">Cancel</button></td>
+                </tr>
+            `;
+
+        $("#selected-course-table tbody").append(ajaxTable);
+        $(this).closest('tr').remove();
+
+        let concentrationName = $('#concentration-name').text();
+
+        let minCreditPrimaryArea = $('#min-credits-in-primary-area').text();
+        let selectedCredit = $('#selected-course-credits').text();
+        let annualCredits = $('#yearly-credits').text();
+        let areasCountCredit = $('#areas-count').text();
+
+        if (selectedCredit == annualCredits) {
+            $('.selected-credits').removeClass('btn-danger');
+            $('.selected-credits').addClass('btn-success');
+        } else {
+            $('.selected-credits').addClass('btn-danger');
+            $('.selected-credits').removeClass('btn-success');
+        }
+
+        if (Number($('#areas-count').text()) > 0) {
+            $('.areas-count').addClass('btn-danger');
+            $('.areas-count').removeClass('btn-success');
+        } else {
+            $('.areas-count').removeClass('btn-danger');
+            $('.areas-count').addClass('btn-success');
+        }
+
+        if (concentrationName.toLocaleLowerCase() !== 'general management') {
+            let primaryAreaCourse = calculateAreahighest(areaAddedArray);
         
-    function demandEstimationTimeCountDown(){
-        let endTime = $('#end-time').text();
-        let startTime = $('#start-time').text();
+            let concentrationCriteria = primaryAreaCourse.totalCredits;
+     
+            if (concentrationCriteria < minCreditPrimaryArea) {
+                $('#selected-course-table tbody').removeAttr(`max-credits-one-area`);
+                $('#min-credits-in-primary-area').closest('button').removeClass('btn-success');
+                $('#min-credits-in-primary-area').closest('button').addClass('btn-danger');
+            } else {
+                $('#min-credits-in-primary-area').closest('button').removeClass('btn-danger');
+                $('#min-credits-in-primary-area').closest('button').addClass('btn-success');
+            }
 
-
-        let endDateTime = new Date(endTime);
-        let startDateTime = new Date(startTime);
-        let currentDateTime = new Date();
-        if(endDateTime > currentDateTime){
-        let dateSubtraction = endDateTime - currentDateTime;
-        let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
-        $('.time-remaining').text(`Round ends in ${dateSubtractionValue}`);
+            if ((selectedCredit == annualCredits) && (areasCountCredit == '0') && (concentrationCriteria >= minCreditPrimaryArea)  && (concentrationCriteria <= maxCreditsPerAreas) ) {
+                $('.criteria-status').text('Criteria Met');
+                $('.criteria-status').removeClass('btn-danger');
+                $('.criteria-status').addClass('btn-success');
+                $('.save-select-course').removeClass('d-none');
+            }
         }
 
-        if(endDateTime == currentDateTime){
-            let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
-        $('.time-remaining').text(`Round ends in ${dateSubtractionValue}`);
+        if (concentrationName.toLocaleLowerCase() == 'general management') {
+            if ((selectedCredit == annualCredits) && (areasCountCredit == '0')) {
+                $('.criteria-status').text('Criteria Met');
+                $('.criteria-status').removeClass('btn-danger');
+                $('.criteria-status').addClass('btn-success');
+                $('.save-select-course').removeClass('d-none');
+            }
         }
-        if(endDateTime < currentDateTime){
-            $('.time-remaining').text(`Round ended`);
-            $('.time-remaining').attr('data-round-status','end');
-            $('.save-select-course').addClass('d-none');
-            $('.demand-estimation-status').addClass('d-none');
-            $('.demand-estimation-modal').addClass('d-none');
+    
+    });
+
+    $('#selected-course-table').on('click', '.cancel-course', function () {
+
+        let acadSessionId = $(this).closest('tr').data('acad-session-id');
+        let credits = $(this).closest('tr').data('credits');
+        let area = $(this).closest('tr').data('area');
+        let id = $(this).closest('tr').data('course-id');
+        let acadSession = $(this).closest('tr').data('acad-session');
+        let course = $(this).closest('tr').data('course-name');
+        let rowId = $(this).closest('tr').find('td:first-child').text();
+        let annualCredits = $('#yearly-credits').text();
+        let minCreditPrimaryArea = $('#min-credits-in-primary-area').text();
+        let selectedCourseCredit = $('#selected-course-credits').text();
+       
+        let areaObject = {
+            area: area,
+            credits: credits,
+            id: id
+        };
+
+        areaAddedArray = areaAddedArray.filter(obj => obj.id != areaObject.id);
+        selectedCourse = selectedCourse.filter(obj => obj.id != areaObject.id);
+        acadSessionArray = acadSessionArray.filter(obj => obj.id != areaObject.id);
+        acadSEssionCount = acadSessionCounttyper(acadSessionArray);
+
+        const acadSessionTotalsArray = calculateAcadSessionTotals(acadSEssionCount);
+        $('#selected-course-table tbody').attr(`credit-complete-${acadSessionId}`, false);
+
+         completedArea = calculateCompletedArea(areaAddedArray, minCreditsPerAreas);
+
+        acadSessionTotalsArray.filter(obj =>{ 
+            
+            currentObject.filter(current =>{ 
+                const missingAcadSessions = currentObject.filter(obj => !acadSessionTotalsArray.some(current => current.acadSession === obj.acadSession))  
+                if(current.acadSession == obj.acadSession){
+                    current.totalCredits = obj.totalCredits;
+                }
+                missingAcadSessions.filter(obj =>{
+                    if(current.acadSession === obj.acadSession){
+                        current.totalCredits = 0;
+                    }
+                })    
+            })    
+        })
+ 
+        if(acadSessionTotalsArray.length == 0){
+            $('.credit-points').each((index, element) => {
+            currentObject.forEach(obj => {
+                $(element).find('span').html(obj.totalCredits);
+            });
+        });  
         }
+        else{
+        $('.credit-points').each((index, element) => {
+            currentObject.forEach(obj => {
+                $(element).find(`#credits-points-${obj.acadSession}`).html(obj.totalCredits);
+            });
+        });
+        }
+
+        if(completedArea.length <= numOfAeaToCover ){
+        $('#areas-count').text(Number(numOfAeaToCover) - completedArea.length);
+        }
+
+        $('#selected-course-credits').text(Number(selectedCourseCredit) - Number(credits));
+        selectedCourseCredit = $('#selected-course-credits').text();
+
+        if ($('#selected-course-table tbody').attr(`credit-complete-${acadSessionId}`)) {
+            $('#selected-course-table tbody').attr(`credit-complete-${acadSessionId}`, false);
+            $(`#available-course-table tbody tr[data-acad-session=${acadSessionId}]`).each(function (index, elem) {
+                $(elem).find('button.add-course').removeClass('disabled');
+            });
+        }
+
+        let count = 1;
+        let ajaxTable = `
+                <tr data-course-id="${id}" data-area="${area}" data-course-name="${course}" data-acad-session="${acadSession}" data-credits="${credits}" data-acad-session-id="${acadSessionId}">
+                    <td>${count++}</td>
+                    <td>${area}</td>
+                    <td>${course}</td>
+                    <td>${acadSession}</td>
+                    <td>${credits}</td>
+                    <td><button class="btn btn-secondary add-course" data-area="${area}">Add</button></td>
+                </tr>`;
+
+        $("#available-course-table tbody").append(ajaxTable);
+
+        $('.criteria-status').removeClass('btn-success');
+        $('.criteria-status').addClass('btn-danger');
+        $('.criteria-status').html('Criteria Not Met');
+        $('.save-select-course').addClass('d-none');
+        $(this).closest('tr').remove();
         
-        if(startDateTime > currentDateTime){
-        
-            $('.time-remaining').text(`Round has not started yet`);
-            $('.time-remaining').attr('data-round-status','not-started');
-            $('.save-select-course').addClass('d-none');
-            $('.demand-estimation-status').addClass('d-none');
-            $('.time-remaining').removeClass('btn-danger');
-            $('.time-remaining').addClass('btn-success');
+        if (selectedCourseCredit == annualCredits) {
+            $('.selected-credits').removeClass('btn-danger');
+            $('.selected-credits').addClass('btn-success');
+        } else {
+            $('.selected-credits').addClass('btn-danger');
+            $('.selected-credits').removeClass('btn-success');
         }
-    } 
+        let primaryAreaCourse = calculateAreahighest(areaAddedArray);
+        
+        let concentrationCriteria = primaryAreaCourse.totalCredits;
 
+        if ((completedArea.length) < numOfAeaToCover) {
+            $('.areas-count').addClass('btn-danger');
+            $('.areas-count').removeClass('btn-success');
+        } else  {
 
+            $('.areas-count').removeClass('btn-danger');
+            $('.areas-count').addClass('btn-success');
+        } 
+       
+      
+       
+        if (concentrationCriteria < minCreditPrimaryArea) {
+            $('#min-credits-in-primary-area').closest('button').removeClass('btn-success');
+            $('#min-credits-in-primary-area').closest('button').addClass('btn-danger');
+        } else {
+            $('#min-credits-in-primary-area').closest('button').removeClass('btn-danger');
+            $('#min-credits-in-primary-area').closest('button').addClass('btn-success');
+        }
 
+        $('#acad-session-change').val('34').trigger('change');
+        deleteSelectedCourse(rowId);
+    });
 
-    function ajaxTable(courseList) {
+    $('#acad-session-change').on('change', function () {
+        let acadSessionId = $(this).val();
+
+        let ApiObj = {
+            url: '/student/demand-estimation/courses-by-acad',
+            type: 'POST',
+            data: {
+                acadSessionId: acadSessionId
+            },
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result => {
+            
+            let areaName = `<option selected disabled value="-1">--Select Area--</option>`;
+            if (result.areaList.length > 0) {
+                result.areaList.forEach(area => {
+                    areaName += `<option value="${area.area_name}">${area.area_name}</option>`;
+                });
+
+            } else {
+                areaName += `<option value="">No Area Found!</option>`;
+            }
+
+            $("#area-change").html(areaName);
+            ajaxTable(result.courseList);
+            deleteSelectedCourse();
+            $('#page-no').html(result.courseCount);
+        });
+
+    });
+
+    $('#area-change').on('change', function () {
+        let acadSessionId = $('#acad-session-change').val();
+        let areaName = $(this).val();
+
+        let ApiObj = {
+            url: '/student/demand-estimation/courses-by-area',
+            type: 'POST',
+            data: {
+                acadSessionId: acadSessionId,
+                areaName: areaName
+            },
+            dataType: 'JSON'
+        }
+        ajaxApi(ApiObj).then(result => {
+            
+            ajaxTable(result.courseList);
+            deleteSelectedCourse();
+            $('#page-no').html(result.courseCount);
+        })
+    })
+
+    function deleteSelectedCourse(deleteColumnId) {
+        $('#selected-course-table tbody tr').each(function () {
+            let columnId = Number($(this).children(':first-child').text());
+
+            if (columnId > deleteColumnId) {
+                $(this).children(':first-child').text(columnId - 1);
+            }
+        })
+    }
+
+    function EnableAcadSession(acadSessionId) {
+        $('#selected-course-table tbody tr').each(function () {
+            let currentAcadSessionId = $(this).data('acad-session-id');
+            let targetCreditPoints = $(`#credits-points-target-${currentAcadSessionId}`).text();
+            let creditPoints = $(`#credits-points-${currentAcadSessionId}`).text();
+            if (targetCreditPoints != creditPoints) {
+                let deleteAcadSession = $('#selected-course-table tbody').attr(`delete-acad-session-${currentAcadSessionId}`);
+                if (deleteAcadSession == undefined) {
+                    $('#selected-course-table tbody').attr(`delete-acad-session-${currentAcadSessionId}`, true);
+                }
+            }
+        });
+    }
+
+    $(document).on('click', '.save-select-course', function () {
+        let selectedCourseArray = [];
+        $('#selected-course-table tbody tr').each((index, selectedCourse) => {
+            let selectedCourses = {};
+            let courseLid = $(selectedCourse).data('course-id');
+            let studentLid = $('.student-id').text();
+
+            selectedCourses.course_lid = courseLid;
+            selectedCourseArray.push(selectedCourses);
+        });
+
+        let studentLid = $('#student-data').data('student-lid');
+        let roundId = $('.bidding-round').data('id');
+        if (roundId == 0) {
+            createToastMessage('This round is not created yet!');
+        } else {
+            let ApiObj = {
+                url: '/student/demand-estimation/save',
+                type: 'POST',
+                data: { inputJSON: JSON.stringify(selectedCourseArray), studentLid: studentLid, roundLid: roundId },
+                dataType: 'JSON'
+            };
+
+            ajaxApi(ApiObj)
+                .then(result => {
+                    createToastMessage(result.description);
+                })
+                .catch(error => {
+                    createToastError(JSON.stringify(error.responseJSON.description));
+                });
+        }
+    });
+});
+
+    $('#selected-course-table tr[data-acad-session-id]').each(function() {
+        const acadSessionId = $(this).data('acad-session-id');
+        const element = $(`#credits-points-${acadSessionId}`);
+
+        if (element.length) {
+            const creditsValue = parseFloat($(this).data('credits'), 10);
+            const elementValue = parseFloat(element.text(), 10) || 0;
+            element.text(elementValue + creditsValue);
+        }
+    });
+
+    function ajaxTable(courseList, completedAreaCount, concentrationSettings) {
         $("#available-course-table tbody").empty();
+        let courseArray = [];
+        let maxCreditsOneAreas = $('#selected-course-table tbody').attr('max-credits-one-area');
+        let selectedCourse = $('#selected-course-table tbody tr').each((index, element) => {
+            let courseId = $(element).data('course-id');
+            courseArray.push(courseId);
+        });
+        courseArray.forEach(item => {
+            courseList = courseList.filter(course => course.id !== item);
+        });
+
         let ajaxTable = ``;
         if (courseList.length > 0) {
             let count = 1;
             for (const course of courseList) {
-            let creditsComplete = $('#selected-course-table tbody').attr(`credit-complete-${course.sap_acad_session_id}`);
-            let creditsCourseCompleted =  $('#selected-course-table tbody').attr(`max-credit-area`);
-            let deleteCredits = $('#selected-course-table tbody').attr(`delete-acad-session-${course.sap_acad_session_id}`);
-     
-          
-            let addToTable = true;
-            $('#selected-course-table tbody tr').each((index, selectedCourse) => {
-                let selectedCourseId = $(selectedCourse).data('course-id');
-                if (selectedCourseId == course.id) {
-                addToTable = false; 
+                let creditsComplete = $('#selected-course-table tbody').attr(`credit-complete-${course.sap_acad_session_id}`);
+                let disabledAddButton = creditsComplete === 'true' ? 'disabled' : '';
+                if (course.area_name == maxCreditsOneAreas) {
+                    disabledAddButton = 'disabled';
                 }
-            });
-
-            if (addToTable) {
-                let disabledAddButton = creditsComplete === 'true'?'disabled':'';
-                disabledAddButton = creditsCourseCompleted === 'true'?'disabled':'';
-                // if(!deleteCredits){
-                //     disabledAddButton = 'disabled';
-                // }
-                
                 ajaxTable +=
-                `<tr data-course-id="${course.id}" data-area="${course.area_name}" data-course-name="${course.course_name}" data-acad-session="${course.acad_session}" data-credits="${course.credits}" data-acad-session-id="${course.sap_acad_session_id}">
-                    <td>${count++}</td>
-                    <td>${course.area_name}</td>
-                    <td>${course.course_name}</td>
-                    <td>${course.acad_session}</td>
-                    <td>${course.credits}</td>
-                    <td><button class="btn btn-secondary add-course ${disabledAddButton}" data-area="${course.area_name}" >Add</button></td>
-                </tr>`;
-            }
+                    `<tr data-course-id="${course.id}" data-area="${course.area_name}" data-course-name="${course.course_name}" data-acad-session="${course.acad_session}" data-credits="${course.credits}" data-acad-session-id="${course.sap_acad_session_id}">
+                        <td>${count++}</td>
+                        <td>${course.area_name}</td>
+                        <td>${course.course_name}</td>
+                        <td>${course.acad_session}</td>
+                        <td>${course.credits}</td>
+                        <td><button class="btn btn-secondary add-course ${disabledAddButton}"  data-area="${course.area_name}" >Add</button></td>
+                    </tr>`;
             }
         }
         $("#available-course-table tbody").html(ajaxTable);
-      
-       
     }
-    let areaAddedArray = [];
-    $('#available-course-table').on('click','.add-course',function(){
-      
-      let addCouresRow = $(this).closest('tr');
-      let courseId = addCouresRow.data('course-id');
-      let areaName = addCouresRow.data('area');
-      let courseName = addCouresRow.data('course-name');
-      let acadSession = addCouresRow.data('acad-session');
-      let credits = addCouresRow.data('credits');
-      let acadSessionId = addCouresRow.data('acad-session-id');
-      let selectedCourseCreditCount = $('#selected-course-credits-count').text();
-      let maxCreditPerArea = $('#max-credits-per-area').text();
-      
-      let CourseNameAndCredits = {
-        areaName:areaName,
-        credit:credits,
-        id:courseId
-      }
 
-      let maxCreditLimit = $('#selected-course-table tbody').attr('no-of-area-completed');
-      let creditsPointsElement = $(`#credits-points-${acadSessionId}`);
-      let currentCredits = Number(creditsPointsElement.text());
-
-      creditsPointsElement.text(currentCredits + Number(credits));
-      $('#selected-course-credits-count').text(Number(selectedCourseCreditCount)+Number(credits));
-      let targetCreditsPoints = Number($(`#credits-points-target-${acadSessionId}`).text());
-      
-      if(targetCreditsPoints == Number($(`#credits-points-${acadSessionId}`).text())){
-        $('#available-course-table tbody tr').each((index,avaliableCours) =>{
-            if($(avaliableCours).data('acad-session-id') == acadSessionId){
-                $(avaliableCours).find('.add-course').addClass('disabled');
-                $('#selected-course-table tbody').attr(`credit-complete-${acadSessionId}`,'true');           
-            } 
-        })
-        completedCreditsCount++;
-      }
-
-      if ($('#selected-course-table tbody').attr('max-credit-area') !== undefined) {
-       let areaNameCompleted = $('#selected-course-table tbody').attr('max-credit-area');
-       $(`#selected-course-table tbody`).data(`credit-area-${areaNameCompleted}`, 'true');
-       $('#selected-course-table tbody').data(`credit-area-complete`, areaNameCompleted);
-       $('#available-course-table tbody tr').each((index,avaliableCours) =>{
-            if($(avaliableCours).data('area') == areaNameCompleted){
-                $(avaliableCours).find('.add-course').addClass('disabled');
-                $('#selected-course-table tbody').attr(`credit-complete-${acadSessionId}`,'true');           
-            } 
-        })
-      }
-
-      if(maxCreditLimit != undefined){
-        $('.max-credits-per-area').addClass('btn-danger');
-      }
-     
-        let ajaxTable =
-            `<tr data-course-id="${courseId}" data-area="${areaName}" data-course-name="${courseName}" data-acad-session="${acadSession}" data-credits="${credits}" data-acad-session-id="${acadSessionId}">
-                <td class="index-row-demand-estimation">${count++}</td>
-                <td>${areaName}</td>
-                <td>${courseName}</td>
-                <td>${acadSession}</td>
-                <td>${credits}</td>
-                <td><button class="btn btn-danger cancel-course" data-area="${areaName}">Cancel</button></td>
-            </tr>`;
-
-            $("#selected-course-table tbody").append(ajaxTable);
-            $(this).closest('tr').remove();
-
-          if(completedCreditsCount == acadSessionCount){
-                let demandEstimationStatus = $('.time-remaining').attr('data-round-status');
-            }
-
-            
-
-           if(selectedCourseList > 0){
-            
-             let concentrationName = $('#concentration-name').text();
-             let deleteCount =  calculateDeleteFrequency(deleteAcadSession)
-             let deletePrimaryArea = 0;
-                Object.keys(deleteCount).forEach((key) => {
-                    let element = deleteCount[key];
-                    deletePrimaryArea += element.frequency;
-                });
-
-             let cancelCourseElements = $('#selected-course-table tbody tr .cancel-course').closest('tr');
-             
-             
-
-                let filteredElements = cancelCourseElements.filter(function() {
-                    return $(this).attr('data-area') == areaName;
-                });
-
-                let lengthOfFilteredElements = filteredElements.length;
-                if(deletePrimaryArea == lengthOfFilteredElements){
-                    $('.save-select-course').removeClass('d-none');
-                    $('.criteria-status').removeClass('btn-danger');
-                    $('.criteria-status').addClass('btn-success');
-                    $('.criteria-status').html('Criteria Met');
-                } 
-            }
-            areaAddedArray.push(CourseNameAndCredits);  
-           
-            let areaCount = calculateAreaFrequency(areaAddedArray);
-            if ((areaCount[areaName].totalCredits) == Number(maxCreditPerArea)) {
-            $('#selected-course-table tbody').attr('max-credit-area', areaName);
- 
-         }
-            if( $('#selected-course-table tbody').attr('max-credit-area') != undefined ){
-                let selectedCourse = $('#selected-course-table tbody').attr('max-credit-area');
-                $(`#available-course-table tbody tr[data-area = "${selectedCourse}"]`).find('.add-course').addClass('disabled');
-            }
-          
-
-            let areaCountValue = (areaCount[areaName]);
-            let minCreditsPerArea = $('#min-credits-per-area').text();
-            let concentrationName = $('#concentration-name').text();
-          
-            let minCreditPrimaryArea = $('#min-credits-in-primary-area').text();
-            let selectedCredit = $('#selected-course-credits-count').text();
-            let yearlyCredit = $('#yearly-credits').text();
-            let areasCountCredit = $('#areas-count').text();
-
-            if(areaCountValue.totalCredits == minCreditsPerArea){
-               let areaCountElement = Number($('#areas-count').text());
-               if(areaCountValue.totalCredits == minCreditsPerArea){
-                if(areaCountElement > 0){
-                 $('#areas-count').text(areaCountElement - 1);
-              }}
-            } 
-            if(areaCountValue.totalCredits == maxCreditPerArea){
-                $('#selected-course-table tbody').attr(`no-of-area-completed`,'true');
-                $(`#available-course-table tbody tr[data-area="${areaName}"]`).addClass('disabled');
-            }
-
-            let $existingArea = $('#selected-course-table tbody tr[data-area="' + areaName + '"]');
-                
-                if ($existingArea.length > 0) {
-                 let areasCountElement = $('#areas-count');
-                 let currentCount = parseInt(areasCountElement.text());
-
-                // if (!isNaN(currentCount) && currentCount > 0) {
-                //     let newCount = currentCount - 1; 
-                //     areasCountElement.text(newCount);
-                // }
-                
-                } 
-            
-              if(selectedCredit == yearlyCredit){
-                $('.selected-credits').removeClass('btn-secondary');
-                $('.selected-credits').addClass('btn-success');
-              }
-              else{
-                $('.selected-credits').addClass('btn-secondary');
-                $('.selected-credits').removeClass('btn-success');
-              }
-              
-              if( Number($('#areas-count').text()) > 0){
-                $('.areas-count').addClass('btn-secondary');
-                $('.areas-count').removeClass('btn-success');
-                $('.min-credits-per-area').addClass('btn-secondary');
-                $('.min-credits-per-area').removeClass('btn-success');
-                
-              }
-              else{
-                $('.areas-count').removeClass('btn-secondary');
-                $('.areas-count').addClass('btn-success');
-                $('.min-credits-per-area').removeClass('btn-secondary');
-                $('.min-credits-per-area').addClass('btn-success');
-              }
-
-
-      
-           
-              let acadSessionValue = false;
-              $('#available-course-table tbody tr').each(function() {
-                let currentAcadSessionId = $(this).data('acad-session-id');
-                let creditPoint = Number($(`#credits-points-${currentAcadSessionId}`).text());
-                let targetCreditsPoint = Number($(`#credits-points-target-${currentAcadSessionId}`).text());
-                
-                if (creditPoint > targetCreditsPoint) {
-                 $(`#credits-points-${currentAcadSessionId}`).closest('h6').addClass('over-credits');
-                }
-                else{
-                    $(`#credits-points-${currentAcadSessionId}`).closest('h6').removeClass('over-credits');
-                }
-
-                if(creditPoint == targetCreditsPoint){
-                    acadSessionValue = true;
-                }
-              });
-                    
-            if(concentrationName.toLocaleLowerCase() !== 'general management'){
-              let areaCountValue = 0
-              if(areaCount[concentrationName] != undefined){  
-              areaCountValue =   areaCount[concentrationName].totalCredits;
-              }
-          
-              if((areaCountValue >= minCreditPrimaryArea && areaCountValue <= maxCreditPerArea) &&( selectedCredit == yearlyCredit ) &&(areasCountCredit == '0') && acadSessionValue  ){
-                $('.criteria-status').text('Criteria Met');
-                $('.criteria-status').removeClass('btn-danger');
-                $('.criteria-status').addClass('btn-success');
-                $('.save-select-course').removeClass('d-none');
-              }
-
-            }
-            if(concentrationName.toLocaleLowerCase() == 'general management'){
-               if ((selectedCredit == yearlyCredit ) &&(areasCountCredit == '0') && acadSessionValue){
-                $('.criteria-status').text('Criteria Met');
-                $('.criteria-status').removeClass('btn-danger');
-                $('.criteria-status').addClass('btn-success');
-                $('.save-select-course').removeClass('d-none');
-              }
-            }  
-            $('#selected-course-table tbody tr').each((index, ele) => {
-                $(ele).children().eq(0).text(index+1);
-       });
-
-    });
-
-    $('#selected-course-table').on('click','.cancel-course',function(){
-      let addCouresRow = $(this).closest('tr');
-      let courseId = addCouresRow.data('course-id');
-      let areaName = addCouresRow.data('area');
-      let courseName = addCouresRow.data('course-name');
-      let acadSession = addCouresRow.data('acad-session');
-      let credits = addCouresRow.data('credits');
-      let acadSessionId = addCouresRow.data('acad-session-id');
-      let selectedCourseCreditCount = $('#selected-course-credits-count').text();
-      let removed = false;
-      let maxCreditPerArea = $('#max-credits-per-area').text();
-      let areaCount = calculateAreaFrequency(areaAddedArray);
-      
-     
-      $('#selected-course-credits-count').text(Number(selectedCourseCreditCount)-Number(credits));
-
-      let currentAcadSessionId = $(this).closest('tr').data('acad-session-id');
-      let creditPoint = Number($(`#credits-points-${currentAcadSessionId}`).text());
-      let targetCreditsPoint = Number($(`#credits-points-target-${currentAcadSessionId}`).text());
-
-         if (creditPoint > targetCreditsPoint) {
-                    $(`#credits-points-${currentAcadSessionId}`).closest('h6').removeClass('over-credits');
-                }
-      let creditsPointsElement = $(`#credits-points-${acadSessionId}`);
-      let currentCredits = Number(creditsPointsElement.text());
-      creditsPointsElement.text(currentCredits - Number(credits));
-
-      if($(this).closest('tbody').attr(`credit-complete-${acadSessionId}`) !== undefined){
-      $(this).closest('tbody').removeAttr(`credit-complete-${acadSessionId}`)}
-
-      let sameAcadSessionList = $(`#available-course-table tbody tr[data-acad-session-id="${acadSessionId}"] td  button`);
-    
-        if (sameAcadSessionList.hasClass('disabled')) {
-            sameAcadSessionList.removeClass('disabled');
-        }
-
-        let count = 1; 
-        let ajaxTable =
-            `<tr data-course-id="${courseId}" data-area="${areaName}" data-course-name="${courseName}" data-acad-session="${acadSession}" data-credits="${credits}" 
-              data-acad-session-id="${acadSessionId}"
-             ">
-                <td>${count++}</td>
-                <td>${areaName}</td>
-                <td>${courseName}</td>
-                <td>${acadSession}</td>
-                <td>${credits}</td>
-                <td><button class="btn btn-secondary add-course" data-area="${areaName}">Add</button></td>
-            </tr>`;
-
-                   $("#available-course-table tbody").append(ajaxTable);
-                    $('.criteria-status').removeClass('btn-success');
-                    $('.criteria-status').addClass('btn-danger');
-                    $('.criteria-status').html('Criteria Not Met');
-                    $('.save-select-course').addClass('d-none');
-                     $(this).closest('tr').remove();
-              
-                     areaAddedArray = areaAddedArray.filter(areaObj => {
-                        if (areaObj.id === courseId && !removed) {
-                            removed = true; 
-                            return false; 
-                        }
-                        return true; 
-                    });
-                    
-                    let concentrationSettingAreaCount = '<%= concentrationSettings.no_of_areas_to_cover %>';
-                  
-                    let minCreditsPerArea = $('#min-credits-per-area').text();
-                    let areaFrequencyCount = calculateAreaFrequency(areaAddedArray);
-                    
-                    let areaCountNumber = Object.keys(areaCount).filter(key => [key].totalCredits >= 6);
-                    
-                   if((areaFrequencyCount[areaName] != undefined? areaFrequencyCount[areaName].totalCredits:0) < minCreditsPerArea){
-                    let areaCount = Number($('#areas-count').text());
-                    
-                    if(areaCountNumber < concentrationSettingAreaCount){
-                        $('#areas-count').text(areaCount+1);
-                    }    
-                   }
-                   let tableLength = $('#selected-course-table tbody').length;
-                    $('#selected-course-table tbody tr').each((index, ele) => {
-                        $(ele).find('.index-row-demand-estimation').text(index + 1);
-                    });
-                   
-            let totalCreditsCounts = Number(areaCount[areaName].totalCredits) - Number(credits);
-            let selectedCredit = $('#selected-course-credits-count').text();
-            let yearlyCredit = $('#yearly-credits').text();
-
-            if(selectedCredit != yearlyCredit){
-                $('.selected-credits').addClass('btn-secondary');
-                $('.selected-credits').removeClass('btn-success');
-              }
-              else{
-                $('.selected-credits').removeClass('btn-secondary');
-                $('.selected-credits').addClass('btn-success');
-
-              }
-              
-              if( Number($('#areas-count').text()) > 0){
-                $('.areas-count').addClass('btn-secondary');
-                $('.areas-count').removeClass('btn-success');
-                $('.min-credits-per-area').addClass('btn-secondary');
-                $('.min-credits-per-area').removeClass('btn-success');
-                
-              }
-              else{
-                $('.areas-count').removeClass('btn-secondary');
-                $('.areas-count').addClass('btn-success');
-                $('.min-credits-per-area').removeClass('btn-secondary');
-                $('.min-credits-per-area').addClass('btn-success');
-              }
-
-      if (totalCreditsCounts != Number(maxCreditPerArea)-3) {
-            $('#selected-course-table tbody').removeAttr('max-credit-area');
- 
-         }
-         
-    
-
-
-                })
-
-    $(".pagination-search").on('click', '.pagination li', function () {
-                let pageNo = $(this).attr('data-lp')
-                let searchValue = $(this).val();
-                let showEntry = $('#changeEntry').val();
-                let acadSession = $('#acad-session-change').val();
-                let area = $('#area-change').val();
-
-                  $.ajax({
-                      type:'POST',
-                      url:'/student/demand-estimation/search-by-letter',
-                      data:{
-                        searchLetter:searchValue,
-                        pageNo:pageNo,
-                        showEntry:showEntry,
-                        acadSessionId:acadSession,
-                        area:area
-                      },
-                 success:function(result){
-                    ajaxTable(result.courseList)
-                                     
-                }
-            })
-        })
-
-     $('#changeEntry').on('change',function(){
-             let showEntry = $(this).val();
-             let ApiObj = {
-                type:'POST',
-                url:'/student/demand-estimation/showEntryCouresList',
-                data:{
-                    showEntry:showEntry
-                },
-                datatype:'JSON'
-                }
-                ajaxApi(ApiObj).then(result=>{
-                paginationData(showEntry,result.length)
-                ajaxTable(result.data)
-                }).catch(error =>{
-                    createToastError(JSON.stringify(error.responseJSON.description));
-                })    
-            })
-    
-        $(document).on('click', '.save-select-course', function () {
-            let selectedCourseArray = [];
-        $('#selected-course-table tbody tr').each((index, selectedCourse) => {
-            
-            let selectedCourses = {};
-            let courseLid = $(selectedCourse).data('course-id');
-            let studentLid = $('.student-id').text();
-    
-            selectedCourses.course_lid = courseLid
-            selectedCourseArray.push(selectedCourses);
-        });
-       
-        let studentLid = $('#student-data').data('student-lid'); 
-        let roundId = $('.bidding-round').data('id');
-        let ApiObj = {
-            url: '/student/demand-estimation/selected-course/save',
-            type: 'POST',
-            data:{ inputJSON:JSON.stringify(selectedCourseArray),studentLid:studentLid,roundLid:roundId},
-            dataType: 'JSON'
-        };
-
-        ajaxApi(ApiObj).then(result => {
-            createToastMessage(result.description);
-        }).catch(error =>{
-            createToastError(JSON.stringify(error.responseJSON.description));
-        })
-        });
-
-  
-})
-
-    $('#selected-course-table tr[data-acad-session-id]').each(function() {
-    const acadSessionId = $(this).data('acad-session-id');
-    const element = $(`#credits-points-${acadSessionId}`);
-
-    if (element.length) {
-        const creditsValue = parseFloat($(this).data('credits'), 10);
-        const elementValue = parseFloat(element.text(), 10) || 0;
-        element.text(elementValue + creditsValue);
-    }
-    });
-
-
-   
 </script>
 
+<%- include('../partials/footerEnd.ejs') %>

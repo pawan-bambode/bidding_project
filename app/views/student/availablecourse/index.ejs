@@ -63,15 +63,7 @@
     </div>
   </div>  
 </div>
-<footer class="footer">
-  <div class="footer-div">
-      <div class="d-flex justify-content-center align-items-center" style="height: 40px;">
-          <div class="d-flex justify-content-between align-items-center">
-           <button class="btn btn-success text-light">Remaining Bid Points:&nbsp;<span id="remaining-bid-points"></button>
-          </div>
-      </div>
-  </div>
-</footer>
+
 <%- include('../partials/footer.ejs') %>
 <script>
 $(document).ready(function() {
@@ -93,7 +85,7 @@ $(document).ready(function() {
           $(availableCourse).css('--available-trimester-active', $(availableCourse).innerHeight() + 'px');
         })
         
-        $('#available-course-table tbody').on('click', '.add-favourite', async function () {
+      $('#available-course-table tbody').on('click', '.add-favourite', async function () {
         $(this).children('i').toggleClass('d-none');
         $(this).children('.added-star').toggleClass('d-none');
         let courseId = $(this).closest('tr').data('course-id');

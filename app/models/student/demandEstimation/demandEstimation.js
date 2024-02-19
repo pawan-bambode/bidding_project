@@ -12,15 +12,15 @@ module.exports = class DemandEstimation {
         });
     }
 
-    static getCourseListByAcadSession(slug, biddingId, showEntry, acadSessionId) {
+    static getCourseListByAcadSession(slug, biddingId, acadSessionId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('acadSessionId', sql.Int, acadSessionId)
-                .query(`SELECT TOP ${showEntry} c.*, p.program_name 
+                .query(`SELECT c.*, p.program_name 
                         FROM [${slug}].courses c 
-                        INNER JOIN [${slug}].programs p ON c.program_id = p.program_id 
-                        WHERE c.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId AND c.active = 1`);
+                        INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
+                        WHERE c.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId AND c.active = 1 ORDER BY c.id`);
         });
     }
 
@@ -46,20 +46,20 @@ module.exports = class DemandEstimation {
         });
     }
 
-    static getCourseListByAreaName(slug, biddingId, showEntry, acadSessionId, areaName) {
+    static coursesByArea(slug, biddingId, acadSessionId, areaName) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('acadSessionId', sql.Int, acadSessionId)
                 .input('areaName', sql.NVarChar, `%${areaName}%`)
-                .query(`SELECT TOP ${showEntry} c.*, p.program_name 
+                .query(`SELECT c.*, p.program_name 
                         FROM [${slug}].courses c 
-                        INNER JOIN [${slug}].programs p ON c.program_id = p.program_id 
-                        WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId AND c.area_name LIKE @areaName`);
+                        INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
+                        WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId AND c.area_name LIKE @areaName ORDER BY c.id`);
         });
     }
 
-    static getCountOfCourseListByAreaName(slug, biddingId, acadSessionId, areaName) {
+    static coursesByAreaCount(slug, biddingId, acadSessionId, areaName) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -127,31 +127,6 @@ module.exports = class DemandEstimation {
         }
     }
 
-    static showEntryCouresList(slug, biddingId, showEntry, pageNo) {
-        if (pageNo) {
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('biddingId', sql.Int, biddingId)
-                    .input('pageNo', sql.Int, pageNo)
-                    .query(`SELECT TOP ${showEntry} c.id, course_name, credits, program_id, ad.acad_session, 
-                            area_name, min_demand_criteria, year_of_introduction
-                            FROM [${slug}].courses c
-                            INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
-                            WHERE c.active = 1 AND c.bidding_session_lid = @biddingId ORDER BY c.id DESC OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`);
-            });
-        } else {
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('biddingId', sql.Int, biddingId)
-                    .query(`SELECT TOP ${showEntry} c.id, course_name, credits, program_id, 
-                            ad.acad_session, area_name, min_demand_criteria, year_of_introduction
-                            FROM [${slug}].courses c
-                            INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
-                            WHERE c.active = 1 AND c.bidding_session_lid = @biddingId`);
-            });
-        }
-    }
-
     static getCounts(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
@@ -186,7 +161,7 @@ module.exports = class DemandEstimation {
         });
     }
 
-    static saveSelectedCourse(slug, biddingId, userid, student_lid, round_lid, selectedCourseJson) {
+    static save(slug, biddingId, userid, student_lid, round_lid, selectedCourseJson) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(selectedCourseJson))

@@ -8,14 +8,15 @@ module.exports = {
     getPage: (req, res) => {
         let availableCourseUrl = req.route.path.split('/');
         let availableCourse = availableCourseUrl[availableCourseUrl.length - 1];
-
+  
         Promise.all([
             course.acadSessionList(res.locals.slug, res.locals.biddingId),
             divisionBatch.areaList(res.locals.slug, res.locals.biddingId),
             divisionBatch.courseList(res.locals.slug, res.locals.biddingId),
-            divisionBatch.biddingCourse(res.locals.slug, res.locals.biddingId),
+            divisionBatch.biddingCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             favouriteCourse.getFavouriteCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId)
         ]).then(result => {
+       
             res.render('student/availablecourse/index', {
                 active: availableCourse,
                 dropdownAcadSessionList: result[0].recordset,
@@ -30,7 +31,7 @@ module.exports = {
     getCourseByAcadSession: (req, res) => {
         Promise.all([
             divisionBatch.getBiddingCourseByAcadSession(res.locals.slug, res.locals.biddingId, req.body.acadSessionId),
-            divisionBatch.getCourseNameForFilter(res.locals.slug, res.locals.biddingId, req.body.acadSessionId)
+            divisionBatch.listByProgramId(res.locals.slug, res.locals.biddingId, req.body.acadSessionId)
         ]).then(result => {
             res.json({
                 status: '200',
