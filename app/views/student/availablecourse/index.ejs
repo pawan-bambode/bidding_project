@@ -53,7 +53,6 @@
                 <th>Course Timings</th>
                 <th>Credits</th>
                 <th>Total Seats</th>
-                <th>Remaining Seats</th>
                 <th>Faculty</th>
                 <th>Favourite</th>
             </thead>
@@ -269,7 +268,6 @@ function availableCourses(biddingCourseList) {
           <td class='course-timing'>${biddingCourse.day_name}(${biddingCourse.StartTime} to ${biddingCourse.EndTime})</td>
           <td>${biddingCourse.credits}</td>
           <td>${biddingCourse.max_seats}</td>
-          <td>0</td>
           <td>${biddingCourse.faculty_name}</td>
           <td>
             <button class="btn add-favourite">              

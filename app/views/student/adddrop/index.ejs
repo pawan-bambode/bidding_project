@@ -5,41 +5,30 @@
 <%- include('../partials/header.ejs') %>
 
 <div class="main-content">
-
-    <ul class="d-flex round-wises justify-content-between align-items-end">
-        <li class="ms-5" data-id="7" style="height: 58px;">
-            <a href="#" class="text-decoration-none text-dark">
-                <div class="d-flex flex-column justify-content-center align-items-center h-100">
-                    <div class="d-flex justify-content-between align-items-center active-div">
-                        <h4 class="ms-2 round-label">Add Drop Round I</h4>
+        <ul class="d-flex round-wises justify-content-between align-items-end bidding-round-wise d-none">
+            <li class="ms-5 active" style="height: 58px;">
+                <a class="text-decoration-none text-dark">
+                    <div class="d-flex flex-column justify-content-center align-items-center h-100">
+                        <div class="d-flex justify-content-between align-items-center active-div">
+                            <h4 class="ms-2 round-name"></h4>
+                        </div>
                     </div>
-                </div>
-            </a>
-        </li>
-    
-        <li class="ms-5" data-id="8" style="height: 58px;">
-            <a href="#" class="text-decoration-none text-dark">
-                <div class="d-flex justify-content-center align-items-center h-100">
-                    <div class="d-flex justify-content-between align-items-center active-div">
-                        <h4 class="ms-2 round-label">Add Drop Round II</h4>
-                    </div>
-                </div>
-            </a>
-        </li>
-    </ul>
+                </a>
+            </li>
+        </ul>
 
-    <div class="main-div-round-wise card-custom-border-curv p-2">
-        <div class="card card-custom-border-curv mt-2">
-            <div class="card-header-custom d-flex justify-content-center p-1">
-                <h3 class="add-drop-rounds"></h3>
+        <div class="main-div-round-wise card-custom-border-curv p-3 bidding-round-wise d-none">
+            <div class="card-header-custom d-flex justify-content-between p-1">
+                <h5 class="ms-2 round-name"></h5>
+                <button class="btn btn-danger time-remaining me-5"></button>
             </div>
             <div class="card-body table-responsive">
                 <div class="row ps-5 pe-5">
                     <div class="col-md-4">
-                        <h6>Start Time :&nbsp;<span id="start-time"><%- startAndEndTime.startTime %></span><span class="round-not-created d-none">Add Drop Not Created Yet</span></h6>
+                        <h6>Start Time :&nbsp;<span id="start-time"></span></h6>
                     </div>
                     <div class="col-md-4">
-                        <h6>End Time :&nbsp;<span id="end-time"><%-startAndEndTime.endTime %></span><span class="round-not-created d-none">Add Drop Not Created Yet</span></h6>
+                        <h6>End Time :&nbsp;<span id="end-time"></span></h6>
                     </div>
                     <div class="col-md-4">
                         <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
@@ -47,7 +36,8 @@
                 </div>
             </div>
         </div>
-        <div class="card card-custom-border-curv mt-5">
+
+        <div class="card card-custom-border-curv mt-5 bidding-round-wise round-wise-modal d-none">
             <div class="card-header-custom d-flex justify-content-between p-1">
                 <h3 class="ms-2">Confirmed Courses</h3>
             </div>
@@ -61,11 +51,12 @@
                         <th>Faculty</th>
                         <th>Credits</th>
                         <th>Your Bid</th>
+                        <th>Action</th>
                     </thead>
                     <tbody>
                         <% let count = 1 %>
-                        <% for (let confirmCourse of confirmCourseList) { %>
-                            <tr>
+                        <% for (let confirmCourse of confirmation) { %>
+                            <tr data-id="<%- confirmCourse.Id %>" data-division-batch-id="<%- confirmCourse.id %>">
                                 <td><%- count++ %></td>
                                 <td><%- confirmCourse.area_name %></td>
                                 <td><%- confirmCourse.acad_session %></td>
@@ -73,39 +64,88 @@
                                 <td><%- confirmCourse.faculty_name %></td>
                                 <td><%- confirmCourse.credits %></td>
                                 <td><%- confirmCourse.bid_points %></td>
+                                <td><button class="btn btn-danger drop-course">Drop</button></td>
                             </tr>
                         <% } %>
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="card card-custom-border-curv mt-5 bidding-modal" id="bidding-modal">
+        <div class="card card-custom-border-curv mt-5 bidding-round-wise round-wise-modal d-none" id="bidding-modal">
             <div class="card-header-custom d-flex justify-content-between p-1">
                 <h3 class="ms-2">WaitList Courses</h3>
             </div>
             <div class="card-body table-responsive">
-                <table class="table custom_row table-bordered mt-4 custom-table" id="wait-list-course-table">
+                <table class="table custom_row table-bordered mt-4 custom-table" id="add-drop-wait-list">
                     <thead>
-                        <th>#</th>
-                        <th>Area</th>
-                        <th>Course</th>
-                        <th>Trimester</th>
-                        <th>Faculty</th>
-                        <th>Credits</th>
-                        <th>Your Bid</th>
-                        <th>WaitList Number</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <tr>
+                            <th>#</th>
+                            <th>Area</th>
+                            <th>Course</th>
+                            <th>Trimester</th>
+                            <th>Faculty</th>
+                            <th>Credits</th>
+                            <th>Your Bid</th>
+                            <th>WaitList Number</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
                     </thead>
                     <tbody>
-                        
-                    </tbody>
+                        <% 
+                        let waitListCount = 1;
+                        let rankValue;
+                        waitListCourses.forEach(function(waitList) { 
+                            waitListRanked.forEach(function(rank) { 
+                                if(waitList.division_batch_lid == rank.div_batch_lid){
+                                    rankValue = rank.rank;
+                                }
+                        %>
+                        <tr 
+                            data-wait-list-id="<%- waitList.id %>"
+                            data-area-name="<%- waitList.area_name %>" 
+                            data-course-name="<%- waitList.course_name %>" 
+                            data-acad-session="<%- waitList.acad_session %>"
+                            data-course-with-division-name="<%- waitList.course_name %>-<%- waitList.division %>"  
+                            data-division-batch-lid="<%- waitList.division_batch_lid %>"
+                            data-faculty-id="<%- waitList.faculty_id %>"
+                            data-credits="<%- waitList.credits %>"
+                            data-max-seats="<%- waitList.max_seats %>"
+                            data-acad-session-id="<%- waitList.sap_acad_session_id %>"
+                            data-course-id="<%- waitList.course_id %>"
+                            data-course-lid="<%- waitList.course_lid %>"
+                            data-faculty-name="<%- waitList.faculty_name %>"
+                            data-division="<%- waitList.division %>"
+                            data-available-seats="<%- waitList.available_seats %>" >
+                            
+                            <td><%- waitListCount++ %></td>
+                            <td><%- waitList.area_name %></td>
+                            <td><%- waitList.course_name %>-<%- waitList.division %></td>
+                            <td><%- waitList.acad_session %></td>
+                            <td><%- waitList.faculty_name %> </td>
+                            <td><%- waitList.credits %></td>
+                            <td><%- waitList.bid_points %></td>
+                            <td><%- rankValue %></td>
+                            <% if (waitList.is_winning == true) { %>
+                                <td>Winning</td>
+                                <td>
+                                <button class="btn border border-dark add-drop">
+                                    <i class="fa-solid fa-circle-plus" style="color:#5ca4ea"></i>
+                                  </button>
+                                </td>
+                            <% } else { %>
+                                <td>WaitList</td>
+                                <td><button class="btn btn-danger drop-course">Drop</button></td>
+                            <% } %>
+                            
+                        </tr>
+                        <% }); }); %>
+                    </tbody>                    
                 </table>
             </div>
         </div>
-    </div>
-    
-    <div class="card card-custom-border-curv mt-5 add-drop-modal" id="add-drop-modal">
+        
+    <div class="card card-custom-border-curv mt-5 add-drop-modal bidding-round-wise round-wise-modal d-none" id="add-drop-modal">
         <div class="card-header-custom d-flex justify-content-between p-1">
             <h3 class="ms-2">Available Courses</h3>
         </div>
@@ -153,72 +193,154 @@
                     <th>Remaining Seats</th>
                     <th>Action</th>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+
+                </tbody>
             </table>
         </div>
     </div>
+
+    <div class="card card-custom-border-curv empty-bidding-round-wise">
+        <div class="card-header-custom d-flex justify-content-between">
+           <h4 class="ms-2">Add Drop Rounds</h4>
+        </div>
+        <div class="card-body table-responsive d-flex justify-content-center align-items-center">
+           <p>There is not any Add Drop Rounds</p>
+        </div>
+    </div>
+</div>   
     
 <%- include('../partials/footer.ejs') %>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
 <script>
 $(document).ready(function() {
     
-   
+    let socket = io();
+    let studentId = $('#student-data').data('student-lid');
     let waitListCourseList = JSON.parse(`<%- JSON.stringify(waitListCourses) %>`);
     let availableCourseList = JSON.parse(`<%- JSON.stringify(courseList) %>`);
     setActiveMenuItem(`<%- active %>`)
     let concentrationId = `<%- concentrationId %>`;
     
     avilableCourses(availableCourseList, false);
-    waitListConsiderationSet(waitListCourseList, false, 'wait-list-course-table');
-
 
     let startTime = JSON.parse('<%- JSON.stringify(startAndEndTime) %>');
     let timeRemaing = $('.time-remaining').text().trim();
-		    
-    if (startTime.trim() === '') {
-        $('.round-not-created').removeClass('d-none');
-        $('.time-remaining').addClass('d-none');
-    } else {
-        $('.round-not-created').addClass('d-none');
-        $('.time-remaining').removeClass('d-none');
-    }
-	
-
-    $('ul.round-wises li').on('click', function () {  
-        $('ul.round-wises li').removeClass('active');
-  
-        $(this).addClass('active');
-        
-        let roundId = $(this).data('id');
-        
-       
-        let outerWidth = Number($(this).outerWidth(true));
-
-        $(this).append(divElement);
-        $(this).css('height', '58px');
-
-        $('.add-drop-rounds').html($(this).find('h4').html());
-
-        let ApiObj = {
-            type: 'POST',
-            url: '/student/add-drop/round-wise',
-            data: {
-                roundId: roundId
-            },
-            datatype: 'JSON'
-        };
-
-        ajaxApi(ApiObj)
-            .then(result => {
-                
-                updateConfirmationDetails(result);
-            })
-            .catch(error => {
-      
-                createToastError(JSON.stringify(error.responseJSON.description));
-            });
-    }) 
+		    	
+    let roundDetails = JSON.parse(`<%- JSON.stringify(roundDetails) %>`);
     
+   if((roundDetails != '')){
+        
+        let roundStartTime = roundDetails.startTime;
+        let roundEndTime = roundDetails.endTime;
+        let roundName = roundDetails.roundName;
+        let roundId = roundDetails.round_lid;
+      
+        $('#start-time').html(roundStartTime);
+        $('#end-time').html(roundEndTime);
+        $('.round-name').html(roundName);
+        $('.round-name').attr('data-round-id', roundId);
+        $('.bidding-round-wise').removeClass('d-none');
+        $('.empty-bidding-round-wise').addClass('d-none');
+        $('.round-wise-modal').addClass('d-none')
+    
+    }
+
+    socket.emit('addDropPageLoaded', { 
+             slugName: "<%- slug %>",
+              biddingTime: JSON.parse(`<%- JSON.stringify(roundSettingTime) %>`),
+              roundId: 7,
+              roundIId: 8,
+              studentId: studentId       
+    }); 
+
+    socket.on('addDropVisibleToStudent', function(data){
+        
+        let roundName = data.roundDetails[0].roundName;
+        let roundId = data.roundDetails[0].round_lid;
+        let roundStartTime = data.roundDetails[0].startTime;
+        let roundEndTime = data.roundDetails[0].endTime;
+        let considerationSet = data.considerationSet;
+        let confirmCourse = data.confirmCourse;
+        confirmCourse.forEach(confirm => {
+            
+            let facultyId = confirm.faculty_id;
+            let facultyName = confirm.faculty_name;
+            let areaName = confirm.area_name;
+            let acadSession = confirm.acad_session;
+            let acadSessionId = confirm.sap_acad_session_id;
+            let courseName = confirm.course_name;
+            let courseId = confirm.course_id;
+            let courseLid = confirm.course_lid;
+            let credits = confirm.credits;
+            let bidPoints = confirm.bid_points;
+            let division = confirm.division;
+            let concentrationId = confirm.concentration_lid;
+            let divisionBatchId = confirm.id;
+            let isDropped = confirm.is_dropped;
+            let isWaitListed = confirm.is_waitlisted;
+            let isWinning = confirm.is_winning;
+            let roundId = confirm.round_lid; 
+            let row =
+                `<tr data-faculty-id="${facultyId}" data-faculty-name="${facultyName}" 
+                     data-area-name="${areaName}" data-acad-session-id="${acadSessionId}" data-acad-session="${acadSession}" data-course-name="${courseName}"data-course-id="${courseId}" data-credits="${credits}" data-bid-points="${bidPoints}" data-division="${division}" data-concentration-lid="${concentrationId}" data-division-batch-lid="${divisionBatchId}" data-is-dropped="${isDropped}" data-is-waitlist="${isWaitListed}" data-is-winning="${isWinning}" data-course-lid="${courseLid}" data-round-id ="${roundId}">
+                    
+                    <td>${areaName}</td>
+                    <td>${acadSession}</td>
+                    <td>${courseName}-${division}</td>
+                    <td>${facultyName}</td>
+                    <td>${credits}</td>
+                    <td>${bidPoints}</td>
+                    <td><button class="btn btn-success confirm-courses me-1"><i class="fa-solid fa-check"></i> Confirm</button></td>
+                </tr>`;
+            
+            $('#confirm-courses-table tbody').append(row);
+        });
+        $('#bidding-table').html('');
+        $('.round-wise-modal').addClass('d-none')
+             
+        $('#start-time').html(roundStartTime);
+        $('#end-time').html(roundEndTime);
+        $('.round-name').html(roundName);
+        $('.round-name').attr('data-round-id', roundId);
+        $('.bidding-round-wise').removeClass('d-none');
+        $('.empty-bidding-round-wise').addClass('d-none');
+    })
+    
+    $('#confirm-courses-table').on('click','.drop-course',function(){
+      let id = $(this).closest('tr').data('id');
+      let divisionBatchId = $(this).closest('tr').data('division-batch-id')
+      let studendId = $('#student-data').data('student-lid');
+      let roundId = $('.round-name').data('round-id');
+      
+      let ApiObj = {
+        type: 'POST',
+        url: '/student/add-drop/drop',
+        data: {
+           id: id,
+           divisionBatchId: divisionBatchId,
+           studendId: studendId,
+           roundId: roundId
+        },
+        dataType: 'JSON'
+    };
+
+    ajaxApi(ApiObj)
+        .then(result => {
+            if(result.status == 200){
+            let response = JSON.parse(result.addWaitListResponse);
+            createToastMessage(response.description);
+            }
+            else {
+                let response = JSON.parse(result.error);
+                createToastError(JSON.stringify(response.description)); 
+            }
+        }).catch(error =>{
+            createToastError(JSON.stringify(error.responseJSON.description));
+        })
+});
     function updateConfirmationDetails(addDropCourseList) {
         
         const { startAndEndTime, confirmCourseList, winningCourseList } = addDropCourseList;
@@ -370,8 +492,8 @@ biddingCourseList.forEach(function(biddingCourse, index) {
 });
 }
 
-$('#add-drop-availale-table').on('click', '.add-drop', function() {
-    
+$('.add-drop').on('click', function() {
+        
         let areaName = $(this).closest('tr').data('area-name');
         let courseName = $(this).closest('tr').data('course-name');
         let credits = $(this).closest('tr').data('credits');
@@ -387,7 +509,7 @@ $('#add-drop-availale-table').on('click', '.add-drop', function() {
         let studentId = $('#student-data').data('student-lid');
         let division = $(this).closest('tr').data('division');
         let availableSeats = $(this).closest('tr').data('available-seats');
-        let roundId = 6;
+        let roundId = 7;
         let waitListId = '';
 
         let biddingTable = $('#wait-list-table tbody');
@@ -401,7 +523,8 @@ $('#add-drop-availale-table').on('click', '.add-drop', function() {
                 roundId: roundId,
                 courseId: courseLid,
                 concentrationId: concentrationId,
-                divBatchId: divisionBatchId
+                divBatchId: divisionBatchId,
+                bidPoints: 1,
             },
             datatype: 'JSON'
         };

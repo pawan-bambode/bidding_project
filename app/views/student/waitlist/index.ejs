@@ -4,15 +4,23 @@
 <%- include('../partials/header.ejs') %>
   
 <div class="main-content">
-  <div class="card card-custom-border-curv">
-      <div class="card-header-custom d-flex justify-content-between p-1">
-          <h3 class="ms-2">Wait List</h3>
-      </div>
+    <ul class="d-flex round-wises justify-content-between align-items-end bidding-round-wise d-none">
+        <li class="ms-5 active" style="height: 58px;">
+          <a class="text-decoration-none text-dark">
+            <div class="d-flex flex-column justify-content-center align-items-center h-100">
+              <div class="d-flex justify-content-between align-items-center active-div">
+                <h4 class="ms-2 round-name"></h4>
+              </div>
+            </div>
+          </a>
+        </li>
+      </ul>
+  <div class="card card-custom-border-curv bidding-round-wise d-none">
+    <div class="card-header-custom d-flex justify-content-between p-1">
+        <h5 class="ms-2 round-name"></h5>
+         <button class="btn btn-danger time-remaining me-5"></button>
+    </div>
       <div class="card-body table-responsive">
-          <div class="row ps-5 pe-5">
-
-          </div>
-
           <div class="row ps-5 pe-5">
               <div class="col-md-4">
                   <h6>Start Time :&nbsp;<span id="start-time"><%- startAndEndTime.startTime %></span>
@@ -31,7 +39,7 @@
       </div>
   </div>
 
-  <div class="card card-custom-border-curv mt-5">
+  <div class="card card-custom-border-curv mt-5 bidding-round-wise round-wise-modal d-none">
       <div class="card-header-custom d-flex justify-content-between p-1">
           <h3 class="ms-2">Confirmation Courses</h3>
       </div>
@@ -48,7 +56,9 @@
               </thead>
               <tbody>
                   <% let count = 1 %>
-                  <% for (let confirmCourse of confirmCourseList) { %>
+                  <% for (let confirmCourse of confirmCourseList) {
+                    
+                    %>
                       <tr>
                           <td><%- count++ %></td>
                           <td><%- confirmCourse.area_name %></td>
@@ -64,7 +74,7 @@
       </div>
   </div>
 
-  <div class="card card-custom-border-curv mt-5">
+  <div class="card card-custom-border-curv mt-5 bidding-round-wise round-wise-modal d-none">
       <div class="card-header-custom d-flex justify-content-between p-1">
           <h3 class="ms-2">WaitList Consideration Set</h3>
       </div>
@@ -83,47 +93,49 @@
                   <th>Withdraw</th>
               </thead>
               <tbody>
-                  <% for(let waitListCourse of waitListCourses) { %>
-                      <tr data-area-name="<%- waitListCourse.area_name %>"
-                          data-wait-list-id="<%- waitListCourse.id %>"
-                          data-course-name="<%- waitListCourse.course_name %>"
-                          data-course-with-division-name="<%- waitListCourse.course_name %>-<%- waitListCourse.division %>"
-                          data-acad-session="<%- waitListCourse.acad_session %>"
-                          data-division-batch-lid="<%- waitListCourse.division_batch_lid %>"
-                          data-faculty-id="<%- waitListCourse.faculty_id %>"
-                          data-credits="<%- waitListCourse.credits %>"
-                          data-max-seats="<%- waitListCourse.max_seats %>"
-                          data-acad-session-id="<%- waitListCourse.sap_acad_session_id %>"
-                          data-course-id="<%- waitListCourse.course_id %>"
-                          data-course-lid="<%- waitListCourse.course_lid %>"
-                          data-faculty-name="<%- waitListCourse.faculty_name %>"
-                          data-division="<%- waitListCourse.division %>"
-                          data-available-seats="<%- waitListCourse.available_seats %>" >
-                          <td><%- waitListCourse.SequenceNumber %></td>
-                          <td><%- waitListCourse.area_name %></td>
-                          <td><%- waitListCourse.course_name %></td>
-                          <td><%- waitListCourse.credits %></td>
-                          <td><%- waitListCourse.faculty_name %></td>
-                          <td><%- waitListCourse.available_seats %></td>
-                          <td class="student-previous-bid-point"><%- waitListCourse.bid_points %></td>
-                          <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
-                              <button class="btn border border-dark ms-2 add-wait-list-points">
-                                  <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
-                              </button>
-                          </td>
-                          <td>
-                              <button class="btn border border-danger withdraw-wait-list mt-1" data-area="${areaName}">
-                                  <img src='/image/student/body-part-image/bidding-round-image/withdraw.png' alt='withdraw'>
-                              </button>
-                          </td>
-                      </tr>
-                  <% } %>
+                <% waitListCourses.forEach(function(waitListCourse, index) { 
+                    %>
+                    <tr data-area-name="<%- waitListCourse.area_name %>"
+                        data-wait-list-id="<%- waitListCourse.id %>"
+                        data-course-name="<%- waitListCourse.course_name %>"
+                        data-course-with-division-name="<%- waitListCourse.course_name %>-<%- waitListCourse.division %>"
+                        data-acad-session="<%- waitListCourse.acad_session %>"
+                        data-division-batch-lid="<%- waitListCourse.division_batch_lid %>"
+                        data-faculty-id="<%- waitListCourse.faculty_id %>"
+                        data-credits="<%- waitListCourse.credits %>"
+                        data-max-seats="<%- waitListCourse.max_seats %>"
+                        data-acad-session-id="<%- waitListCourse.sap_acad_session_id %>"
+                        data-course-id="<%- waitListCourse.course_id %>"
+                        data-course-lid="<%- waitListCourse.course_lid %>"
+                        data-faculty-name="<%- waitListCourse.faculty_name %>"
+                        data-division="<%- waitListCourse.division %>"
+                        data-available-seats="<%- waitListCourse.available_seats %>" >
+                        <td><%- index + 1 %></td>
+                        <td><%- waitListCourse.area_name %></td>
+                        <td><%- waitListCourse.course_name %></td>
+                        <td><%- waitListCourse.credits %></td>
+                        <td><%- waitListCourse.faculty_name %></td>
+                        <td><%- waitListCourse.available_seats %></td>
+                        <td class="student-previous-bid-point"><%- waitListCourse.bid_points %></td>
+                        <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
+                            <button class="btn border border-dark ms-2 add-wait-list-points">
+                                <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn border border-danger withdraw-wait-list mt-1" data-area="<%- waitListCourse.area_name %>">
+                                <img src='/image/student/body-part-image/bidding-round-image/withdraw.png' alt='withdraw'>
+                            </button>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
               </tbody>
           </table>
       </div>
   </div>
 
-  <div class="card card-custom-border-curv mt-5 bidding-modal" id="bidding-modal">
+  <div class="card card-custom-border-curv mt-5 bidding-round-wise d-none round-wise-modal" id="bidding-modal">
       <div class="card-header-custom d-flex justify-content-between p-1">
           <h3 class="ms-2">Available Courses</h3>
       </div>
@@ -173,16 +185,28 @@
                   <th>MRB</th>
                   <th>Action</th>
               </thead>
-              <tbody></tbody>
+               <tbody>
+             
+               </tbody>
           </table>
       </div>
   </div>
 </div>
-
+<div class="card card-custom-border-curv empty-bidding-round-wise">
+    <div class="card-header-custom d-flex justify-content-between">
+      <h4 class="ms-2">Demand Estimation Rounds</h4>
+    </div>
+    <div class="card-body table-responsive d-flex justify-content-center align-items-center">
+      <p>No Demand Estimation Rounds</p>
+    </div>
+  </div> 
 <%- include('../partials/footer.ejs') %>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
 $(document).ready(function() {
-    
+    let socket = io();
+    let studentId = $('#student-data').data('student-lid');
     setActiveMenuItem(`<%- active %>`);
     
     let availableCourseList = JSON.parse(`<%- JSON.stringify(courseList) %>`);
@@ -190,98 +214,139 @@ $(document).ready(function() {
     let waitListCourseList = JSON.parse(`<%- JSON.stringify(waitListCourses) %>`);
 
     biddingCourses(availableCourseList, false);
-    waitListConsiderationSet(waitListCourseList, false, 'wait-list-table');
+   // waitListConsiderationSet(waitListCourseList, false, 'wait-list-table');
 
+   let roundDetails = JSON.parse(`<%- JSON.stringify(roundDetails) %>`);
+   if((roundDetails != '')){
+        
+        let roundStartTime = roundDetails.startTime;
+        let roundEndTime = roundDetails.endTime;
+        let roundName = roundDetails.roundName;
+        let roundId = roundDetails.round_lid;
+      
+
+        $('#start-time').html(roundStartTime);
+        $('#end-time').html(roundEndTime);
+        $('.round-name').html(roundName);
+        $('.round-name').attr('data-round-id', roundId);
+        $('.bidding-round-wise').removeClass('d-none');
+        $('.empty-bidding-round-wise').addClass('d-none');
+        $('.round-wise-modal').addClass('d-none')
+    
+    }
+
+    socket.emit('waitListPageLoaded', { 
+              slugName: "<%- slug %>",
+              biddingTime: JSON.parse(`<%- JSON.stringify(roundDetails) %>`),
+              roundId: 6,
+              studentId: studentId      
+    }); 
+    socket.on('waitlistVisibleToStudent', function(data){
+     
+        let roundName = data.roundDetails[0].roundName;
+        let roundId = data.roundDetails[0].round_lid;
+        let roundStartTime = data.roundDetails[0].startTime;
+        let roundEndTime = data.roundDetails[0].endTime;
+        let considerationSet = data.considerationSet;
+        let confirmCourse = data.confirmationCourse;
+        $('#bidding-table').html('');
+        $('.round-wise-modal').addClass('d-none')
+        
+        const allCourses = data.courseList.map(course => ({ id: course.course_id, name: course.course_name }));
+        
+        $('#start-time').html(roundStartTime);
+        $('#end-time').html(roundEndTime);
+        $('.round-name').html(roundName);
+        $('.round-name').attr('data-round-id', roundId);
+        $('.bidding-round-wise').removeClass('d-none');
+        $('.empty-bidding-round-wise').addClass('d-none');
+ })
     
    let startTime = JSON.parse('<%- JSON.stringify(startAndEndTime) %>');
     let timeRemaing = $('.time-remaining').text().trim();
 		    
-    if (startTime.trim() === '') {
-        $('.round-not-created').removeClass('d-none');
-        $('.time-remaining').addClass('d-none');
-    } else {
-        $('.round-not-created').addClass('d-none');
-        $('.time-remaining').removeClass('d-none');
-    }
-
     $('#wait-list-availale-table').on('click', '.add-wait-list', function() {
-        let areaName = $(this).closest('tr').data('area-name');
-        let courseName = $(this).closest('tr').data('course-name');
-        let credits = $(this).closest('tr').data('credits');
-        let available = $(this).closest('tr').data('max-seats');
-        let acadSession = $(this).closest('tr').data('acad-session');
-        let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
-        let facultyId = $(this).closest('tr').data('faculty-id');
-        let facultyName = $(this).closest('tr').data('faculty-name');
-        let acadSessionId = $(this).closest('tr').data('acad-session-id');
-        let courseTime = $(this).closest('tr').children('.course-timing').html();
-        let courseId = $(this).closest('tr').data('course-id');
-        let courseLid = $(this).closest('tr').data('course-lid');
-        let studentId = $('#student-data').data('student-lid');
-        let division = $(this).closest('tr').data('division');
-        let availableSeats = $(this).closest('tr').data('available-seats');
-        let roundId = 6;
-        let waitListId = '';
 
-        let biddingTable = $('#wait-list-table tbody');
-        let tableId = $('#wait-list-table tbody tr').length;
+    let areaName = $(this).closest('tr').data('area-name');
+    let courseName = $(this).closest('tr').data('course-name');
+    let credits = $(this).closest('tr').data('credits');
+    let available = $(this).closest('tr').data('max-seats');
+    let acadSession = $(this).closest('tr').data('acad-session');
+    let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
+    let facultyId = $(this).closest('tr').data('faculty-id');
+    let facultyName = $(this).closest('tr').data('faculty-name');
+    let acadSessionId = $(this).closest('tr').data('acad-session-id');
+    let courseTime = $(this).closest('tr').children('.course-timing').html();
+    let courseId = $(this).closest('tr').data('course-id');
+    let courseLid = $(this).closest('tr').data('course-lid');
+    let studentId = $('#student-data').data('student-lid');
+    let division = $(this).closest('tr').data('division');
+    let availableSeats = $(this).closest('tr').data('available-seats');
+    let roundId = 6;
+    let waitListId = '';
 
-        let ApiObj = {
-            type: 'POST',
-            url: '/student/wait-list/add',
-            data: {
-                studentId: studentId,
-                roundId: roundId,
-                courseId: courseLid,
-                concentrationId: concentrationId,
-                divBatchId: divisionBatchId
-            },
-            datatype: 'JSON'
-        };
+    let biddingTable = $('#wait-list-table tbody');
+    let tableId = $('#wait-list-table tbody tr').length;
 
-        ajaxApi(ApiObj)
-            .then(result => {
-                if (result.status == 200) {
-                    let waitListResponse = JSON.parse(result.addWaitListResponse);
+    let ApiObj = {
+        type: 'POST',
+        url: '/student/wait-list/add',
+        data: {
+            studentId: studentId,
+            roundId: roundId,
+            courseId: courseLid,
+            concentrationId: concentrationId,
+            divBatchId: divisionBatchId
+        },
+        datatype: 'JSON'
+    };
 
-                    waitListId = waitListResponse.data.inserted_id;
-                    createToast(waitListResponse.description, 'alert-success', 'message-content');
+    ajaxApi(ApiObj)
+        .then(result => {
+            
+            if (result.status == 200) {
+                
+                 let waitListResponse = JSON.parse(result.addWaitListResponse);
+                waitListId = waitListResponse.data.inserted_id;
+                createToast(waitListResponse.description, 'alert-success', 'message-content');
+        
+                let biddingRow = `<tr data-wait-list-id="${waitListId}" data-area-name="${areaName}" data-course-name="${courseName}" 
+                    data-acad-session="${acadSession}" data-division-batch-lid="${divisionBatchId}" data-faculty-id="${facultyId}" data-credits="${credits}" data-max-seats="${available}" data-course-time="${courseTime}" data-acad-session-id="${acadSessionId}" data-course-id="${courseId}" data-course-lid="${courseLid}">
+                    <td class="id-column">${++tableId}</td>
+                    <td>${areaName}</td>
+                    <td>${courseName}-${division}</td>
+                    <td>${acadSession}</td>
+                    <td>${facultyName}</td>
+                    <td>${availableSeats}</td>
+                    <td class="student-previous-bid-point">0</td>
+                    <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
+                        <button class="btn border border-dark ms-2 add-wait-list-points">
+                            <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn border border-danger withdraw-wait-list mt-1" data-area="${areaName}">
+                            <img src='/image/student/body-part-image/bidding-round-image/withdraw.png' alt='withdraw'>
+                        </button>
+                    </td>
+                </tr>`;
 
-                    let biddingRow = `<tr data-wait-list-id="${waitListId}" data-area-name="${areaName}" data-course-name="${courseName}" 
-                        data-acad-session="${acadSession}" data-division-batch-lid="${divisionBatchId}" data-faculty-id="${facultyId}" data-credits="${credits}" data-max-seats="${available}" data-course-time="${courseTime}" data-acad-session-id="${acadSessionId}" data-course-id="${courseId}" data-course-lid="${courseLid}">
-                        <td class="id-column">${++tableId}</td>
-                        <td>${areaName}</td>
-                        <td>${courseName}-${division}</td>
-                        <td>${acadSession}</td>
-                        <td>${facultyName}</td>
-                        <td>${availableSeats}</td>
-                        <td class="student-previous-bid-point">0</td>
-                        <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
-                            <button class="btn border border-dark ms-2 add-wait-list-points">
-                                <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn border border-danger withdraw-wait-list mt-1" data-area="${areaName}">
-                                <img src='/image/student/body-part-image/bidding-round-image/withdraw.png' alt='withdraw'>
-                            </button>
-                        </td>
-                    </tr>`;
+                biddingTable.append(biddingRow);
+                $(this).closest('tr').remove();
+                arrangeTableId('wait-list-availale-table');
+            } else {
+                
+                let waitListResponse = JSON.parse(result.error);
+                createToast(waitListResponse.description, 'alert-danger', 'error-message');
+            }
+          })
+          .catch(error => {
+              let waitListResponse = JSON.parse(error.responseJSON);
+              createToast(waitListResponse.description, 'alert-danger', 'error-message');
+              return;
+          });
+});
 
-                    biddingTable.append(biddingRow);
-                    $(this).closest('tr').remove();
-                    arrangeTableId('wait-list-availale-table');
-                } else {
-                    let waitListResponse = JSON.parse(result.error);
-                    createToast(waitListResponse.description, 'alert-danger', 'error-message');
-                }
-              })
-              .catch(error => {
-                  let waitListResponse = JSON.parse(error.responseJSON.error);
-                  createToast(waitListResponse.description, 'alert-danger', 'error-message');
-                  return;
-              });
-      });
 
     $('#wait-list-table').on('click', '.add-wait-list-points', function() {
 
@@ -291,7 +356,7 @@ $(document).ready(function() {
         let previousBidPoints = $(this).closest('tr').find('.student-previous-bid-point').html();
         let id = $(this).closest('tr').data('wait-list-id');
         let roundId = 6;
-
+        
         let ApiObj = {
             type: 'POST',
             url: '/student/wait-list/bid-points',

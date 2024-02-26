@@ -129,7 +129,7 @@ else {
         biddingResponse.respond(socket, io);
 
         socket.on('clientEvent', (data) => {
-            console.log('Received from client:', data);
+            
         });
     });
     

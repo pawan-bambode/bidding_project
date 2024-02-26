@@ -20,7 +20,8 @@ module.exports = {
             roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, roundId),
             demandEstimation.getSelectedCourses(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             concentrationSetting.studentList(res.locals.slug, res.locals.biddingId, res.locals.username),
-            concentrationSetting.totalCreditCount(res.locals.slug, res.locals.biddingId)
+            concentrationSetting.totalCreditCount(res.locals.slug, res.locals.biddingId),
+            roundSetting.demandEstimOneDayBefore(res.locals.slug, res.locals.biddingId, roundId)
         ]).then(result => {
             res.render('student/demandEstimation/index', {
                 active: demandEstimationActive,
@@ -33,7 +34,8 @@ module.exports = {
                 startAndEndTime: result[6].recordset[0] != undefined? result[6].recordset[0] : '',
                 selectCourse: result[7].recordset,
                 concentrationSettings: (result[8].recordset && result[8].recordset.length !== 0) ? result[8].recordset[0] : 0,
-                totalCreditsCounts: result[9].recordset[0] != undefined ? result[9].recordset[0].totalCount :0 
+                totalCreditsCounts: result[9].recordset[0] != undefined ? result[9].recordset[0].totalCount :0,
+                roundDetails: result[10].recordset[0] !== undefined ? result[10].recordset[0] : '',
             });
         });
     },
@@ -105,3 +107,5 @@ module.exports = {
             });
     }
 };
+
+

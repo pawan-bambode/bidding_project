@@ -6,33 +6,21 @@
 
 <div class="main-content">
 
-    <ul class="d-flex round-wises justify-content-between align-items-end">
-        <li class="ms-5 active" data-id="3" style="height: 58px;">
-
-            <a href="#" class="text-decoration-none text-dark">
+    <ul class="d-flex round-wises justify-content-between align-items-end bidding-round-wise d-none">
+        <li class="ms-5 active" style="height: 58px;">
+            <a class="text-decoration-none text-dark">
                 <div class="d-flex flex-column justify-content-center align-items-center h-100">
                     <div class="d-flex justify-content-between align-items-center active-div">
                         <img src="/image/student/body-part-image/confirmation-round/confirmation.png" alt="confirmation round I">
-                        <h4 class="ms-2 round-label">Confirmation Round I</h4>
-                    </div>
-                </div>
-            </a>
-        </li>
-    
-        <li class="ms-5" data-id="5" style="height: 58px;">
-            <a href="#" class="text-decoration-none text-dark">
-                <div class="d-flex justify-content-center align-items-center h-100">
-                    <div class="d-flex justify-content-between align-items-center active-div">
-                        <img src="/image/student/body-part-image/confirmation-round/confirmation.png" alt="confirmation round II">
-                        <h4 class="ms-2 round-label">Confirmation Round II</h4>
+                        <h4 class="ms-2 round-name"></h4>
                     </div>
                 </div>
             </a>
         </li>
     </ul>
 
-    <div class="main-div-round-wise card-custom-border-curv p-2">
-        <div class="card card-custom-border-curv mt-2">
+    <div class="main-div-round-wise card-custom-border-curv p-2 bidding-round-wise d-none">
+        <div class="card card-custom-border-curv mt-2 ">
             <div class="card-header-custom d-flex justify-content-center p-1">
                 <h3 class="confirmation-rounds"></h3>
             </div>
@@ -43,7 +31,7 @@
 
                     </div>
                     <div class="col-md-4">
-                        <h6>Start Time: <span id="start-time"><% if (startAndEndTime && startAndEndTime !== '0') { %><%- startAndEndTime.endTime %><% } else { %> <% } %></span><span class="round-not-created d-none">Confirmation Rounds Not Created Yet</span></h6>
+                        <h6>End Time: <span id="end-time"><% if (startAndEndTime && startAndEndTime !== '0') { %><%- startAndEndTime.endTime %><% } else { %> <% } %></span><span class="round-not-created d-none">Confirmation Rounds Not Created Yet</span></h6>
                     </div>
                     <div class="col-md-4">
                         <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
@@ -51,7 +39,7 @@
                 </div>
             </div>
         </div>
-        <div class="card card-custom-border-curv mt-5">
+        <div class="card card-custom-border-curv mt-5 round-wise-modal">
             <div class="card-header-custom d-flex justify-content-between p-1">
                 <h3 class="ms-2">Confirmed Courses</h3>
             </div>
@@ -65,11 +53,13 @@
                         <th>Faculty</th>
                         <th>Credits</th>
                         <th>Your Bid</th>
+                        <th>Action</th>
                     </thead>
                     <tbody>
                         <% let count = 1 %>
-                        <% for (let confirmCourse of confirmCourseList) { %>
-                            <tr>
+                        <% for (let confirmCourse of confirmCourseList ) {
+                            %>
+                            <tr data-faculty-id = "<%- confirmCourse.faculty_id %>"  data-faculty-name = "<%- confirmCourse.faculty_name %>" data-area-name = "<%- confirmCourse.area_name %>" data-acad-session-id = "<%- confirmCourse.sap_acad_session_id %>" data-acad-session = "<%- confirmCourse.acad_session %>" data-course-name = "<%- confirmCourse.course_name %>" data-course-id = "<%- confirmCourse.course_id %>" data-credits = "<%- confirmCourse.credits %>" data-bid-points = "<%- confirmCourse.bid_points %>" data-division = "<%- confirmCourse.division %>" data-concentration-lid = "<%- confirmCourse.concentration_lid %>" data-division-batch-lid = "<%- confirmCourse.id %>" data-is-dropped = "<%- confirmCourse.is_dropped %>" data-is-waitlist = "<%- confirmCourse.is_waitlisted %>" data-is-winning = "<%- confirmCourse.is_winning %>"  data-course-lid = "<%- confirmCourse.course_lid %>" data-round-id ="<%- confirmCourse.round_lid %>">
                                 <td><%- count++ %></td>
                                 <td><%- confirmCourse.area_name %></td>
                                 <td><%- confirmCourse.acad_session %></td>
@@ -77,13 +67,14 @@
                                 <td><%- confirmCourse.faculty_name %></td>
                                 <td><%- confirmCourse.credits %></td>
                                 <td><%- confirmCourse.bid_points %></td>
+                                <td><button class="btn btn-danger unconfirm-courses me-1"><i class="fa fa-close"></i> Unconfirm</button></td>
                             </tr>
                         <% } %>
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="card card-custom-border-curv mt-5 bidding-modal" id="bidding-modal">
+        <div class="card card-custom-border-curv mt-5 bidding-modal round-wise-modal" id="bidding-modal">
             <div class="card-header-custom d-flex justify-content-between p-1">
                 <h3 class="ms-2">Winning Courses</h3>
             </div>
@@ -100,12 +91,14 @@
                         <th>Action</th>
                     </thead>
                     <tbody>
-                        <% if(winningCourseList.length > 0) { %>
+                        <% if(winningCourseList != '') {
+                            %>
                             <% let count = 1 %>
-                            <% for(let winningCourse of winningCourseList) { %>
+                            <% for(let winningCourse of winningCourseList) { 
+                                %>
                                 <tr data-faculty-id="<%- winningCourse.faculty_id %>" data-faculty-name="<%- winningCourse.faculty_name %>" data-area-name="<%- winningCourse.area_name %>"
                                     data-acad-session-id="<%- winningCourse.sap_acad_session_id %>" data-acad-session="<%- winningCourse.acad_session %>" data-course-name="<%- winningCourse.course_name %>"
-                                    data-course-id="<%- winningCourse.course_id %>" data-credits="<%- winningCourse.credits %>" data-bid-points="<%- winningCourse.bid_points %>" data-division="<%- winningCourse.division %>" data-concentration-lid="<%- winningCourse.concentration_lid %>" data-division-batch-lid="<%- winningCourse.id %>" data-is-dropped="<%- winningCourse.is_dropped %>" data-is-waitlist="<%- winningCourse.is_waitlisted %>" data-is-winning="<%- winningCourse.is_winning %>" data-course-lid="<%- winningCourse.course_lid %>"
+                                    data-course-id="<%- winningCourse.course_id %>" data-credits="<%- winningCourse.credits %>" data-bid-points="<%- winningCourse.bid_points %>" data-division="<%- winningCourse.division %>" data-concentration-lid="<%- winningCourse.concentration_lid %>" data-division-batch-lid="<%- winningCourse.id %>" data-is-dropped="<%- winningCourse.is_dropped %>" data-is-waitlist="<%- winningCourse.is_waitlisted %>" data-is-winning="<%- winningCourse.is_winning %>" data-course-lid="<%- winningCourse.course_lid %>" data-round-id ="<%- winningCourse.round_lid %>"
                                 >
                                     <td><%- count++ %></td>
                                     <td><%- winningCourse.area_name %></td>
@@ -123,55 +116,137 @@
             </div>
         </div>
     </div>
+    <div class="card card-custom-border-curv empty-bidding-round-wise">
+        <div class="card-header-custom d-flex justify-content-between">
+          <h4 class="ms-2">Confirmation</h4>
+        </div>
+        <div class="card-body table-responsive d-flex justify-content-center align-items-center">
+          <p>There is not any Confirmation Rounds</p>
+        </div>
+      </div>
        
 <%- include('../partials/footer.ejs') %>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
 $(document).ready(function() {
  
     let active = `<%- active %>`;
-    let startTime = '<%- startAndEndTime %>';
+    let startTime = JSON.parse('<%- JSON.stringify(startAndEndTime) %>');
+    let studentId = $('#student-data').data('student-lid');
     let timeRemaing = $('.time-remaining').text().trim();
 
     $('#sidebar .side-menu li.' + `<%- active %>`).addClass('active');
     let outerWidth = $('.round-wises li.active').innerWidth() + Number(10);
     $('.round-wises li.active::before').css('--active-element-width', outerWidth + 'px');
 
-		    
-    updateUI(startTime, 'Confirmation');
+    let roundSettings = JSON.parse(`<%- JSON.stringify(roundDetails) %>`);
 
-    $('ul.round-wises li').on('click', function () {  
-        $('ul.round-wises li').removeClass('active');
-      
-        $(this).addClass('active');
+
+    let roundId = roundSettings.round_lid;
+$('#confirm-courses-table tbody tr').each((index, element) => {
+    let roundElementId = parseInt($(element).data('round-id'));
+    if (roundId !== roundElementId) {
+        $(element).find('button.unconfirm-courses').addClass('disabled');
+    }
+});
+
+    if(roundSettings != ''){
         
-        let roundId = $(this).data('id');
-        let roundName = $(this).text();
-       
-        let outerWidth = Number($(this).outerWidth(true));
+        let roundStartTime = roundSettings.startTime;
+        let roundEndTime = roundSettings.endTime;
+        let roundName = roundSettings.roundName;
+        let roundId = roundSettings.round_lid;
+        $('.round-wise-modal').addClass('d-none')
 
-        $(':root').css('--active-right-width', outerWidth + 'px');
-     
-        $('.confirmation-rounds').html($(this).find('h4').html());
-       
-        let ApiObj = {
-            type: 'POST',
-            url: '/student/confirmation/round-wise',
-            data: {
-                roundId: roundId
-            },
-            datatype: 'JSON'
-        };
+        $('#start-time').html(roundStartTime);
+        $('#end-time').html(roundEndTime);
+        $('.round-name').html(roundName);
+        $('.round-name').attr('data-round-id', roundId);
+        $('.bidding-round-wise').removeClass('d-none');
+        $('.empty-bidding-round-wise').addClass('d-none');
 
-        ajaxApi(ApiObj)
-            .then(result => {
-          
-                updateConfirmationDetails(result);
-                updateUI(result, roundName);
-            })
-            .catch(error => {
-                createToastError(JSON.stringify(error.responseJSON.description));
+    }
+
+   
+
+    let socket = io();
+    
+    socket.emit('confirmationPageLoaded', { 
+              slugName: "<%- slug %>",
+              biddingTime: JSON.parse(`<%- JSON.stringify(roundDetails) %>`),
+              roundId: 3,
+              roundIId: 5,
+              studentId: studentId      
             });
-    });
+
+    socket.on('confirmationVisibleToStudent', function(data){
+        $('.round-wise-modal').addClass('d-none');
+        let roundName = data.roundDetails[0].roundName;
+        let roundId = data.roundDetails[0].round_lid;
+        let roundStartTime = data.roundDetails[0].startTime;
+        let roundEndTime = data.roundDetails[0].endTime;
+        let considerationSet = data.considerationSet;
+        let confirmCourse = data.confirmationCourse;
+        let winningCourse = data.winningCourse;
+        let count = 0;
+         
+        winningCourse.forEach(winCourse => {
+            
+            let facultyId = winCourse.faculty_id;
+            let facultyName = winCourse.faculty_name;
+            let areaName = winCourse.area_name;
+            let acadSession = winCourse.acad_session;
+            let acadSessionId = winCourse.sap_acad_session_id;
+            let courseName = winCourse.course_name;
+            let courseId = winCourse.course_id;
+            let courseLid = winCourse.course_lid;
+            let credits = winCourse.credits;
+            let bidPoints = winCourse.bid_points;
+            let division = winCourse.division;
+            let concentrationId = winCourse.concentration_lid;
+            let divisionBatchId = winCourse.id;
+            let isDropped = winCourse.is_dropped;
+            let isWaitListed = winCourse.is_waitlisted;
+            let isWinning = winCourse.is_winning;
+            let roundId = winCourse.round_lid; 
+            let row =
+                `<tr data-faculty-id="${facultyId}" data-faculty-name="${facultyName}" data-area-name="${areaName}"
+                    data-acad-session-id="${acadSessionId}" data-acad-session="${acadSession}" data-course-name="${courseName}"
+                    data-course-id="${courseId}" data-credits="${credits}" data-bid-points="${bidPoints}" data-division="${division}" data-concentration-lid="${concentrationId}" data-division-batch-lid="${divisionBatchId}" data-is-dropped="${isDropped}" data-is-waitlist="${isWaitListed}" data-is-winning="${isWinning}" data-course-lid="${courseLid}" data-round-id ="${roundId}">
+                    <td>${count++}</td>
+                    <td>${areaName}</td>
+                    <td>${acadSession}</td>
+                    <td>${courseName}-${division}</td>
+                    <td>${facultyName}</td>
+                    <td>${credits}</td>
+                    <td>${bidPoints}</td>
+                    <td><button class="btn btn-success confirm-courses me-1"><i class="fa-solid fa-check"></i> Confirm</button></td>
+                </tr>`;
+            
+            $('#winning-course-table tbody').append(row);
+        });
+    
+        $('#start-time').html(data.roundDetails[0].startTime);
+        $('#end-time').html(data.roundDetails[0].endTime);
+        $('.round-name').html(roundName);
+        $('.round-name').attr('data-round-id', roundId);
+    
+        $('.bidding-round-wise').removeClass('d-none');
+        $('.empty-bidding-round-wise').addClass('d-none');
+
+  
+  })
+       let confirmationRoundId = $('.round-name').data('round-id');
+        socket.emit('roundEnded', { 
+         slugName: "<%- slug %>",
+         startTime :JSON.parse(`<%- JSON.stringify(roundDetails) %>`),
+         roundId: confirmationRoundId
+
+        });       
+
+  
+ 
   
     $('#winning-course-table').on('click', '.confirm-courses', function () {
         let studentId = $('#student-data').data('student-lid');
@@ -182,6 +257,7 @@ $(document).ready(function() {
         let isDropped = $(this).closest('tr').data('is-dropped') == true ? 1 : 0;
         let isWaitListed = $(this).closest('tr').data('is-waitlist') == true ? 1 : 0;
         let courseId = $(this).closest('tr').data('course-lid');
+        let roundId = $('h4.round-name').data('round-id');
         let isConfirmed = 1;
 
         let confirmCourse = {
@@ -194,7 +270,52 @@ $(document).ready(function() {
             is_dropped: isDropped,
             is_waitlisted: isWaitListed,
             course_lid: courseId,
-            round_lid: 3
+            round_lid: roundId
+        };
+
+        
+        let ApiObj = {
+            type: 'POST',
+            url: '/student/confirmation/add-confirmation',
+            data: {
+                inputJson: JSON.stringify(confirmCourse)
+            },
+            dataType: 'JSON',
+        };
+
+        ajaxApi(ApiObj)
+            .then(result => {})
+            .catch(error => {
+                createToastError(JSON.stringify(error.responseJSON.description));;
+            });
+
+        confirmUnConfirmRow($(this), 'confirm-courses-table', 'btn btn-danger unconfirm-courses', 'fa-close', 'Unconfirm');
+    });
+
+
+    $('#confirm-courses-table').on('click', '.unconfirm-courses', function(){
+        let studentId = $('#student-data').data('student-lid');
+        let concentrationId = $(this).closest('tr').data('concentration-lid');
+        let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
+        let bidPoints = $(this).closest('tr').data('bid-points');
+        let isWinning = $(this).closest('tr').data('is-winning') == true ? 1 : 0;
+        let isDropped = $(this).closest('tr').data('is-dropped') == true ? 1 : 0;
+        let isWaitListed = $(this).closest('tr').data('is-waitlist') == true ? 1 : 0;
+        let courseId = $(this).closest('tr').data('course-lid');
+        let isConfirmed = 0;
+        let roundId = $('h4.round-name').data('round-id');
+
+        let confirmCourse = {
+            student_lid: studentId,
+            concentration_lid: concentrationId,
+            div_batch_lid: divisionBatchId,
+            bid_points: bidPoints,
+            is_winning: isWinning,
+            is_confirmed: isConfirmed,
+            is_dropped: isDropped,
+            is_waitlisted: isWaitListed,
+            course_lid: courseId,
+            round_lid: roundId
         };
 
         let ApiObj = {
@@ -211,12 +332,6 @@ $(document).ready(function() {
             .catch(error => {
                 createToastError(JSON.stringify(error.responseJSON.description));;
             });
-
-        confirmUnConfirmRow($(this), 'confirm-courses-table', 'btn btn-danger unconfirm-courses', 'fa-close', 'unConfirm');
-    });
-
-
-    $('#confirm-courses-table').on('click', '.unconfirm-courses', function(){
         confirmUnConfirmRow($(this), 'winning-course-table', 'btn btn-success confirm-courses', 'fa-check', 'Confirm')
     })
 

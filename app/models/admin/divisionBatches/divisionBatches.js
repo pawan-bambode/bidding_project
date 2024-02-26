@@ -346,30 +346,109 @@ module.exports = class DivisionBatches {
                         WHERE db.active = 1 AND db.bidding_session_lid = @biddingId AND p.program_id = @programId AND c.sap_acad_session_id = @sessionId`);
         });
     }
-    
-    static biddingCourse(slug, biddingId, studentId) {
-  
-        let roundId = 2;
+        
+    static waitlistAvailableCourse(slug, biddingId, studentId) {
+        let roundId = 6;
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('studentLid', sql.Int, studentId)
                 .input('roundId', sql.Int, roundId)
-                .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, 
-                        c.sap_acad_session_id, c.credits, db.max_seats ,db.available_seats, RTRIM(LTRIM(db.division)) AS division,
-                        t.faculty_id, t.faculty_name, d.day_name, c.id AS course_lid,
-                        CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, 
-                        CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, 
-                        IIF(sem.is_favourite IS NULL,0, sem.is_favourite) AS is_favourite
-                        FROM [${slug}].timetable t 
-                        INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
-                        INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
-                        INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
-                        INNER JOIN [${slug}].courses c ON c.id = db.course_lid
-                        INNER JOIN [dbo].days d ON d.id = t.day_lid
-                        LEFT JOIN [${slug}].student_elective_mapping sem ON sem.div_batch_lid = db.id AND student_lid = @studentLid AND sem.div_batch_lid IS NOT NULL
-                        LEFT JOIN [${slug}].student_elective_bidding seb ON t.division_batch_lid = seb.div_batch_lid AND seb.student_lid = @studentLid AND seb.bidding_session_lid = @biddingId AND seb.active = 1 AND seb.round_lid = @roundId WHERE seb.div_batch_lid IS NULL ORDER BY 
-                        sem.id DESC`);
+                .query(`IF(SELECT COUNT(*) 
+                        FROM [${slug}].student_elective_bidding 
+                        WHERE student_lid = @studentLid AND bidding_session_lid = @biddingId AND active = 1 AND round_lid = @roundId)> 0
+                            BEGIN
+                                SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id,
+                                c.acad_session, c.sap_acad_session_id, c.credits, db.max_seats,db.available_seats, RTRIM(LTRIM(db.division)) AS division, t.faculty_id,
+                                t.faculty_name, d.day_name, c.id AS course_lid,
+                                CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, 
+                                CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime
+                                FROM [${slug}].timetable t 
+                                INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
+                                INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
+                                INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
+                                INNER JOIN [${slug}].courses c ON c.id = db.course_lid
+                                INNER JOIN [dbo].days d ON d.id = t.day_lid
+                                LEFT JOIN [${slug}].student_elective_bidding seb 
+                                ON t.division_batch_lid = seb.div_batch_lid AND seb.student_lid = @studentLid 
+                                AND seb.bidding_session_lid = @biddingId AND seb.active = 1 
+                                AND seb.is_confirmed != 1  
+                                WHERE db.available_seats = 0 AND db.bidding_session_lid = @biddingId 
+                                AND db.active = 1 AND seb.div_batch_lid IS NULL
+                            END
+                        ELSE IF (SELECT COUNT(*) 
+                                 FROM [${slug}].student_elective_bidding 
+                                 WHERE student_lid = @studentLid AND bidding_session_lid = @biddingId 
+                                 AND active = 1 AND round_lid = @roundId) = 0
+                            BEGIN
+                                SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, 
+                                c.acad_session, c.sap_acad_session_id, c.credits, db.max_seats, 
+                                db.available_seats, RTRIM(LTRIM(db.division)) AS division, t.faculty_id, 
+                                t.faculty_name, d.day_name, c.id AS course_lid,
+                                CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, 
+                                CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime
+                                FROM [${slug}].timetable t 
+                                INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
+                                INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
+                                INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
+                                INNER JOIN [${slug}].courses c ON c.id = db.course_lid
+                                INNER JOIN [dbo].days d ON d.id = t.day_lid
+                                LEFT JOIN [${slug}].student_elective_bidding seb ON 
+                                t.division_batch_lid = seb.div_batch_lid AND seb.student_lid = @studentLid 
+                                AND seb.bidding_session_lid = @biddingId AND seb.active = 1 
+                                AND seb.is_waitlisted != 1 AND seb.is_confirmed != 1  
+                                WHERE db.available_seats = 0 AND db.bidding_session_lid = @biddingId
+                                AND db.active = 1 AND seb.div_batch_lid IS NULL
+                            END`);
+        });
+    }
+    static biddingCourse(slug, biddingId, studentId) {
+  
+        let round1Id = 2;
+        let round2Id = 4;
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .input('studentLid', sql.Int, studentId)
+                .input('round1Id', sql.Int, round1Id)
+                .input('round2Id', sql.Int, round2Id)
+                .query(`IF (SELECT COUNT(*) 
+                            FROM [${slug}].round_settings WHERE round_lid = @round1Id AND end_date_time >= GETDATE()) > 0
+                          BEGIN
+                               SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, 
+                               c.sap_acad_session_id, c.credits, db.max_seats ,db.available_seats, RTRIM(LTRIM(db.division)) AS division,
+                               t.faculty_id, t.faculty_name, d.day_name, c.id AS course_lid,
+                               CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, 
+                               CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, 
+                               IIF(sem.is_favourite IS NULL,0, sem.is_favourite) AS is_favourite
+                               FROM [${slug}].timetable t 
+                               INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
+                               INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
+                               INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
+                               INNER JOIN [${slug}].courses c ON c.id = db.course_lid
+                               INNER JOIN [dbo].days d ON d.id = t.day_lid
+                               LEFT JOIN [${slug}].student_elective_mapping sem ON sem.div_batch_lid = db.id AND student_lid = @studentLid AND sem.div_batch_lid IS NOT NULL
+                               LEFT JOIN [${slug}].student_elective_bidding seb ON t.division_batch_lid = seb.div_batch_lid AND seb.student_lid = @studentLid AND seb.bidding_session_lid = @biddingId AND seb.active = 1 AND seb.round_lid =  @round2Id WHERE seb.div_batch_lid IS NULL AND db.available_seats > 0 ORDER BY 
+                               sem.id DESC
+                          END
+                        ELSE
+                          BEGIN
+                             SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, 
+                             c.sap_acad_session_id, c.credits, db.max_seats ,db.available_seats, RTRIM(LTRIM(db.division)) AS division,
+                             t.faculty_id, t.faculty_name, d.day_name, c.id AS course_lid,
+                             CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, 
+                             CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, 
+                             IIF(sem.is_favourite IS NULL,0, sem.is_favourite) AS is_favourite
+                             FROM [${slug}].timetable t 
+                             INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
+                             INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
+                             INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
+                             INNER JOIN [${slug}].courses c ON c.id = db.course_lid
+                             INNER JOIN [dbo].days d ON d.id = t.day_lid
+                             LEFT JOIN [${slug}].student_elective_mapping sem ON sem.div_batch_lid = db.id AND student_lid = @studentLid AND sem.div_batch_lid IS NOT NULL
+                             LEFT JOIN [${slug}].student_elective_bidding seb ON t.division_batch_lid = seb.div_batch_lid AND seb.student_lid = @studentLid AND seb.bidding_session_lid = @biddingId AND seb.active = 1 AND seb.round_lid = @round1Id WHERE seb.div_batch_lid IS NULL AND db.available_seats > 0 ORDER BY 
+                             sem.id DESC
+                           END`);
         });
     }
     

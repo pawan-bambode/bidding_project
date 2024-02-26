@@ -4,6 +4,7 @@ const programSession = require('../../../models/admin/programs/programsession');
 const roundSetting = require('../../../models/admin/roundSettings/roundSettings');
 const concentrationSetting = require('../../../models/admin/concentrationsettings/concentrationsettings');
 const biddingClass = require('../../../models/student/bidding/bidding');
+const confirmation = require('../../../models/student/confirmation/confirmation');
 const isJsonString = require('../../../utils/util');
 
 module.exports = {
@@ -13,29 +14,27 @@ module.exports = {
         let bidding = biddingUrl[biddingUrl.length - 1];
         let slug = res.locals.slug;
         let round1Id = 2, round2Id = 4;
-        let roundId = 0;
-        biddingClass.checkRoundId(res.locals.slug, round1Id, round2Id)
-            .then(roundIdResult => {
-                roundId = roundIdResult.recordset[0].round_lid;
+                
                 return Promise.all([
                     course.acadSessionList(res.locals.slug, res.locals.biddingId),
                     programSession.getCredits(res.locals.slug, res.locals.biddingId),
-                    roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, roundId),
+                    roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, round1Id),
                     divisionBatch.biddingCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
                     divisionBatch.courseList(res.locals.slug, res.locals.biddingId),
                     concentrationSetting.getList(res.locals.slug, res.locals.biddingId),
                     divisionBatch.areaList(res.locals.slug, res.locals.biddingId),
                     roundSetting.roundId(res.locals.slug, res.locals.biddingId),
-                    biddingClass.considerationSet(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+                    biddingClass.considerationSet(res.locals.slug, res.locals.biddingId, res.locals.studentId, round1Id, round2Id),
                     biddingClass.studentBidPoints(res.locals.slug, res.locals.biddingId, res.locals.studentId),
                     biddingClass.updateBidPoints(res.locals.slug, res.locals.biddingId, res.locals.studentId),
                     roundSetting.listByOneDayBefore(res.locals.slug, res.locals.biddingId, round1Id, round2Id),
-                    roundSetting.roundSettingTime(res.locals.slug, res.locals.biddingId, round1Id, round2Id)
-                ]);
-            })
+                    roundSetting.roundSettingTime(res.locals.slug, res.locals.biddingId, round1Id, round2Id),
+                    confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+                    confirmation.getConfirmationForBidding(res.locals.slug, res.locals.biddingId, res.locals.studentId)
+                    
+                ])
             .then(result => {
-                console.log('values of ', result[11].recordset);
-                console.log('valiues of  result ,', result[12].recordset);
+                
                 res.render('student/bidding/index', {
                     active: bidding,
                     acadSessions: result[0].recordset,
@@ -46,12 +45,14 @@ module.exports = {
                     concentrationSetting: result[5].recordset[0],
                     areaList: result[6].recordset,
                     roundId: result[7].recordset[0] !== undefined ? result[7].recordset[0].round_lid : 0,
-                    considerationSetList: result[8].recordset,
+                    considerationSetList: result[8].recordset !== undefined ? result[8].recordset:'',
                     studentBidsPoints: result[9].recordset[0] !== null && result[9].recordset[0] !== undefined ? result[9].recordset[0] : 0,
                     remaingBidPoints: result[10].recordset[0] !== null && result[10].recordset[0] !== undefined ?
                         result[10].recordset[0] : result[9].recordset[0] !== null && result[9].recordset[0] !== undefined ? result[9].recordset[0] : 0,
                     roundDetails: result[11].recordset[0] !== undefined ? result[11].recordset[0] : '',
                     roundSettingTime : result[12].recordset[0] != undefined ? result[12].recordset[0] :0,
+                    confirmationCourse: result[13].recordset[0] != undefined ? result[13].recordset: '',
+                    confirmationCourse12: result[14].recordset[0] != undefined ? result[14].recordset: '',
                     slug: slug
                 });
             })

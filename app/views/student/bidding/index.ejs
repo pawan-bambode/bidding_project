@@ -3,29 +3,27 @@
 <%- include('../partials/header.ejs') %>
 
 <div class="main-content">
-    <% if (roundDetails) { %>
-      <ul class="d-flex round-wises justify-content-between align-items-end">
+      <ul class="d-flex round-wises justify-content-between align-items-end bidding-round-wise d-none">
         <li class="ms-5 active" style="height: 58px;">
           <a class="text-decoration-none text-dark">
             <div class="d-flex flex-column justify-content-center align-items-center h-100">
               <div class="d-flex justify-content-between align-items-center active-div">
-                <h4 class="ms-2 round-label"><%= roundDetails.roundName.trim() %></h4>
+                <h4 class="ms-2 round-name"></h4>
               </div>
             </div>
           </a>
         </li>
       </ul>
-    <% } %>
-
-    <div class="main-div-round-wise card-custom-border-curv p-3">
-      <div class="bidding-round-wise">
+   
+    <div class="main-div-round-wise card-custom-border-curv p-3 bidding-round-wise d-none">
+   
         <div class="card card-custom-border-curv">
           <div class="card-header-custom d-flex justify-content-between p-1">
-              <h5 class="ms-2 round-name" data-id="<%= roundDetails.round_lid %>">  <% if (roundDetails) { %><%= roundDetails.roundName.trim() %> <% } %></h5>
-            <button class="btn btn-danger time-remaining me-5"></button>
+              <h5 class="ms-2 round-name"></h5>
+               <button class="btn btn-danger time-remaining me-5"></button>
           </div>
           <div class="card-body table-responsive">
-            <div class="row ps-5 pe-5">
+            <div class="row ps-5 pe-5 round-wise-modal">
               <div class="col-md-4">
                 <h6>Total Bid Points :&nbsp;<span id="total-bid-points"> <%- studentBidsPoints.student_bid_points %></span></h6>
               </div>
@@ -52,10 +50,10 @@
             </div>
             <div class="row ps-5 pe-5">
               <div class="col-md-4">
-                <h6>Start Time :&nbsp;<span id="start-time">  <% if (roundDetails) { %> <%= roundDetails.startTime %> <% } %></span><span class="round-not-created d-none"></span></h6>
+                <h6>Start Time :&nbsp;<span id="start-time">  </span><span class="round-not-created d-none"></span></h6>
               </div>
               <div class="col-md-4">
-                <h6>End Time :&nbsp;<span id="end-time">  <% if (roundDetails) { %><%= roundDetails.endTime %> <% } %></span><span class="round-not-created d-none"></span></h6>
+                <h6>End Time :&nbsp;<span id="end-time"></span><span class="round-not-created d-none"></span></h6>
               </div>
               <div class="col-md-4">
                 <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
@@ -64,16 +62,45 @@
           </div>
         </div>
 
-        <div class="card card-custom-border-curv mt-5">
+        <div class="card card-custom-border-curv mt-5 round-wise-modal">
           <div class="card-header-custom d-flex justify-content-between p-1">
             <h3 class="ms-2">Confirmation Courses</h3>
           </div>
           <div class="card-body table-responsive">
-
+            <table class="table custom_row table-bordered mt-4 custom-table" id="confirm-course-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Area</th>
+                  <th>Course</th>
+                  <th>Acad Session</th>
+                  <th>Faculty</th>
+                  <th>Credits</th>
+                  <th>Your Bid</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if(confirmationCourse12.length > 0){ %>
+                <% let count = 1; %>
+                <% confirmationCourse12.forEach((confirm) => {
+                  %>
+                <tr>
+                  <td><%= count++ %></td>
+                  <td><%= confirm.area_name %></td>
+                  <td><%= confirm.course_name %> - <%= confirm.division %></td>
+                  <td><%= confirm.acad_session %></td>
+                  <td><%= confirm.faculty_name %></td>
+                  <td><%= confirm.credits %></td>
+                  <td><%= confirm.bid_points %></td>
+                </tr>
+                <% }) } %>
+              </tbody>
+            </table>
           </div>
         </div>
+        
 
-        <div class="card card-custom-border-curv mt-5">
+        <div class="card card-custom-border-curv mt-5 round-wise-modal">
           <div class="card-header-custom d-flex justify-content-between p-1">
             <h3 class="ms-2">Bidding Course</h3>
           </div>
@@ -104,6 +131,7 @@
                 <th>Withdraw</th>
               </thead>
               <tbody>
+                <% if(considerationSetList != '') { %>
                 <% let count = 1; %>
                 <% considerationSetList.forEach((considerationSet) => { %>
                   <tr data-id="<%= considerationSet.id %>"
@@ -146,12 +174,13 @@
                     </td>
                   </tr>
                 <% }); %>
+                <% } %>
               </tbody>
             </table>
           </div>
         </div>
 
-        <div class="card card-custom-border-curv mt-5 bidding-modal" id="bidding-modal">
+        <div class="card card-custom-border-curv mt-5 bidding-modal round-wise-modal" id="bidding-modal">
           <div class="card-header-custom d-flex justify-content-between p-1">
             <h3 class="ms-2">Available Courses</h3>
           </div>
@@ -204,19 +233,20 @@
               </tbody>
             </table>
           </div>
-        </div>
+        
+      </div>
+    </div>
+    <div class="card card-custom-border-curv empty-bidding-round-wise">
+      <div class="card-header-custom d-flex justify-content-between">
+        <h4 class="ms-2">Bidding</h4>
+      </div>
+      <div class="card-body table-responsive d-flex justify-content-center align-items-center">
+        <p>There is not any bidding Rounds</p>
       </div>
     </div>
 </div>
 
-  <div class="card card-custom-border-curv empty-bidding-round-wise">
-    <div class="card-header-custom d-flex justify-content-between">
-      <h4 class="ms-2">Bidding</h4>
-    </div>
-    <div class="card-body table-responsive d-flex justify-content-center align-items-center">
-      <p>There is not any bidding Rounds</p>
-    </div>
-  </div>
+
 
 
 
@@ -230,10 +260,7 @@ $(document).ready(function() {
     dropdownParent: $('#bidding-modal')
     });
 
-    let  roundsDetails = `<%- JSON.stringify(roundDetails) %>`;
-
-
-    
+  
     demandEstimationTimeCountDown();
     let userId = `<%- locals.userId %>`;
     $('#sidebar .side-menu li.' + `<%- active %>`).addClass('active');
@@ -250,26 +277,46 @@ $(document).ready(function() {
     let creditsList = JSON.parse(`<%- JSON.stringify(creditList) %>`)
     let roundId = JSON.parse(`<%- JSON.stringify(roundId) %>`)
     let considerationSet = JSON.parse(`<%- JSON.stringify(considerationSetList) %>`);
+    let roundSettings = JSON.parse(`<%- JSON.stringify(roundDetails) %>`);
+    
+    let studentId = $('#student-data').data('student-lid')
     
     let concentrationId = concentrationSettingData.concentration_lid;
     let biddingSessionId = concentrationSettingData.bidding_session_lid;
     let concentrationName = concentrationSettingData.concentration_name;
-       
+    let winningCredits = 0;
+    $('#bidding-table tbody td.winning').each(function() {
+       winningCredits += $(this).closest('tr').data('credits');
+    });
+
+    $('#credits-winning').html(winningCredits)   
     let socket = io();
     
-
     socket.emit('biddingPageLoaded', { 
+              slugName: "<%- slug %>",
               biddingTime: JSON.parse(`<%- JSON.stringify(roundSettingTime) %>`),
-           
+              roundId: 2,
+              roundIId: 4,
+              studentId: studentId      
             });  
-    if(localStorage.getItem('reloadFlag') === 'true') {
-        localStorage.removeItem('reloadFlag');
-        $('.bidding-round-wise').addClass('d-none');
-        $('.empty-bidding-round-wise').find('p').html('Bidding Round Completed');
-        $('.empty-bidding-round-wise').removeClass('d-none');
+ 
+    if((roundSettings != '')){
 
-    }
+      let roundStartTime = roundSettings.startTime;
+      let roundEndTime = roundSettings.endTime;
+      let roundName = roundSettings.roundName;
+      let roundId = roundSettings.round_lid;
+
+      $('.round-wise-modal').addClass('d-none')
      
+      $('#start-time').html(roundStartTime);
+      $('#end-time').html(roundEndTime);
+      $('.round-name').html(roundName);
+      $('.round-name').attr('data-round-id', roundId);
+      $('.bidding-round-wise').removeClass('d-none');
+      $('.empty-bidding-round-wise').addClass('d-none');
+    
+    }
     let trimesterWiseTargetCreditPoints = {};
     let trimesterWiseTargetCreditsComparing = {};
     let currentCreditsPoints = {};
@@ -433,12 +480,6 @@ $(document).ready(function() {
 
       });
 
-      const myFunction = () => {
-          console.log('Function called at specific date and time!');
-      };
-
-
-     
 
   $('#bidding-trimester-select-table').on('click','.add-bidding',function(){
 
@@ -462,6 +503,7 @@ $(document).ready(function() {
       let id = $(this).closest('tr').data('id');
       let roundLid = $(this).closest('tr').data('round-lid');
       let areaSwap = '';
+      let roundId = $('.round-name').data('round-id');
 
       let areaNameAndCredits = {
         area:areaName,
@@ -491,10 +533,7 @@ $(document).ready(function() {
           trimesterWiseTargetCreditPoints[`${acadSessionId}`].max_credits = updatedTargetCredits;
         }
       }
-      else{
-        createToast('Exceeds trimester credits limit', 'alert-danger', 'error-message');
-        return;
-      }
+      
 
       updateCreditsPointTargets(trimesterWiseTargetCreditPoints);
 
@@ -612,7 +651,7 @@ $(document).ready(function() {
                     }
                   }
               } 
-        
+            
             socket.emit('addBidding', { 
               slugName: "<%- slug %>",
               studentLid: studentId,
@@ -622,13 +661,35 @@ $(document).ready(function() {
               divisionBatchLid: divisionBatchId,
               userId: userId,
               biddingSessionId: biddingSessionId
-            });            
+            });     
+            
+            let winningCredits = 0;
+    $('#bidding-table tbody td.winning').each(function() {
+       winningCredits += $(this).closest('tr').data('credits');
+    });
+
+            $('#credits-winning').html(winningCredits)
   })
 
-
-  socket.on('biddingVisibleToStudent', function(){
-
-   $('.bidding-round-wise').removeClass('d-none');
+ 
+  socket.on('biddingVisibleToStudent', function(data){
+      
+     let roundName = data.roundDetails[0].roundName;
+     let roundId = data.roundDetails[0].round_lid;
+     let roundStartTime = data.roundDetails[0].startTime;
+     let roundEndTime = data.roundDetails[0].endTime;
+     let considerationSet = data.considerationSet;
+     let confirmCourse = data.confirmationCourse;
+      $('#bidding-table').html('');
+      $('.round-wise-modal').addClass('d-none')
+     
+     const allCourses = data.courseList.map(course => ({ id: course.course_id, name: course.course_name }));
+        
+     $('#start-time').html(roundStartTime);
+     $('#end-time').html(roundEndTime);
+     $('.round-name').html(roundName);
+     $('.round-name').attr('data-round-id', roundId);
+     $('.bidding-round-wise').removeClass('d-none');
    $('.empty-bidding-round-wise').addClass('d-none');
 
   
@@ -675,6 +736,7 @@ $(document).ready(function() {
     let bidPoints = $(this).closest('tr').find('.student-previous-bid-point').html();
     let totalBidPoints = Number($('#remaining-bid-points').html());
     let studentId = $('#student-data').data('student-lid');
+    let roundId = $('h5.round-name').data('round-id');
 
     $('#remaining-bid-points').html(totalBidPoints + Number(bidPoints));
   
@@ -683,7 +745,7 @@ $(document).ready(function() {
 
     updateCreditsPointTargets(trimesterWiseTargetCreditPoints);
     updateCurrentPointTargets(currentCreditsPoints);
-  
+
     socket.emit('withdrawBidding', { 
         slugName: "<%- slug %>",
         id: concentrationId,
@@ -732,7 +794,9 @@ $(document).ready(function() {
       let previousBid = $(this).closest('tr').find('.student-previous-bid-point').html();
       let id = $(this).closest('tr').data('id');
       let totalBidPoints = Number($('#total-bid-points').html());
-      let remainingBidPoints = Number($('#remaining-bid-points').html())
+      let remainingBidPoints = Number($('#remaining-bid-points').html());
+      $(this).closest('tr').find('.student-previous-bid-point').html(bidPoints);
+      $(this).closest('tr').find('.student-current-bid-point').val('');
 
       $('#remaining-bid-points').html(remainingBidPoints - Number(bidPoints));
      
@@ -756,7 +820,7 @@ $(document).ready(function() {
   });
 
   socket.on('studentBiddingResponse', function(biddingReponseResult) {
-
+ 
   let biddingResponseToUser = biddingReponseResult.studentBiddingResponse.description;
   const isCurrentUser = userId === biddingReponseResult.userId;
   let bidPoints = biddingReponseResult.bid_points;
@@ -777,16 +841,13 @@ $(document).ready(function() {
           let mrbPointsElement = targetRow.find('.mrb-points');
           let curentStudentBitPoints = targetRow.find('.student-current-bid-point').val();
           
-          curentStudentBitPoints = curentStudentBitPoints !== '' ? curentStudentBitPoints : 0;
-          targetRow.find('.student-previous-bid-point').html(curentStudentBitPoints)
-
-          targetRow.find('.student-previous-bid-point').html(0)
+          curentStudentBitPoints = curentStudentBitPoints !== '' ? curentStudentBitPoints : '';
+        //  targetRow.find('.student-previous-bid-point').html(curentStudentBitPoints)
         
           mrbPointsElement.html(mrbPoint);
           if (winningStudent == userId) {
             winningStatusElement.html('Yes');
-            winningStatusElement.removeClass('losing').addClass('winning');
-          
+            winningStatusElement.removeClass('losing').addClass('winning');          
           }
           if(loosingStudent == userId){
             winningStatusElement.html('No');
@@ -802,6 +863,11 @@ $(document).ready(function() {
         createToast(biddingResponseToUser, 'alert-danger', 'error-message');
       }
     } 
+    let winningCredits = 0;
+    $('#bidding-table tbody td.winning').each(function() {
+       winningCredits += $(this).closest('tr').data('credits');
+    });
+            $('#credits-winning').html(winningCredits)
  });
      
     function biddingCourses(biddingCourseList , isWithdraw) {

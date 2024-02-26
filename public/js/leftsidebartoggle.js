@@ -807,11 +807,12 @@ function demandEstimationTimeCountDown(){
     let startDateTime = new Date(startTime);
     
     let currentDateTime = new Date();
-
-    if(startDateTime < currentDateTime){
+    
+    if(startDateTime <= currentDateTime){
     let dateSubtraction = endDateTime - currentDateTime;
     let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
     $('.time-remaining').text(`Round ends in ${dateSubtractionValue}`);
+    $('.round-wise-modal').removeClass('d-none')
  
 
     }
@@ -823,20 +824,17 @@ function demandEstimationTimeCountDown(){
 
     }
     if(endDateTime < currentDateTime){
-        let roundId = $('.round-name').data('id');
-         console.log('values of roundId', roundId);
-     
-       
-        $('.time-remaining').text(`Round ended`);
-        
+      
+        $('.time-remaining').text(`Round ended`); 
+        $('.bidding-round-wise').addClass('d-none');
+        $('.empty-bidding-round-wise').removeClass('d-none');   
         $('.time-remaining').attr('data-round-status','end');
         $('.save-select-course').addClass('d-none');
         $('.demand-estimation-status').addClass('d-none');
         $('.demand-estimation-modal').addClass('d-none');
         
-       
-    }
-    
+       }
+ 
     if(startDateTime > currentDateTime){
     
         $('.time-remaining').text(`Round has not started yet`);

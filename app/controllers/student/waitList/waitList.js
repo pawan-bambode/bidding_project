@@ -10,14 +10,16 @@ module.exports = {
         let wait = waitListUrl[waitListUrl.length - 1];
         let roundId = 6;
         Promise.all([
-            confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+            confirmation.getConfirmationForBidding(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, roundId),
             course.acadSessionList(res.locals.slug, res.locals.biddingId),
             divisionBatch.areaList(res.locals.slug, res.locals.biddingId),
-            divisionBatch.biddingCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+            divisionBatch.waitlistAvailableCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             waitList.getStudentDetails(res.locals.slug, res.locals.biddingId, res.locals.studentId),
-            waitList.getWaitListCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId)
+            waitList.getWaitListCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId, roundId),
+            roundSetting.demandEstimOneDayBefore(res.locals.slug, res.locals.biddingId, roundId)
         ]).then(result => {
+            
             res.render('student/waitlist/index', {
                 active: wait,
                 confirmCourseList: result[0].recordset,
@@ -26,9 +28,12 @@ module.exports = {
                 areaList: result[3].recordset,
                 courseList: result[4].recordset,
                 concentrationId: result[5].recordset[0].concentrationId,
-                waitListCourses: result[6].recordset
+                waitListCourses: result[6].recordset,
+                roundDetails: result[7].recordset[0] !== undefined ? result[7].recordset[0]: '',
+
             });
         }).catch(error => {
+            
             res.status(500).json(JSON.parse(error.originalError.info.message));
         });
     },

@@ -3,13 +3,25 @@
 <%- include('../partials/header.ejs') %>
 
 <div class="main-content">
-   <div class="card card-custom-border-curv">
+
+    <ul class="d-flex round-wises justify-content-between align-items-end bidding-round-wise d-none">
+        <li class="ms-5 active" style="height: 58px;">
+          <a class="text-decoration-none text-dark">
+            <div class="d-flex flex-column justify-content-center align-items-center h-100">
+              <div class="d-flex justify-content-between align-items-center active-div">
+                <h4 class="ms-2 round-name"></h4>
+              </div>
+            </div>
+          </a>
+        </li>
+      </ul>
+
+   <div class="card card-custom-border-curv bidding-round-wise d-none">
         <div class="card-header-custom d-flex justify-content-between p-1">
             <h4 class="ms-2">Demand Estimation Round</h4>
             <button class="btn btn-danger time-remaining me-5"></button> 
         </div>
         <div class="card-body table-responsive">
-            <h3 class="text-center bidding-round" data-id="<%- roundLid %>">Demand Estimation Round</h3>
             <div class="row ps-5 pe-5 d-flex justify-content-between">
                 <div class="col-md-4">
                     <h6>Minimum / Maximum Yearly Credits :&nbsp;<span id="yearly-credits"><%- totalCreditsCounts %></span></h6>
@@ -37,10 +49,10 @@
 
             <div class="row ps-5 pe-5">
                 <div class="col-md-4">
-                    <h6>Start Time :&nbsp;<span id="start-time"><%-startAndEndTime.startTime %></span><span class="demand-estimation-not-created d-none">Demand Estimation Not Created Yet</span></h6>
+                    <h6>Start Time :&nbsp;<span id="start-time"></span><span class="demand-estimation-not-created d-none">Demand Estimation Not Created Yet</span></h6>
                 </div>    
                 <div class="col-md-4">
-                    <h6>End Time :&nbsp;<span id="end-time"><%-startAndEndTime.endTime %></span><span class="demand-estimation-not-created d-none">Demand Estimation Not Created Yet</span></h6>
+                    <h6>End Time :&nbsp;<span id="end-time"></span><span class="demand-estimation-not-created d-none">Demand Estimation Not Created Yet</span></h6>
                 </div>
                 <div class="col-md-4">
                     <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
@@ -50,7 +62,7 @@
         </div>
     </div> 
   
-    <div class="card card-custom-border-curv mt-5 pb-1">
+    <div class="card card-custom-border-curv mt-5 pb-1 bidding-round-wise d-none round-wise-modal">
         <div class="card-header-custom d-flex justify-content-between p-1">
             <h3 class="ms-2">Selected Courses</h3>
             <div class="me-3 d-flex demand-estimation-status">
@@ -105,7 +117,7 @@
             <button class="btn btn-success save-select-course d-none w-50 m-auto mb-4">Save</button>
     </div>    
 
-    <div class="card card-custom-border-curv mt-5 demand-estimation-modal">
+    <div class="card card-custom-border-curv mt-5 bidding-round-wise round-wise-modal d-none">
       <div class="card-header-custom d-flex justify-content-between p-1">
           <h3 class="ms-2">Available Courses</h3>
       </div>
@@ -163,10 +175,21 @@
                 
             </div>
           </div>
-      </div>     
+      </div>    
+    
 </div>
+<div class="card card-custom-border-curv empty-bidding-round-wise">
+    <div class="card-header-custom d-flex justify-content-between">
+      <h4 class="ms-2">Demand Estimation Rounds</h4>
+    </div>
+    <div class="card-body table-responsive d-flex justify-content-center align-items-center">
+      <p>No Demand Estimation Rounds</p>
+    </div>
+  </div> 
 
 <%- include('../partials/footer.ejs') %>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script>
 $(document).ready(function() {
 
@@ -182,6 +205,7 @@ $(document).ready(function() {
     let selectedCourse = JSON.parse('<%- JSON.stringify(selectCourse) %>');
 
     let creditsList = `<%- JSON.stringify(creditList) %>`;
+   
     let parsedCreditsList = JSON.parse(creditsList);
     let comparingCredits = parsedCreditsList;
     let creditsObject = {};
@@ -196,6 +220,63 @@ $(document).ready(function() {
     let totalCreditsPoints = 0;
     let currentObject =  [];
     let completedArea;
+   
+
+    let roundDetails = JSON.parse(`<%- JSON.stringify(roundDetails) %>`);
+    
+    let timeRemaing = $('.time-remaining').text().trim();
+    let studentId = $('#student-data').data('student-lid');
+    if((roundDetails != '')){
+        
+        let roundStartTime = roundDetails.startTime;
+        let roundEndTime = roundDetails.endTime;
+        let roundName = roundDetails.roundName;
+        let roundId = roundDetails.round_lid;
+      
+
+        $('#start-time').html(roundStartTime);
+        $('#end-time').html(roundEndTime);
+        $('.round-name').html(roundName);
+        $('.round-name').attr('data-round-id', roundId);
+        $('.bidding-round-wise').removeClass('d-none');
+        $('.empty-bidding-round-wise').addClass('d-none');
+        $('.round-wise-modal').addClass('d-none')
+    
+    }
+    let socket = io();
+   
+    socket.emit('roundEnded', { 
+         slugName: "<%- slug %>",
+         startTime :  JSON.parse(`<%- JSON.stringify(startAndEndTime) %>`)
+        });   
+
+    socket.emit('demandEstimationPageLoaded', { 
+              slugName: "<%- slug %>",
+              biddingTime: JSON.parse(`<%- JSON.stringify(startAndEndTime) %>`),
+              roundId: 1,
+              studentId: studentId      
+    });  
+
+    socket.on('demandEsmationVisibleToStudent', function(data){
+    
+      let roundName = data.roundDetails[0].roundName;
+      let roundId = data.roundDetails[0].round_lid;
+      let roundStartTime = data.roundDetails[0].startTime;
+      let roundEndTime = data.roundDetails[0].endTime;
+      let considerationSet = data.considerationSet;
+      let confirmCourse = data.confirmationCourse;
+       $('#bidding-table').html('');
+       $('.round-wise-modal').addClass('d-none')
+      
+      const allCourses = data.courseList.map(course => ({ id: course.course_id, name: course.course_name }));
+         
+      $('#start-time').html(roundStartTime);
+      $('#end-time').html(roundEndTime);
+      $('.round-name').html(roundName);
+      $('.round-name').attr('data-round-id', roundId);
+      $('.bidding-round-wise').removeClass('d-none');
+      $('.empty-bidding-round-wise').addClass('d-none');
+   })
 
     parsedCreditsList.forEach(item => {    
         let current = {
@@ -210,6 +291,11 @@ $(document).ready(function() {
         totalCreditsPoints += Number(obj.credits);
     });
 
+    if(totalCreditsPoints == totalCredits){
+        $('.criteria-status').html('Criteria Met');
+       $('.criteria-status').addClass('btn-success');
+       $('.criteria-status').removeClass('btn-danger');
+    }
     if (selectedCourse.length > 0) {
         
         selectedCourse.forEach(course => {
@@ -254,19 +340,10 @@ $(document).ready(function() {
         });
     }
 
-    let startTime = '<%- startAndEndTime %>'.trim();
-    let timeRemaing = $('.time-remaining').text().trim();
+   
 
     if (timeRemaing.trim() == 'Round Ended') {
         $('.hide-column-after-round-over').addClass('d-none');
-    }
-
-    if (startTime.trim() === '') {
-        $('.demand-estimation-not-created').removeClass('d-none');
-        $('.time-remaining').addClass('d-none');
-    } else {
-        $('.demand-estimation-not-created').addClass('d-none');
-        $('.time-remaining').removeClass('d-none');
     }
 
     if (concentrationSettings == 0) {
@@ -280,6 +357,10 @@ $(document).ready(function() {
     let acadSessionCount = '<%- dropdownAcadSessionList.length %>';
     let completedCreditsCount = 0;
     let selectedCourseList = ('<%- selectCourse.length %>');
+    let selectedCourseList1 = JSON.parse(`<%-JSON.stringify(selectCourse) %>`);
+    let selectedCredits = 0;
+ 
+   
     let count = 1;
 
     $('#available-course-table').on('click', '.add-course', function () {
@@ -655,7 +736,7 @@ $(document).ready(function() {
         });
 
         let studentLid = $('#student-data').data('student-lid');
-        let roundId = $('.bidding-round').data('id');
+        let roundId = $('.round-name').data('round-id');
         if (roundId == 0) {
             createToastMessage('This round is not created yet!');
         } else {
