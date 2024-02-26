@@ -16,7 +16,7 @@
 
     <div class="card card-custom-border-curv">
         <div class="card-header-custom d-flex justify-content-between p-1">
-            <h3 class="ms-2">Bonus Bid Points </h3>
+            <h4 class="ms-2">Bonus Bid Points </h4>
             <button type="button" class="btn add-btn-bonus-bid me-2" data-bs-target="#add-bonus-points-modal"
                 data-bs-toggle="modal">
                 <i class="fas fa-plus"></i>
@@ -25,9 +25,7 @@
         <div class="card-body table-responsive">
             <div class="d-flex justify-content-between">
                 <div>
-
-                </div>
-            
+                </div>           
             </div>
 
             <table class="table custom_row table-bordered mt-4 custom-table" id="bonus-points-table">
@@ -58,65 +56,62 @@
             </table>
         </div>
     </div>
-</div>
-</div>
 
-<div class="modal" id="add-bonus-points-modal" data-bs-backdrop="static">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Bonus Bid Points</h3>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
+    <div class="modal" id="add-bonus-points-modal" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Bonus Bid Points</h3>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row empty">
+                        <div class="col-md-12">
+                            <label class="form-label mb-2" for="bonus-bid-points-input">Bonus Bid Points:</label>
+                            <input class="form-control bonus-bid-points-input is-empty is-number" id="bonus-bid-points-input" autocomplete="off">
+                            <span class="text-danger d-none is-in-valid" ></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" id="bonus-bid-points">Add</button>
+                </div>
             </div>
-            <div class="modal-body">
-                <div class="row empty">
-                <div class="col-md-12">
-                <label class="form-label mb-2" for="bonus-bid-points-input">Bonus Bid Points:</label>
-                <input class="form-control bonus-bid-points-input is-empty is-number" id="bonus-bid-points-input" autocomplete="off">
-                <span class="text-danger d-none is-in-valid" ></span>
-           </div>
-            </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-primary" id="bonus-bid-points">Add</button>
+        </div>
+    </div>
+
+    <div class="modal" id="edit-bonus-points" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Update Bonus Points</h3>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row empty">
+                        <div>
+                            <input type="hidden" id="bonus-id">
+                            <label class="mb-2 disabled" for="round-name">Round Name:</label>
+                            <input class="form-control is-empty" type="text" id="round-name" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="row empty">
+                        <div class="col-md-12">
+                            <label class="mb-2" for="bonus-points">Bonus Points:</label>
+                            <input class="form-control is-empty is-number" type="text" id="bonus-points" autocomplete="off">  
+                            <span class="text-danger d-none is-in-valid" ></span>
+                        </div>
+                    </div>  
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" id="update-bonus-points">Update</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<div class="modal" id="edit-bonus-points" data-bs-backdrop="static">
-  <div class="modal-dialog">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h3 class="modal-title">Update Bonus Points</h3>
-              <button class="btn-close" data-bs-dismiss="modal"></button>
-          </div>
-          <div class="modal-body">
-            <div class="row empty">
-            <div>
-            <input type="hidden" id="bonus-id">
-            <label class="mb-2 disabled" for="round-name">Round Name:</label>
-            <input class="form-control is-empty" type="text" id="round-name" autocomplete="off">
-            </div>
-            </div>
-            <div class="row empty">
-                <div class="col-md-12">
-                <label class="mb-2" for="bonus-points">Bonus Points:</label>
-                <input class="form-control is-empty is-number" type="text" id="bonus-points" autocomplete="off">  
-                <span class="text-danger d-none is-in-valid" ></span>
-                </div>
-            </div>
-               
-          </div>
-          <div class="modal-footer">
-              <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button class="btn btn-primary" id="update-bonus-points">Update</button>
-          </div>
-      </div>
-  </div>
-</div>
-
 <%- include('../partials/footer.ejs') %>
 
 <script>

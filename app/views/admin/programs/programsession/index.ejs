@@ -14,109 +14,108 @@
             <% } %>
         </ul>
     </div>
-  <div class="card card-custom-border-curv">
-    <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-2">Program Sessions List</h3>
-        <button type="button" class="btn btn-danger ms-auto me-3"  id="refresh-program-sessions">
-            <i class="fa-solid fa-rotate p-1"></i>Refresh
-        </button>  
-    </div>
-    <div class="card-body table-responsive">
-        <div class="d-flex justify-content-between">
-            <div>
-                <label>Show Entries</label>
-                <select class="form-select" id="changeEntry">
-                    <% for (let page of locals.page_filter) { %>
-                        <option value="<%- page %>"><%- page %></option>
-                    <% } %>
-                </select>
+    <div class="card card-custom-border-curv">
+        <div class="card-header-custom d-flex justify-content-between p-1">
+            <h4 class="ms-2">Program Sessions</h4>
+                <button type="button" class="btn btn-danger ms-auto me-3"  id="refresh-program-sessions">
+                    <i class="fa-solid fa-rotate p-1"></i>Refresh
+                </button>  
+        </div>
+        <div class="card-body table-responsive">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <label>Show Entries</label>
+                    <select class="form-select" id="changeEntry">
+                        <% for (let page of locals.page_filter) { %>
+                            <option value="<%- page %>"><%- page %></option>
+                        <% } %>
+                    </select>
+                </div>
+                <div>
+                    <div class="table-searchbar-container d-flex justify-content-around p-1">
+                        <button type="button" id="searchkeyword-button" class="border-0 outline-0">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+                    </div>
+                </div>
             </div>
-            <div>
-                <div class="table-searchbar-container d-flex justify-content-around p-1">
-                    <button type="button" id="searchkeyword-button" class="border-0 outline-0">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+
+            <table class="table custom_row table-bordered mt-4 custom-table" id="program-sessions-table">
+                <thead>
+                    <th>#</th>
+                    <th>Acad Session</th>
+                    <th>Program Name</th>
+                    <th>Year</th>
+                    <th>Minimum Credits</th>
+                    <th>Maximum Credits</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    <% let count = 1 %>
+                    <%for(let programSession of programSessionList) { %>
+                        <tr>
+                            <td><%- count++ %></td>
+                            <td><%-programSession.acad_session %></td>
+                            <td><%-programSession.program_name %></td>
+                            <td><%-programSession.year %></td>
+                            <td><%-programSession.min_credits %></td>
+                            <td><%-programSession.max_credits %></td>
+                            <td><a class="edit-program-sessions" data-bs-target="#edit-program-sessions" data-bs-toggle="modal" data-id="<%-programSession.id %>" data-min-credits ="<%- programSession.min_credits %>"
+                                data-max-credits ="<%- programSession.max_credits %>"
+                            data-acad-session = "<%- programSession.acad_session %>"
+                                ><i class="fa fa-edit"></i></a>
+                                
+                            </td>
+                        </tr>
+                    <%}%>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries :&nbsp;
+                        <span id="page-no"></span>
+                    </p>
+                </div>
+                <div>
+                    <p id="pagination" class="pagination-search"></p>
                 </div>
             </div>
         </div>
+    </div>  
 
-        <table class="table custom_row table-bordered mt-4 custom-table" id="program-sessions-table">
-            <thead>
-                <th>#</th>
-                <th>Acad Session</th>
-                <th>Program Name</th>
-                <th>Year</th>
-                <th>Minimum Credits</th>
-                <th>Maximum Credits</th>
-                <th>Action</th>
-            </thead>
-            <tbody>
-                <% let count = 1 %>
-                <%for(let programSession of programSessionList) { %>
-                    <tr>
-                        <td><%- count++ %></td>
-                        <td><%-programSession.acad_session %></td>
-                        <td><%-programSession.program_name %></td>
-                        <td><%-programSession.year %></td>
-                        <td><%-programSession.min_credits %></td>
-                        <td><%-programSession.max_credits %></td>
-                        <td><a class="edit-program-sessions" data-bs-target="#edit-program-sessions" data-bs-toggle="modal" data-id="<%-programSession.id %>" data-min-credits ="<%- programSession.min_credits %>"
-                            data-max-credits ="<%- programSession.max_credits %>"
-                        data-acad-session = "<%- programSession.acad_session %>"
-                            ><i class="fa fa-edit"></i></a>
-                            
-                        </td>
-                    </tr>
-                <%}%>
-            </tbody>
-        </table>
-        <div class="d-flex justify-content-between">
-            <div>
-                <p>Total entries :&nbsp;<span id="page-no"></span>
-                </p>
-            </div>
-            <div>
-                <p id="pagination" class="pagination-search"></p>
+    <div class="modal" id="edit-program-sessions" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Acad Session Credits</h5>
+                    <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="acad-session-disabled">Acad Session:</label>
+                    <input type="text" id="acad-session-disabled" class="form-control" autocomplete="off" disabled><br>
+
+                    <div class="empty">
+                        <input type="hidden" id="program-session-id">
+                        <label class="form-label" for="min-credits">Minimum Credits:</label>
+                        <input class="form-control is-empty is-number" type="text" id="min-credits" autocomplete="off">
+                        <span class="text-danger d-none is-in-valid"></span><br>
+                    </div>
+
+                    <div class="empty">
+                        <label class="form-label" for="max-credits">Maximum Credits:</label>
+                        <input class="form-control is-empty is-number" type="text" id="max-credits" autocomplete="off">
+                        <span class="text-danger d-none is-in-valid"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" id="update-program-sessions">Update</button>
+                </div>
             </div>
         </div>
     </div>
-  </div>  
 </div>
-
-
-<div class="modal" id="edit-program-sessions" data-bs-backdrop="static">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Update Acad Session Credits</h5>
-                <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <label for="acad-session-disabled">Acad Session:</label>
-                <input type="text" id="acad-session-disabled" class="form-control" autocomplete="off" disabled><br>
-
-                <div class="empty">
-                    <input type="hidden" id="program-session-id">
-                    <label class="form-label" for="min-credits">Minimum Credits:</label>
-                    <input class="form-control is-empty is-number" type="text" id="min-credits" autocomplete="off">
-                    <span class="text-danger d-none is-in-valid"></span><br>
-                </div>
-
-                <div class="empty">
-                    <label class="form-label" for="max-credits">Maximum Credits:</label>
-                    <input class="form-control is-empty is-number" type="text" id="max-credits" autocomplete="off">
-                    <span class="text-danger d-none is-in-valid"></span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-primary" id="update-program-sessions">Update</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <%- include('../../partials/footer.ejs') %>
 <script>
     $(document).ready(function() {

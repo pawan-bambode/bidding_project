@@ -6,39 +6,39 @@
   integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
 <div class="main-content">
-  <div class="breadcrumbs-container">
-    <ul class="breadcrumb">
-        <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
-            <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
-        <%} }%>
-    </ul>
-  </div>
-  <div class="card card-custom-border-curv">
-    <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-2">Student List</h3>
-        <div>
+    <div class="breadcrumbs-container">
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
+                <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
+            <%} }%>
+        </ul>
+    </div>
+    <div class="card card-custom-border-curv">
+        <div class="card-header-custom d-flex justify-content-between p-1">
+            <h4 class="ms-2">Students</h4>
+            <div>
                 <button class="btn btn-danger disabled" id="delete-all-student-data">Delete All Student Data</button>
                 <button type="button" class="btn btn-success me-2"  data-bs-target="#upload-student-modal" data-bs-toggle="modal">Upload Student Data</button>
                 <button type="button" class="btn btn-danger ms-auto me-3"  id="refresh-student-data">
                     <i class="fa-solid fa-rotate p-1"></i>Refresh
                 </button>  
-       </div> 
-    </div>
-    <div class="card-body table-responsive">
-        <div class="d-flex justify-content-between">
-            <div>
-                <label>Show Entries</label>
-                <select class="form-select" id="changeEntry">
-                    <%for(let page of locals.page_filter){%>
-                       <option value="<%-page%>"><%-page%></option>
-                    <%}%>
-                </select>
-            </div>
+            </div> 
+        </div>
+        <div class="card-body table-responsive">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <label>Show Entries</label>
+                    <select class="form-select" id="changeEntry">
+                        <%for(let page of locals.page_filter){%>
+                            <option value="<%-page%>"><%-page%></option>
+                        <%}%>
+                    </select>
+                </div>
             <div class="col-md-3 mt-4">
                 <select class="form-select form-control select2" id="program-name-filter">
                     <option value="-1" selected>Select Program</option>
                     <%for(let program of programList){%>
-                    <option value="<%-program.program_id%>"><%-program.program_name%></option>
+                        <option value="<%-program.program_id%>"><%-program.program_name%></option>
                     <%}%>
                 </select>
             </div>
@@ -71,29 +71,43 @@
             </thead>
             <tbody>
              
-                  <% let count = 1 %>
-                  <%for(let studentData of studentDataList) {%>
-                      <tr data-id="<%-studentData.id %>" data-student-sap-id="<%-studentData.sap_id %>" data-student-roll-no="<%- studentData.roll_no %>" data-student-name = "<%- studentData.student_name %>" data-student-email ="<%- studentData.email %>" data-student-bidding-points="<%- studentData.bid_points %>" data-student-year-of-join ="<%- studentData.year_of_joining %>" data-student-pre-ele-credits  ="<%- studentData.previous_elective_credits %>">
-                          <td><%- count++ %></td>
-                          <td><%-studentData.sap_id %></td> 
-                          <td><%-studentData.roll_no %></td> 
-                          <td><%-studentData.student_name %></td> 
-                          <td><%-studentData.email %></td> 
-                          <td><%-studentData.program_name %></td> 
-                          <td><%-studentData.bid_points %></td> 
-                          <td><%-studentData.year_of_joining %></td> 
-                          <td><a class="edit-student-data" data-bs-target="#edit-student-data" data-bs-toggle="modal">
-                            <i class="fa fa-edit"></i></a>
-                            <a class="delete-student-data" data-id="<%-studentData.id %>"><i class="fa-solid fa-trash text-danger"></i></a>
-                            <input class="d-none checkbox-student-data" type="checkbox" name="student-data" data-id="<%- studentData.id %>" >
-                        </td>
-                      </tr>
-                  <%}%>
+                <% let count = 1 %>
+                <%for(let studentData of studentDataList) {%>
+                    <tr 
+                        data-id="<%-studentData.id %>" 
+                        data-student-sap-id="<%-studentData.sap_id %>" 
+                        data-student-roll-no="<%- studentData.roll_no %>" 
+                        data-student-name = "<%- studentData.student_name %>" 
+                        data-student-email ="<%- studentData.email %>" 
+                        data-student-bidding-points="<%- studentData.bid_points %>" 
+                        data-student-year-of-join ="<%- studentData.year_of_joining %>" 
+                        data-student-pre-ele-credits  ="<%- studentData.previous_elective_credits %>">
+
+                            <td><%- count++ %></td>
+                            <td><%-studentData.sap_id %></td> 
+                            <td><%-studentData.roll_no %></td> 
+                            <td><%-studentData.student_name %></td> 
+                            <td><%-studentData.email %></td> 
+                            <td><%-studentData.program_name %></td> 
+                            <td><%-studentData.bid_points %></td> 
+                            <td><%-studentData.year_of_joining %></td> 
+                            <td>
+                                <a class="edit-student-data" data-bs-target="#edit-student-data" data-bs-toggle="modal">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a class="delete-student-data" data-id="<%-studentData.id %>">
+                                    <i class="fa-solid fa-trash text-danger"></i>
+                                </a>
+                                <input class="d-none checkbox-student-data" type="checkbox" name="student-data" data-id="<%- studentData.id %>" >
+                            </td>
+                    </tr>
+                <%}%>
             </tbody>
         </table>
         <div class="d-flex justify-content-between">
             <div>
-                <p>Total entries:&nbsp;<span id="page-no"><%- pageCount%></span>
+                <p>Total entries:&nbsp;
+                    <span id="page-no"><%- pageCount%></span>
                 </p>
             </div>
             <div>
@@ -101,89 +115,82 @@
             </div>
         </div>
     </div>
-  </div>  
-</div>
-
+ 
     <div class="modal" id="edit-student-data" data-bs-backdrop="static">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Update Student Data</h5>
-                <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row empty">
-                    <div class="col-md-6">
-                        <input type="hidden" id="student-id">
-                        <label class="mb-2" for="student-name">Student Name :</label>
-                        <input class="form-control is-empty" type="text" id="student-name">
-                        <span class="text-danger d-none is-in-valid"></span>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Student Data</h5>
+                    <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row empty">
+                        <div class="col-md-6">
+                            <input type="hidden" id="student-id">
+                            <label class="mb-2" for="student-name">Student Name :</label>
+                            <input class="form-control is-empty" type="text" id="student-name">
+                            <span class="text-danger d-none is-in-valid"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="mb-2" for="student-email">Email :</label>
+                            <input class="form-control is-empty" type="text" id="student-email">
+                            <span class="text-danger d-none is-in-valid"></span>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="mb-2" for="student-email">Email :</label>
-                        <input class="form-control is-empty" type="text" id="student-email">
-                        <span class="text-danger d-none is-in-valid"></span>
+                    <div class="row empty">
+                        <div class="col-md-6">
+                            <label class="mb-2" for="bidding-points">Bid Points :</label>
+                            <input class="form-control is-empty is-number" type="text" id="bidding-points">
+                            <span class="text-danger d-none is-in-valid"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="mb-2" for="year-of-joining">Year of Joining :</label>
+                            <input class="form-control is-empty is-number" type="text" id="year-of-joining">
+                            <span class="text-danger d-none is-in-valid"></span>
+                        </div>
+                    </div>
+                    <div class="row empty">
+                        <div class="col-md-6">
+                            <label class="mb-2" for="previous-elective-credits">Previous Elective Credits :</label>
+                            <input class="form-control is-empty is-number" type="text" id="previous-elective-credits">
+                            <span class="text-danger d-none is-in-valid"></span>  
+                        </div>
                     </div>
                 </div>
-                <div class="row empty">
-                    <div class="col-md-6">
-                        <label class="mb-2" for="bidding-points">Bid Points :</label>
-                        <input class="form-control is-empty is-number" type="text" id="bidding-points">
-                        <span class="text-danger d-none is-in-valid"></span>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="mb-2" for="year-of-joining">Year of Joining :</label>
-                        <input class="form-control is-empty is-number" type="text" id="year-of-joining">
-                        <span class="text-danger d-none is-in-valid"></span>
-                    </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" id="update-student-data">Update</button>
                 </div>
-                <div class="row empty">
-                    <div class="col-md-6">
-                        <label class="mb-2" for="previous-elective-credits">Previous Elective Credits :</label>
-                        <input class="form-control is-empty is-number" type="text" id="previous-elective-credits">
-                        <span class="text-danger d-none is-in-valid"></span>  
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-primary" id="update-student-data">Update</button>
             </div>
         </div>
-    </div>
     </div>
 
     <div class="modal" id="upload-student-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
         <div class="modal-dialog">
-        <div class="modal-content">
-        
-            <div class="modal-header">
-            <h5 class="modal-title">Upload Student Data</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            
-            <div class="modal-body">
+            <div class="modal-content"> 
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Student Data</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
                     <div class="d-flex">
-                    <label class="form-label me-3">Import Student Data :</label>
-                    <form enctype="multipart/form-data"  method="post" id="upload-student-data-form">
-                    <input type="file" name="import-student-data" id="import-student-data" accept=".xlsx">
+                        <label class="form-label me-3">Import Student Data :</label>
+                        <form enctype="multipart/form-data"  method="post" id="upload-student-data-form">
+                        <input type="file" name="import-student-data" id="import-student-data" accept=".xlsx">
                     </div>
                     <div class="d-flex justify-content-between align-item-center mt-5">
-                    <input type="submit" class="btn btn-success mt-2 d-none" id="upload-student-data-button" value="Upload Student Data"></input> 
-                    </form> 
-                
-                <a href="/admin/generate-excel-student" download="sampleForImportStudentData.xlsx" name="sample-for-import-student" class="text-decoration-none align-self-end">Sample for Import Student Data</a>
+                        <input type="submit" class="btn btn-success mt-2 d-none" id="upload-student-data-button" value="Upload Student Data"></input> 
+                        </form> 
+                        <a href="/admin/generate-excel-student" download="sampleForImportStudentData.xlsx" name="sample-for-import-student" class="text-decoration-none align-self-end">Sample for Import Student Data</a>
+                    </div> 
                 </div>
-            
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
-    
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        
-        </div>
         </div>
     </div>
+</div>    
 <%- include('../partials/footer.ejs') %>
 <script>
     $(document).ready(function() {

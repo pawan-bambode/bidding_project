@@ -82,7 +82,7 @@ module.exports = {
     drop: (req, res) =>{
       
         let id = req.body.id;
-        let studentId = req.body.studendId;
+        let studentId = req.body.studentId;
         let divisionId = req.body.divisionBatchId;
         let roundId = req.body.roundId;
         addDrop.drop(res.locals.slug, res.locals.biddingId, id, studentId, divisionId, roundId, res.locals.userId).then(result => {

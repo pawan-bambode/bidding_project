@@ -5,144 +5,179 @@
 <div class="main-content">
 
     <ul class="d-flex round-wises justify-content-between align-items-end bidding-round-wise d-none">
-        <li class="ms-5 active" style="height: 58px;">
-          <a class="text-decoration-none text-dark">
-            <div class="d-flex flex-column justify-content-center align-items-center h-100">
-              <div class="d-flex justify-content-between align-items-center active-div">
-                <h4 class="ms-2 round-name"></h4>
-              </div>
+      <li class="ms-5 active" style="height: 58px;">
+        <a class="text-decoration-none text-dark">
+          <div class="d-flex flex-column justify-content-center align-items-center h-100">
+            <div class="d-flex justify-content-between align-items-center active-div">
+              <h4 class="ms-2 round-name"></h4>
             </div>
-          </a>
-        </li>
-      </ul>
-
-   <div class="card card-custom-border-curv bidding-round-wise d-none">
+          </div>
+        </a>
+      </li>
+    </ul>
+  
+    <div class="card card-custom-border-curv bidding-round-wise d-none">
         <div class="card-header-custom d-flex justify-content-between p-1">
             <h4 class="ms-2">Demand Estimation Round</h4>
-            <button class="btn btn-danger time-remaining me-5"></button> 
+                <button class="btn btn-danger time-remaining me-5"></button>
         </div>
         <div class="card-body table-responsive">
             <div class="row ps-5 pe-5 d-flex justify-content-between">
                 <div class="col-md-4">
-                    <h6>Minimum / Maximum Yearly Credits :&nbsp;<span id="yearly-credits"><%- totalCreditsCounts %></span></h6>
+                    <h6>Minimum / Maximum Yearly Credits :&nbsp;
+                        <span id="yearly-credits"><%- totalCreditsCounts %></span>
+                    </h6>
                 </div>
                 <div class="col-md-4">
-                    <h6>Concentraion Name :&nbsp;<span class="d-none" id="concentration-name"><%- concentrationSettings.concentration_name %></span><span class="concentration-not-selected d-none">Select Concentration</span></h6>
-                </div>
-            </div>
-           
-            <div class="row ps-5 pe-5">
-                <%for(let credit of creditList) { %>
-                    <div class="col-md-4 credits-point-target">
-                        <h6><%- credit.acad_session %> Credits :&nbsp;<span  id="credits-points-target-<%- credit.sap_acad_session_id %>"><%- credit.min_credits %></span></h6>
-                    </div>
-                <% } %>
-            </div>
-
-            <div class="row ps-5 pe-5">
-                    <%for(let acadSession of dropdownAcadSessionList) { %>
-                        <div class="col-md-4 credit-points">
-                            <h6><%- acadSession.acad_session %> Selected Credits :&nbsp;<span id="credits-points-<%- acadSession.sap_acad_session_id %>">0</span></h6>
-                        </div>
-                    <% } %>
-            </div>
-
-            <div class="row ps-5 pe-5">
-                <div class="col-md-4">
-                    <h6>Start Time :&nbsp;<span id="start-time"></span><span class="demand-estimation-not-created d-none">Demand Estimation Not Created Yet</span></h6>
-                </div>    
-                <div class="col-md-4">
-                    <h6>End Time :&nbsp;<span id="end-time"></span><span class="demand-estimation-not-created d-none">Demand Estimation Not Created Yet</span></h6>
-                </div>
-                <div class="col-md-4">
-                    <h6>Current Time : &nbsp;<span id="current-date-time"></span></h6>
+                    <h6>Concentration Name :&nbsp;
+                        <span class="d-none" id="concentration-name"><%- concentrationSet.name %></span>
+                        <span class="concentration-not-selected d-none">Select Concentration</span>
+                    </h6>
                 </div>
             </div>
             
+            <div class="row ps-5 pe-5">
+                <% for(let credit of creditList) { %>
+                    <div class="col-md-4 credits-point-target">
+                        <h6><%- credit.name %> Credits :&nbsp;
+                            <span id="credits-points-target-<%- credit.id %>"><%- credit.credits %></span>
+                        </h6>
+                    </div>
+                <% } %>
+            </div>
+        
+            <div class="row ps-5 pe-5">
+                <% for(let acadSession of acadSessions) { %>
+                    <div class="col-md-4 credit-points">
+                        <h6><%- acadSession.acad_session %> Selected Credits :&nbsp;
+                            <span id="credits-points-<%- acadSession.id %>">0</span>
+                        </h6>
+                    </div>
+                <% } %>
+            </div>
+        
+            <div class="row ps-5 pe-5">
+                <div class="col-md-4">
+                    <h6>Start Time :&nbsp;
+                        <span id="start-time"></span>
+                        <span class="round-not-created d-none">Demand Estimation Not Created Yet</span>
+                    </h6>
+                </div>
+                <div class="col-md-4">
+                    <h6>End Time :&nbsp;
+                        <span id="end-time"></span>
+                        <span class="round-not-created d-none">Demand Estimation Not Created Yet</span>
+                    </h6>
+                </div>
+                <div class="col-md-4">
+                    <h6>Current Time : &nbsp;
+                        <span id="current-date-time"></span>
+                    </h6>
+                </div>
+            </div>
         </div>
-    </div> 
+    </div>
   
     <div class="card card-custom-border-curv mt-5 pb-1 bidding-round-wise d-none round-wise-modal">
         <div class="card-header-custom d-flex justify-content-between p-1">
             <h3 class="ms-2">Selected Courses</h3>
             <div class="me-3 d-flex demand-estimation-status">
-                
-                <button class="btn btn-danger me-3 selected-credits"><h6>Selected Course Credits :&nbsp;
-                    <% if (selectCourse.length > 0) { %>
-                        <span id="selected-course-credits"><%- concentrationSettings.total_elective_credits %></span></h6></button>
-                     <% }  else {%>
-                    <span id="selected-course-credits">0</span></h6></button>
-                     <% } %>
-                     <button class="btn btn-danger me-3 areas-count"><h6>No.of Areas to cover :&nbsp;<span id="areas-count"><%- concentrationSettings.no_of_areas_to_cover %></span></h6></button>
-                <button class="btn btn-success me-3"><h6>Min Credits per Area :&nbsp;<span id="min-credits-per-area"><%- concentrationSettings.min_credits_per_area %></span></h6></button>
-                <button class="btn btn-success me-3 max-credits-per-area"><h6>Max Credits per Area :&nbsp;<span id="max-credits-per-area">
-                    <%- concentrationSettings.max_credits_per_area %>
-                </span></h6></button>
-                <%if(concentrationSettings.min_credits_in_primary_area > 0) { %>
-                    <button class="btn btn-danger me-3 min-credits-in-primary-area"><h6>Min Credits in Primary Area :&nbsp;<span id="min-credits-in-primary-area">
-                        <%- concentrationSettings.min_credits_in_primary_area %>
-                    </span></h6></button>
-                    <% }%>
+                <button class="btn btn-danger me-3 selected-credits">
+                    <h6>Selected Course Credits :&nbsp;
+                        <% if (selectCourse.length > 0) { %>
+                            <span id="selected-course-credits"><%- concentrationSet.totalCredits %></span>
+                        <% } else { %>
+                            <span id="selected-course-credits">0</span>
+                        <% } %>
+                    </h6>
+                </button>
+                <button class="btn btn-danger me-3 areas-count">
+                    <h6>No.of Areas to cover :&nbsp;
+                        <span id="areas-count"><%- concentrationSet.areasCover %></span></h6>
+                </button>
+                <button class="btn btn-success me-3">
+                    <h6>Min Credits per Area :&nbsp;
+                        <span id="min-credits-per-area"><%- concentrationSet.minCreditsPerArea %></span>
+                    </h6>
+                </button>
+                <button class="btn btn-success me-3 max-credits-per-area">
+                    <h6>Max Credits per Area :&nbsp;
+                        <span id="max-credits-per-area"><%- concentrationSet.maxCreditsPerArea %></span>
+                    </h6>
+                </button>
+                <% if(concentrationSet.min_credits_in_primary_area > 0) { %>
+                    <button class="btn btn-danger me-3 min-credits-in-primary-area">
+                        <h6>Min Credits in Primary Area :&nbsp;
+                            <span id="min-credits-in-primary-area"><%-concentrationSet.minCreditsInPrimayArea %></span>
+                        </h6>
+                    </button>
+                <% } %>
                 <button class="btn btn-danger me-3 criteria-status"><h6>Criteria Not Met</h6></button>
             </div>
         </div>
-            <div class="card-body table-responsive">
-                <table class="table custom_row table-bordered mt-4 custom-table" id="selected-course-table">
-                  <thead>
-                      <th>#</th>
-                      <th>Area</th>
-                      <th>Course</th>
-                      <th>Acad Session</th>
-                      <th>Credits</th>
-                      <th class="hide-column-after-round-over">Action</th>
-                  </thead>
-                  <tbody>
-                        <% let selectedCourseIndex = 1 %>
-                        <% if (selectCourse.length > 0) { %>
-                          <% for (let selectedCourse of selectCourse) { %>
-                            <tr data-course-id = "<%- selectedCourse.id %>" data-area="<%-selectedCourse.area_name %>" data-course-name="<%- selectedCourse.course_name %>" data-acad-session="<%-selectedCourse.acad_session %>" data-credits="<%-selectedCourse.credits %>" data-acad-session-id="<%-selectedCourse.sap_acad_session_id %>">
 
-                              <td class="index-row-demand-estimation"><%- selectedCourseIndex++ %></td>
-                              <td><%- selectedCourse.area_name %></td>
-                              <td><%- selectedCourse.course_name %></td>
-                              <td><%- selectedCourse.acad_session %></td>
-                              <td><%- selectedCourse.credits %></td>
-                              <td><button class="btn btn-danger cancel-course">Cancel</button></td>
+        <div class="card-body table-responsive">
+            <table class="table custom_row table-bordered mt-4 custom-table" id="selected-course-table">
+                <thead>
+                    <th>#</th>
+                    <th>Area</th>
+                    <th>Course</th>
+                    <th>Acad Session</th>
+                    <th>Credits</th>
+                    <th class="hide-column-after-round-over">Action</th>
+                </thead>
+                <tbody>
+                    <% let selectedCourseIndex = 1 %>
+                    <% if (selectCourse.length > 0) { %>
+                        <% for (let selectedCourse of selectCourse) { %>
+                            <tr data-course-id="<%- selectedCourse.id %>"
+                                data-area="<%-selectedCourse.area_name %>" 
+                                data-course-name="<%- selectedCourse.course_name %>" 
+                                data-acad-session="<%-selectedCourse.acad_session %>" 
+                                data-credits="<%-selectedCourse.credits %>" 
+                                data-acad-session-id="<%-selectedCourse.sap_acad_session_id %>">
+                                
+                                <td class="index-row-demand-estimation"><%- selectedCourseIndex++ %></td>
+                                <td><%- selectedCourse.area_name %></td>
+                                <td><%- selectedCourse.course_name %></td>
+                                <td><%- selectedCourse.acad_session %></td>
+                                <td><%- selectedCourse.credits %></td>
+                                <td><button class="btn btn-danger cancel-course">Cancel</button></td>
                             </tr>
-                          <% } %>
-                        <% } %>                  
-                  </tbody>
-                </table>
-            </div>
-            <button class="btn btn-success save-select-course d-none w-50 m-auto mb-4">Save</button>
-    </div>    
-
+                        <% } %>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+       <button class="btn btn-success save-select-course d-none w-50 m-auto mb-4">Save</button>
+    </div>
+  
     <div class="card card-custom-border-curv mt-5 bidding-round-wise round-wise-modal d-none">
-      <div class="card-header-custom d-flex justify-content-between p-1">
-          <h3 class="ms-2">Available Courses</h3>
-      </div>
-   
-      <div class="card-body table-responsive">
-          <div class="d-flex">
-       
-              <div class="col-md-3 ms-5">
-                  <label class="form-label mb-1" for="acad-session-change">Select Acad Session:</label>
-                  <select class="form-select form-control select2" id="acad-session-change">
-                      <option selected disabled value="-1">--Select Acad Session-- </option>
-                       <%for(let acadSession of dropdownAcadSessionList) { %>
-                          <option value="<%- acadSession.sap_acad_session_id %>"><%- acadSession.acad_session %></option>
-                      <% } %>    
-                  </select>
-               </div>   
-                  <div class="col-md-3 ms-5">
+        <div class="card-header-custom d-flex justify-content-between p-1">
+            <h3 class="ms-2">Available Courses</h3>
+        </div>
+  
+        <div class="card-body table-responsive">
+            <div class="d-flex">
+                <div class="col-md-3 ms-5">
+                    <label class="form-label mb-1" for="acad-session-change">Select Acad Session:</label>
+                    <select class="form-select form-control select2" id="acad-session-change">
+                        <option selected disabled value="-1">--Select Acad Session-- </option>
+                            <%for(let acadSession of acadSessions) { %>
+                                <option value="<%- acadSession.id %>"><%- acadSession.name %></option>
+                            <% } %>
+                    </select>
+                </div>
+                <div class="col-md-3 ms-5">
                     <label class="form-label mb-1" for="area-change">Select Area:</label>
-                  <select class="form-select form-control select2" id="area-change">
-                    <option selected disabled value="-1">--Select Area-- </option>   
-                </select>
-              </div>
-          </div>
-          <div class="card-body table-responsive">
-              <table class="table custom_row table-bordered mt-4 custom-table" id="available-course-table">
+                    <select class="form-select form-control select2" id="area-change">
+                        <option selected disabled value="-1">--Select Area-- </option>
+                    </select>
+            </div>
+        </div>
+
+        <div class="card-body table-responsive">
+            <table class="table custom_row table-bordered mt-4 custom-table" id="available-course-table">
                 <thead>
                     <th>#</th>
                     <th>Area</th>
@@ -154,54 +189,57 @@
                 <tbody>
                     <% let count = 1 %>
                     <%for(let course of courseList) {%>
-                        <tr data-course-id="<%- course.id %>" data-area="<%- course.area_name %>" data-course-name="<%-course.course_name %>" data-acad-session="<%-course.acad_session %>"
-                            data-credits ="<%- course.credits %>" data-acad-session-id ="<%-course.sap_acad_session_id %>"
-                            >
+                        <tr data-course-id="<%- course.id %>" 
+                            data-area="<%- course.area_name %>" data-course-name="<%-course.course_name %>" data-acad-session="<%-course.acad_session %>" data-credits="<%- course.credits %>" data-acad-session-id="<%-course.sap_acad_session_id %>">
+
                             <td><%- count++ %></td>
-                            <td><%-course.area_name %></td> 
-                            <td><%-course.course_name %></td> 
-                            <td><%-course.acad_session %></td> 
-                            <td><%-course.credits %></td> 
+                            <td><%-course.area_name %></td>
+                            <td><%-course.course_name %></td>
+                            <td><%-course.acad_session %></td>
+                            <td><%-course.credits %></td>
                             <td><button class="btn btn-secondary add-course">Add</button></td>
                         </tr>
                     <%}%>
                 </tbody>
-              </table>
-              <div class="d-flex justify-content-between">
+            </table>
+
+            <div class="d-flex justify-content-between">
                 <div>
-                    <p>Total entries :&nbsp;<span id="page-no"></span>
+                    <p>Total entries :&nbsp;
+                        <span id="page-no"></span>
                     </p>
                 </div>
-                
             </div>
-          </div>
-      </div>    
-    
+        </div>
+    </div>
+  
+    <div class="card card-custom-border-curv empty-bidding-round-wise">
+        <div class="card-header-custom d-flex justify-content-between">
+            <h4 class="ms-2">Demand Estimation Rounds</h4>
+        </div>
+        <div class="card-body table-responsive d-flex justify-content-center align-items-center">
+            <p>No Demand Estimation Rounds</p>
+        </div>
+    </div>
 </div>
-<div class="card card-custom-border-curv empty-bidding-round-wise">
-    <div class="card-header-custom d-flex justify-content-between">
-      <h4 class="ms-2">Demand Estimation Rounds</h4>
-    </div>
-    <div class="card-body table-responsive d-flex justify-content-center align-items-center">
-      <p>No Demand Estimation Rounds</p>
-    </div>
-  </div> 
+  
 
 <%- include('../partials/footer.ejs') %>
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
 <script>
 $(document).ready(function() {
 
     demandEstimationTimeCountDown();
     setInterval(demandEstimationTimeCountDown, 1000);
     setActiveMenuItem(`<%- active %>`);
+    let socket = io();
 
-    let concentrationSettings = JSON.parse('<%- JSON.stringify(concentrationSettings) %>');
-    let minCreditsPerAreas = concentrationSettings.min_credits_per_area;
-    let numOfAeaToCover = concentrationSettings.no_of_areas_to_cover;
-    let maxCreditsPerAreas = concentrationSettings.max_credits_per_area;
-    let totalCredits = concentrationSettings.total_elective_credits;
+    let concentrationSet = JSON.parse('<%- JSON.stringify(concentrationSet) %>');
+    
+    let minCreditsPerAreas = concentrationSet.minCreditsPerArea;
+    let numOfAeaToCover = concentrationSet.areasCover;
+    let maxCreditsPerAreas = concentrationSet.maxCreditsPerArea;
+    let totalCredits = concentrationSet.totalCredits;
     let selectedCourse = JSON.parse('<%- JSON.stringify(selectCourse) %>');
 
     let creditsList = `<%- JSON.stringify(creditList) %>`;
@@ -243,12 +281,11 @@ $(document).ready(function() {
         $('.round-wise-modal').addClass('d-none')
     
     }
-    let socket = io();
-   
+
     socket.emit('roundEnded', { 
          slugName: "<%- slug %>",
          startTime :  JSON.parse(`<%- JSON.stringify(startAndEndTime) %>`)
-        });   
+    });   
 
     socket.emit('demandEstimationPageLoaded', { 
               slugName: "<%- slug %>",
@@ -340,13 +377,11 @@ $(document).ready(function() {
         });
     }
 
-   
-
     if (timeRemaing.trim() == 'Round Ended') {
         $('.hide-column-after-round-over').addClass('d-none');
     }
 
-    if (concentrationSettings == 0) {
+    if (concentrationSet == 0) {
         $('.concentration-not-selected').removeClass('d-none');
         $('#concentration-name').addClass('d-none');
     } else {
@@ -354,7 +389,7 @@ $(document).ready(function() {
         $('#concentration-name').removeClass('d-none');
     }
 
-    let acadSessionCount = '<%- dropdownAcadSessionList.length %>';
+    let acadSessionCount = '<%- acadSessions.length %>';
     let completedCreditsCount = 0;
     let selectedCourseList = ('<%- selectCourse.length %>');
     let selectedCourseList1 = JSON.parse(`<%-JSON.stringify(selectCourse) %>`);
@@ -376,10 +411,7 @@ $(document).ready(function() {
         let rowId = $(this).closest('tr').find('td:first-child').text();
         let selectedTableLenght = $('#selected-course-table tbody tr').length;
         count = selectedTableLenght + 1;
-      
-        
-
-        let areaCountText = concentrationSettings.no_of_areas_to_cover;
+        let areaCountText = concentrationSet.no_of_areas_to_cover;
 
         let CourseCredits = {
             area: area,
@@ -403,10 +435,6 @@ $(document).ready(function() {
         areaAddedArray.push(CourseCredits);
         acadSessionArray.push(acadSesionsObject);
         completedAreaCount.push(areaObject);
-
-
-      
-
         let acadSEssionCount = acadSessionCounttyper(acadSessionArray);
 
         const acadSessionTotalsArray = calculateAcadSessionTotals(acadSEssionCount);
@@ -769,7 +797,7 @@ $(document).ready(function() {
         }
     });
 
-    function ajaxTable(courseList, completedAreaCount, concentrationSettings) {
+    function ajaxTable(courseList, completedAreaCount, concentrationSet) {
         $("#available-course-table tbody").empty();
         let courseArray = [];
         let maxCreditsOneAreas = $('#selected-course-table tbody').attr('max-credits-one-area');

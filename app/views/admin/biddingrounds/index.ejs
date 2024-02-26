@@ -7,299 +7,302 @@
         <ul class="breadcrumb">
             <% if (breadcrumbs) { %>
                 <% for (let crumbs of breadcrumbs) { %>
-                    <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
-                     %>
+                    <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;%>
                     <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
                 <% } %>
             <% } %>
         </ul>
     </div>
 
-  <div class="card card-custom-border-curv">
-    <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-2">Bidding Rounds</h3>
-        <% if (biddingPredefineRounds.length > 0) { %>
-        <button type="button" class="btn add-btn-program ms-auto me-3"  id="add-bidding-rounds" data-bs-target="#add-bidding-rounds-modal"
-         data-bs-toggle="modal">
-            <i class="fa-solid fa-plus p-1"></i>
-        </button>  
-        <% } %>
-    </div>
-    <div class="card-body table-responsive">
-        <div class="d-flex justify-content-between">
-            <div>
-                <label>Show Entries</label>
-                <select class="form-select" id="changeEntry">
-                    <%for(let page of locals.page_filter){%>
-                       <option value="<%-page%>"><%-page%></option>
+    <div class="card card-custom-border-curv">
+        <div class="card-header-custom d-flex justify-content-between p-1">
+            <h4 class="ms-2">Round Settings</h4>
+                <% if (biddingPredefineRounds.length > 0) { %>
+                    <button type="button" class="btn add-btn-program ms-auto me-3" id="add-bidding-rounds" 
+                            data-bs-target="#add-bidding-rounds-modal" data-bs-toggle="modal">
+                        <i class="fa-solid fa-plus p-1"></i>
+                    </button>  
+                <% } %>
+        </div>
+        <div class="card-body table-responsive">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <label>Show Entries</label>
+                    <select class="form-select" id="changeEntry">
+                        <%for(let page of locals.page_filter){%>
+                        <option value="<%-page%>"><%-page%></option>
+                        <%}%>
+                    </select>
+                </div>
+                <div>
+                    <div class="table-searchbar-container d-flex justify-content-around p-1">
+                        <button type="button" id="searchkeyword-button" class="border-0 outline-0">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+                    </div>
+                </div>
+            </div>
+
+            <table class="table custom_row table-bordered mt-4 custom-table" id="bidding-rounds-table">
+                <thead>
+                    <th>#</th>
+                    <th>Round Name</th>
+                    <th>Total Students</th>
+                    <th>Total Courses</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Actions</th>   
+                </thead>
+                <tbody>
+                    <% let count = 1 %>
+                    <%for(let biddingRound of biddingRoundList) {%>
+                        <tr 
+                            data-bidding-round-id="<%- biddingRound.id %>" 
+                            data-bidding-round-lid="<%-biddingRound.round_lid %>" 
+                            data-bit-limit="<%- biddingRound.bid_limit %>" 
+                            data-start-time="<%- biddingRound.start_date_time_attr %>" 
+                            data-end-time="<%- biddingRound.end_date_time_attr %>" 
+                            data-total-students="<%- biddingRound.total_students %>" 
+                            data-total-course="<%- biddingRound.total_courses %>" 
+                            data-is-bid-limit="<%- biddingRound.is_bid_limit %>" 
+                            data-bid-limit-points="<%- biddingRound.bid_limit %>"
+                            data-round-name="<%-biddingRound.round_name %>"
+                        >
+
+                            <td><%- count++ %></td>
+                            <td><%-biddingRound.round_name %></td>
+                            <td><%- biddingRound.total_students %></td>
+                            <td><%- biddingRound.total_courses %></td> 
+                            <td><%- biddingRound.start_date_time %></td>
+                            <td><%- biddingRound.end_date_time %></td>
+                            <td><a class="edit-bidding-rounds" data-bs-target="#edit-bidding-rounds" data-bs-toggle="modal" data-round-lid =<%-biddingRound.round_lid %>><i class="fa fa-edit"></i></a>
+                                <a class="delete-bidding-rounds" data-id="<%-biddingRound.round_lid %>"><i class="fa-solid fa-trash text-danger"></i></a>
+                            </td>
+                        </tr>
                     <%}%>
-                </select>
-            </div>
-            <div>
-                <div class="table-searchbar-container d-flex justify-content-around p-1">
-                    <button type="button" id="searchkeyword-button" class="border-0 outline-0">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries :&nbsp;
+                        <span id="page-no"></span>
+                    </p>
+                </div>
+                <div>
+                    <p id="pagination" class="pagination-search"></p>
                 </div>
             </div>
         </div>
+    </div>  
 
-        <table class="table custom_row table-bordered mt-4 custom-table" id="bidding-rounds-table">
-            <thead>
-                <th>#</th>
-                <th>Round Name</th>
-                <th>Total Students</th>
-                <th>Total Courses</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Actions</th>
-               
-            </thead>
-            <tbody>
-                <% let count = 1 %>
-                <%for(let biddingRound of biddingRoundList)
-                
-                {%>
-                    <tr data-bidding-round-id="<%- biddingRound.id %>" data-bidding-round-lid="<%-biddingRound.round_lid %>" data-bit-limit="<%- biddingRound.bid_limit %>" data-start-time="<%- biddingRound.start_date_time_attr %>" data-end-time="<%- biddingRound.end_date_time_attr %>" 
-                    data-total-students="<%- biddingRound.total_students %>" data-total-course="<%- biddingRound.total_courses %>" data-is-bid-limit="<%- biddingRound.is_bid_limit %>" data-bid-limit-points="<%- biddingRound.bid_limit %>"
-                    data-round-name="<%-biddingRound.round_name %>">
-                        <td><%- count++ %></td>
-                        <td><%-biddingRound.round_name %></td>
-                        <td><%- biddingRound.total_students %></td>
-                        <td><%- biddingRound.total_courses %></td> 
-                        <td><%- biddingRound.start_date_time %></td>
-                        <td><%- biddingRound.end_date_time %></td>
-                        <td><a class="edit-bidding-rounds" data-bs-target="#edit-bidding-rounds" data-bs-toggle="modal" data-round-lid =<%-biddingRound.round_lid %>><i class="fa fa-edit"></i></a>
-                            <a class="delete-bidding-rounds" data-id="<%-biddingRound.round_lid %>"><i class="fa-solid fa-trash text-danger"></i></a>
-                        </td>
-                    </tr>
-                <%}%>
-            </tbody>
-        </table>
-        <div class="d-flex justify-content-between">
-            <div>
-                <p>Total entries :&nbsp;<span id="page-no"></span>
-                </p>
-            </div>
-            <div>
-                <p id="pagination" class="pagination-search"></p>
-            </div>
-        </div>
-    </div>
-  </div>  
-</div>
-
-  <div class="modal" id="total-student-bidding-rounds" data-bs-backdrop="static">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5>Select Students</h5>
-                <div class="d-flex justify-content-between">
-                <h5 class="px-3">Total Selected Students  : <span id="total-selected-students">0</span></h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-            </div>
-            <div class="modal-body">
-               
-                <table class="table table-responsive custom_row table-bordered mt-4 custom-table" >
-                    <thead>
-                        <th>Id <input type="checkbox" name="bidding-rounds-checkbox" id="bidding-rounds-checkbox"></th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Program</th>
-                    </thead>
-                <tbody>
-              <% for(let student of biddingRoundsStudents) { %>
-                  <tr data-student-id="<%- student.student_lid %>">
-                    <td><input type="checkbox" class="student-sap-id-bidding-rounds"><%- student.sap_id %></td>
-                    <td><%- student.student_name %></td>
-                    <td><%- student.email %></td>
-                    <td><%- student.program_name %></td>
-                  </tr>
-                <% } %>
-                </tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success disabled" data-bs-dismiss="modal" id="import-total-student-bidding-rounds">Save</button>
-            </div>
-        </div>
-    </div>
-  </div>
-
-  <div class="modal" id="update-total-student-bidding-rounds" data-bs-backdrop="static">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5>Update Bidding Rounds </h5>
-                <div class="d-flex justify-content-between">
-                <h4 class="px-3">Total Selected Students  : <span id="update-total-selected-students">0</span></h4>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-            </div>
-            <div class="modal-body">
-               
-                <table class="table table-responsive custom_row table-bordered mt-4 custom-table" id ="course-list-checked">
-                    <thead>
-                        <th>Id <input type="checkbox" name="bidding-rounds-checkbox" id="update-bidding-rounds-checkbox"></th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Program</th>
-                    </thead>
-                <tbody>
-              <% for(let student of biddingRoundsStudents) { %>
-                  <tr data-student-id = "<%- student.student_lid %>">
-                    <td><input type="checkbox" class="update-student-sap-id-bidding-rounds"><%- student.sap_id %></td>
-                    <td><%- student.student_name %></td>
-                    <td><%- student.email %></td>
-                    <td><%- student.program_name %></td>
-                  </tr>
-                <% } %>
-                </tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success" data-bs-dismiss="modal" id="update-total-student">Update</button>
-            </div>
-        </div>
-    </div>
-  </div>
- 
-  <div class="modal" id="total-courses-bidding-rounds" data-bs-backdrop="static">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5>Select Courses</h5>
-                <div class="d-flex justify-content-between">
-                  <h5>Total Selected Courses : <span id="total-selected-courses">0</span></h5>
-                  <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>  
-            </div>
-            <div class="modal-body">
-                <table class="table table-responsive custom_row table-bordered mt-4 custom-table">
-                    <thead>
-                        <th>Name</th>
-                        <th>Credits</th>
-                        <th>Action <input type="checkbox" name="bidding-rounds-checkbox" id="bidding-rounds-course-checkbox"></th>
-                    </thead>
-                <tbody>
-              <% for(let biddingRoundCourse of biddingRoundCourseList) { 
-                %>
-                  <tr data-course-id="<%- biddingRoundCourse.id %>">
-                    <td class="d-none"><%-biddingRoundCourse.id %></td>
-                    <td><%- biddingRoundCourse.course_name %></td>
-                    <td><%- biddingRoundCourse.credits %></td>
-                    <td><input type="checkbox" class="bidding-round-courses"> </td>
-                  </tr>
-                <% } %>
-                </tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success disabled" id="total-course-bidding-rounds" data-bs-dismiss="modal">Save</button>
-            </div>
-        </div>
-    </div>
-  </div>
-
-  
-  <div class="modal" id="update-total-courses-bidding-rounds" data-bs-backdrop="static">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Update  Bidding Rounds</h3>
-                <div class="d-flex justify-content-between">
-                  <h4>Total Selected Courses :<span id="update-total-selected-courses">0</span></h4>
-                  <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>  
-            </div>
-            <div class="modal-body">
-                <table class="table table-responsive custom_row table-bordered mt-4 custom-table">
-                    <thead>
-                        <th>Name</th>
-                        <th>Credits</th>
-                        <th>Action <input type="checkbox" name="update-bidding-rounds-checkbox" id="update-bidding-rounds-course-checkbox"></th>
-                    </thead>
-                <tbody>
-              <% for(let biddingRoundCourse of biddingRoundCourseList) { %>
-                  <tr data-course-id ="<%-biddingRoundCourse.id %>" >
-                    <td class="d-none"><%-biddingRoundCourse.id %></td>
-                    <td><%- biddingRoundCourse.course_name %></td>
-                    <td><%- biddingRoundCourse.credits %></td>
-                    <td><input type="checkbox" class="update-bidding-round-courses"> </td>
-                  </tr>
-                <% } %>
-                </tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success" id="update-course-bidding-rounds" data-bs-dismiss="modal">Update</button>
-            </div>
-        </div>
-    </div>
-  </div>
-  <div class="modal" id="bidding-rounds-add-date-time" data-bs-backdrop="static">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5>Select Date Time</h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <label class="mb-2" for="start-date-time">Start date time :</label>
-                <input type="hidden" id="bidding-round-id">
-                <input class="form-control" type="datetime-local" id="start-date-time">
-                <label class="mb-2" for="end-date-time">End date time :</label>
-                <input class="form-control" type="datetime-local" id="end-date-time">  
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success disabled" data-bs-dismiss="modal" id="save-bidding-rounds-date-time">Save</button>
-            </div>
-        </div>
-    </div>
-  </div>
-  <div class="modal" id="add-bidding-rounds-modal">
-    <div class="modal-dialog modal-fullscreen">
+    <div class="modal" id="total-student-bidding-rounds" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                  <h4>Select Bidding Rounds</h4>
-                  <button class="btn-close full-modal-left-sidebar" data-bs-dismiss="modal"></button>
+                    <h5>Select Students</h5>
+                    <div class="d-flex justify-content-between">
+                    <h5 class="px-3">Total Selected Students  : <span id="total-selected-students">0</span></h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-responsive custom_row table-bordered mt-4 custom-table" >
+                        <thead>
+                            <th>Id <input type="checkbox" name="bidding-rounds-checkbox" id="bidding-rounds-checkbox"></th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Program</th>
+                        </thead>
+                        <tbody>
+                            <% for(let student of biddingRoundsStudents) { %>
+                                <tr data-student-id="<%- student.student_lid %>">
+                                    <td><input type="checkbox" class="student-sap-id-bidding-rounds"><%- student.sap_id %></td>
+                                    <td><%- student.student_name %></td>
+                                    <td><%- student.email %></td>
+                                    <td><%- student.program_name %></td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success disabled" data-bs-dismiss="modal" id="import-total-student-bidding-rounds">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="update-student-count" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Update Bidding Rounds </h5>
+                    <div class="d-flex justify-content-between">
+                    <h4 class="px-3">Total Selected Students  : <span id="update-total-selected-students">0</span></h4>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                
+                    <table class="table table-responsive custom_row table-bordered mt-4 custom-table" id ="course-list-checked">
+                        <thead>
+                            <th>Id <input type="checkbox" name="bidding-rounds-checkbox" id="update-bidding-rounds-checkbox"></th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Program</th>
+                        </thead>
+                    <tbody>
+                <% for(let student of biddingRoundsStudents) { %>
+                    <tr data-student-id = "<%- student.student_lid %>">
+                        <td><input type="checkbox" class="update-student-sap-id-bidding-rounds"><%- student.sap_id %></td>
+                        <td><%- student.student_name %></td>
+                        <td><%- student.email %></td>
+                        <td><%- student.program_name %></td>
+                    </tr>
+                    <% } %>
+                    </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" data-bs-dismiss="modal" id="update-total-student">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <div class="modal" id="total-courses-bidding-rounds" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Select Courses</h5>
+                    <div class="d-flex justify-content-between">
+                    <h5>Total Selected Courses : <span id="total-selected-courses">0</span></h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>  
+                </div>
+                <div class="modal-body">
+                    <table class="table table-responsive custom_row table-bordered mt-4 custom-table">
+                        <thead>
+                            <th>Name</th>
+                            <th>Credits</th>
+                            <th>Action <input type="checkbox" name="bidding-rounds-checkbox" id="bidding-rounds-course-checkbox"></th>
+                        </thead>
+                        <tbody>
+                            <% for(let biddingRoundCourse of biddingRoundCourseList) { 
+                                %>
+                                <tr data-course-id="<%- biddingRoundCourse.id %>">
+                                    <td class="d-none"><%-biddingRoundCourse.id %></td>
+                                    <td><%- biddingRoundCourse.course_name %></td>
+                                    <td><%- biddingRoundCourse.credits %></td>
+                                    <td><input type="checkbox" class="bidding-round-courses"> </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success disabled" id="total-course-bidding-rounds" data-bs-dismiss="modal">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <div class="modal" id="update-courses-count" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Update  Bidding Rounds</h3>
+                    <div class="d-flex justify-content-between">
+                    <h4>Total Selected Courses :<span id="selected-courses-count">0</span></h4>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>  
+                </div>
+                <div class="modal-body">
+                    <table class="table table-responsive custom_row table-bordered mt-4 custom-table">
+                        <thead>
+                            <th>Name</th>
+                            <th>Credits</th>
+                            <th>Action <input type="checkbox" name="update-bidding-rounds-checkbox" id="update-bidding-rounds-course-checkbox"></th>
+                        </thead>
+                    <tbody>
+                <% for(let biddingRoundCourse of biddingRoundCourseList) { %>
+                    <tr data-course-id ="<%-biddingRoundCourse.id %>" >
+                        <td class="d-none"><%-biddingRoundCourse.id %></td>
+                        <td><%- biddingRoundCourse.course_name %></td>
+                        <td><%- biddingRoundCourse.credits %></td>
+                        <td><input type="checkbox" class="update-bidding-round-courses"> </td>
+                    </tr>
+                    <% } %>
+                    </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" id="update-course" data-bs-dismiss="modal">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="add-date-time-modal" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Select Date Time</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="mb-2" for="start-date-time">Start date time :</label>
+                    <input type="hidden" id="bidding-round-id">
+                    <input class="form-control" type="datetime-local" id="start-date-time">
+                    <label class="mb-2" for="end-date-time">End date time :</label>
+                    <input class="form-control" type="datetime-local" id="end-date-time">  
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success disabled" data-bs-dismiss="modal" id="save-date-time">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="add-bidding-rounds-modal">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Select Bidding Rounds</h4>
+                    <button class="btn-close full-modal-left-sidebar" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body row custum-imp-program">
-                   
-                  <div class="col-md-3 border-end custm-padd-for-imp-program custm-padd pe-2 ps-2" >
-                 
-                    <label class="mb-2" for="select-bidding-rounds" >Select Bidding Rounds :</label>
+                    <div class="col-md-3 border-end custm-padd-for-imp-program custm-padd pe-2 ps-2" >
+                        <label class="mb-2" for="select-bidding-rounds" >Select Bidding Rounds :</label>
                         <input type="search" class="form-control p3 mb-3 searchItemProgramCustom" placeholder="Search Bidding Rounds" id="select-bidding-rounds">
-                       <% for(let preDefineBiddingRounds of biddingPredefineRounds ) { %>
-                        <div class="border p-3 mb-3 rounded bidding-rounds-div" data-bidding-name="<%- locals.biddingName %>&nbsp;-&nbsp;<%-preDefineBiddingRounds.round_name %>" data-bidding-id ="<%- preDefineBiddingRounds.id %>">
-                            <% if(locals.biddingName) { %>
-                                <%- locals.biddingName %>&nbsp; - &nbsp;<%-preDefineBiddingRounds.round_name %>
+                        <% for(let preDefineBiddingRounds of biddingPredefineRounds ) { %>
+                            <div class="border p-3 mb-3 rounded bidding-rounds-div" data-bidding-name="<%- locals.biddingName %>&nbsp;-&nbsp;<%-preDefineBiddingRounds.round_name %>" data-bidding-id ="<%- preDefineBiddingRounds.id %>">
+                                <% if(locals.biddingName) { %>
+                                    <%- locals.biddingName %>&nbsp; - &nbsp;<%-preDefineBiddingRounds.round_name %>
                                 <% } %>
                             </div>
                         <% } %>
-                    
                         <div class="d-flex justify-content-end" id="add-date-time-append">
-                            <button data-bs-target="#bidding-rounds-add-date-time" data-bs-toggle="modal" class="btn btn-primary d-none" id="add-date-time">
-                                    Add Date Time
+                            <button data-bs-target="#add-date-time-modal" data-bs-toggle="modal" class="btn btn-primary d-none" id="add-date-time">
+                                        Add Date Time
                             </button>
                         </div>
-                  </div>
-                  <div class="col-md-9 custm_padd p-2 ps-2">
-                    <table class="table-responsive table-bordered table import-bidding-rounds-table" id="import-bidding-rounds-table">
-                        <thead>
-                            <th>Bidding Rounds Name</th>
-                            <th>Total Students</th>
-                            <th>Total Courses</th>
-                            <th>Start Date Time</th>
-                            <th>End Date Time</th>
-                            <th>Bid Point Limit Per Bid</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                  </div>
+                    </div>
+                    <div class="col-md-9 custm_padd p-2 ps-2">
+                        <table class="table-responsive table-bordered table import-bidding-rounds-table" id="import-bidding-rounds-table">
+                            <thead>
+                                <th>Bidding Rounds Name</th>
+                                <th>Total Students</th>
+                                <th>Total Courses</th>
+                                <th>Start Date Time</th>
+                                <th>End Date Time</th>
+                                <th>Bid Point Limit Per Bid</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-success disabled" id="import-bidding-rounds">Import Bidding Rounds</button>
@@ -307,6 +310,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal" id="edit-bidding-rounds" data-bs-backdrop="static">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -317,10 +321,10 @@
                 <div class="modal-body">
                     <input type="hidden" id="bidding-rounds">
                     <div class="row">
-                    <div class="col-md-12">
-                        <label class="form-label" for="round-name">Round Name :</label>
-                        <input class="form-control" type="text" id="round-name" disabled>
-                    </div>
+                        <div class="col-md-12">
+                            <label class="form-label" for="round-name">Round Name :</label>
+                            <input class="form-control" type="text" id="round-name" disabled>
+                        </div>
                     </div>
                       
                     <div class="row empty">
@@ -338,16 +342,15 @@
                    
                     <div class="row empty mt-4">
                         <div class="col-md-6 d-flex">          
-                            
-                                <div class="input-group mb-3">
-                                    <button class="btn btn-danger text-white" type="button"  data-bs-target="#update-total-student-bidding-rounds" data-bs-toggle="modal" >Total Students</button>
-                                    <input type="text" class="form-control is-empty is-number" placeholder="total students" id="total-students"  autocomplete="off" disabled>
-                                    <span class="text-danger d-none is-in-valid" ></span>
-                                </div>
-                         </div>
+                            <div class="input-group mb-3">
+                                <button class="btn btn-danger text-white" type="button"  data-bs-target="#update-student-count" data-bs-toggle="modal" >Total Students</button>
+                                <input type="text" class="form-control is-empty is-number" placeholder="total students" id="total-students"  autocomplete="off" disabled>
+                                <span class="text-danger d-none is-in-valid" ></span>
+                            </div>
+                        </div>
                         <div class="col-md-6 d-none update-total-course round-wise-hide">
                             <div class="input-group mb-3">
-                                <button class="btn btn-danger text-white" type="button" data-bs-target="#update-total-courses-bidding-rounds" data-bs-toggle="modal" >Total Courses</button>
+                                <button class="btn btn-danger text-white" type="button" data-bs-target="#update-courses-count" data-bs-toggle="modal" >Total Courses</button>
                                 <input type="text" class="form-control is-empty is-number" placeholder="total courses" id="total-courses" autocomplete="off"  disabled>
                                 <span class="text-danger d-none is-in-valid" ></span>
                             </div>
@@ -358,13 +361,12 @@
                                 <div class="d-flex is-bid-limit-check">
                                     <div class="d-flex pe-4 justify-content-between">
                                         <div class="d-flex justify-content-between pe-4">
-                                        <label for="yes" class="px-2">Yes</label>
-                                        <input type="radio" name="bid-point-limit" id="yes" value="Yes" class="px-2">
+                                            <label for="yes" class="px-2">Yes</label>
+                                            <input type="radio" name="bid-point-limit" id="yes" value="Yes" class="px-2">
                                         </div>
                                         <input type="text" class="form-control bid-point-limit-per-bid is-number d-none" size="8" placeholder="Enter bid Points" id="edit-bid-limit-points">
-                                        </div>
-                                        <span class="text-danger d-none is-in-valid" >Enter Bid Points</span>
-                                    
+                                    </div>
+                                    <span class="text-danger d-none is-in-valid" >Enter Bid Points</span>
                                     <div>
                                         <label for="no">No</label>
                                         <input type="radio" name="bid-point-limit" id="no" value="No">
@@ -372,9 +374,7 @@
                                 </div>
                             </div>
                         </div>
-                </div>
-                
-                
+                    </div> 
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -383,10 +383,13 @@
             </div>
         </div>
     </div>
+</div>
 
-    <%- include('../partials/footer.ejs') %>
+<%- include('../partials/footer.ejs') %>
 <script>
+
     $(document).ready(function() {
+        
         let pageCount = `<%- pageCount %>`;
         let studentList = [];
         let courseList = [];
@@ -399,26 +402,26 @@
 
         $('#page-no').html(pageCount);
 
-        $('#update-total-courses-bidding-rounds').on('change','.update-bidding-round-courses',function(){
-            $('#update-course-bidding-rounds').removeClass('disabled');
+        $('#update-courses-count').on('change','.update-bidding-round-courses',function(){
+            $('#update-course').removeClass('disabled');
         })   
-        $('#update-total-courses-bidding-rounds').on('change','#update-bidding-rounds-course-checkbox',function(){
+        $('#update-courses-count').on('change','#update-bidding-rounds-course-checkbox',function(){
            if(this.checked){
              $('.update-bidding-round-courses').prop('checked', true);
-             $('#update-course-bidding-rounds').removeClass('disabled');
-             let totalCourseBiddingRounds =  $('#update-total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
-            $('#update-total-selected-courses').html(totalCourseBiddingRounds);
+             $('#update-course').removeClass('disabled');
+             let totalCourseBiddingRounds =  $('#update-courses-count .table tbody tr td input[type="checkbox"]:checked').length;
+            $('#selected-courses-count').html(totalCourseBiddingRounds);
            }
            else{
             $('.update-bidding-round-courses').prop('checked', false);
            }
         })
-        $('#update-total-student-bidding-rounds').on('change','#update-bidding-rounds-checkbox',function(){
+        $('#update-student-count').on('change','#update-bidding-rounds-checkbox',function(){
            if(this.checked){
              $('.update-student-sap-id-bidding-rounds').removeClass('d-none');
              $('.update-student-sap-id-bidding-rounds').prop('checked', true);
              $('#update-total-student').removeClass('disabled');
-             let totalStudentBiddingRounds =  $('#update-total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+             let totalStudentBiddingRounds =  $('#update-student-count .table tbody tr td input[type="checkbox"]:checked').length;
             $('#update-total-selected-students').html(totalStudentBiddingRounds);
            }else{
             $('.update-student-sap-id-bidding-rounds').prop('checked', false);
@@ -447,15 +450,15 @@
     })
 
    
-    $('#update-total-student-bidding-rounds').on('change','.update-student-sap-id-bidding-rounds',function(){
-        let count = $('#update-total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+    $('#update-student-count').on('change','.update-student-sap-id-bidding-rounds',function(){
+        let count = $('#update-student-count .table tbody tr td input[type="checkbox"]:checked').length;
            $('#update-total-selected-students').html(count);
     })
 
        
-    $('#update-total-courses-bidding-rounds').on('change','.update-bidding-round-courses',function(){
-        let count = $('#update-total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
-           $('#update-total-selected-courses').html(count);
+    $('#update-courses-count').on('change','.update-bidding-round-courses',function(){
+        let count = $('#update-courses-count .table tbody tr td input[type="checkbox"]:checked').length;
+           $('#selected-courses-count').html(count);
     })
 
     $('#total-courses-bidding-rounds').on('change','#bidding-rounds-course-checkbox', function() {
@@ -582,8 +585,8 @@
             let isBidLimit = $(event.relatedTarget).closest('tr').data('is-bid-limit');
             let bidLimitPoints = $(event.relatedTarget).closest('tr').data('bid-limit-points');
             let roundName = $(event.relatedTarget).closest('tr').data('round-name');
-            $(`#update-total-courses-bidding-rounds .table tbody tr`).find('.update-bidding-round-courses').prop('checked', false);
-                $(`#update-total-student-bidding-rounds #course-list-checked tbody tr`).find('input[type="checkbox"]').prop('checked', false);
+            $(`#update-courses-count .table tbody tr`).find('.update-bidding-round-courses').prop('checked', false);
+                $(`#update-student-count #course-list-checked tbody tr`).find('input[type="checkbox"]').prop('checked', false);
             
 
             let ApiObj = {
@@ -598,17 +601,17 @@
                 let studentList = result.studentMappingList;
                 let courseList = result.courseMappingList;
 
-                $('#update-total-student-bidding-rounds #update-total-selected-students').html(studentList.length);
-                $('#update-total-selected-courses').html(courseList.length);
+                $('#update-student-count #update-total-selected-students').html(studentList.length);
+                $('#selected-courses-count').html(courseList.length);
 
                
                 
                 studentList.forEach(student => {
-                    $(`#update-total-student-bidding-rounds #course-list-checked tbody tr[data-student-id=${student.student_lid}] input[type="checkbox"]`).prop('checked', true);
+                    $(`#update-student-count #course-list-checked tbody tr[data-student-id=${student.student_lid}] input[type="checkbox"]`).prop('checked', true);
                 });
 
                 courseList.forEach(course => {
-                    $(`#update-total-courses-bidding-rounds .table tbody tr[data-course-id=${course.course_lid}]`).find('.update-bidding-round-courses').prop('checked', true);
+                    $(`#update-courses-count .table tbody tr[data-course-id=${course.course_lid}]`).find('.update-bidding-round-courses').prop('checked', true);
                 });
             }).catch(error => {
                 
@@ -677,17 +680,17 @@
                     $(this).closest('div.is-bid-limit-check').find('.bid-point-limit-per-bid').addClass('d-none');
                 }
          })
-         $('#bidding-rounds-add-date-time').on('change','#end-date-time',function(){
-            $('#save-bidding-rounds-date-time').removeClass('disabled');
+         $('#add-date-time-modal').on('change','#end-date-time',function(){
+            $('#save-date-time').removeClass('disabled');
             $('#add-bidding-rounds-modal #import-bidding-rounds').removeClass('disabled');
          })
          
-         $('#update-total-student-bidding-rounds').on('click','#update-total-student',function(){
+         $('#update-student-count').on('click','#update-total-student',function(){
             updateBiddingRoundStudent = [];
            
-        let totalStudentBiddingRoundsCounts =  $('#update-total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+        let totalStudentBiddingRoundsCounts =  $('#update-student-count .table tbody tr td input[type="checkbox"]:checked').length;
        
-        $('#update-total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
+        $('#update-student-count .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
           studentList.push($(selectedElement).closest('tr').data('student-id'));
           
         });
@@ -713,7 +716,7 @@
 
  
 
-       $('#update-total-student-bidding-rounds').on('click','#update-total-student-bidding-rounds',function(){
+       $('#update-student-count').on('click','#update-student-count',function(){
         let totalStudentBiddingRoundsCounts =  $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
         let dataBiddingRoundId =  $('#total-student-bidding-rounds').attr('data-bidding-round-id');
      
@@ -773,7 +776,7 @@
               biddingRoundStudent.push(studentList);
        })
 
-       $('#update-total-student-bidding-rounds').on('click','#update-total-student-bidding-rounds',function(){
+       $('#update-student-count').on('click','#update-student-count',function(){
         let totalStudentBiddingRoundsCounts =  $('#total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
         let dataBiddingRoundId =  $('#total-student-bidding-rounds').attr('data-bidding-round-id');
      
@@ -810,14 +813,14 @@
            
        })
 
-       $('#update-total-courses-bidding-rounds').on('click','#update-course-bidding-rounds',function(){
-        let totalCoursesBiddingRoundsCounts =  $('#update-total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+       $('#update-courses-count').on('click','#update-course',function(){
+        let totalCoursesBiddingRoundsCounts =  $('#update-courses-count .table tbody tr td input[type="checkbox"]:checked').length;
         
-        $('#update-total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
+        $('#update-courses-count .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
           courseList.push($(selectedElement).closest('tr').data('course-id'));
         });
 
-        let dataBiddingRoundId =  $('#update-total-courses-bidding-rounds').attr('data-bidding-round-id');
+        let dataBiddingRoundId =  $('#update-courses-count').attr('data-bidding-round-id');
          $('#add-bidding-rounds-modal .modal-body .table-responsive tbody tr').each(function(index,element) {
             updateBiddingCourseList = [];
                 let biddingRoundId = $(element).attr('data-bidding-round-id');
@@ -831,7 +834,7 @@
             updateBiddingCourseList.push(courseList);
        })
 
-       $('#bidding-rounds-add-date-time').on('click','#save-bidding-rounds-date-time',function(){
+       $('#add-date-time-modal').on('click','#save-date-time',function(){
            let startDateTime = $('#start-date-time').val().replace('T',' ');
            let endDateTime = $('#end-date-time').val().replace('T',' ');
            let biddingRoundId = $('#bidding-round-id').val();
@@ -846,17 +849,17 @@
             });      
        });        
 
-       $('#bidding-rounds-add-date-time').on('show.bs.modal',function(event){
+       $('#add-date-time-modal').on('show.bs.modal',function(event){
              $('#start-date-time').val('');
              $('#end-date-time').val('');
             let dataBiddingRoundId = $(event.relatedTarget).attr('data-bidding-round-id');
             $('#bidding-round-id').val(dataBiddingRoundId);
          })  
           
-         $('#update-total-student-bidding-rounds').on('click','#update-total-student',function(){
+         $('#update-student-count').on('click','#update-total-student',function(){
             studentList = [];
-            let totalStudentBiddingRoundsCounts =  $('#update-total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
-        $('#update-total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
+            let totalStudentBiddingRoundsCounts =  $('#update-student-count .table tbody tr td input[type="checkbox"]:checked').length;
+        $('#update-student-count .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
             studentList.push($(selectedElement).closest('tr').data('student-id'));
           });
         
@@ -864,10 +867,10 @@
           
         })
 
-        $('#update-total-courses-bidding-rounds').on('click','#update-course-bidding-rounds',function(){
+        $('#update-courses-count').on('click','#update-course',function(){
             courseList = [];
-            let totalStudentBiddingRoundsCounts =  $('#update-total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
-        $('#update-total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
+            let totalStudentBiddingRoundsCounts =  $('#update-courses-count .table tbody tr td input[type="checkbox"]:checked').length;
+        $('#update-courses-count .table tbody tr td input[type="checkbox"]:checked').each(function(index, selectedElement) {
             courseList.push($(selectedElement).closest('tr').data('course-id'));
           });
           importdata.push(courseList);
@@ -901,16 +904,16 @@
             }
            
         });
-        $('#update-total-student-bidding-rounds').on('click','#update-total-student',function(){
-            let totalStudentBiddingRounds =  $('#update-total-student-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+        $('#update-student-count').on('click','#update-total-student',function(){
+            let totalStudentBiddingRounds =  $('#update-student-count .table tbody tr td input[type="checkbox"]:checked').length;
             $('#total-students').val(totalStudentBiddingRounds);
             $('#update-total-selected-students').html(totalStudentBiddingRounds);
         });
 
-        $('#update-total-courses-bidding-rounds').on('click','#update-course-bidding-rounds',function(){
-            let totalCoursesBiddingRounds =  $('#update-total-courses-bidding-rounds .table tbody tr td input[type="checkbox"]:checked').length;
+        $('#update-courses-count').on('click','#update-course',function(){
+            let totalCoursesBiddingRounds =  $('#update-courses-count .table tbody tr td input[type="checkbox"]:checked').length;
             $('#total-courses').val(totalCoursesBiddingRounds);
-            $('#update-total-selected-courses').html(totalCoursesBiddingRounds);
+            $('#selected-courses-count').html(totalCoursesBiddingRounds);
         });
         $(document).on('click','#import-bidding-rounds',function(){
           let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
@@ -1011,7 +1014,7 @@
                 $("#update-total-student").trigger('click');
             }
             if(updateBiddingCourseList.length == 0){
-                $("#update-course-bidding-rounds").trigger('click');
+                $("#update-course").trigger('click');
             }
            
             let editBiddingRounds = {

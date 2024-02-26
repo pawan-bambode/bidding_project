@@ -121,7 +121,10 @@ module.exports = class ConcentrationSettings {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('studentEmail', sql.NVarChar, studentEmail)
-                .query(`SELECT cs.*, u.id AS userId, sd.id AS studentId 
+                .query(`SELECT cs.concentration_name AS name, total_elective_credits AS totalCredits,
+                        max_credits_per_area AS maxCreditsPerArea, no_of_areas_to_cover AS areasCover,
+                        min_credits_per_area AS minCreditsPerArea, primary_area As primaryArea,
+                        min_credits_in_primary_area AS minCreditsInPrimayArea, u.id AS userId, sd.id AS studentId 
                         FROM [${slug}].student_data sd 
                         INNER JOIN [${slug}].concentration c ON sd.concentration_lid = c.id
                         INNER JOIN [${slug}].users u ON u.email = sd.email

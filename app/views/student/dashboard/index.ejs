@@ -2,13 +2,10 @@
 <%- include ('../partials/header') %>
 <%- include('../partials/leftSidebarForStudent.ejs') %>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-
     <div class="main-content">  
         <div class="card card-custom-border-curv">
             <div class="card-header-custom d-flex justify-content-between p-1">
-                <h3 class="ms-2"> Student Time</h3>
+                <h4 class="ms-2">Home</h4>
                 <button type="button" class="btn btn-secondary me-2" data-bs-target="#view-student-completed-course-list" data-bs-toggle="modal" >
                 Complete Courses
                 </button>  
@@ -16,13 +13,13 @@
             <div class="card-body table-responsive">
                 <div class="row">
                     <div class="col-md-4">
-                        <h4>Max Trimester Credits :</h4>
+                        <p class="fw-bold">Max Trimester Credits :</p>
                     </div>
                     <div class="col-md-4 d-flex">
                         <p class="fw-bold">Max Yearly Credits :</p>&nbsp;<%- maxYearlyCredits %>
                     </div>
                     <div class="col-md-4">
-                        <h4>Confirmed Credits : </h4>
+                        <p class="fw-bold">Confirmed Credits : </p>
                     </div>
                 </div>
                 <div class="row">
@@ -34,7 +31,7 @@
                         <p class="fw-bold">Total Bid Points :</p>&nbsp;<span id="total-bid-point"><%- bidPoints %></span>
                     </div>
                     <div class="col-md-4">
-                        <h4>Remaining Bid Points :</h4>
+                        <p class="fw-bold">Remaining Bid Points :</p>
                     </div>  
                 </div>  
             </div>

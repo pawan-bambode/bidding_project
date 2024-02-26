@@ -1,11 +1,10 @@
 
 <%- include('../partials/head') %>
-
 <%- include('../partials/leftSidebarForStudent.ejs') %>
 <%- include('../partials/header.ejs') %>
 
 <div class="main-content">
-        <ul class="d-flex round-wises justify-content-between align-items-end bidding-round-wise d-none">
+        <ul class="d-flex round-wises justify-content-between align-items-end active-round d-none">
             <li class="ms-5 active" style="height: 58px;">
                 <a class="text-decoration-none text-dark">
                     <div class="d-flex flex-column justify-content-center align-items-center h-100">
@@ -17,7 +16,7 @@
             </li>
         </ul>
 
-        <div class="main-div-round-wise card-custom-border-curv p-3 bidding-round-wise d-none">
+        <div class="main-div-round-wise card-custom-border-curv p-3 active-round d-none">
             <div class="card-header-custom d-flex justify-content-between p-1">
                 <h5 class="ms-2 round-name"></h5>
                 <button class="btn btn-danger time-remaining me-5"></button>
@@ -37,7 +36,7 @@
             </div>
         </div>
 
-        <div class="card card-custom-border-curv mt-5 bidding-round-wise round-wise-modal d-none">
+        <div class="card card-custom-border-curv mt-5 active-round round-wise-modal d-none">
             <div class="card-header-custom d-flex justify-content-between p-1">
                 <h3 class="ms-2">Confirmed Courses</h3>
             </div>
@@ -71,7 +70,8 @@
                 </table>
             </div>
         </div>
-        <div class="card card-custom-border-curv mt-5 bidding-round-wise round-wise-modal d-none" id="bidding-modal">
+
+        <div class="card card-custom-border-curv mt-5 active-round round-wise-modal d-none"      id="bidding-modal">
             <div class="card-header-custom d-flex justify-content-between p-1">
                 <h3 class="ms-2">WaitList Courses</h3>
             </div>
@@ -102,21 +102,21 @@
                                 }
                         %>
                         <tr 
-                            data-wait-list-id="<%- waitList.id %>"
-                            data-area-name="<%- waitList.area_name %>" 
-                            data-course-name="<%- waitList.course_name %>" 
-                            data-acad-session="<%- waitList.acad_session %>"
-                            data-course-with-division-name="<%- waitList.course_name %>-<%- waitList.division %>"  
-                            data-division-batch-lid="<%- waitList.division_batch_lid %>"
-                            data-faculty-id="<%- waitList.faculty_id %>"
-                            data-credits="<%- waitList.credits %>"
-                            data-max-seats="<%- waitList.max_seats %>"
-                            data-acad-session-id="<%- waitList.sap_acad_session_id %>"
-                            data-course-id="<%- waitList.course_id %>"
-                            data-course-lid="<%- waitList.course_lid %>"
-                            data-faculty-name="<%- waitList.faculty_name %>"
-                            data-division="<%- waitList.division %>"
-                            data-available-seats="<%- waitList.available_seats %>" >
+                            data-wait-list-id = "<%- waitList.id %>"
+                            data-area-name = "<%- waitList.area_name %>" 
+                            data-course-name = "<%- waitList.course_name %>" 
+                            data-acad-session = "<%- waitList.acad_session %>"
+                            data-course-division = "<%- waitList.course_name %>-<%- waitList.division %>"  
+                            data-division-batch-lid = "<%- waitList.division_batch_lid %>"
+                            data-faculty-id = "<%- waitList.faculty_id %>"
+                            data-credits = "<%- waitList.credits %>"
+                            data-max-seats = "<%- waitList.max_seats %>"
+                            data-acad-session-id = "<%- waitList.sap_acad_session_id %>"
+                            data-course-id = "<%- waitList.course_id %>"
+                            data-course-lid = "<%- waitList.course_lid %>"
+                            data-faculty-name = "<%- waitList.faculty_name %>"
+                            data-division = "<%- waitList.division %>"
+                            data-available-seats = "<%- waitList.available_seats %>" >
                             
                             <td><%- waitListCount++ %></td>
                             <td><%- waitList.area_name %></td>
@@ -145,7 +145,7 @@
             </div>
         </div>
         
-    <div class="card card-custom-border-curv mt-5 add-drop-modal bidding-round-wise round-wise-modal d-none" id="add-drop-modal">
+    <div class="card card-custom-border-curv mt-5 add-drop-modal active-round round-wise-modal d-none" id="add-drop-modal">
         <div class="card-header-custom d-flex justify-content-between p-1">
             <h3 class="ms-2">Available Courses</h3>
         </div>
@@ -200,7 +200,7 @@
         </div>
     </div>
 
-    <div class="card card-custom-border-curv empty-bidding-round-wise">
+    <div class="card card-custom-border-curv empty-round">
         <div class="card-header-custom d-flex justify-content-between">
            <h4 class="ms-2">Add Drop Rounds</h4>
         </div>
@@ -211,52 +211,43 @@
 </div>   
     
 <%- include('../partials/footer.ejs') %>
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
 <script>
-$(document).ready(function() {
-    
-    let socket = io();
-    let studentId = $('#student-data').data('student-lid');
-    let waitListCourseList = JSON.parse(`<%- JSON.stringify(waitListCourses) %>`);
-    let availableCourseList = JSON.parse(`<%- JSON.stringify(courseList) %>`);
-    setActiveMenuItem(`<%- active %>`)
-    let concentrationId = `<%- concentrationId %>`;
-    
-    avilableCourses(availableCourseList, false);
+  $(document).ready(function() {
 
-    let startTime = JSON.parse('<%- JSON.stringify(startAndEndTime) %>');
-    let timeRemaing = $('.time-remaining').text().trim();
-		    	
+    let socket = io();
+    let availCourse = JSON.parse(`<%- JSON.stringify(courseList) %>`);	    	
     let roundDetails = JSON.parse(`<%- JSON.stringify(roundDetails) %>`);
-    
-   if((roundDetails != '')){
-        
-        let roundStartTime = roundDetails.startTime;
-        let roundEndTime = roundDetails.endTime;
-        let roundName = roundDetails.roundName;
-        let roundId = roundDetails.round_lid;
-      
-        $('#start-time').html(roundStartTime);
-        $('#end-time').html(roundEndTime);
-        $('.round-name').html(roundName);
-        $('.round-name').attr('data-round-id', roundId);
-        $('.bidding-round-wise').removeClass('d-none');
-        $('.empty-bidding-round-wise').addClass('d-none');
-        $('.round-wise-modal').addClass('d-none')
-    
+    let concentrationId = `<%- concentrationId %>`;
+    let studentId = $('#student-data').data('student-lid');
+
+    avilableCourses(availCourse, false);
+    setActiveMenuItem(`<%- active %>`);
+
+    if(roundDetails != '') {
+
+       let roundStartTime = roundDetails.startTime;
+       let roundEndTime = roundDetails.endTime;
+       let roundName = roundDetails.roundName;
+       let roundId = roundDetails.round_lid;
+  
+       $('#start-time').html(roundStartTime);
+       $('#end-time').html(roundEndTime);
+       $('.round-name').html(roundName);
+       $('.round-name').attr('data-round-id', roundId);
+       $('.active-round').removeClass('d-none');
+       $('.empty-round').addClass('d-none');
+       $('.round-wise-modal').addClass('d-none');
     }
 
-    socket.emit('addDropPageLoaded', { 
-             slugName: "<%- slug %>",
-              biddingTime: JSON.parse(`<%- JSON.stringify(roundSettingTime) %>`),
-              roundId: 7,
-              roundIId: 8,
-              studentId: studentId       
-    }); 
+    socket.emit('addDropPageLoad', { 
+       slugName: "<%- slug %>",
+       biddingTime: JSON.parse(`<%- JSON.stringify(roundSettingTime) %>`),
+       roundId: 7,
+       roundIId: 8,
+       studentId: studentId       
+    });
 
-    socket.on('addDropVisibleToStudent', function(data){
+    socket.on('activeAddDropRound', function(data){
         
         let roundName = data.roundDetails[0].roundName;
         let roundId = data.roundDetails[0].round_lid;
@@ -264,235 +255,103 @@ $(document).ready(function() {
         let roundEndTime = data.roundDetails[0].endTime;
         let considerationSet = data.considerationSet;
         let confirmCourse = data.confirmCourse;
-        confirmCourse.forEach(confirm => {
-            
-            let facultyId = confirm.faculty_id;
-            let facultyName = confirm.faculty_name;
-            let areaName = confirm.area_name;
-            let acadSession = confirm.acad_session;
-            let acadSessionId = confirm.sap_acad_session_id;
-            let courseName = confirm.course_name;
-            let courseId = confirm.course_id;
-            let courseLid = confirm.course_lid;
-            let credits = confirm.credits;
-            let bidPoints = confirm.bid_points;
-            let division = confirm.division;
-            let concentrationId = confirm.concentration_lid;
-            let divisionBatchId = confirm.id;
-            let isDropped = confirm.is_dropped;
-            let isWaitListed = confirm.is_waitlisted;
-            let isWinning = confirm.is_winning;
-            let roundId = confirm.round_lid; 
-            let row =
-                `<tr data-faculty-id="${facultyId}" data-faculty-name="${facultyName}" 
-                     data-area-name="${areaName}" data-acad-session-id="${acadSessionId}" data-acad-session="${acadSession}" data-course-name="${courseName}"data-course-id="${courseId}" data-credits="${credits}" data-bid-points="${bidPoints}" data-division="${division}" data-concentration-lid="${concentrationId}" data-division-batch-lid="${divisionBatchId}" data-is-dropped="${isDropped}" data-is-waitlist="${isWaitListed}" data-is-winning="${isWinning}" data-course-lid="${courseLid}" data-round-id ="${roundId}">
-                    
-                    <td>${areaName}</td>
-                    <td>${acadSession}</td>
-                    <td>${courseName}-${division}</td>
-                    <td>${facultyName}</td>
-                    <td>${credits}</td>
-                    <td>${bidPoints}</td>
-                    <td><button class="btn btn-success confirm-courses me-1"><i class="fa-solid fa-check"></i> Confirm</button></td>
-                </tr>`;
-            
-            $('#confirm-courses-table tbody').append(row);
-        });
-        $('#bidding-table').html('');
-        $('.round-wise-modal').addClass('d-none')
-             
+
+            confirmCourse.forEach(confirm => {
+                
+                let facultyId = confirm.faculty_id;
+                let facultyName = confirm.faculty_name;
+                let areaName = confirm.area_name;
+                let acadSession = confirm.acad_session;
+                let acadSessionId = confirm.sap_acad_session_id;
+                let courseName = confirm.course_name;
+                let courseId = confirm.course_id;
+                let courseLid = confirm.course_lid;
+                let credits = confirm.credits;
+                let bidPoints = confirm.bid_points;
+                let division = confirm.division;
+                let concentrationId = confirm.concentration_lid;
+                let divisionBatchId = confirm.id;
+                let isDropped = confirm.is_dropped;
+                let isWaitListed = confirm.is_waitlisted;
+                let isWinning = confirm.is_winning;
+                let roundId = confirm.round_lid; 
+                let row =
+                    `<tr data-faculty-id="${facultyId}" 
+                        data-faculty-name="${facultyName}" 
+                        data-area-name="${areaName}" 
+                        data-acad-session-id="${acadSessionId}" 
+                        data-acad-session="${acadSession}" 
+                        data-course-name="${courseName}"
+                        data-course-id="${courseId}" 
+                        data-credits="${credits}" 
+                        data-bid-points="${bidPoints}" 
+                        data-division="${division}" 
+                        data-concentration-lid="${concentrationId}" 
+                        data-division-batch-lid="${divisionBatchId}" 
+                        data-is-dropped="${isDropped}" 
+                        data-is-waitlist="${isWaitListed}" 
+                        data-is-winning="${isWinning}" 
+                        data-course-lid="${courseLid}" 
+                        data-round-id ="${roundId}"
+                        >
+                        
+                            <td>${areaName}</td>
+                            <td>${acadSession}</td>
+                            <td>${courseName}-${division}</td>
+                            <td>${facultyName}</td>
+                            <td>${credits}</td>
+                            <td>${bidPoints}</td>
+                            <td><button class="btn btn-success confirm-courses me-1">
+                                    <i class="fa-solid fa-check"></i> Confirm
+                                </button>
+                            </td>
+                    </tr>`;
+                $('#confirm-courses-table tbody').append(row);
+            });
+
         $('#start-time').html(roundStartTime);
         $('#end-time').html(roundEndTime);
         $('.round-name').html(roundName);
         $('.round-name').attr('data-round-id', roundId);
-        $('.bidding-round-wise').removeClass('d-none');
-        $('.empty-bidding-round-wise').addClass('d-none');
+        $('#bidding-table').html('');
+        $('.round-wise-modal').addClass('d-none')           
+        $('.active-round').removeClass('d-none');
+        $('.empty-round').addClass('d-none');
     })
     
-    $('#confirm-courses-table').on('click','.drop-course',function(){
-      let id = $(this).closest('tr').data('id');
-      let divisionBatchId = $(this).closest('tr').data('division-batch-id')
-      let studendId = $('#student-data').data('student-lid');
-      let roundId = $('.round-name').data('round-id');
-      
-      let ApiObj = {
-        type: 'POST',
-        url: '/student/add-drop/drop',
-        data: {
-           id: id,
-           divisionBatchId: divisionBatchId,
-           studendId: studendId,
-           roundId: roundId
-        },
-        dataType: 'JSON'
-    };
+    $('#confirm-courses-table').on('click', '.drop-course', function () {
 
-    ajaxApi(ApiObj)
-        .then(result => {
-            if(result.status == 200){
-            let response = JSON.parse(result.addWaitListResponse);
-            createToastMessage(response.description);
-            }
-            else {
-                let response = JSON.parse(result.error);
-                createToastError(JSON.stringify(response.description)); 
-            }
-        }).catch(error =>{
-            createToastError(JSON.stringify(error.responseJSON.description));
-        })
-});
-    function updateConfirmationDetails(addDropCourseList) {
-        
-        const { startAndEndTime, confirmCourseList, winningCourseList } = addDropCourseList;
-        const confirmCourseTable = $('#confirm-courses-table tbody');
-        const winningCourseTable = $('#wait-list-course-table tbody');
+            let id = $(this).closest('tr').data('id');
+            let divisionBatchId = $(this).closest('tr').data('division-batch-id');
+            let roundId = $('.round-name').data('round-id');
 
-        $('#start-time').html(startAndEndTime.startTime);
-        $('#end-time').html(startAndEndTime.endTime);
-        $('#confirm-courses-table tbody').empty();
-        $('#wait-list-course-table tbody').empty();
+            let ApiObj = {
+                type: 'POST',
+                url: '/student/add-drop/drop',
+                data: {
+                    id: id,
+                    divisionBatchId: divisionBatchId,
+                    studentId: studentId,
+                    roundId: roundId
+                },
+                dataType: 'JSON'
+            };
 
-        const appendCourseRow = (course, table) => {
-            const count = table.find('tr').length + 1;
-            const courseRow = `<tr>
-                <td>${count}</td>
-                <td>${course.area_name}</td>
-                <td>${course.acad_session}</td>
-                <td>${course.course_name}</td>
-                <td>${course.faculty_name}</td>
-                <td>${course.credits}</td>
-                <td>${course.bid_points}</td>
-            </tr>`;
-            table.append(courseRow);
-        };
-
-        confirmCourseList.forEach(course => appendCourseRow(course, confirmCourseTable));
-    }
-
-    function waitListConsiderationSet(biddingCourseList, isWithdraw, tableId) {
-            if (!isWithdraw) {
-                $(`#${tableId} tbody`).empty();
-            }
-
-            biddingCourseList.forEach(function (biddingCourse, index) {
-                
-                let { division_batch_lid: divisionBatchId, faculty_id: facultyId } = biddingCourse;
-                let existingElement = $(`#${tableId} tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
-                let existingFaculty = existingElement.filter(`[data-faculty-id="${facultyId}"]`);
-                let otherFacultyExists = existingElement.not(existingFaculty);
-                let lengthOfTable = $(`#${tableId} tbody tr`).length;
-                let isWaitListed = biddingCourse.is_waitlisted;
-
-                if (existingElement.length === 0) {
-                    let waitListStatus = isWaitListed ? 'WaitList' : 'Winning';
-
-                    let newRow = `<tr 
-                        data-wait-list-id="${biddingCourse.id}"
-                        data-area-name="${biddingCourse.area_name}" 
-                        data-course-name="${biddingCourse.course_name}"
-                        data-course-with-division-name="${biddingCourse.course_name}-${biddingCourse.division}" 
-                        data-acad-session="${biddingCourse.acad_session}" 
-                        data-division-batch-lid="${biddingCourse.division_batch_lid}"
-                        data-faculty-id="${biddingCourse.faculty_id}"
-                        data-credits="${biddingCourse.credits}"
-                        data-max-seats="${biddingCourse.max_seats}"
-                        data-acad-session-id="${biddingCourse.sap_acad_session_id}"
-                        data-course-id="${biddingCourse.course_id}"
-                        data-course-lid="${biddingCourse.course_lid}"
-                        data-faculty-name="${biddingCourse.faculty_name}"
-                        data-division="${biddingCourse.division}"
-                        data-available-seats="${biddingCourse.available_seats}" >
-                    
-                        <td class="id-column">${++lengthOfTable}</td>
-                        <td>${biddingCourse.area_name}</td>
-                        <td>${biddingCourse.course_name}-${biddingCourse.division}
-                            ${biddingCourse.is_favourite == 1 ?
-                                '<img class="added-star fav-course" src="/image/student/body-part-image/available-course/added-star.png" alt="added">' : ''}
-                        </td>
-                        <td>${biddingCourse.acad_session}</td>
-                        <td class='course-timing'> ${biddingCourse.faculty_name}</td>
-                        <td>${biddingCourse.credits}</td>
-                        <td class="student-previous-bid-point">${biddingCourse.bid_points}</td>
-                        <td class="wait-list-number">1</td>
-                        <td>${waitListStatus}</td>
-                        <td>
-                            <button class="btn border border-danger withdraw-wait-list-add-drop mt-1">
-                                <img src='/image/student/body-part-image/bidding-round-image/withdraw.png' alt='withdraw'>
-                            </button>
-                        </td>
-                    </tr>`;
-
-                    $(`#${tableId} tbody`).append(newRow);
-                } else {
-                    let courseTiming = ``;
-                    let contentToAppend = otherFacultyExists.length ? `${courseTiming} - ${biddingCourse.faculty_name})` : `${courseTiming}`;
-                    existingElement.children('.course-timing').append(contentToAppend);
-                }
+            ajaxApi(ApiObj).then(result => {
+                    if (result.status == 200) {
+                        let response = JSON.parse(result.addWaitListResponse);
+                        createToastMessage(response.description);
+                    } else {
+                        let response = JSON.parse(result.error);
+                        createToastError(JSON.stringify(response.description));
+                    }
+            }).catch(error => {
+                    createToastError(JSON.stringify(error.responseJSON.description));
             });
-        }
+        });
 
-        function avilableCourses(biddingCourseList, isWithdraw) {
 
-if (!isWithdraw) {
-    $('#add-drop-availale-table tbody').empty();
-}
-
-biddingCourseList.forEach(function(biddingCourse, index) {
-
-    let {
-        division_batch_lid: divisionBatchId,
-        faculty_id: facultyId
-    } = biddingCourse;
-    let existingElement = $(`#add-drop-availale-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
-    let existingFaculty = existingElement.filter(`[data-faculty-id="${facultyId}"]`);
-    let otherFacultyExists = existingElement.not(existingFaculty);
-    let lengthOfTable = $('#add-drop-availale-table tbody tr').length;
-
-    if (existingElement.length === 0) {
-        let newRow = `<tr 
-    data-area-name = "${biddingCourse.area_name}" 
-    data-course-name = "${biddingCourse.course_name}"
-    data-course-with-division-name = "${biddingCourse.course_name}-${biddingCourse.division}" 
-    data-acad-session = "${biddingCourse.acad_session}" 
-    data-division-batch-lid = "${biddingCourse.division_batch_lid}"
-    data-faculty-id = "${biddingCourse.faculty_id}"
-    data-credits = "${biddingCourse.credits}"
-    data-max-seats = "${biddingCourse.max_seats}"
-    data-acad-session-id = "${biddingCourse.sap_acad_session_id}"
-    data-course-id = "${biddingCourse.course_id}"
-    data-course-lid = "${biddingCourse.course_lid}"
-    data-faculty-name = "${biddingCourse.faculty_name}"
-    data-division = "${biddingCourse.division}"
-    data-available-seats = "${biddingCourse.available_seats}"
-    >
-  
-    <td class="id-column">${++lengthOfTable}</td>
-    <td>${biddingCourse.area_name}</td>
-    <td>${biddingCourse.course_name}-${biddingCourse.division}
-      ${biddingCourse.is_favourite == 1 ?
-         '<img class="added-star fav-course" src="/image/student/body-part-image/available-course/added-star.png" alt="added">' : ''}
-    </td>
-    <td>${biddingCourse.acad_session}</td>
-    <td class='course-timing'>${biddingCourse.day_name}(${biddingCourse.StartTime} to ${biddingCourse.EndTime}) ${biddingCourse.faculty_name}</td>
-    <td>${biddingCourse.credits}</td>
-    <td>${biddingCourse.available_seats}</td>
-    <td>
-      <button class="btn border border-dark add-drop">
-        <i class="fa-solid fa-circle-plus" style="color:#5ca4ea"></i>
-      </button>
-    </td>
-  </tr>`;
-
-        $('#add-drop-availale-table tbody').append(newRow);
-    } else {
-        let courseTiming = `<div>${biddingCourse.day_name}(${biddingCourse.StartTime} to ${biddingCourse.EndTime})`;
-        let contentToAppend = otherFacultyExists.length ? `${courseTiming} - ${biddingCourse.faculty_name})` : `${courseTiming}`;
-        existingElement.children('.course-timing').append(contentToAppend);
-    }
-});
-}
-
-$('.add-drop').on('click', function() {
+    $('.add-drop').on('click', function() {
         
         let areaName = $(this).closest('tr').data('area-name');
         let courseName = $(this).closest('tr').data('course-name');
@@ -506,7 +365,6 @@ $('.add-drop').on('click', function() {
         let courseTime = $(this).closest('tr').children('.course-timing').html();
         let courseId = $(this).closest('tr').data('course-id');
         let courseLid = $(this).closest('tr').data('course-lid');
-        let studentId = $('#student-data').data('student-lid');
         let division = $(this).closest('tr').data('division');
         let availableSeats = $(this).closest('tr').data('available-seats');
         let roundId = 7;
@@ -537,27 +395,29 @@ $('.add-drop').on('click', function() {
                     waitListId = waitListResponse.data.inserted_id;
                     createToast(waitListResponse.description, 'alert-success', 'message-content');
 
-                    let biddingRow = `<tr data-wait-list-id="${waitListId}" data-area-name="${areaName}" data-course-name="${courseName}" 
-                        data-acad-session="${acadSession}" data-division-batch-lid="${divisionBatchId}" data-faculty-id="${facultyId}" data-credits="${credits}" data-max-seats="${available}" data-course-time="${courseTime}" data-acad-session-id="${acadSessionId}" data-course-id="${courseId}" data-course-lid="${courseLid}">
-                        <td class="id-column">${++tableId}</td>
-                        <td>${areaName}</td>
-                        <td>${courseName}-${division}</td>
-                        <td>${acadSession}</td>
-                        <td>${facultyName}</td>
-                        <td>${availableSeats}</td>
-                        <td class="student-previous-bid-point">0</td>
-                        <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
-                            <button class="btn border border-dark ms-2 add-wait-list-points">
-                                <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn border border-danger withdraw-wait-list mt-1" data-area="${areaName}">
-                                <img src='/image/student/body-part-image/bidding-round-image/withdraw.png' alt='withdraw'>
-                            </button>
-                        </td>
-                    </tr>`;
-
+                    let biddingRow = `<tr 
+                                        data-wait-list-id="${waitListId}" data-area-name="${areaName}" 
+                                        data-course-name="${courseName}" data-acad-session="${acadSession}" data-division-batch-lid="${divisionBatchId}" data-faculty-id="${facultyId}" data-credits="${credits}" data-max-seats="${available}" data-course-time="${courseTime}" data-acad-session-id="${acadSessionId}" data-course-id="${courseId}" data-course-lid="${courseLid}"
+                                    >
+                                        <td class="id-column">${++tableId}</td>
+                                        <td>${areaName}</td>
+                                        <td>${courseName}-${division}</td>
+                                        <td>${acadSession}</td>
+                                        <td>${facultyName}</td>
+                                        <td>${availableSeats}</td>
+                                        <td class="student-previous-bid-point">0</td>
+                                        <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
+                                            <button class="btn border border-dark ms-2 add-wait-list-points">
+                                                <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="btn border border-danger withdraw-wait-list mt-1" data-area="${areaName}">
+                                                <img src='/image/student/body-part-image/bidding-round-image/withdraw.png' alt='withdraw'>
+                                            </button>
+                                        </td>
+                                    </tr>`;
+                                    
                     biddingTable.append(biddingRow);
                     $(this).closest('tr').remove();
                     arrangeTableId('wait-list-availale-table');
@@ -565,98 +425,65 @@ $('.add-drop').on('click', function() {
                     let waitListResponse = JSON.parse(result.error);
                     createToast(waitListResponse.description, 'alert-danger', 'error-message');
                 }
-              })
-              .catch(error => {
-                  let waitListResponse = JSON.parse(error.responseJSON.error);
-                  createToast(waitListResponse.description, 'alert-danger', 'error-message');
-                  return;
-              });
-      });
-
-$('#wait-list-course-table').on('click', '.withdraw-wait-list-add-drop', function() {
-
-let areaName = $(this).closest('tr').data('area-name');
-let courseName = $(this).closest('tr').data('course-name');
-let credits = $(this).closest('tr').data('credits');
-let available = $(this).closest('tr').data('max-seats');
-let acadSession = $(this).closest('tr').data('acad-session');
-let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
-let facultyId = $(this).closest('tr').data('faculty-id');
-let facultyName = $(this).closest('tr').data('faculty-name');
-let acadSessionId = $(this).closest('tr').data('acad-session-id');
-let courseTime = $(this).closest('tr').data('course-time');
-let courseId = $(this).closest('tr').data('course-id');
-let courseLid = $(this).closest('tr').data('course-lid');
-let id = $(this).closest('tr').data('wait-list-id');
-let studentId = $('#student-data').data('student-lid');
-let division = $(this).closest('tr').data('division');
-let roundId = 7;
-let lengthOfTable = $('#wait-list-availale-table tbody tr').length;
-
-let ApiObj = {
-    type: 'POST',
-    url: '/student/wait-list/withdraw',
-    data: {
-        id: id,
-        studentId: studentId,
-        roundId: roundId,
-        divBatchId: divisionBatchId
-    },
-    datatype: 'JSON'
-};
-
-ajaxApi(ApiObj)
-    .then(result => {
-        if (result.status == 200) {
-            let waitListResponse = JSON.parse(result.addWaitListPoints);
-            createToast(waitListResponse.description, 'alert-success', 'message-content');
-            let withdrawRow = `<tr
-          data-area-name = "${areaName}" 
-          data-course-name = "${courseName}"
-          data-course-with-division-name = "${courseName}-${division}" 
-          data-acad-session = "${acadSession}" 
-          data-division-batch-lid = "${divisionBatchId}"
-          data-faculty-id = "${facultyId}"
-          data-credits = "${credits}"
-          data-max-seats = "${available}"
-          data-acad-session-id = "${acadSessionId}"
-          data-course-id = "${courseId}"
-          data-course-lid = "${courseLid}"
-          data-faculty-name = "${facultyName}"
-          data-division = "${division}"
-          data-course-time = "${courseTime}">
-          <td class="id-column">${++lengthOfTable}</td>
-          <td>${areaName}</td>
-          <td>${courseName}-${division}
-          </td>
-          <td>${acadSession}</td>
-          <td class='course-timing'>${courseTime}</td>
-          <td>${credits}</td>
-          <td>${available}</td>
-          <td>0</td>
-          <td>0</td>
-          <td>
-            <button class="btn border border-dark add-drop">
-              <i class="fa-solid fa-circle-plus" style="color:#5ca4ea"></i>
-            </button>
-          </td>
-
-          </tr>`
-            $('#wait-list-availale-table tbody').append(withdrawRow);
-            $(this).closest('tr').remove();
-        } else {
-            let waitListResponse = JSON.parse(result.error);
-            createToast(waitListResponse.description, 'alert-danger', 'error-message');
-        }
-    })
-    .catch(error => {
-        let waitListResponse = JSON.parse(error.responseJSON.error);
-        createToast(waitListResponse.description, 'alert-danger', 'error-message');
-        return;
+            })
+            .catch(error => {
+                let waitListResponse = JSON.parse(error.responseJSON.error);
+                createToast(waitListResponse.description, 'alert-danger', 'error-message');
+                return;
+            });
     });
-});
+    
+    function avilableCourses(courseList) {
+        courseList.forEach(function(course, index) {
+            let { division_batch_lid: divisionBatchId, faculty_id: facultyId } = course;
+            let existingElement = $(`#add-drop-availale-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
+            let existingFaculty = existingElement.filter(`[data-faculty-id="${facultyId}"]`);
+            let otherFacultyExists = existingElement.not(existingFaculty);
+            let lengthOfTable = $('#add-drop-availale-table tbody tr').length;
+
+            if (existingElement.length === 0) {
+                let newRow = `<tr 
+                                data-area-name="${course.area_name}" 
+                                data-course-name="${course.course_name}"
+                                data-course-division="${course.course_name}-${course.division}" 
+                                data-acad-session="${course.acad_session}" 
+                                data-division-batch-lid="${course.division_batch_lid}"
+                                data-faculty-id="${course.faculty_id}"
+                                data-credits="${course.credits}"
+                                data-max-seats="${course.max_seats}"
+                                data-acad-session-id="${course.sap_acad_session_id}"
+                                data-course-id="${course.course_id}"
+                                data-course-lid="${course.course_lid}"
+                                data-faculty-name="${course.faculty_name}"
+                                data-division="${course.division}"
+                                data-available-seats="${course.available_seats}"
+                            >
+                            <td class="id-column">${++lengthOfTable}</td>
+                            <td>${course.area_name}</td>
+                            <td>${course.course_name}-${course.division}
+                            ${course.is_favourite == 1 ? '<img class="added-star fav-course" src="/image/student/body-part-image/available-course/added-star.png" alt="added">' : ''}
+                            </td>
+                            <td>${course.acad_session}</td>
+                            <td class='course-timing'>${course.day_name}(${course.StartTime} to ${course.EndTime}) ${course.faculty_name}</td>
+                            <td>${course.credits}</td>
+                            <td>${course.available_seats}</td>
+                            <td>
+                                <button class="btn border border-dark add-drop">
+                                    <i class="fa-solid fa-circle-plus" style="color:#5ca4ea"></i>
+                                </button>
+                            </td>
+                        </tr>`;
+
+                $('#add-drop-availale-table tbody').append(newRow);
+            } else {
+                let courseTiming = `<div>${course.day_name}(${course.StartTime} to ${course.EndTime})`;
+                let contentToAppend = otherFacultyExists.length ? `${courseTiming} - ${course.faculty_name})` : `${courseTiming}`;
+                existingElement.children('.course-timing').append(contentToAppend);
+            }
+        });
+    }
+
 });
 
 </script>
-
 <%- include('../partials/footerEnd.ejs') %>

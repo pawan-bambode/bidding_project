@@ -1,140 +1,124 @@
 <%- include('../partials/head') %>
 <%- include('../partials/leftSidebar.ejs') %>
 <%- include('../partials/header.ejs') %>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 
 <div class="main-content">
-   <div class="breadcrumbs-container">
-    <ul class="breadcrumb">
-        <% if (breadcrumbs) { %>
-            <% for (let crumbs of breadcrumbs) { %>
-                <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
-                 %>
-                <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
+    <div class="breadcrumbs-container">
+        <ul class="breadcrumb">
+            <% if (breadcrumbs) { %>
+                <% for (let crumbs of breadcrumbs) { %>
+                    <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;%>
+                    <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
+                <% } %>
             <% } %>
-        <% } %>
-    </ul>
-  </div>
-  <div class="card card-custom-border-curv card">
-    <div class="card-header-custom d-flex justify-content-between p-1">
-        <h3 class="ms-2">Elective Timetable</h3>
-        <div>
+        </ul>
+    </div>
+    <div class="card card-custom-border-curv card">
+        <div class="card-header-custom d-flex justify-content-between p-1">
+            <h4 class="ms-2">Elective Timetable</h4>
+            <div>
                 <button class="btn btn-danger" id="delete-timetable">Delete Timetable</button>
                 <button type="button" class="btn btn-success me-2"  data-bs-target="#upload-elective-timetable-modal" data-bs-toggle="modal">Upload Elective Timetable</button>
                 <button type="button" class="btn btn-danger ms-auto me-3"  id="fetch-elective-timetable">
                     <i class="fa-solid fa-rotate p-1"></i>Fetch Elective Timetable 
                 </button>  
-       </div> 
-    </div>
+            </div> 
+        </div>
  
-    <div class="card-body table-responsive">
-        <div class="d-flex">
-            <div class="col-md-3 ms-5">
-                <label class="form-label mb-1" for="timetable-acad-session">Select Acad Session :</label>
-                <select class="form-select form-control select2" id="timetable-acad-session">
-                    <option selected disabled>--Select Acad Session-- </option>
-                     <%for(let acadSession of dropdownAcadSessionList) { %>
-                        <option value="<%- acadSession.sap_acad_session_id %>"><%- acadSession.acad_session %></option>
-                    <% } %>
-                    
-                </select>
-            </div>
-            <div class="col-md-3 ms-5">
-                <label class="form-label mb-1" for="day-select">Select Day :</label>
-                <select class="form-select form-control select2" id="day-select">
-                    <option selected disabled>--Select Day--</option>
-                    <option value="1">Monday</option>
-                    <option value="2">Tuesday</option>
-                    <option value="3">Wednesday</option>
-                    <option value="4">Thursday</option>
-                    <option value="5">Friday</option>
-                    <option value="6">Saturday</option>
-                    <option value="7">Sunday</option>
-                </select>
-            </div>
-             
-        </div>
-    
         <div class="card-body table-responsive">
-            <div class="timetable-container">
+            <div class="d-flex">
+                <div class="col-md-3 ms-5">
+                    <label class="form-label mb-1" for="timetable-acad-session">Select Acad Session :</label>
+                    <select class="form-select form-control select2" id="timetable-acad-session">
+                        <option selected disabled>--Select Acad Session-- </option>
+                        <%for(let acadSession of dropdownAcadSessionList) { %>
+                            <option value="<%- acadSession.sap_acad_session_id %>"><%- acadSession.acad_session %></option>
+                        <% } %>     
+                    </select>
+                </div>
+                <div class="col-md-3 ms-5">
+                    <label class="form-label mb-1" for="day-select">Select Day :</label>
+                    <select class="form-select form-control select2" id="day-select">
+                        <option selected disabled>--Select Day--</option>
+                        <option value="1">Monday</option>
+                        <option value="2">Tuesday</option>
+                        <option value="3">Wednesday</option>
+                        <option value="4">Thursday</option>
+                        <option value="5">Friday</option>
+                        <option value="6">Saturday</option>
+                        <option value="7">Sunday</option>
+                    </select>
+                </div>            
+            </div>
+            <div class="card-body table-responsive">
+                <div class="timetable-container"></div>
             </div>
         </div>
     </div>
     
-
-
-
     <div class="modal" id="upload-elective-timetable-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
         <div class="modal-dialog">
-        <div class="modal-content">
-        
-            <div class="modal-header">
-            <h5 class="modal-title">Upload Elective Timetable</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            
-            <div class="modal-body">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Elective Timetable</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
                     <div class="d-flex">
-                    <label class="form-label me-3">Import Elective Timetable :</label>
-                    <form enctype="multipart/form-data"   method="post" action="/admin/timetable/upload" id="upload-elective-timetable-form">
-                    <input type="file" name="import-elective-timetable" id="import-elective-timetable" accept=".xlsx">
+                        <label class="form-label me-3">Import Elective Timetable :</label>
+                        <form enctype="multipart/form-data"   method="post" action="/admin/timetable/upload" id="upload-elective-timetable-form">
+                        <input type="file" name="import-elective-timetable" id="import-elective-timetable" accept=".xlsx">
                     </div>
                     <div class="d-flex justify-content-between align-item-center mt-5">
-                    <input type="submit" class="btn btn-success mt-2 d-none" id="upload-elective-timetable-button" value="Upload Elective Timetable"></input> 
-                    </form> 
-                
-                <a href="/admin/timetable/generate-excel" download="sampleForImportTimetable.xlsx" name="sample-for-import-timetable" class="text-decoration-none align-self-end">Sample for Import Elective Timetable</a>
+                        <input type="submit" class="btn btn-success mt-2 d-none" id="upload-elective-timetable-button" value="Upload Elective Timetable"></input> 
+                        </form> 
+                        <a href="/admin/timetable/generate-excel" download="sampleForImportTimetable.xlsx" name="sample-for-import-timetable" class="text-decoration-none align-self-end">Sample for Import Elective Timetable</a>
+                    </div>      
                 </div>
-            
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
-    
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        
-        </div>
         </div>
     </div>
+
     <div class="modal" tabindex="-1" data-bs-backdrop="static" id="timetable-delete-modal">
         <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Delete timetable</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">    
-                       <label for="program-wise">Program:</label>
-                       <input type="radio" class="delete-timetable" name="delete-timetable" id="program-wise"  data-id="1">
-                    </div>
-                    <div class="col-md-6">
-                      <label for="program-acadsession-wise">Program Acad Session:</label>
-                      <input type="radio" class="delete-timetable" name="delete-timetable" id="program-acadsession-wise" data-id="2">
-                    </div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete timetable</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <select class="form-select form-control select2 mt-4" id="program-name-filter" disabled>
-                    <option selected>--Select Program--</option>
-                   <% for(let program of programList) { %>
-                    <option value="<%- program.id %>" data-delete="<%- program.program_id %>" ><%-program.program_name %></option>
-                    <% } %>
-                </select>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">    
+                            <label for="program-wise">Program:</label>
+                            <input type="radio" class="delete-timetable" name="delete-timetable" id="program-wise"  data-id="1">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="program-acadsession-wise">Program Acad Session:</label>
+                            <input type="radio" class="delete-timetable" name="delete-timetable" id="program-acadsession-wise" data-id="2">
+                        </div>
+                    </div>
+                    <select class="form-select form-control select2 mt-4" id="program-name-filter" disabled>
+                        <option selected>--Select Program--</option>
+                            <% for(let program of programList) { %>
+                                <option value="<%- program.id %>" data-delete="<%- program.program_id %>" ><%-program.program_name %></option>
+                            <% } %>
+                    </select>
 
-                <select class="form-select form-control select2 mt-4" id="session-filter" disabled>
-                    <option selected>--Select Session--</option>
-                </select>
+                    <select class="form-select form-control select2 mt-4" id="session-filter" disabled>
+                        <option selected>--Select Session--</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="delete-timetable-modal">Delete Timetable</button>
+                </div>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary" id="delete-timetable-modal">Delete Timetable</button>
-            </div>
-          </div>
         </div>
-      </div>
+    </div>
+</div>    
 <%- include('../partials/footer.ejs') %>
 <script>
     $(document).ready(function(){

@@ -384,7 +384,7 @@ module.exports = class course {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .query(`SELECT DISTINCT sap_acad_session_id, acad_session 
+                .query(`SELECT DISTINCT sap_acad_session_id AS id, acad_session AS name
                         FROM [${slug}].courses WHERE bidding_session_lid = @biddingId AND active = 1`);
         });
     }

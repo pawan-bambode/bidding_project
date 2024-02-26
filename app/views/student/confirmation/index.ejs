@@ -1,6 +1,5 @@
 
 <%- include('../partials/head') %>
-
 <%- include('../partials/leftSidebarForStudent.ejs') %>
 <%- include('../partials/header.ejs') %>
 
@@ -96,9 +95,22 @@
                             <% let count = 1 %>
                             <% for(let winningCourse of winningCourseList) { 
                                 %>
-                                <tr data-faculty-id="<%- winningCourse.faculty_id %>" data-faculty-name="<%- winningCourse.faculty_name %>" data-area-name="<%- winningCourse.area_name %>"
-                                    data-acad-session-id="<%- winningCourse.sap_acad_session_id %>" data-acad-session="<%- winningCourse.acad_session %>" data-course-name="<%- winningCourse.course_name %>"
-                                    data-course-id="<%- winningCourse.course_id %>" data-credits="<%- winningCourse.credits %>" data-bid-points="<%- winningCourse.bid_points %>" data-division="<%- winningCourse.division %>" data-concentration-lid="<%- winningCourse.concentration_lid %>" data-division-batch-lid="<%- winningCourse.id %>" data-is-dropped="<%- winningCourse.is_dropped %>" data-is-waitlist="<%- winningCourse.is_waitlisted %>" data-is-winning="<%- winningCourse.is_winning %>" data-course-lid="<%- winningCourse.course_lid %>" data-round-id ="<%- winningCourse.round_lid %>"
+                                <tr data-faculty-id="<%- winningCourse.faculty_id %>" 
+                                    data-faculty-name="<%- winningCourse.faculty_name %>" 
+                                    data-area-name="<%- winningCourse.area_name %>"
+                                    data-acad-session-id="<%- winningCourse.sap_acad_session_id %>" 
+                                    data-acad-session="<%- winningCourse.acad_session %>" 
+                                    data-course-name="<%- winningCourse.course_name %>"
+                                    data-course-id="<%- winningCourse.course_id %>" 
+                                    data-credits="<%- winningCourse.credits %>" 
+                                    data-bid-points="<%- winningCourse.bid_points %>" 
+                                    data-division="<%- winningCourse.division %>" 
+                                    data-concentration-lid="<%- winningCourse.concentration_lid %>" data-division-batch-lid="<%- winningCourse.id %>" 
+                                    data-is-dropped="<%- winningCourse.is_dropped %>" 
+                                    data-is-waitlist="<%- winningCourse.is_waitlisted %>" 
+                                    data-is-winning="<%- winningCourse.is_winning %>" 
+                                    data-course-lid="<%- winningCourse.course_lid %>"
+                                    data-round-id ="<%- winningCourse.round_lid %>"
                                 >
                                     <td><%- count++ %></td>
                                     <td><%- winningCourse.area_name %></td>
@@ -118,38 +130,33 @@
     </div>
     <div class="card card-custom-border-curv empty-bidding-round-wise">
         <div class="card-header-custom d-flex justify-content-between">
-          <h4 class="ms-2">Confirmation</h4>
+            <h4 class="ms-2">Confirmation</h4>
         </div>
         <div class="card-body table-responsive d-flex justify-content-center align-items-center">
-          <p>There is not any Confirmation Rounds</p>
+            <p>There is not any Confirmation Rounds</p>
         </div>
-      </div>
+    </div>
        
 <%- include('../partials/footer.ejs') %>
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
 <script>
 $(document).ready(function() {
  
+    let socket = io();
     let active = `<%- active %>`;
-    let startTime = JSON.parse('<%- JSON.stringify(startAndEndTime) %>');
-    let studentId = $('#student-data').data('student-lid');
-    let timeRemaing = $('.time-remaining').text().trim();
-
     $('#sidebar .side-menu li.' + `<%- active %>`).addClass('active');
-    let outerWidth = $('.round-wises li.active').innerWidth() + Number(10);
-    $('.round-wises li.active::before').css('--active-element-width', outerWidth + 'px');
 
+    let studentId = $('#student-data').data('student-lid');
     let roundSettings = JSON.parse(`<%- JSON.stringify(roundDetails) %>`);
-
-
     let roundId = roundSettings.round_lid;
-$('#confirm-courses-table tbody tr').each((index, element) => {
-    let roundElementId = parseInt($(element).data('round-id'));
-    if (roundId !== roundElementId) {
-        $(element).find('button.unconfirm-courses').addClass('disabled');
-    }
-});
+    let confirmationRoundId = $('.round-name').data('round-id');
+
+    $('#confirm-courses-table tbody tr').each((index, element) => {
+        let roundElementId = parseInt($(element).data('round-id'));
+        if (roundId !== roundElementId) {
+            $(element).find('button.unconfirm-courses').addClass('disabled');
+        }
+    });
 
     if(roundSettings != ''){
         
@@ -165,22 +172,17 @@ $('#confirm-courses-table tbody tr').each((index, element) => {
         $('.round-name').attr('data-round-id', roundId);
         $('.bidding-round-wise').removeClass('d-none');
         $('.empty-bidding-round-wise').addClass('d-none');
-
     }
 
-   
+    socket.emit('confirmationPageLoad', { 
+        slugName: "<%- slug %>",
+        biddingTime: JSON.parse(`<%- JSON.stringify(roundDetails) %>`),
+        roundId: 3,
+        roundIId: 5,
+        studentId: studentId      
+    });
 
-    let socket = io();
-    
-    socket.emit('confirmationPageLoaded', { 
-              slugName: "<%- slug %>",
-              biddingTime: JSON.parse(`<%- JSON.stringify(roundDetails) %>`),
-              roundId: 3,
-              roundIId: 5,
-              studentId: studentId      
-            });
-
-    socket.on('confirmationVisibleToStudent', function(data){
+    socket.on('activeConfirmationRound', function(data) {
         $('.round-wise-modal').addClass('d-none');
         let roundName = data.roundDetails[0].roundName;
         let roundId = data.roundDetails[0].round_lid;
@@ -211,19 +213,28 @@ $('#confirm-courses-table tbody tr').each((index, element) => {
             let isWinning = winCourse.is_winning;
             let roundId = winCourse.round_lid; 
             let row =
-                `<tr data-faculty-id="${facultyId}" data-faculty-name="${facultyName}" data-area-name="${areaName}"
-                    data-acad-session-id="${acadSessionId}" data-acad-session="${acadSession}" data-course-name="${courseName}"
-                    data-course-id="${courseId}" data-credits="${credits}" data-bid-points="${bidPoints}" data-division="${division}" data-concentration-lid="${concentrationId}" data-division-batch-lid="${divisionBatchId}" data-is-dropped="${isDropped}" data-is-waitlist="${isWaitListed}" data-is-winning="${isWinning}" data-course-lid="${courseLid}" data-round-id ="${roundId}">
-                    <td>${count++}</td>
-                    <td>${areaName}</td>
-                    <td>${acadSession}</td>
-                    <td>${courseName}-${division}</td>
-                    <td>${facultyName}</td>
-                    <td>${credits}</td>
-                    <td>${bidPoints}</td>
-                    <td><button class="btn btn-success confirm-courses me-1"><i class="fa-solid fa-check"></i> Confirm</button></td>
-                </tr>`;
-            
+                `<tr data-faculty-id="${facultyId}" data-faculty-name="${facultyName}" 
+                     data-area-name="${areaName}" data-acad-session-id="${acadSessionId}" 
+                     data-acad-session="${acadSession}" data-course-name="${courseName}"
+                     data-course-id="${courseId}" data-credits="${credits}" 
+                     data-bid-points="${bidPoints}" data-division="${division}" 
+                     data-concentration-lid="${concentrationId}" data-division-batch-lid="${divisionBatchId}" 
+                     data-is-dropped="${isDropped}" data-is-waitlist="${isWaitListed}" data-is-winning="${isWinning}"
+                      data-course-lid="${courseLid}" data-round-id ="${roundId}"
+                    >
+                        <td>${count++}</td>
+                        <td>${areaName}</td>
+                        <td>${acadSession}</td>
+                        <td>${courseName}-${division}</td>
+                        <td>${facultyName}</td>
+                        <td>${credits}</td>
+                        <td>${bidPoints}</td>
+                        <td>
+                            <button class="btn btn-success confirm-courses me-1">
+                                <i class="fa-solid fa-check"></i> Confirm
+                            </button>
+                        </td>
+                </tr>`; 
             $('#winning-course-table tbody').append(row);
         });
     
@@ -233,21 +244,15 @@ $('#confirm-courses-table tbody tr').each((index, element) => {
         $('.round-name').attr('data-round-id', roundId);
     
         $('.bidding-round-wise').removeClass('d-none');
-        $('.empty-bidding-round-wise').addClass('d-none');
-
-  
-  })
-       let confirmationRoundId = $('.round-name').data('round-id');
-        socket.emit('roundEnded', { 
+        $('.empty-bidding-round-wise').addClass('d-none');  
+    })
+      
+    socket.emit('roundEnded', { 
          slugName: "<%- slug %>",
          startTime :JSON.parse(`<%- JSON.stringify(roundDetails) %>`),
          roundId: confirmationRoundId
+    });       
 
-        });       
-
-  
- 
-  
     $('#winning-course-table').on('click', '.confirm-courses', function () {
         let studentId = $('#student-data').data('student-lid');
         let concentrationId = $(this).closest('tr').data('concentration-lid');
@@ -272,8 +277,7 @@ $('#confirm-courses-table tbody tr').each((index, element) => {
             course_lid: courseId,
             round_lid: roundId
         };
-
-        
+ 
         let ApiObj = {
             type: 'POST',
             url: '/student/confirmation/add-confirmation',
@@ -288,12 +292,12 @@ $('#confirm-courses-table tbody tr').each((index, element) => {
             .catch(error => {
                 createToastError(JSON.stringify(error.responseJSON.description));;
             });
-
         confirmUnConfirmRow($(this), 'confirm-courses-table', 'btn btn-danger unconfirm-courses', 'fa-close', 'Unconfirm');
     });
 
 
     $('#confirm-courses-table').on('click', '.unconfirm-courses', function(){
+
         let studentId = $('#student-data').data('student-lid');
         let concentrationId = $(this).closest('tr').data('concentration-lid');
         let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
@@ -336,6 +340,7 @@ $('#confirm-courses-table tbody tr').each((index, element) => {
     })
 
     function confirmUnConfirmRow(element, tableId, buttonClass, iconClass, buttonLabel) {
+
         let facultyId = $(element).closest('tr').data('faculty-id');
         let facultyName = $(element).closest('tr').data('faculty-name');
         let areaName = $(element).closest('tr').data('area-name');
@@ -354,19 +359,32 @@ $('#confirm-courses-table tbody tr').each((index, element) => {
         let courseLid = $(element).closest('tr').data('course-lid');
         let confirmaCourseTableLength = $('#confirm-courses-table tbody tr').length;
 
-        let confirmaCourseRow = `<tr data-faculty-id = "${facultyId}"  data-faculty-name = "${facultyName}" data-area-name = "${areaName}" data-acad-session-id = "${acadSessionId}" data-acad-session = "${acadSession}" data-course-name = "${courseName}" data-course-id = "${courseId}" data-credits = "${credits}" data-bid-points = "${studentPoints}" data-division = "${division}" data-concentration-lid = "${concentrationId}" data-division-batch-lid = "${divisionBatchId}" data-is-dropped = "${isDropped}" data-is-waitlist = "${isWaitListed}" data-is-winning = "${isWinning}"  data-course-lid = "${courseLid}"> 
-        <td>${++confirmaCourseTableLength}</td>
-        <td>${areaName}</td>
-        <td>${acadSession}</td>
-        <td>${courseName}-${division}</td>
-        <td>${facultyName}</td>
-        <td>${credits}</td>
-        <td>${studentPoints}</td>
-        <td><button class="${buttonClass}"><i class="me-1 fa-solid ${iconClass}"></i>${buttonLabel}</button></td>
-        </tr>`;
+        let confirmaCourseRow = `<tr 
+                                  data-faculty-id = "${facultyId}"  data-faculty-name = "${facultyName}" 
+                                  data-area-name = "${areaName}" data-acad-session-id = "${acadSessionId}" 
+                                  data-acad-session = "${acadSession}" data-course-name = "${courseName}" 
+                                  data-course-id = "${courseId}" data-credits = "${credits}" 
+                                  data-bid-points = "${studentPoints}" data-division = "${division}"
+                                  data-concentration-lid = "${concentrationId}" data-division-batch-lid = "${divisionBatchId}" 
+                                  data-is-dropped = "${isDropped}" data-is-waitlist = "${isWaitListed}"
+                                  data-is-winning = "${isWinning}"  data-course-lid = "${courseLid}"
+                                 > 
+                                    <td>${++confirmaCourseTableLength}</td>
+                                    <td>${areaName}</td>
+                                    <td>${acadSession}</td>
+                                    <td>${courseName}-${division}</td>
+                                    <td>${facultyName}</td>
+                                    <td>${credits}</td>
+                                    <td>${studentPoints}</td>
+                                    <td>
+                                        <button class="${buttonClass}">
+                                            <i class="me-1 fa-solid ${iconClass}"></i>${buttonLabel}
+                                        </button>
+                                    </td>
+                                </tr>`;
 
-        $(`#${tableId} tbody`).append(confirmaCourseRow);
-        $(element).closest('tr').remove();
+    $(`#${tableId} tbody`).append(confirmaCourseRow);
+    $(element).closest('tr').remove();
     }
     
     function updateConfirmationDetails(confirmationDetails) {

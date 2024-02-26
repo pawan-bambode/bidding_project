@@ -101,7 +101,7 @@ const currentDate = currentDateTime.getUTCMinutes();
     });
     
        
-    socket.on('confirmationPageLoaded', (data) => {
+    socket.on('confirmationPageLoad', (data) => {
         
         let slugName = data.slugName;
         let biddingId = data.biddingTime.bidding_session_lid;
@@ -288,7 +288,7 @@ const currentDate = currentDateTime.getUTCMinutes();
                 // Join room logic
             });
             
-            socket.on('addDropPageLoaded', (data) => {
+            socket.on('addDropPageLoad', (data) => {
                 
                 let slugName = data.slugName;
                 let biddingId = data.biddingTime.bidding_session_lid;
@@ -334,13 +334,13 @@ const currentDate = currentDateTime.getUTCMinutes();
                                 roundSetting.listByOneDayBefore(slugName, biddingId, roundId, roundIId)
                             ]);
                         
-                            io.emit('addDropVisibleToStudent', {
+                            io.emit('activeAddDropRound', {
                                 roundSetting: roundSettingTimeResult.recordset,
                                 roundDetails: listByOneDayBeforeResult.recordset
                             });
                         } catch (error) {
                             console.error('Error:', error);
-                            io.emit('addDropVisibleToStudent');
+                            io.emit('activeAddDropRound');
                         }
                     });
                 
@@ -351,13 +351,13 @@ const currentDate = currentDateTime.getUTCMinutes();
                                 roundSetting.listByOneDayBefore(slugName, biddingId, roundId, roundIId),
                             ]);
                         
-                            io.emit('addDropVisibleToStudent', {
+                            io.emit('activeAddDropRound', {
                                 roundSetting: roundSettingTimeResult.recordset,
                                 roundDetails: listByOneDayBeforeResult.recordset
                             });
                         } catch (error) {
                             console.error('Error:', error);
-                            io.emit('addDropVisibleToStudent');
+                            io.emit('activeAddDropRound');
                         }
                     });
                     });
@@ -406,7 +406,7 @@ const currentDate = currentDateTime.getUTCMinutes();
                 }
             });
         
-            socket.on('demandEstimationPageLoaded', (data) => {
+            socket.on('demandEstimationPageLoad', (data) => {
               
                 let slugName = data.slugName;
                 let biddingId = data.biddingTime.bidding_session_lid;
@@ -450,7 +450,7 @@ const currentDate = currentDateTime.getUTCMinutes();
                 }
             });
         
-            socket.on('biddingPageLoaded', (data) => {
+            socket.on('biddingPageLoad', (data) => {
                
                 let slugName = data.slugName;
                 let biddingId = data.biddingTime.bidding_session_lid;
@@ -538,7 +538,7 @@ const currentDate = currentDateTime.getUTCMinutes();
             });
             
                
-            socket.on('confirmationPageLoaded', (data) => {
+            socket.on('confirmationPageLoad', (data) => {
                 
                 let slugName = data.slugName;
                 let biddingId = data.biddingTime.bidding_session_lid;
@@ -583,14 +583,14 @@ const currentDate = currentDateTime.getUTCMinutes();
                                 confirmation.winningCourseList(slugName, biddingId, studendId,  roundId, roundIId)
                             ]);
                         
-                            io.emit('confirmationVisibleToStudent', {
+                            io.emit('activeConfirmationRound', {
                                 roundSetting: roundSettingTimeResult.recordset,
                                 roundDetails: listByOneDayBeforeResult.recordset,
                                 winningCourse: winningCourse.recordset
                             });
                         } catch (error) {
                             console.error('Error:', error);
-                            io.emit('confirmationVisibleToStudent');
+                            io.emit('activeConfirmationRound');
                         }
                     });
                 
@@ -603,7 +603,7 @@ const currentDate = currentDateTime.getUTCMinutes();
                                 confirmation.winningCourseList(slugName, biddingId, studendId,  roundId, roundIId)
                             ]);
                         
-                            io.emit('confirmationVisibleToStudent', {
+                            io.emit('activeConfirmationRound', {
                                 roundSetting: roundSettingTimeResult.recordset,
                                 roundDetails: listByOneDayBeforeResult.recordset,
                                 confirmationCourse: confirmCourse.recordset,
@@ -611,7 +611,7 @@ const currentDate = currentDateTime.getUTCMinutes();
                             });
                         } catch (error) {
                             console.error('Error:', error);
-                            io.emit('confirmationVisibleToStudent');
+                            io.emit('activeConfirmationRound');
                         }
                     });
                 }

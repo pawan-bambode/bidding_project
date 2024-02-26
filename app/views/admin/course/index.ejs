@@ -5,213 +5,158 @@
 
 <div class="main-content">
     <div class="breadcrumbs-container">
-      <ul class="breadcrumb">
-          <% if(breadcrumbs){%> <% for (let crumbs of breadcrumbs){%>
-              <li><a href="<%- crumbs.url%>"><%- crumbs.name%></a></li>
-              <%} }%>
-      </ul>
+        <ul class="breadcrumb">
+            <% if(breadcrumbs){ %> 
+                  <% for (let crumbs of breadcrumbs){ %>
+                        <li>
+                            <a href="<%- crumbs.url %>"><%- crumbs.name %></a>
+                        </li>
+                    <% } %>
+            <% } %>
+        </ul>
     </div>
-    <div class="card card-custom-border-curv" id="course-modal">
-        <div class="card-header-custom d-flex justify-content-between p-2">
-            <h4 class="ms-2">Course</h4>
+<div class="card card-custom-border-curv" id="course-modal">
+    <div class="card-header-custom d-flex justify-content-between p-2">
+        <h4 class="ms-2">Courses</h4>
             <div>
-              <button class="btn btn-danger disabled" id="delete-all-coures">Delete All Courses</button>
-            <button type="button" class="btn btn-success me-2"  data-bs-target="#upload-course-modal" data-bs-toggle="modal">Upload Courses</button>
+                <button class="btn btn-danger disabled" id="delete-all-coures">Delete All Courses</button>
+                <button type="button" class="btn btn-success me-2" data-bs-target="#upload-course-modal" data-bs-toggle="modal">Upload Courses</button>
             </div>
-        </div>
-        <div class="card-body table-responsive custom-table">
-
+    </div>
+      <div class="card-body table-responsive custom-table">
           <div class="d-flex justify-content-between">
-            <div>
-                <label>Show Entries</label>
-                <select class="form-select" id="changeEntry">
-                    <%for(let page of locals.page_filter){%>
-                       <option value="<%-page%>"><%-page%></option>
-                    <%}%>
-                </select>
-            </div>
-            <div class="col-md-3 mt-4">
-              <select class="form-select form-control select2" id="program-name-filter">
-                  <option value="-1" selected >Select Program</option>
-                  <%for(let prog of programList){%>
-                  <option value="<%-prog.program_id%>"><%-prog.program_name%></option>
-                  <%}%>
-              </select>
+              <div>
+                  <label>Show Entries</label>
+                  <select class="form-select" id="changeEntry">
+                      <% for(let page of locals.page_filter){ %>
+                          <option value="<%- page %>"><%- page %></option>
+                      <% } %>
+                  </select>
+              </div>
+              <div class="col-md-3 mt-4">
+                  <select class="form-select form-control select2" id="program-name-filter">
+                      <option value="-1" selected>Select Program</option>
+                      <% for(let prog of programList){ %>
+                          <option value="<%- prog.program_id %>"><%- prog.program_name %></option>
+                      <% } %>
+                  </select>
+              </div>
+              <div class="col-md-2 mt-4">
+                  <select class="form-select form-control select2" id="session-name-filter">
+                      <option value="-1" selected>Select Acad Session</option>
+                  </select>
+              </div>
+              <div class="col-md-3 mt-4">
+                  <select class="form-select form-control select2" id="course-name-filter">
+                      <option value="-1" selected>Select Course</option>
+                  </select>
+              </div>
+              <div>
+                  <div class="table-searchbar-container d-flex justify-content-around p-1">
+                      <button type="button" id="searchkeyword-button" class="border-0 outline-0">
+                          <i class="fas fa-search"></i>
+                      </button>
+                      <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+                  </div>
+              </div>
           </div>
-          <div class="col-md-2 mt-4">
-              <select class="form-select form-control select2" id="session-name-filter">
-                <option value="-1" selected>Select Acad Session</option>
-              </select>
-          </div>
-          <div class="col-md-3 mt-4">
-            <select class="form-select form-control select2" id="course-name-filter">
-              <option value="-1" selected>Select Course</option>
-            </select>
-          </div>
-          <div>
-            <div class="table-searchbar-container d-flex justify-content-around p-1">
-                <button type="button" id="searchkeyword-button" class="border-0 outline-0">
-                    <i class="fas fa-search"></i>
-                </button>
-                <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
-            </div>
-        </div>
-        </div>
-            <table class="table custom_row table-bordered mt-4" id="course-table">
-                <thead>
+          <table class="table custom_row table-bordered mt-4" id="course-table">
+              <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Course Name</th>
-                    <th>Credits</th>
-                    <th>Program Id</th>
-                    <th>Acad Session</th>
-                    <th>Area</th>
-                    <th>Year of Introduction</th>
-                    <th>Minimum Demand Criteria</th>
-                    <th>Actions <input type="checkbox" name="courses-checkbox" id="course-checkbox"></th>
+                      <th>#</th>
+                      <th>Course Name</th>
+                      <th>Credits</th>
+                      <th>Program Id</th>
+                      <th>Acad Session</th>
+                      <th>Area</th>
+                      <th>Year of Introduction</th>
+                      <th>Minimum Demand Criteria</th>
+                      <th>Actions <input type="checkbox" name="courses-checkbox" id="course-checkbox"></th>
                   </tr>
-                </thead>
-                <tbody>
+              </thead>
+              <tbody>
                   <% let count = 1 %>
                   <% for(let course of courseList) { %>
-                    <tr data-id="<%- course.id %>"
-                      data-course-name="<%- course.course_name%>"  data-credits="<%- course.credits %>" data-year-of-introduction ="<%- course.year_of_introduction %>" data-min-demand-criteria="<%- course.min_demand_criteria %>"
-                      >
-                      <td><%- count++ %></td>
-                      <td><%- course.course_name %></td>
-                      <td><%- course.credits %></td>
-                      <td><%- course.program_id %></td>
-                      <td><%- course.acad_session %></td>
-                      <td><%- course.area_name %></td>
-                      <td><%- course.year_of_introduction %></td>
-                      <td><%- course.min_demand_criteria %></td>
-                      <td>
-                      <a class="edit-course" data-bs-target="#edit-course-modal" data-bs-toggle="modal" 
-                        ><i class="fa fa-edit"></i></a>
-                      <a data-id="<%- course.id %>" class="delete-course" ><i class="fas fa-trash text-danger"></i>
-                      </a>
-                      <input class="d-none checkbox-course" type="checkbox" name="course" data-id="<%- course.id %>" >
-                      </td>
-                    </tr>
-                    
-                  <%}%>
-                </tbody>
-              </table>
-              <div class="d-flex justify-content-between">
-                <div>
-                    <p>Total entries :&nbsp;<span id="page-no"></span>
-                    </p>
-                </div>
-                <div>
-                    <p id="pagination" class="pagination-search"></p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal" id="upload-course-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
-        <div class="modal-dialog">
+                      <tr data-id="<%- course.id %>"
+                          data-course-name="<%- course.course_name %>"  data-credits="<%- course.credits %>" data-year-of-introduction ="<%- course.year_of_introduction %>" data-min-demand-criteria="<%- course.min_demand_criteria %>">
+                          <td><%- count++ %></td>
+                          <td><%- course.course_name %></td>
+                          <td><%- course.credits %></td>
+                          <td><%- course.program_id %></td>
+                          <td><%- course.acad_session %></td>
+                          <td><%- course.area_name %></td>
+                          <td><%- course.year_of_introduction %></td>
+                          <td><%- course.min_demand_criteria %></td>
+                          <td>
+                              <a class="edit-course" data-bs-target="#edit-course-modal" data-bs-toggle="modal"><i class="fa fa-edit"></i></a>
+                              <a data-id="<%- course.id %>" class="delete-course"><i class="fas fa-trash text-danger"></i></a>
+                              <input class="d-none checkbox-course" type="checkbox" name="course" data-id="<%- course.id %>">
+                          </td>
+                      </tr>
+                  <% } %>
+              </tbody>
+          </table>
+          <div class="d-flex justify-content-between">
+              <div>
+                  <p>Total entries :&nbsp;<span id="page-no"></span></p>
+              </div>
+              <div>
+                  <p id="pagination" class="pagination-search"></p>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div class="modal" id="upload-course-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
+      <div class="modal-dialog">
           <div class="modal-content">
-         
-            <div class="modal-header">
-              <h5 class="modal-title">Upload Courses</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <div class="modal-header">
+                  <h5 class="modal-title">Upload Courses</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                    <div class="d-flex">
+                        <label class="form-label me-3">Import Courses :</label>
+                        <form enctype="multipart/form-data" action="/admin/course/upload" method="post" id="upload-course-form">
+                            <input type="file" name="import-course" id="import-course" accept=".xlsx">
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-5">
+                        <input type="submit" class="btn btn-success mt-2 d-none" id="upload-course-button" value="Upload Courses">
+                </form>
+                <a href="/admin/course/generate-excel" download="sampleForImportCourses.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample for Import Courses</a>
+                </div>
             </div>
             
-            <div class="modal-body">
-                    <div class="d-flex">
-                    <label class="form-label me-3">Import Courses :</label>
-                    <form enctype="multipart/form-data" action="/admin/course/upload" method="post" id="upload-course-form">
-                    <input type="file" name="import-course" id="import-course" accept=".xlsx">
-                    </div>
-                    <div class="d-flex justify-content-between align-item-center mt-5">
-                    <input type="submit" class="btn btn-success mt-2 d-none" id="upload-course-button" value="Upload Courses"></input> 
-                    </form> 
-                
-                  <a href="/admin/course/generate-excel" download="sampleForImportCourses.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample for Import Courses</a>
-                 </div>
-             
-            </div>
-      
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-           
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
           </div>
-        </div>
       </div>
-
-      <div class="modal" id="edit-course-modal" data-bs-backdrop="static">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Update Course</h5>
-                    <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                  <div class="row empty">
-                  <div class="col-md-6">
-                  <label class="mb-2 form-label" for="course-name">Course Name :</label>
-                  <input class="form-control is-empty" type="text" id="course-name">
-                  <span class="text-danger d-none is-in-valid" ></span>
-                  </div>
-                    <div class="col-md-6">
-                        <label class="mb-2 form-label" for="course-credits">Credits :</label>
-                        <input class="form-control is-empty is-number" type="text" id="course-credits">
-                        <span  class="text-danger d-none is-in-valid"></span>
-                    </div>
-                    </div>
-                    <div class="row empty">
-                      <div class="col-md-6">
-                        <label class="mb-2 form-label" for="year-of-introduction">Year of Introduction :</label>
-                        <select class="form-control form-select select2 custom-select" id="year-of-introduction-select" required>
-                            <option value="-1" disabled selected>-- Select Year of Introduction --</option>
-                            <% let currentYear = new Date().getFullYear(); %>
-                            <% for (let year = 2000; year <= currentYear; year++) { %>
-                                <option value="<%- year %>"><%- year %></option>
-                            <% } %>
-                        </select>
-                        <p id="error-year-of-intro" class="text-danger d-none is-in-valid">Please Select Year of Introduction!</p>
-                    </div>
-                    
-                  
-                    <div class="col-md-6">
-                      <label class="form-label mb-2" for="min-demand-criteria">Minimum Demand Criteria :</label>
-                      <input class="form-control is-empty is-number" type="text"  id="min-demand-criteria">
-                      <span  class="text-danger d-none is-in-valid"></span>
-                    </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
-                    <button class="btn btn-primary" id="update-course">Update</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal position-absolute bottom-0 end-3" id="confirmation-delete-all-courses">
+  </div>
+  <div class="modal position-absolute bottom-0 end-3" id="confirmation-delete-all-courses">
       <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3 class="modal-title">
-                 Delete All Courses
-            </h3>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h3 class="modal-title">
+                      Delete All Courses
+                  </h3>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <div class="d-flex flex-column p-3">
+                      <h4>You are sure to delete all courses ?</h4>
+                      <div class="">
+                          <button class="btn btn-success">Yes</button>
+                          <button class="btn btn-danger">No</button>
+                      </div>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button class="btn" data-bs-dismiss="modal">Close</button>
+              </div>
           </div>
-          <div class="modal-body">
-            <div class="d-flex flex-column p-3">
-               <h4>You are sure to delete all courses ?</h4>
-               <div class="">
-                <button class="btn btn-success">Yes</button>
-                <button class="btn btn-danger">No</button>
-               </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
       </div>
-    </div>
+  </div>
+
     <%- include('../partials/footer.ejs') %>
 <script>
    $(document).ready(function(){
@@ -488,6 +433,7 @@ $(document).on('change', '#course-name-filter', function() {
       });
       $(document).ready(function() {
       $('#upload-course-form').on('submit', function(event) {
+        console.log('course is click now');
         event.preventDefault(); 
         var formData = new FormData(this); 
 

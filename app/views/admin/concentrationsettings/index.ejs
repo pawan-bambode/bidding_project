@@ -58,7 +58,8 @@
                 </thead>
                 <tbody>
                     <% let count = 1 %>
-                    <% for (let concentrationSetting of concentrationSettingList) { %>
+                    <% for (let concentrationSetting of concentrationSettingList) {
+                        %>
                         <tr data-concentration-setting-id="<%- concentrationSetting.id %>"
                             data-concen-settings-total-ele-credits="<%- concentrationSetting.total_elective_credits %>"
                             data-concen-settings-max-cre-per-area="<%- concentrationSetting.max_credits_per_area %>"

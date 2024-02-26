@@ -19,9 +19,9 @@ module.exports = class ProgramSession {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .query(`SELECT ad.sap_acad_session_id, ad.acad_session, 
-                        IIF(ps.min_credits IS NULL, 0, ps.min_credits) AS min_credits, 
-                        IIF(ps.max_credits IS NULL, 0, ps.max_credits) AS max_credits 
+                .query(`SELECT ad.sap_acad_session_id AS id, ad.acad_session AS name, 
+                        IIF(ps.min_credits IS NULL, 0, ps.min_credits) AS credits, 
+                        IIF(ps.max_credits IS NULL, 0, ps.max_credits) AS maxCredits
                         FROM [${slug}].program_sessions ps 
                         INNER JOIN [dbo].acad_sessions ad ON ps.sap_acad_session_id = ad.sap_acad_session_id
                         WHERE bidding_session_lid = @biddingId AND active = 1`)

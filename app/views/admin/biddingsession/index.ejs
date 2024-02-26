@@ -16,7 +16,7 @@
 
     <div class="card card-custom-border-curv">
         <div class="card-header-custom d-flex justify-content-between p-1">
-            <h3 class="ms-2">Bidding Sessions</h3>
+            <h4 class="ms-2">Bidding Sessions</h4>
             <button type="button" class="btn add-bidding-session-button me-2" data-bs-target="#add-bidding-session" data-bs-toggle="modal">
                 <i class="fas fa-plus"></i>
             </button>
@@ -66,119 +66,118 @@
             </table>
         </div>
     </div>
-</div>
 
-<div class="modal" id="add-bidding-session">
-    <div class="modal-dialog modal-fullscreen" tabindex="-1" aria-hidden="true" aria-labelledby="exampleModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Add Bidding Session</h4>
-                <button class="btn-close full-modal-left-sidebar" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body row custum-imp-program">
-                <div class="col-md-3 border-end custm-padd-for-imp-program custm-pad">
-                    <div class="mt-4 ms-1">
-                        <label class="form-label" for="bidding-name">Bidding Session Name :</label>
-                        <input class="form-control" id="bidding-name" type="text" autocomplete="off">
-                        <label class="form-label" for="start-date">Session Start Date :</label>
-                        <input class="form-control" type="date" name="start-date" id="start-date">
-                        <label class="form-label" for="end-date">Session End Date :</label>
-                        <input class="form-control disabled" type="date" name="end-date" id="end-date">
-                        <div class="d-flex justify-content-end align-items mt-4">
-                            <button class="btn btn-primary" id="add-bidding-details">Add Bidding Details </button>
-                        </div>
-                        <div class="mt-5 d-none" id="add-acad-session">
-                            <div class="d-flex flex-column">
-                                <label class="form-label" for="selected-acad-session">Acad Session :</label>
-                                <select class="form-select select2" id="selected-acad-session">
-                                    <option selected disabled>--Select Acad Session--</option>
-                                    <% for(let acadSession of acadSessionList) { %>  
-                                        <option value="<%- acadSession.id %>"><%- acadSession.acad_session %></option>
-                                    <% } %>                          
-                                </select>
-                                <button class="btn btn-primary mt-4 align-self-end" id="add-acad-session-in-bidding-details">Add Acad Session</button>
+    <div class="modal" id="add-bidding-session">
+        <div class="modal-dialog modal-fullscreen" tabindex="-1" aria-hidden="true" aria-labelledby="exampleModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Bidding Session</h4>
+                    <button class="btn-close full-modal-left-sidebar" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body row custum-imp-program">
+                    <div class="col-md-3 border-end custm-padd-for-imp-program custm-pad">
+                        <div class="mt-4 ms-1">
+                            <label class="form-label" for="bidding-name">Bidding Session Name :</label>
+                            <input class="form-control" id="bidding-name" type="text" autocomplete="off">
+                            <label class="form-label" for="start-date">Session Start Date :</label>
+                            <input class="form-control" type="date" name="start-date" id="start-date">
+                            <label class="form-label" for="end-date">Session End Date :</label>
+                            <input class="form-control disabled" type="date" name="end-date" id="end-date">
+                            <div class="d-flex justify-content-end align-items mt-4">
+                                <button class="btn btn-primary" id="add-bidding-details">Add Bidding Details </button>
+                            </div>
+                            <div class="mt-5 d-none" id="add-acad-session">
+                                <div class="d-flex flex-column">
+                                    <label class="form-label" for="selected-acad-session">Acad Session :</label>
+                                    <select class="form-select select2" id="selected-acad-session">
+                                        <option selected disabled>--Select Acad Session--</option>
+                                        <% for(let acadSession of acadSessionList) { %>  
+                                            <option value="<%- acadSession.id %>"><%- acadSession.acad_session %></option>
+                                        <% } %>                          
+                                    </select>
+                                    <button class="btn btn-primary mt-4 align-self-end" id="add-acad-session-in-bidding-details">Add Acad Session</button>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-9 custm-padd">
+                        <table class="custom_row table table-bordered mt-4" id="temp-bidding-session-details">
+                            <thead>
+                                <th>#</th>
+                                <th>Bidding Session Name</th>
+                                <th>Acad Sessions</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="col-md-9 custm-padd">
-                    <table class="custom_row table table-bordered mt-4" id="temp-bidding-session-details">
-                        <thead>
-                            <th>#</th>
-                            <th>Bidding Session Name</th>
-                            <th>Acad Sessions</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Action</th>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <div class="modal-footer">
+                    <button class="btn btn-success disabled" id="add-bidding-sessions">Add Bidding Session</button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-success disabled" id="add-bidding-sessions">Add Bidding Session</button>
             </div>
         </div>
     </div>
-</div>
 
-<div class="modal fade" id="edit-bidding-session-modal" tabindex="-1" aria-labelledby="edit-bidding-session-modal" data-bs-backdrop="static" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="edit-bidding-session-modal">Update Bidding Session</h5>
-                <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3 empty">
-                    <input type="hidden" name="bidding-id" id="bidding-id">
-                    <label for="exampleFormControlInput1" class="form-label">Bidding Name :</label>
-                    <input type="text" class="form-control is-empty" name="bidding-session-name" id="bidding-name-val" autocomplete="off">
-                    <span class="text-danger d-none is-in-valid">Enter the Bidding Name!</span>
+    <div class="modal fade" id="edit-bidding-session-modal" tabindex="-1" aria-labelledby="edit-bidding-session-modal" data-bs-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit-bidding-session-modal">Update Bidding Session</h5>
+                    <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="row empty">
-                    <div class="mb-3 col-md-6">
-                        <label class="form-label">Start Date :</label>
-                        <input type="date" class="form-control is-empty" name="start-date" id="start-date" >
+                <div class="modal-body">
+                    <div class="mb-3 empty">
+                        <input type="hidden" name="bidding-id" id="bidding-id">
+                        <label for="exampleFormControlInput1" class="form-label">Bidding Name :</label>
+                        <input type="text" class="form-control is-empty" name="bidding-session-name" id="bidding-name-val" autocomplete="off">
+                        <span class="text-danger d-none is-in-valid">Enter the Bidding Name!</span>
                     </div>
-                    <div class="mb-3 col-md-6">
-                        <label for="exampleFormControlInput1" class="form-label">End Date :</label>
-                        <input type="date" class="form-control is-empty" name="end-date" id="end-date">
+                    <div class="row empty">
+                        <div class="mb-3 col-md-6">
+                            <label class="form-label">Start Date :</label>
+                            <input type="date" class="form-control is-empty" name="start-date" id="start-date" >
+                        </div>
+                        <div class="mb-3 col-md-6">
+                            <label for="exampleFormControlInput1" class="form-label">End Date :</label>
+                            <input type="date" class="form-control is-empty" name="end-date" id="end-date">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="selected-acad-session col-md-9">
+                            <div class='d-flex flex-column justify-content-between align-item-center session-list-container'></div>
+                        </div>
+                        <span class="text-danger d-none bidding-acad-session-label">Acad Session Already Added!</span>
+                        <span class="text-danger d-none timetable-acad-session-select">Select Acad Session!</span>
+                        <div class="d-flex col-md-9 add-bidding-session-val"></div>
+                        <div class="d-flex justify-content-end align-items-end add-acad-session col-md-3">
+                            <span class="d-flex justify-content-center align-items-center badge bg-primary mt-1 col-md-6" style="height:35px;"><i class="fa-solid fa-circle-plus" style="font-size: large;"></i></span>
+                        </div>
+                    </div>
+                    <div class="acad-session-drop-down d-none d-flex">
+                        <div class="col-md-8">
+                            <label class="form-label">Academic Session </label>
+                            <select class="form-select select2" id="edit-academic-session-add">
+                                <option selected disabled>Select Acad Session</option>
+                                <% for(let acadSession of acadSessionList) {  %>
+                                    <option value="<%- acadSession.id %>"><%- acadSession.acad_session %></option>
+                                <%} %>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-end align-items-end col-md-4">
+                            <button class="btn btn-success" id="add-acad-session-edit-bidding" style="height:40px">Add Acad Session</button>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="selected-acad-session col-md-9">
-                        <div class='d-flex flex-column justify-content-between align-item-center session-list-container'></div>
-                    </div>
-                    <span class="text-danger d-none bidding-acad-session-label">Acad Session Already Added!</span>
-                    <span class="text-danger d-none timetable-acad-session-select">Select Acad Session!</span>
-                    <div class="d-flex col-md-9 add-bidding-session-val"></div>
-                    <div class="d-flex justify-content-end align-items-end add-acad-session col-md-3">
-                        <span class="d-flex justify-content-center align-items-center badge bg-primary mt-1 col-md-6" style="height:35px;"><i class="fa-solid fa-circle-plus" style="font-size: large;"></i></span>
-                    </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary update-bidding-session" id="update-bidding-session">UPDATE</button>
                 </div>
-                <div class="acad-session-drop-down d-none d-flex">
-                    <div class="col-md-8">
-                        <label class="form-label">Academic Session </label>
-                        <select class="form-select select2" id="edit-academic-session-add">
-                            <option selected disabled>Select Acad Session</option>
-                            <% for(let acadSession of acadSessionList) {  %>
-                                <option value="<%- acadSession.id %>"><%- acadSession.acad_session %></option>
-                            <%} %>
-                        </select>
-                    </div>
-                    <div class="d-flex justify-content-end align-items-end col-md-4">
-                        <button class="btn btn-success" id="add-acad-session-edit-bidding" style="height:40px">Add Acad Session</button>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary update-bidding-session" id="update-bidding-session">UPDATE</button>
             </div>
         </div>
     </div>
-</div>
 
 <%- include('../partials/footer.ejs') %>
 
