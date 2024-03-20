@@ -3,29 +3,17 @@
 }
 
 :root {
-
-   --primary-red: #E16071;
-   --primary-bg: #e8eef9;   
-
+    --primary-bg: #e8eef9;   
     --primary-table-bg: #DCEFFC;
     --primary-white: #fff;
-
-    --occupied-grad-pri: #a7a7a7;
-    --occupied-grad-sec: #cdcdcd;
-
     --timetableWidth: 1561px;
     --roomNoWidth: 50px;
     --breakIntervalWidth: 13px;
-    --eventWidth: 144px;
     --roomSlotWidth: 1515px;
-    --eventNoBreakWidth: 156px;
-    --fixedBreakWidth: 65px;
     --left-sidebar-width : 260px;
     --bidding-trimester-active: 0px;
     --available-trimester-active: 0px;
     --active-right-width: 0px;
-    --active-left-width: 0px;
-    --active-spacer-width: 0px;
 }
 
 body {
@@ -43,38 +31,9 @@ body {
     z-index: 1001;
 }
 
-.left-400 {
-    left: -400px !important;
-}
-
-.left-0 {
-    left: 0 !important;
-}
-
-.left-sidebar-logo {
-    height: 80.75px;
-}
-
-.offset-list {
-    list-style: none;
-    padding: 10px 0px;
-    left: 9px;
-    scroll-behavior: auto;
-    height: calc(100vh - 80.75px)
-}
-
-.custom-accordian-button {
-    box-shadow: none !important;
-}
-
-.custom-accordian-button>img {
-    padding-right: 16px;
-}
-
 .select2-container {
     width: 100% !important;
 }
-
 
 ::-webkit-scrollbar {
     width: 5px;
@@ -93,44 +52,30 @@ body {
     border-radius: 2px;
 }
 
-/* SCROLLBAR ENDS  */
+/* SCROLLBAR ENDS */
 @media (max-width:1200px) {
-
     .left-sidebar {
         transform: translateX(-100%);
     }
 
     .left-sidebar-open {
-        transform: translateX(0);
-        
+        transform: translateX(0);        
         transition: all 500ms ease-in-out;
+    }
+    .student-footer{
+        left: 0;
     }
 }
 
-
 @media (max-width:650px) {
-
     .left-sidebar {
         width: 230px;
         height: 50vh;
     }
 
-    .offset-list {
-        overflow-y: scroll;
-        background-color: var(--primary-white);
-    }
-
     .nmims-logo {
         transform: scale(0.6);
     }
-
-    .left-sidebar-logo {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
- 
 }
 
 .main {
@@ -139,25 +84,9 @@ body {
     left: 260px;
     right: 0;
     transition: all 0.5s ease-in-out;
-
-}
-
-.main-maximize {
-    position: absolute;
-    max-width: 100%;
-    left: 80px;
-    right: 0;
-    transition: all 0.5s ease-in-out;
 }
 
 /* TOPNAVBAR */
-
-.nav-top {
-    position: fixed !important;
-    top: 0;
-    width: 100%;
-}
-
 .btn:focus {
     box-shadow: none !important;
 }
@@ -173,20 +102,19 @@ body {
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     transition: all 0.5s ease-in-out;
 }
-
-.top-navbar-maximize {
-
+.student-footer {
     position: fixed;
-    top: 0;
+    bottom: 0;
     right: 0;
-    left: 90px;
-    padding: 2vh;
+    padding: 1vh;
     background: var(--primary-white);
-    z-index: 1;
+    z-index: 1000;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     transition: all 0.5s ease-in-out;
+} 
+.student-footer-div{
+    height: 60px;
 }
-
 .nmims-logo-smalldevices {
     display: none;
 }
@@ -218,19 +146,17 @@ body {
 .userprofile-dropdown-menu {
     transform: none !important;
     inset: 60px 4px auto auto !important;
-
 }
 
 @media (max-width:1200px) {
     .left-sidebar-toggle {
         display: none;
     }
-
 }
 
 /* TOPNAVBAR ENDS */
 .main-content {
-    padding: 100px 15px;
+    padding: 100px 35px;
     width: 100%;
     min-height: 100vh;
     background: var(--primary-bg);
@@ -258,35 +184,24 @@ body {
 }
 
 @media (min-width:1200px) {
-
     .row1-data-card:hover {
         transform: scale(1.06);
         box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-        /* background: #ad0000; */
         background: #ad0000;
         color: #fff !important;
+    }
+
+    .student-footer {
+        background-color: var(--primary-white);
+        position: fixed;
+        left: 260px;
+        bottom: 0;
+        background-color: white;
     }
 
     .table-responsive {
         overflow-x: hidden;
     }
-
-}
-
-.table-header {
-    background: var(--primary-red);
-    padding: 5px;
-    margin: 16px 5px;
-    border-radius: 10px !important;
-    color: var(--primary-white);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-}
-
-.table-header-search {
-    background-color: #f5f5f5;
 }
 
 tr>th,
@@ -320,12 +235,20 @@ tr>td {
     .main {
         left: 0;
     }
+    .student-footer {
+        position: relative;
+        left: 0px;
+    }
 
+    
     .top-navbar {
         left: 0;
         display: flex;
         justify-content: space-between;
         align-items: center;
+    }
+    .student-footer {
+        left: 0;
     }
 
     .top-navbar__list {
@@ -333,7 +256,7 @@ tr>td {
         display: flex;
         justify-content: space-evenly;
     }
-
+     
     .nmims-logo-smalldevices {
         display: inline;
         width: 125px;
@@ -348,18 +271,14 @@ tr>td {
 }
 
 @media (max-width:650px) {
-
     .top-navbar {
         display: grid;
         grid-template-columns: auto auto;
-
     }
 
     .mobile-icon {
         grid-column: 1/2;
         grid-row: 1/2;
-
-
     }
 
     .top-navbar__list {
@@ -370,7 +289,6 @@ tr>td {
         align-items: center;
         justify-content: center;
         width: 100%;
-
     }
 
     .hamburger-smalldevices {
@@ -386,9 +304,7 @@ tr>td {
     .table-responsive {
         overflow-x: auto;
     }
-
 }
-
 
 /* PAGINATION START*/
 
@@ -432,7 +348,7 @@ tr>td {
     background: rgb(199, 199, 199);
 }
 
-.searchItemProgramCustom{
+.search-in-filter{
     width: 100%;
 }
 
@@ -466,9 +382,6 @@ option:hover,
 }
 
 /* BREADCRUMBS */
-.breadcrumbs-container {
-    margin-bottom: 1rem;
-}
 
 .breadcrumb {
     display: flex;
@@ -490,9 +403,10 @@ option:hover,
     position: relative;
 }
 
-.breadcrumb li a {
+.breadcrumb li {
     color: #0d6efd;
     text-decoration: none;
+    
 }
 
 .breadcrumb li::before {
@@ -511,105 +425,6 @@ option:hover,
     color: #000;
 }
 
-.fa-square {
-    transform: scale(1.5);
-}
-
-.dialogConfirmation {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #000;
-    position: relative;
-    z-index: 2000;
-}
- 
-.dialogBox {
-    background-color: rgb(166, 175, 183);
-    min-height: 200px;
-    max-width: 500px;
-    position: absolute;
-    right: 30px;
-    bottom: 40px;    
-}
-
-.dialogHeading {
-    color: white;
-    text-align: center;
-    padding: 0;
-    margin: 0;
-}
-
-.dialogMessage {
-    color: white;
-    text-align: center;
-
-}
-
-.buttonContainer {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-.okButton {
-    background-color: #157347;
-    width: 40%;
-    height: 100%;
-    text-align: center;
-    color: black;
-    border-radius: 15px;
-    padding: 10px;
-    color: white;
-    border: none;
-}
-
-.cancelButton {
-    background-color: #ff0000;
-    width: 40%;
-    height: 100%;
-    color: black;
-    text-align: center;
-    border-radius: 15px;
-    color: white;
-    padding: 10px;
-    border: none;
-}
-/* custom alert css added */
-
-.dialogMessage{
-    font-size: 1.5em;
-}
-
-.dialogHeading {
-    margin: 0;
-    padding: 0;
-}
-
-
-.course-card {
-    background: #fff;
-    min-height: 50px;
-    position: relative;
-    margin-bottom: 24px;
-    border: 1px solid #f2f4f9;
-    border-radius: 10px;
-    box-shadow: 0 0 10px #b7c0ce33;
-    -webkit-box-shadow: 0 0 10px 0 rgba(183,192,206,.2);
-}
-
-.course-card .header {
-    position: relative;
-    display: flex;
-    width: 100%;
-    color: #555;
-    padding: 10px 15px;
-    line-height: 30px;
-    background: #0B3461;
-    color: #ffffff;
-}
 
 .course-table thead tr th {
     padding: 0 10px;
@@ -666,96 +481,11 @@ option:hover,
     border-radius: 0 !important;
     font-size: 0.75em;
 }
-.custom-disabled{
-    background-color: #f2f2f2; 
-    color: #999; 
-    opacity: 0.6;
-}
-.room-slot-selected{
-    box-shadow: 5px 0 5px -2px rgba(0, 0, 0, 0.5), -5px 0 5px -2px rgba(0, 0, 0, 0.5);
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    box-sizing: border-box !important;
-    background-color:var(--primary-bg) !important;
-    position: relative;
-}
-.creatCustom {
-    background: rgb(18, 120, 209);
-    text-align: center;
-    border-radius: 15px;
-    padding: 15px;
-    color: white;
-    border: none;
-}
 
-.dialog {
-    position: fixed;
-    width: 600px;
-    min-height: 200px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000000000;
-    bottom:30px;
-    right: 30px;
-}
-
-.dialogBox {
-    background-color:#badbcc;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
-    justify-content: space-evenly;
-    padding: 1em;
-    box-shadow: 0 0 5px 5px;
-}
-
-.dialogMessage {
-   
-    text-align: center;
-
-}
-
-.dialogHeading {
-    text-align: center;
-    padding: 0;
-    margin: 0;
-}
-
-.buttonContainer {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-}
-
-.okButton {
-    background-color: #0d6efd;
-    width: 40%;
-    text-align: center;
-    color: black;
-    border-radius: 15px;
-    padding: 10px;
-    color: white;
-    border: none;
-}
-
-.cancelButton {
-    background-color: #ff0000;
-    width: 40%;
-    height: 100%;
-    color: black;
-    text-align: center;
-    border-radius: 15px;
-    color: white;
-    padding: 10px;
-    border: none;
-}
 
 .timetable-container {
     width: var(--timetableWidth);
     background: #e6e6e6;
-    /* border: 2px solid;    */
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -801,77 +531,40 @@ option:hover,
     color: #fff;
   }
 
-  hr {
-    margin: 0 !important;
-  }
-  .custom-table tr:nth-child(odd){
-    background-color:var(--primary-table-bg);
-  }
-  .table thead tr{
+.table thead tr{
     vertical-align: middle;
-  }
+}
 
-.disbaled-whole-div{
-    pointer-events: none;
-}
-.disbaled-whole-div .btn-close-custom{
-    pointer-events: all;
-}
 .selected-course{
     max-height: 400px;
     min-height: 100px;
 }
-.selected-our-readonly {
-    max-height: 400px;
-    min-height: 100px;
-}
-.add-btn-program{
-    background-color: whitesmoke !important;
-    border-radius: 50% !important;   
-}
-.add-btn-bonus-bid {
-    background-color: whitesmoke !important;
-    border-radius: 50% !important;   
-}
 
-.custom-table thead th{
-    background-color:var(--primary-table-bg);
-}
-.custom-table tbody tr:nth-child(odd){
-    background-color:var(--primary-table-bg);   
+.add-btn-plus{
+    background-color: whitesmoke !important;
+    border-radius: 50% !important;   
 }
 
 .custm-padd{
     padding: 1em;
 }
-.import-program-table thead th{
+.table thead th{
     background-color: var(--primary-table-bg)
 }
+.table tbody tr:nth-child(odd){
+    background-color: var(--primary-table-bg);
+}
+
 #importProgram .row {
     --bs-gutter-x:0 !important;
 }
-.add-bidding-session-button {
-    background-color: whitesmoke !important;
-    border-radius:  50% !important;
-}
-#bidding-sesssion-table thead th{
-    background-color: var(--primary-table-bg);
-}
-#bidding-sesssion tbody tr:nth-child(odd){
- background-color: var(--primary-table-bg);
-}
-#add-bidding-session .modal-body .table th{
-    background-color: var(--primary-table-bg);
-}
 
-.custom-width {
-    width: 80%;
+#bidding-sesssion-table tbody td span {
+    min-width: 50px;
 }
-.course-card{
-    background-color: var(--primary-table-bg);
-    border-radius: 25px;
+.add-acad-session span {
+    height: 35px;
 }
-
 #upload-course-modal .modal-content{
  border-top-left-radius: 15px !important;
  border-top-right-radius: 15px !important;   
@@ -881,9 +574,13 @@ option:hover,
     z-index: 2001; 
 }
 
-.add-btn-specialization {
-    background-color: whitesmoke !important;
-    border-radius: 50% !important;
+.round-mapping-count{
+    z-index: 2050;
+}
+
+.round-mapping-count .modal-body {
+    overflow-y: scroll;
+    max-height: 300px;
 }
 
 .select2-dropdown {
@@ -899,68 +596,19 @@ option:hover,
 .search-button-timetable{
     height:38px;
 }
-.timetable-slot{
-    min-height: 215px;
-    max-height: 215px;
-}
-#total-student-bidding-rounds{
-    z-index: 2050;
-}
-
-#total-student-bidding-rounds .modal-body{
-    overflow-y: scroll; 
-    max-height: 300px; 
-}
-#total-courses-bidding-rounds{
-    z-index: 2050;
-}
-
-#total-courses-bidding-rounds .modal-body {
-    overflow-y: scroll;
-    max-height: 300px;
-}
-#bidding-rounds-add-date-time {
-    z-index: 2051;
-}
-
-.import-bidding-rounds-table  thead th{
-    background-color: var(--primary-table-bg);
-}
-.import-bidding-rounds-table  tbody tr:nth-child(odd){
- background-color: var(--primary-table-bg);
-}
-#update-total-student-bidding-rounds .modal-body  {
-    overflow-y: scroll;
-    max-height: 300px;
-}
-#update-total-student-bidding-rounds{
-    z-index: 2052;
-}
-#update-total-courses-bidding-rounds {
-    z-index: 2052;
-}
-#update-total-courses-bidding-rounds .modal-body{
-    overflow-y: scroll;
-    max-height: 300px;
-}
-
-.confirm-coures-table thead th{
-    background-color: var(--primary-table-bg)
-}
-.student-complete-courses-list-table thead th{
-    background-color: var(--primary-table-bg);
-}
-.student-course-status {
- height: 130px;
-}
 
 .card-custom-border-curv {
     border-radius: 15px !important;
   }
-  .custom-width{
-    width: 96%;
-  }
 
+  .table-searchbar-container {
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    margin-left: auto;
+    width: 300px;
+    padding: 4px 6px;
+}
+ 
   @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap');
   * {
       margin: 0;
@@ -990,8 +638,7 @@ option:hover,
       top: 0;
       left: 0;
       width: var(--left-sidebar-width);
-      height: 100%;
-      
+      height: 100%;   
       font-family: var(--lato);
       transition: .3s ease;
       overflow-x: hidden;
@@ -1054,11 +701,10 @@ option:hover,
   .left-sidebar .side-menu li a {
       width: 100%;
       height: 100%;
-      /* background: var(--light); */
       display: flex;
       align-items: center;
       border-radius: 48px;
-      font-size: 17px;
+      font-size: 14px !important;
       color: var(--dark);
       white-space: nowrap;
       overflow-x: hidden;
@@ -1068,7 +714,6 @@ option:hover,
   .left-sidebar .side-menu.top li.active a {
       color: var(--blue);
       font-weight: 700;
-      font-size: 16px;
       transition: 0.3s;
       background-color: #5ca4ea;      
   }
@@ -1093,6 +738,10 @@ option:hover,
     right: 0;
     box-shadow: 30px 30px 0 var(--primary-bg);
     z-index: -1;
+}
+
+.rounds-div {
+    overflow-wrap: break-word;
 }
 
 #sidebar .side-menu li.active::after {
@@ -1168,23 +817,11 @@ option:hover,
     margin-top: 5px;
 }
 
-.separator {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 1px;
-    width: 75%;
-    background-color: #000;
-}
 
 .side-bar-content{
-    font-size: 18px;    
+    font-size: 15px;    
 }
-.hr{
-    border: 0.25px solid black;
-    width: 80%;
-    box-shadow: 0.25px 0.25px #5ca4ea;
-}
+
 
 .logo-img .nmims-logo-small{
     width: 70px;
@@ -1193,11 +830,6 @@ option:hover,
 .logo-img .nmims-logo{
     background-color: white;
     border-radius: 5px;
-}
-
-.student-add-drop-image{
-    width: 38px;
-    height: 38px;
 }
 
 .student-icon-image{
@@ -1216,14 +848,9 @@ option:hover,
     padding-left: 5px;
 }
 
-
 .disabled-in-bidding-rounds {
     opacity: 0.6; 
     pointer-events: none;
-}
-
-.expand-image {
-    height: 35px;
 }
 
 @keyframes concentration-not-selected {
@@ -1246,7 +873,6 @@ option:hover,
     color:red;
 }
 
-/* In bidding active trimester means while trimester tab use click*/
 .bidding-trimester-selected{
     border:1px solid black !important;
     border-bottom: 2px solid black !important;
@@ -1295,35 +921,7 @@ option:hover,
  color:white;
  vertical-align: middle;
 }
-
-.pop-up-message {
-    position: fixed;
-    background-color: white;
-    top: 86px;
-    right: 20px;
-    overflow: hidden; 
-    border: 1px solid black;
-    border-radius: 15px;
-  }
   
-  .pop-up-img {
-    height: 40px;
-  }
-  
-  .pop-up-content {
-    padding: 10px; 
-  }
-  
-  .pop-up-message-error{
-    position: fixed;
-    background-color: #f8d7da;
-    top: 86px;
-    right: 20px;
-    overflow: hidden; 
-    border: 1px solid black;
-    border-radius: 15px;
-  }
-
   .fa-regular.fa-star {
    width: 24px;
    height: 24px;
@@ -1340,7 +938,6 @@ option:hover,
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    z-index: 1000000000;
   }
 
   .top-80 {
@@ -1366,7 +963,12 @@ option:hover,
     height: 15px;
   }
 
-  #bidding-trimester-select-table tbody tr.odd-row {
+
+
+
+
+  
+#bidding-trimester-select-table tbody tr.odd-row {
     background-color: var(--primary-table-bg) !important;
 }
 #bidding-trimester-select-table th {
@@ -1410,29 +1012,27 @@ left: 0;
 border-radius: 50%;
 box-shadow: -30px -30px 0 var(--primary-white);
 } 
+.student-footer {
+    position: relative;
+}
 .student-footer::before {
     content: '';
     position: absolute;
     width: 60px;
     height: 60px;
-    bottom: 40px;
-    border-radius: 38%;
-    box-shadow: -24px 42px 0 var(--primary-white);
+    bottom: 60px;
+    left: 1px;
+    border-radius: 31%;
+    box-shadow: -21px 29px 0 var(--primary-white)
 }
 
 .student-footer{
     transition: all 0.5s ease-in-out; 
-    box-shadow: 0 -3px 10px 3px rgba(0, 0, 0, 0.2);
-    height: 40px;
-}
-.student-footer {
-    background-color: var(--primary-white);
+    height: 60px;
     position: fixed;
-    right: 0;
     bottom: 0;
-    left: 260px;
-    z-index: 1030;
 }
+
 studet-footer .footer-div {
     position: relative;
     display: block;
@@ -1448,7 +1048,7 @@ ul.round-wises {
     margin-inline-end: 0px;
     padding-inline-start: 0px; 
     position: relative;
-    top:16px;
+    top:20px;
 
 }
 
@@ -1459,7 +1059,10 @@ ul.round-wises li.active {
     padding: 10px;
 }
 
-
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
 
 ul.round-wises li.active::before {
     content: "";
@@ -1498,10 +1101,153 @@ ul.round-wises li.active::after {
     flex-direction: column;
     z-index: 10005;
 }
+
+#add-date-time-modal {
+    z-index: 1056;
+}
  
 
 
+.dialogConfirmation {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000;
+    position: relative;
+    z-index: 2000;
+}
+ 
+.dialogBox {
+    background-color: rgb(166, 175, 183);
+    min-height: 200px;
+    max-width: 500px;
+    position: absolute;
+    right: 30px;
+    bottom: 40px;    
+}
 
+.dialogHeading {
+    color: white;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+.dialogMessage {
+    color: white;
+    text-align: center;
+
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.okButton {
+    background-color: #157347;
+    width: 40%;
+    height: 100%;
+    text-align: center;
+    color: black;
+    border-radius: 15px;
+    padding: 10px;
+    color: white;
+    border: none;
+}
+
+.cancelButton {
+    background-color: #ff0000;
+    width: 40%;
+    height: 100%;
+    color: black;
+    text-align: center;
+    border-radius: 15px;
+    color: white;
+    padding: 10px;
+    border: none;
+}
+/* custom alert css added */
+
+.dialogMessage{
+    font-size: 1.5em;
+}
+
+.dialogHeading {
+    margin: 0;
+    padding: 0;
+}
+
+.dialog {
+    position: fixed;
+    width: 600px;
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000000000;
+    bottom:30px;
+    right: 30px;
+}
+
+.dialogBox {
+    background-color:#badbcc;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    justify-content: space-evenly;
+    padding: 1em;
+    box-shadow: 0 0 5px 5px;
+}
+
+.dialogMessage {
+   
+    text-align: center;
+
+}
+
+.dialogHeading {
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.okButton {
+    background-color: #0d6efd;
+    width: 40%;
+    text-align: center;
+    color: black;
+    border-radius: 15px;
+    padding: 10px;
+    color: white;
+    border: none;
+}
+
+.cancelButton {
+    background-color: #ff0000;
+    width: 40%;
+    height: 100%;
+    color: black;
+    text-align: center;
+    border-radius: 15px;
+    color: white;
+    padding: 10px;
+    border: none;
+}
+
+hr{
+    margin: 0;
+}
 
 
 

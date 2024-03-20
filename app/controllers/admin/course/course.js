@@ -2,7 +2,8 @@ const course = require('../../../models/admin/course/course');
 const isJsonString = require('../../../utils/util');
 
 module.exports = {
-    getList: (req, res) => {
+    getPage : (req, res) => {
+        let sidebarActive = req.sidebarActive.split('/');
         Promise.all([
             course.getList(res.locals.slug, res.locals.biddingId),
             course.listCount(res.locals.slug, res.locals.biddingId),
@@ -12,7 +13,7 @@ module.exports = {
                 courseList: result[0].recordset,
                 pageCount: result[1].recordset[0][''],
                 programList: result[2].recordset,
-                active: 'dashboard',
+                active: sidebarActive[2],
                 breadcrumbs: req.breadcrumbs
             });
         });

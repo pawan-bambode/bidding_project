@@ -1,52 +1,58 @@
 const timetable = require('../../../../models/admin/timetable/timetable');
 const isJsonString = require('../../../../utils/util');
-const excel = require('excel4node');
+const excel = require('exceljs');
 const xlsx = require('xlsx');
 
 module.exports = {
-generateExcel: (req, res) => {
-    const workbook = new excel.Workbook();
-    const worksheet = workbook.addWorksheet('Sheet1');
-
-    worksheet.column(1).setWidth(15);
-    worksheet.column(2).setWidth(15);
-    worksheet.column(3).setWidth(15);
-    worksheet.column(4).setWidth(15);
-    worksheet.column(5).setWidth(15);
-    worksheet.column(6).setWidth(15);
-    worksheet.column(7).setWidth(15);
-    worksheet.column(8).setWidth(15);
-    worksheet.column(9).setWidth(15);
-    worksheet.column(10).setWidth(15);
-    worksheet.column(11).setWidth(15);
-    worksheet.column(12).setWidth(15);
-
-    worksheet.cell(1, 1).string('programId').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 2).string('acadSession').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 3).string('courseName').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 4).string('division').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 5).string('batch').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 6).string('day').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 7).string('startTime').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 8).string('endTime').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 9).string('roomNo').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 10).string('facultyId').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 11).string('facultyName').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 12).string('facultyType').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-
-    const filePath = __dirname + '/sampleForImportTimetable.xlsx';
-
-    workbook.write(filePath, (err, stats) => {
-        if (err) {
-            return res.status(500).send('Error generating Excel file');
-        }
-        res.sendFile(filePath, (err) => {
-            if (err) {
-                return res.status(500).send('Error sending Excel file');
-            }
+    generateExcel: (req, res) => {
+        const workbook = new excel.Workbook();
+        const worksheet = workbook.addWorksheet('Sheet1');
+    
+        worksheet.columns = [
+            {header: 'programId', key: 'programId', width: 15},
+            {header: 'acadSession', key: 'acadSession', width: 15},
+            {header: 'courseName', key: 'courseName', width: 15},
+            {header: 'division', key: 'division', width: 15},
+            {header: 'batch', key: 'batch', width: 15},
+            {header: 'day', key: 'day', width: 15},
+            {header: 'startTime', key: 'startTime', width: 15},
+            {header: 'endTime', key: 'endTime', width: 15},
+            {header: 'roomNo', key: 'roomNo', width: 15},
+            {header: 'facultyId', key: 'facultyId', width: 15},
+            {header: 'facultyName', key: 'facultyName', width: 15},
+            {header: 'facultyType', key: 'facultyType', width: 15}
+        ];
+    
+        worksheet.getRow(1).eachCell(cell => {
+            cell.font = {bold: true};
+            cell.alignment = {horizontal: 'center', vertical: 'center'};
         });
-    });
-},
+    
+        for (let rowNumber = 2; rowNumber <= 2000; rowNumber++) {
+            const cell = worksheet.getCell(`F${rowNumber}`);
+            cell.dataValidation = {
+                type: 'list',
+                formulae: ['"Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday"'],
+                allowBlank: true
+            };
+        }
+    
+        const filePath = __dirname + '/sampleForImportTimetable.xlsx';
+    
+        workbook.xlsx.writeFile(filePath)
+            .then(() => {
+                res.sendFile(filePath, (err) => {
+                    if (err) {
+                        console.error('Error sending Excel file:', err);
+                        return res.status(500).send('Error sending Excel file');
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error generating Excel file:', error);
+                return res.status(500).send('Error generating Excel file');
+            });
+    },    
 
 upload: (req, res) => {
     let excelFileBufferData = req.file.buffer;

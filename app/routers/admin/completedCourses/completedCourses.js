@@ -3,7 +3,8 @@ const completedCourses = require('../../../controllers/admin/completedCourses/co
 const upload = require('../../../middlewares/multerUpload');
 const compltedCoursesExcel = require('../../../controllers/admin/excel/completedCourses/completedCourse');
 
-router.get('/completed-courses', completedCourses.getList);
+router.get('/dashboard/completed-courses', completedCourses.getPage);
+router.get('/master-data/completed-courses', completedCourses.getPage);
 router.post('/completed-courses/delete-all', completedCourses.deleteAll);
 router.post('/completed-courses/showEntry', completedCourses.showEntry);
 router.post('/completed-courses/search', completedCourses.search);

@@ -11,40 +11,37 @@ module.exports = {
   
         Promise.all([
             course.acadSessionList(res.locals.slug, res.locals.biddingId),
-            divisionBatch.areaList(res.locals.slug, res.locals.biddingId),
             divisionBatch.courseList(res.locals.slug, res.locals.biddingId),
-            divisionBatch.biddingCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+            favouriteCourse.getFavCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             favouriteCourse.getFavouriteCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId)
         ]).then(result => {
-       
             res.render('student/availablecourse/index', {
                 active: availableCourse,
                 dropdownAcadSessionList: result[0].recordset,
-                areaList: result[1].recordset,
-                courseList: result[2].recordset,
-                availableCourseList: result[3].recordset,
-                favCourseList: result[4].recordset
+                courseList: result[1].recordset,
+                availableCourseList: result[2].recordset,
+                favCourseList: result[3].recordset
             });
         });
     },
 
     getCourseByAcadSession: (req, res) => {
         Promise.all([
-            divisionBatch.getBiddingCourseByAcadSession(res.locals.slug, res.locals.biddingId, req.body.acadSessionId),
-            divisionBatch.listByProgramId(res.locals.slug, res.locals.biddingId, req.body.acadSessionId)
+            divisionBatch.getBiddingCourseByAcadSession(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, res.locals.studentId),
+            divisionBatch.areaList(res.locals.slug, res.locals.biddingId, req.body.acadSessionId)
         ]).then(result => {
             res.json({
                 status: '200',
                 message: 'Result fetched',
                 availableCourseList: result[0].recordset,
-                courseName: result[1].recordset
+                areaList: result[1].recordset
             });
         });
     },
 
     getCourseByCourseId: (req, res) => {
         Promise.all([
-            divisionBatch.getBiddingCourseByCourseId(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.courseId)
+            divisionBatch.getBiddingCourseByCourseId(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.courseId, res.locals.studentId)
         ]).then(result => {
             res.json({
                 status: '200',
@@ -56,7 +53,7 @@ module.exports = {
 
     getCourseByArea: (req, res) => {
         Promise.all([
-            divisionBatch.getBiddingCourseByAreaName(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaName),
+            divisionBatch.getBiddingCourseByAreaName(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaName, res.locals.studentId),
             divisionBatch.getCourseNameAreaWiseFilter(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaName)
         ]).then(result => {
             res.json({

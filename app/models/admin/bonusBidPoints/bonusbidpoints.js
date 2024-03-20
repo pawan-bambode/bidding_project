@@ -1,14 +1,15 @@
 const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class BonusBidPoints {
-
+    
     static getList(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .query(`SELECT debp.id, round_name, points_to_increase_after_demand  
+                .query(`SELECT debp.id, round_name, points_to_increase_after_demand AS incrementPoints 
                         FROM [${slug}].demand_estimation_bid_points debp
-                        INNER JOIN [${slug}].round_settings rs ON rs.round_lid = debp.round_lid WHERE debp.active = 1 AND debp.bidding_session_lid = @biddingId`);
+                        INNER JOIN [${slug}].round_settings rs ON rs.round_lid = debp.round_lid 
+                        WHERE debp.active = 1 AND debp.bidding_session_lid = @biddingId`);
         });
     }
     

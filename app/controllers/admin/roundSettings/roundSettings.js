@@ -1,28 +1,30 @@
-const biddingRound = require('../../../models/admin/biddinground/biddinground');
+const roundSettings = require('../../../models/admin/roundSettings/roundSettings');
 const isJsonString = require('../../../utils/util');
 
 module.exports = {
+
     getPage: (req, res) => {
+        let sidebarActive = req.sidebarActive.split('/');
         Promise.all([
-            biddingRound.getBiddingRounds(res.locals.slug, res.locals.biddingId),
-            biddingRound.roundList(res.locals.slug, res.locals.biddingId),
-            biddingRound.studentList(res.locals.slug, res.locals.biddingId),
-            biddingRound.courseList(res.locals.slug, res.locals.biddingId)
+            roundSettings.getList(res.locals.slug, res.locals.biddingId),
+            roundSettings.preDefineRounds(res.locals.slug, res.locals.biddingId),
+            roundSettings.students(res.locals.slug, res.locals.biddingId),
+            roundSettings.courses(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
-            res.render('admin/biddingrounds/index.ejs', {
-                biddingRoundList: result[0].recordset,
+            res.render('admin/roundSettings/index.ejs', {
+                biddingRounds: result[0].recordset,
                 pageCount: result[0].recordset.length,
-                biddingPredefineRounds: result[1].recordset,
-                biddingRoundsStudents: result[2].recordset,
-                biddingRoundCourseList: result[3].recordset,
-                active: 'dashboard',
+                predefineRounds: result[1].recordset,
+                students: result[2].recordset,
+                courses: result[3].recordset,
+                active: sidebarActive[2],
                 breadcrumbs: req.breadcrumbs
             });
         });
     },
 
     create: (req, res) => {
-        biddingRound.create(req.body.inputJSON, res.locals.slug, res.locals.userId, res.locals.biddingId)
+        roundSettings.create(req.body.inputJSON, res.locals.slug, res.locals.userId, res.locals.biddingId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
@@ -40,7 +42,7 @@ module.exports = {
     },
 
     delete: (req, res) => {
-        biddingRound.delete(req.body.biddingRoundId, res.locals.slug, res.locals.userId, req.body.biddingSessionId)
+        roundSettings.delete(req.body.biddingRoundId, res.locals.slug, res.locals.userId, req.body.biddingSessionId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
@@ -57,9 +59,8 @@ module.exports = {
             });
     },
 
-    update: (req, res) => {
-        
-        biddingRound.update(req.body.inputJSON, res.locals.slug, res.locals.userId, res.locals.biddingId)
+    update: (req, res) => {    
+        roundSettings.update(req.body.inputJSON, res.locals.slug, res.locals.userId, res.locals.biddingId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
@@ -79,8 +80,8 @@ module.exports = {
 
     search: (req, res) => {
         Promise.all([
-            biddingRound.search(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.pageNo, req.body.showEntry),
-            biddingRound.searchCount(res.locals.slug, res.locals.biddingId, req.body.searchLetter)
+            roundSettings.search(res.locals.slug, res.locals.biddingId, req.body.searchLetter, req.body.pageNo, req.body.showEntry),
+            roundSettings.searchCount(res.locals.slug, res.locals.biddingId, req.body.searchLetter)
         ]).then(result => {
             res.json({
                 status: "200",
@@ -95,14 +96,14 @@ module.exports = {
 
     roundWiseMapping: (req, res) => {
         Promise.all([
-            biddingRound.roundWiseStudentMapping(res.locals.slug, res.locals.biddingId, req.body.roundId),
-            biddingRound.roundWiseCourseMapping(res.locals.slug, res.locals.biddingId, req.body.roundId)
+            roundSettings.studentsMapping(res.locals.slug, res.locals.biddingId, req.body.roundId),
+            roundSettings.coursesMapping(res.locals.slug, res.locals.biddingId, req.body.roundId)
         ]).then(result => {
             res.json({
                 status: "200",
                 message: "Result fetched",
-                studentMappingList: result[0].recordset,
-                courseMappingList: result[1].recordset
+                studentsMapping: result[0].recordset,
+                coursesMapping: result[1].recordset
             });
         }).catch(error => {
             throw error;

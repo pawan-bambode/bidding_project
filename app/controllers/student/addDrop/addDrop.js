@@ -4,6 +4,7 @@ const addDrop = require('../../../models/student/addDrop/addDrop');
 const course = require('../../../models/admin/course/course');
 const divisionBatch = require('../../../models/admin/divisionBatches/divisionBatches');
 const waitList = require('../../../models/student/waitList/waitlist');
+const e = require('express');
 
 module.exports = {
       getPage: (req, res) => {
@@ -16,7 +17,7 @@ module.exports = {
               addDrop.getWaitListCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
               course.acadSessionList(res.locals.slug, res.locals.biddingId),
               divisionBatch.areaList(res.locals.slug, res.locals.biddingId),
-              divisionBatch.biddingCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+              divisionBatch.addDropCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
               waitList.getStudentDetails(res.locals.slug, res.locals.biddingId, res.locals.studentId),
               roundSetting.listByOneDayBefore(res.locals.slug, res.locals.biddingId, round1Id, round2Id),
               roundSetting.roundSettingTime(res.locals.slug, res.locals.biddingId, round1Id, round2Id),
@@ -30,7 +31,7 @@ module.exports = {
                   waitListCourses: result[2].recordset,
                   dropdownAcadSessionList: result[3].recordset,
                   areaList: result[4].recordset,
-                  courseList: result[5].recordset,
+                  courseList: result[5].recordset != undefined ? result[5].recordset:'',
                   concentrationId: result[6].recordset[0].concentrationId,
                   roundDetails: result[7].recordset[0] !== undefined ? result[7].recordset[0]: '',
                   roundSettingTime : result[8].recordset[0] != undefined ? result[8].recordset[0] :0,
@@ -95,5 +96,27 @@ module.exports = {
                 error: error.originalError.info.message,
             });
         });
-    }
+    },
+
+    swap : (req, res) => {
+        
+        let id = req.body.id;
+        let studentId = req.body.studentId;
+        let courseId = req.body.courseLidToAdd;
+        let concentrationId = req.body.concentrationId;
+        let divBatchLidToDrop = req.body.divBatchLidToDrop;
+        let divBatchLidToAdd = req.body.divBatchLidToAdd;
+        let bidPoints = req.body.bidPoint;
+        let roundId = req.body.roundId;
+    
+        addDrop.swap(res.locals.slug, id, studentId, courseId, concentrationId, divBatchLidToDrop, divBatchLidToAdd, bidPoints, roundId, res.locals.userId, res.locals.biddingId).then(result => {
+                res.json({
+                    swap: result.output.output_json
+                });
+            }).catch(error => {
+                res.json({
+                    swap: error.originalError.info.message
+                });
+            });
+        }
 };

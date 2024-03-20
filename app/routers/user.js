@@ -4,7 +4,7 @@ const {
     isLoggedIn, 
     redirectIfLoggedIn
 } = require("../middlewares/user");
-const {check, body, validationResult } = require('express-validator');
+const {check, body } = require('express-validator');
 
 // router.get('/user', controller.getProfile);
 router.get('/register', controller.renderRegisterPage);

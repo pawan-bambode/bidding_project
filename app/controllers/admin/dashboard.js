@@ -1,45 +1,28 @@
 
 module.exports = {
-    getPage: (req, res) => {
-        let adminDashboardUrl = req.route.path.split('/');
-        let dashboard = adminDashboardUrl[adminDashboardUrl.length - 1];
+    getPage: (req, res) => { 
+        let sidebarActive = req.sidebarActive.split('/');
             res.render('admin/dashboard/index', {
                 currentFormStep: 0,
-                active: dashboard,
+                active: sidebarActive[2],
                 path: '/admin',
-                breadcrumbs: req.breadcrumbs[0]
+                breadcrumbs: req.breadcrumbs
             });
     },
 
     masterData: (req, res) => {
-        let adminMasterUrl = req.route.path.split('/');
-        let master = adminMasterUrl[adminMasterUrl.length - 1];
+        let sidebarActive = req.sidebarActive.split('/');
         res.render('admin/masterData/index', {
-            active: master
-        });
-    },
-
-    secondaryData: (req, res) => {
-        let adminSecondaryUrl = req.route.path.split('/');
-        let secondary = adminSecondaryUrl[adminSecondaryUrl.length - 1];
-        res.render('admin/secondarydata/index', {
-            active: secondary
+            active:sidebarActive[2],
+            breadcrumbs: req.breadcrumbs
         });
     },
 
     biddingSettings: (req, res) => {
-        let biddingSettingUrl = req.route.path.split('/');
-        let biddingSettings = biddingSettingUrl[biddingSettingUrl.length - 1];
+        let sidebarActive = req.sidebarActive.split('/');
         res.render('admin/biddingSettings/index', {
-            active: biddingSettings
-        });
-    },
-
-    roundSettings: (req, res) => {
-        let roundSettingUrl = req.route.path.split('/');
-        let roundSettings = roundSettingUrl[roundSettingUrl.length - 1];
-        res.render('admin/roundSettings/index', {
-            active: roundSettings
+            active:sidebarActive[2],
+            breadcrumbs: req.breadcrumbs
         });
     },
 

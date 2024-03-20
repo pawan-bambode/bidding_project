@@ -1,10 +1,11 @@
 const divisionBatch = require('../../../models/admin/divisionBatches/divisionBatches');
 const isJsonString = require('../../../utils/util');
-const excel = require('excel4node');
-const xlsx = require('xlsx');
+
 
 module.exports = {
-    getList : (req, res) => {
+    getPage : (req, res) => {
+        
+    let sidebarActive = req.sidebarActive.split('/');
         Promise.all([
             divisionBatch.getList(res.locals.slug, res.locals.biddingId),
             divisionBatch.getCount(res.locals.slug, res.locals.biddingId),
@@ -14,7 +15,7 @@ module.exports = {
                 divisionBatchList: result[0].recordset,
                 pageCount: result[1].recordset[0][''],
                 programList: result[2].recordset,
-                active: 'dashboard',
+                active: sidebarActive[2],
                 breadcrumbs: req.breadcrumbs
             });
         });

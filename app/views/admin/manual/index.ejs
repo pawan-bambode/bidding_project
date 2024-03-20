@@ -1,0 +1,168 @@
+<%- include('../partials/head') %>
+<%- include('../partials/leftSidebar.ejs') %>
+<%- include('../partials/header.ejs') %>
+<%- include('../partials/bread.ejs') %>
+
+<% if(isRoundCreated.length > 0){ %>
+  <div class="card card-custom-border-curv" id="manual-content">
+    <div class="card-header-custom d-flex justify-content-between p-2">
+      <h4 class="ms-2">Manual</h4>
+      <div>
+        <button class="btn btn-success" data-bs-target="#manual-modal" data-bs-toggle="modal">Manual</button>
+      </div>
+    </div>
+    <div class="card-body table-responsive">
+      <div class="d-flex justify-content-between">
+        <table class="table table-bordered mt-4" id="manual-table">
+          <thead>
+              <th>#</th>
+              <th>Student Name</th>
+              <th>Course Name</th>
+          </thead>
+          <tbody>
+              <% let count = 1 %>
+              <% for(let course of courses) { %>
+                  <tr data-id="<%- course.id %>" 
+                      data-student-name="<%- course.student_name %>" 
+                      data-course-name="<%- course.course_name %>" 
+                      data-course-id="<%- course.course_lid %>" 
+                      data-division="<%- course.division %>">
+                      <td><%- count++ %></td>
+                      <td><%- course.student_name %></td>
+                      <td><%- course.course_name %>-<%- course.division %></td>
+                  </tr>
+              <% } %>
+          </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+<% }  else { %>
+  <div class="card card-custom-border-curv empty-round-wise">
+    <div class="card-header-custom d-flex justify-content-between">
+        <h4 class="ms-2">Manual Enrollment Rounds</h4>
+    </div>
+    <div class="card-body table-responsive d-flex justify-content-center align-items-center">
+        <p>No Manual Enrollment Rounds</p>
+    </div>
+  </div>
+</div>
+<% } %>
+<div class="modal" tabindex="-1" data-bs-backdrop="static" id="manual-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Manual</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mt-4">
+          <select class="form-select form-control select2 mt-4" id="students-filter">
+            <option selected disabled>--Select Student--</option>
+            <% for(let student of students) { %>
+              <option value="<%- student.student_lid %>" data-concentration-id="<%- student.concentration_lid %>"><%- student.student_name %></option>
+            <% } %>
+          </select>
+        </div>
+        <div class="mt-4">
+          <select class="form-select form-control select2 mt-4" id="add-drop-filter">
+            <option selected>--Select--</option>
+            <option value="1">Add</option>
+            <option value="2">Drop</option>
+          </select>
+        </div>
+        <div class="mt-4">
+          <select class="form-select form-control select2 mt-4" id="course-filter">
+            <option selected>--Select Session--</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="add-manual">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer.ejs') %>
+
+<script>
+  
+$(document).ready(function(){
+    $('.select2').select2();
+    setActiveMenuItem(`<%- active %>`)
+
+
+    $('#add-drop-filter').on('change',function(){
+      let id = $(this).val();
+      let studentId = $('#students-filter').val();
+      let roundId = 9;
+      
+      let ApiObj = {
+        type:'POST',
+        url:'/admin/manual/courses',
+        data:{
+            id: id,
+            studentId: studentId, 
+            roundId: roundId
+        },
+        datatype:'JSON'
+        }
+        ajaxApi(ApiObj).then(result=>{
+          let courseName = `<option value="-1" disabled>Select Courses</option>`;
+                if (result.courses.length > 0) {
+                    result.courses.forEach(element => {
+                        courseName += `<option value="${element.division_batch_lid}" data-row-id="${element.rowId}" data-course-id="${element.course_lid}">${element.course_name}-${element.division}</option>`;
+                    });
+                } else {
+                  courseName += `<option value="" disabled>No Courses Found!</option>`;
+                }
+
+                $("#course-filter").html(courseName);
+        }).catch(error =>{
+            createToastError(JSON.stringify(error.responseJSON.description));;
+        })    
+    })
+
+    $('#manual-modal').on('click','#add-manual',function() {
+
+      let divisionBatchId = $("#course-filter").val();
+      let studentId = $('#students-filter').val();
+      let addDrop = $('#add-drop-filter').val();
+      let courseId = $("#course-filter").find(':selected').data('course-id');
+      let concentrationId = $('#students-filter').find(':selected').data('concentration-id');
+      let id = $('#course-filter').find(':selected').data('row-id');
+      let roundId = 9
+      
+      let ApiObj = {
+        type:'POST',
+        url:'/admin/manual/add',
+        data:{
+          id: id,
+          divBatchId: divisionBatchId,
+          studentId: studentId, 
+          addDrop: addDrop,
+          roundId: roundId,
+          courseId: courseId,
+          concentrationId: concentrationId,
+          bidPoints: 0
+        },
+        datatype:'JSON'
+        }
+        ajaxApi(ApiObj).then(result=>{
+         let resultValue = JSON.parse(result.addWaitListResponse);
+         if(resultValue.status == 0){
+          createToastError(resultValue.description);
+          } 
+          else if(resultValue.status == 1){
+            createToastMessage(resultValue.description);
+          }
+        }).catch(error =>{
+            createToastError(JSON.stringify(error.responseJSON.description));;
+        })    
+    })
+});
+</script>
+
+<%- include('../partials/footerEnd.ejs') %>

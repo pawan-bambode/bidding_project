@@ -79,7 +79,6 @@ module.exports = class Specialization {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .input('pageNo', sql.Int, pageNo)
                 .query(`SELECT COUNT(*) 
                         FROM [${slug}].concentration c 
                         WHERE c.active = 1 AND c.bidding_session_lid = @biddingId `);

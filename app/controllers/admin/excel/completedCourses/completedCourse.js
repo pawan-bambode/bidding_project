@@ -2,6 +2,7 @@ const excel = require('excel4node');
 const xlsx = require('xlsx');
 const completedCourses = require('../../../../models/admin/completedCourses/completedCourses');
 const isJsonString = require('../../../../utils/util');
+const path = require('path');
 
 module.exports = {
 generateExcel: (req, res) => {

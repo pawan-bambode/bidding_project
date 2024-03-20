@@ -2,81 +2,72 @@
 <%- include ('../partials/header') %>
 <%- include('../partials/leftSidebarForStudent.ejs') %>
 
-    <div class="main-content">  
-        <div class="card card-custom-border-curv">
-            <div class="card-header-custom d-flex justify-content-between p-1">
-                <h4 class="ms-2">Home</h4>
-                <button type="button" class="btn btn-secondary me-2" data-bs-target="#view-student-completed-course-list" data-bs-toggle="modal" >
-                Complete Courses
-                </button>  
-            </div>
-            <div class="card-body table-responsive">
-                <div class="row">
-                    <div class="col-md-4">
-                        <p class="fw-bold">Max Trimester Credits :</p>
-                    </div>
-                    <div class="col-md-4 d-flex">
-                        <p class="fw-bold">Max Yearly Credits :</p>&nbsp;<%- maxYearlyCredits %>
-                    </div>
-                    <div class="col-md-4">
-                        <p class="fw-bold">Confirmed Credits : </p>
-                    </div>
+<div class="main-content">  
+    <div class="card card-custom-border-curv">
+        <div class="card-header-custom d-flex justify-content-between p-1">
+            <h4 class="ms-2">Home</h4>
+        </div>
+        <div class="card-body table-responsive">
+            <div class="row">
+                <div class="col-md-4 d-flex">
+                    <p>Bidding Name: <span><%- locals.biddingName.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %></span></p>
                 </div>
-                <div class="row">
-                    <div class="col-md-4 d-flex">
-                        <p class="fw-bold">Bidding Name : </p>&nbsp;<%- locals.biddingName.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %>
-                    </div>
-                    <div class="col-md-4 d-flex">
-                        <% const bidPoints = studentDetails.length > 0 ? studentDetails[0].bid_points : 0 %>
-                        <p class="fw-bold">Total Bid Points :</p>&nbsp;<span id="total-bid-point"><%- bidPoints %></span>
-                    </div>
-                    <div class="col-md-4">
-                        <p class="fw-bold">Remaining Bid Points :</p>
-                    </div>  
+                <div class="col-md-4 d-flex">
+                    <p>Max Yearly Credits: <span><%- maxYearlyCredits %></span></p>
+                </div>
+                <div class="col-md-4">
+                    <p>Confirmed Credits: <span>0</span></p>
+                </div>
+            </div>
+            <div class="row">
+                
+                <div class="col-md-4 d-flex">
+                    <% const bidPoints = studentDetails.length > 0 ? studentDetails[0].bid_points : 0 %>
+                    <p>Total Bid Points:</p>&nbsp;<span id="total-bid-point"><%- bidPoints %></span>
+                </div>
+                <div class="col-md-4">
+                    <p>Remaining Bid Points: <span>0</span></p>
                 </div>  
-            </div>
-        </div>  
+            </div>  
+        </div>
+    </div>  
 
-        <div class="card card-custom-border-curv mt-5">
-            <div class="card-header-custom d-flex justify-content-between p-1">
-                <h3 class="ms-2"> MBA Concentration</h3>
-            </div>
-            <div class="card-body table-responsive">
-                <div class="row  ms-5 d-flex justify-content-between">
-                    <% const specializationName = studentDetails.length > 0 ? studentDetails[0].concentrationName.toLowerCase() : '' %>
-                    <% for (let concentration of concentrationList) { %>
-                        <% const concentrationNameLower = concentration.concentration_name.toLowerCase() %>
-                        <div class="col-md-3 d-flex">
-                            <input type="radio" name="concentration-name" data-concentration-id="<%- concentration.id %>" id="concentration<%- concentration.id %>" data-concentration-name = "<%-concentration.concentration_name %>"
-                                <% if (concentrationNameLower === specializationName) { %> checked <% } %>>
-                            <label class="fw-bold mb-0 ms-2" for="concentration<%- concentration.id %>"><%- concentration.concentration_name %></label>
-                        </div>
-                    <% } %>
-                                                        
-                </div>
+    <div class="card card-custom-border-curv mt-5">
+        <div class="card-header-custom d-flex justify-content-between p-1">
+            <h4 class="ms-2">MBA Concentration</h4>
+        </div>
+        <div class="card-body table-responsive">
+            <div class="row ms-5 d-flex justify-content-between">
+                <% const specializationName = studentDetails.length > 0 ? studentDetails[0].concentrationName.toLowerCase() : '' %>
+                <% for (let concentration of concentrationList) { %>
+                    <% const concentrationNameLower = concentration.concentration_name.toLowerCase() %>
+                    <div class="col-md-3 d-flex">
+                        <input type="radio" name="concentration-name" data-concentration-id="<%- concentration.id %>" id="concentration<%- concentration.id %>" data-concentration-name="<%-concentration.concentration_name %>" <% if (concentrationNameLower === specializationName) { %> checked <% } %>>
+                        <label class="mb-0 ms-2" for="concentration<%- concentration.id %>"><%- concentration.concentration_name %></label>
+                    </div>
+                <% } %>                                                        
             </div>
         </div>
+    </div>
 
-        <div class="card card-custom-border-curv mt-5">
-            <div class="card-header-custom d-flex justify-content-between">
-                <h3 class="ms-2">Student Courses Details</h3>
-                    <button class="btn btn-success me-3 showAllCouresTable disabled">Show All Course Table</button>
-            </div>
-        
-            <div class="card-body table-responsive">
-                <div class="d-flex flex-column flex-sm-row">
-                
-                    <div class="col-md-5 d-none" id="courseChart"></div>
-                    <div class="container">
-                        <div class="row gx-3 gy-5 d-none course-list">
+    <div class="card card-custom-border-curv mt-5">
+        <div class="card-header-custom d-flex justify-content-between">
+            <h4 class="ms-2">Student Courses Details</h4>
+            <button class="btn btn-success me-3 showAllCouresTable disabled">Show All Course Table</button>
+        </div>
+        <div class="card-body table-responsive">
+            <div class="d-flex flex-column flex-sm-row">
+                <div class="col-md-5 d-none" id="courseChart"></div>
+                <div class="container">
+                    <div class="row gx-3 gy-5 d-none course-list">
                         <div class="d-flex">
                             <div class="flex-fill col-md-6 card card-custom-border-curv me-5 confirmed">
                                 <div class="d-flex justify-content-center mt-2">
-                                    <h5 class="ms-2"> Confirmed Courses</h5>
+                                    <h5 class="ms-2">Confirmed Courses</h5>
                                 </div>   
                                 <div class="card-body table-responsive" id="confirm-course-table">
                                     <div class="row m-auto d-flex">
-                                        <table class="table-responsive table-bordered table confirm-coures-table">
+                                        <table class="table-responsive table-bordered table">
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
@@ -85,7 +76,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                        <% if(confirmCourseList.length > 0) { %>
+                                                <% if(confirmCourseList.length > 0) { %>
                                                     <% let count = 1; %>
                                                     <% for(let confirmCourse of confirmCourseList) { %>
                                                         <tr>
@@ -94,23 +85,23 @@
                                                             <td><%- confirmCourse.credits %></td>
                                                         </tr>
                                                     <% } %>
-                                                    <% } else { %>
-                                                        <tr>
-                                                            <td colspan="3">There are no Confirmed courses</td>
-                                                        </tr>
-                                                    <% } %>
-                                                </tbody>
-                                            </table>    
+                                                <% } else { %>
+                                                    <tr>
+                                                        <td colspan="3">There are no Confirmed courses</td>
+                                                    </tr>
+                                                <% } %>
+                                            </tbody>
+                                        </table>    
                                     </div>
                                 </div>
                             </div>
                             <div class="flex-fill col-md-6 card card-custom-border-curv dropped">
                                 <div class="d-flex justify-content-center p-1">
-                                    <h5 class="ms-2"> Dropped Courses</h5>
+                                    <h5 class="ms-2">Dropped Courses</h5>
                                 </div>
                                 <div class="card-body table-responsive">
                                     <div class="row m-auto d-flex">
-                                        <table class="table-responsive table-bordered table confirm-coures-table">
+                                        <table class="table-responsive table-bordered table">
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
@@ -145,7 +136,7 @@
                                     <h5 class="ms-2">Waitlist Courses</h5>
                                 </div>
                                 <div class="card-body table-responsive">
-                                    <table class="table-responsive table-bordered table confirm-coures-table">
+                                    <table class="table-responsive table-bordered table">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
@@ -169,16 +160,16 @@
                                                 </tr>
                                             <% } %>
                                         </tbody>
-                                        </table> 
+                                    </table> 
                                 </div>
                             </div>
-                            <div class="flex-fill col-md-6 card card-custom-border-curv winning">
+                            <div class="flex-fill col-md-6 card card-custom-border-curv">
                                 <div class="d-flex justify-content-center p-1">
                                     <h5 class="ms-2">Winning Courses</h5>
                                 </div>
                                 <div class="card-body table-responsive">
                                     <div class="row m-auto d-flex">
-                                        <table class="table-responsive table-bordered table confirm-coures-table">
+                                        <table class="table-responsive table-bordered table">
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
@@ -188,7 +179,6 @@
                                             </thead>
                                             <tbody>
                                                 <% if(winningCourseList.length > 0) { %>
-                                            
                                                     <% let count = 1; %>
                                                     <% for(let winningCourse of winningCourseList) { %>
                                                         <tr>
@@ -197,41 +187,50 @@
                                                             <td><%- winningCourse.credits %></td>
                                                         </tr>
                                                     <% } %>
-                                        <% } else { %>
-                                            <tr>
-                                                <td colspan="3">There are not Winning Courses</td>
-                                            </tr>
-                                            <% } %>
+                                                <% } else { %>
+                                                    <tr>
+                                                        <td colspan="3">There are not Winning Courses</td>
+                                                    </tr>
+                                                <% } %>
                                             </tbody>
                                         </table>    
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-            </div> 
-        </div>
-
-        <div class="modal" id="view-student-completed-course-list">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title">Completed Courses</h3>
-                        <button class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-
-                    </div>   
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
+        </div> 
+    </div>
+    <div class="card card-custom-border-curv mt-5">
+        <div class="card-header-custom d-flex justify-content-between">
+            <h4 class="ms-2">Completed Courses</h4>
         </div>
-    </div>  
+        <div class="card-body table-responsive">
+            <div class="row m-auto d-flex">
+                <table class="table-responsive table-bordered table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Course</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% let count = 1 %>
+                        <% for (let course of completedCoureses) { %> 
+                            <tr data-id="<%- course.id %>" data-course-name="<%- course.course_name %>">
+                                <td><%- count++ %></td>
+                                <td><%- course.course_name %></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>    
+            </div>
+        </div>
+    </div>
+</div>
+
 </main>
 
 <%- include('../partials/footer.ejs') %>
@@ -322,7 +321,7 @@
         });
 
         $(document).on('click','input[name ="concentration-name"]',function(){
-            let id = $('#student-data').data('student-lid');
+            let id = $('#student-data').data('student-id');
             let concentrationName = $(this).data('concentration-name');
             let concentration_lid = $(this).data('concentration-id');
             let selectedConcentration = {
@@ -336,38 +335,30 @@
             };
 
             let ApiObj = {
-                url:'/student/specialization/save',
+                url:'/student/specializations/save',
                 type:'POST',
                 data:{inputJSON:JSON.stringify(SelectedConcentrationDetails)
                 },
                 datatype:'JSON'
             }
             ajaxApi(ApiObj).then(result=>{
+                
                 createToastMessage(result.description);
              }).catch(error =>{
                 createToastError(JSON.stringify(error.responseJSON.description));
             }) 
             })
-    
-
-        $('.left-sidebar').on('click',function(){
-        const allSideMenu = document.querySelectorAll('.left-sidebar .side-menu.top li a');
-
-            allSideMenu.forEach(item => {
-                const li = item.parentElement;
-
-                item.addEventListener('click', function() {
-                    allSideMenu.forEach(i => {
-                        i.parentElement.classList.remove('active');
-                    })
-                    li.classList.add('active');
-                })
-            });
-        })
-
  });
 
 </script>
 
-<%- include('../partials/footerEnd') %>
+<footer class="student-footer">
+    <div class="student-footer-div">
+        <div class="d-flex justify-content-center align-items-center">
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
 

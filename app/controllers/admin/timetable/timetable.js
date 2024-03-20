@@ -3,6 +3,7 @@ const isJsonString = require('../../../utils/util');
 
 module.exports = {
     getPage: (req, res) => {
+        let sidebarActive = req.sidebarActive.split('/');
         Promise.all([
             timetable.getProgramList(res.locals.slug, res.locals.biddingId),
             timetable.getMinAndMaxTime(res.locals.slug, res.locals.biddingId),
@@ -16,7 +17,7 @@ module.exports = {
                 roomList: JSON.stringify(result[2].recordset),
                 timeSlotList: JSON.stringify(result[3].recordset),
                 dropdownAcadSessionList: result[4].recordset,
-                active: 'dashboard',
+                active: sidebarActive[2],
                 breadcrumbs: req.breadcrumbs
             });
         });

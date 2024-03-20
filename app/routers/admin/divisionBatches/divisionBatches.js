@@ -3,7 +3,8 @@ const upload = require('../../../middlewares/multerUpload');
 const divisionBatches = require('../../../controllers/admin/divisionBatches/divisionBatches');
 const diviionBatchesExcel = require('../../../controllers/admin/excel/divisionBatches/divisionBatches');
 
-router.get('/division-batches', divisionBatches.getList);
+router.get('/dashboard/division-batches', divisionBatches.getPage);
+router.get('/master-data/division-batches', divisionBatches.getPage);
 router.post('/division-batches/update', divisionBatches.update);
 router.post('/division-batches/delete', divisionBatches.delete);
 router.post('/division-batches/delete-all', divisionBatches.deleteAll);

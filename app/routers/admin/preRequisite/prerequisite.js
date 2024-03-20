@@ -3,7 +3,8 @@ const preRequisites = require('../../../controllers/admin/preRequisites/preRequi
 const preRequisiteExcel = require('../../../controllers/admin/excel/preRequisites/preRequisites');
 const upload = require('../../../middlewares/multerUpload');
 
-router.get('/pre-requisites', preRequisites.getPage);
+router.get('/dashboard/pre-requisites', preRequisites.getPage);
+router.get('/master-data/pre-requisites', preRequisites.getPage);
 router.post('/pre-requisites/delete', preRequisites.delete);
 router.post('/pre-requisites/update', preRequisites.update);
 router.post('/pre-requisites/showEntry', preRequisites.showEntry);

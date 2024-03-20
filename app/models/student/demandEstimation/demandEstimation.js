@@ -1,3 +1,4 @@
+const { urlencoded } = require('express');
 const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class DemandEstimation {
@@ -46,7 +47,21 @@ module.exports = class DemandEstimation {
         });
     }
 
+    static isStudentPartOfRound (slug, biddingId, studentId, roundId) {
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .input('studentId', sql.Int, studentId)
+                .input('roundId', sql.Int, roundId)
+                .query(`SELECT * FROM [${slug}].student_round_mapping 
+                        WHERE round_lid = @roundId AND student_lid = @studentId AND active = 1 AND 
+                        bidding_session_lid = @biddingId`);
+        });
+    }
+    
+
     static coursesByArea(slug, biddingId, acadSessionId, areaName) {
+
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -150,6 +165,18 @@ module.exports = class DemandEstimation {
         });
     }
 
+    static completedCourses(slug, biddingId, username) {
+       
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .input('sapId', sql.NVarChar, username)
+                .query(`SELECT cc.id, cc.course_name 
+                        FROM [${slug}].completed_courses cc 
+                        WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND cc.sap_id = @sapId`)
+        });
+    }
+
     static getFavouriteCourseList(slug, biddingId, studentId) {
         return poolConnection.then(pool => {
             return pool.request()
@@ -158,6 +185,34 @@ module.exports = class DemandEstimation {
                 .query(`SELECT sem.*, db.course_id FROM [${slug}].student_elective_mapping sem
                         INNER JOIN [${slug}].division_batches db ON sem.div_batch_lid = db.id
                         WHERE sem.student_lid = @studentId AND sem.bidding_session_lid = @biddingId AND is_favourite = 1`);
+        });
+    }
+    static getAvailableCourseList(slug, biddingId) {
+       
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .query(`SELECT c.id, course_name, credits, program_id, 
+                        ad.acad_session, area_name, min_demand_criteria, year_of_introduction, 
+                        c.sap_acad_session_id
+                        FROM [${slug}].course_round_mapping crm 
+                        INNER JOIN [${slug}].courses c ON crm.course_lid = c.id
+                        INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
+                        LEFT JOIN [${slug}].demand_estimation de ON c.id = de.course_lid AND c.active = 1
+                        AND c.bidding_session_lid = @biddingId AND de.bidding_session_lid = @biddingId
+                        AND de.active = 1 WHERE de.course_lid IS NULL ORDER BY c.id`);
+       
+        });
+    }
+    
+    static getAvailableCourseCount(slug, biddingId) {
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .query(`SELECT COUNT(*) AS count
+                        FROM [${slug}].courses c 
+                        INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
+                        WHERE c.active = 1 AND c.bidding_session_lid = @biddingId`);
         });
     }
 

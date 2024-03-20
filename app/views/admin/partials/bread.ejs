@@ -1,0 +1,13 @@
+<div class="main-content">
+    <div class="breadcrumbs-container mt-4">
+        <ul class="breadcrumb">
+            <% if (breadcrumbs) {
+                for (let crumbs of breadcrumbs) {
+                    if (crumbs.name != 'ADMIN') { %>
+                        <li><a href="<%- crumbs.url %>" style="cursor: pointer;" ><%- crumbs.name %></a></li>
+                    <% }         
+                }
+            } %>
+        </ul>  
+    </div>
+ 

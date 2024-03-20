@@ -2,24 +2,17 @@
 <%- include ('../partials/leftSidebar') %>
 <%- include ('../partials/header') %>
 <%- include('../partials/head') %>
-
-
-<div class="main-content">
-    <div class="breadcrumbs-container">
-        <ul class="breadcrumb">
-                    <li>Dashboard</li>
-        </ul>
-    </div>
+<%- include('../partials/bread.ejs') %>
     
-    <div class="row gx-3 gy-3 mb-3 row1-data"> 
+    <div class="row gx-3 gy-3 mb-3 p-2 row1-data"> 
     
         <div class="col-xl-3 col-lg-4 col-md-12">
-            <a href="/admin/bidding-session" class="tab-expand">
+            <a href="/admin/master-data/bidding-sessions" class="tab-expand">
                 <div class="card row1-data-card">
                     <div class="card-body d-flex justify-content-between">
                         <img src="/image/admin/dashboard/biddingSessions.png" alt="bidding-sessions">
                       <div>
-                        <h5 class="fw-normal pt-1">BIDDING SESSIONS</h5>
+                        <h6 class="fw-normal pt-1">BIDDING SESSIONS</h6>
                       </div>
                     </div>
                 </div>
@@ -27,15 +20,14 @@
         </div>
     
         <div class="col-xl-3 col-lg-4 col-md-12">
-            <a href="/admin/program" class="tab-expand">
+            <a href="/admin/master-data/programs" class="tab-expand">
                 <div class="card row1-data-card">
                     <div class="card-body d-flex justify-content-between">
                         <div>
                             <img src="/image/admin/dashboard/programs.png" alt="programs">
                         </div>
                         <div class="d-flex flex-column">
-                            <h5 class="fw-normal pt-1">PROGRAMS</h5>
-                            <h3 class="align-self-end"><%= locals.programCount %></h3>
+                            <h6 class="fw-normal pt-1">PROGRAMS</h6>
                         </div>
                     </div>
                 </div>
@@ -43,15 +35,14 @@
         </div>
     
         <div class="col-xl-3 col-lg-4 col-md-12">
-            <a href="/admin/course" class="tab-expand">
+            <a href="/admin/master-data/courses" class="tab-expand">
                 <div class="card row1-data-card" >
                     <div class="card-body d-flex justify-content-between">
                         <div>
                             <img src="/image/admin/dashboard/courses.png" alt="">
                         </div>
                         <div class="d-flex flex-column">
-                            <h5 class="fw-normal pt-1">COURSES</h5>
-                            <h3 class="align-self-end"><%= locals.courseCount %></h3>
+                            <h6 class="fw-normal pt-1">COURSES</h6>
                         </div>
                     </div>
                 </div>
@@ -59,13 +50,12 @@
         </div>
     
         <div class="col-xl-3 col-lg-4 col-md-12">
-            <a href="/admin/program-session" class="tab-expand">
+            <a href="/admin/master-data/program-sessions" class="tab-expand">
                 <div class="card row1-data-card">
                     <div class="card-body d-flex justify-content-between">
                         <img src="/image/admin/dashboard/room-type.PNG" alt="program-sessions">
                       <div class="d-flex flex-column">
-                        <h5 class="fw-normal pt-1">PROGRAM SESSIONS</h5>
-                        <h3 class="align-self-end"><%= locals.programSessionCount %></h3>
+                        <h6 class="fw-normal pt-1">PROGRAM SESSIONS</h6>
                       </div>
                     </div>
                 </div>
@@ -73,13 +63,12 @@
         </div>
     
         <div class="col-xl-3 col-lg-4 col-md-12">
-            <a href="/admin/areas" class="tab-expand">
+            <a href="/admin/master-data/areas" class="tab-expand">
                 <div class="card row1-data-card">
                     <div class="card-body d-flex justify-content-between">
                         <img src="/image/admin/dashboard/area.jpg" alt="areas">
                         <div class="d-flex flex-column">
-                            <h5 class="fw-normal pt-1">AREAS</h5>
-                            <h3 class="align-self-end"><%= locals.areaCount %></h3>
+                            <h6 class="fw-normal pt-1">AREAS</h6>
                         </div>
                     </div>
                 </div>
@@ -87,53 +76,91 @@
         </div>
     
         <div class="col-xl-3 col-lg-4 col-md-12">
-            <a href="/admin/specialization" class="tab-expand">
+            <a href="/admin/master-data/specializations" class="tab-expand">
                 <div class="card row1-data-card">
                     <div class="card-body d-flex justify-content-between">
                         <div>
                             <img src="/image/admin/dashboard/concentration.png" alt="specialization">
                         </div>
                         <div class="d-flex flex-column">
-                            <h5 class="fw-normal pt-1">SPECIALIZATIONS</h5>
-                            <h3 class="align-self-end"><%= locals.concentrationCount %></h3>
+                            <h6 class="fw-normal pt-1">SPECIALIZATIONS</h6>
                         </div>
                     </div>
                 </div>
             </a>
         </div>
 
-    
-
-
         <div class="col-xl-3 col-lg-4 col-md-12">
-            <a href="/admin/student" class="tab-expand">
+            <a href="/admin/master-data/student-data" class="tab-expand">
                 <div class="card row1-data-card">
                     <div class="card-body d-flex justify-content-between">
                         <div>
                             <img src="/image/admin/dashboard/student.png" alt="">
                         </div>
                         <div class="d-flex flex-column">
-                            <h5 class="fw-normal pt-1">STUDENTS</h5>
-                            <h3 class="align-self-end"><%= locals.studentCount %></h3>
+                            <h6 class="fw-normal pt-1">STUDENTS</h6>
                         </div>
                     </div>
                 </div>
             </a>
         </div>
-    
        
         <div class="col-xl-3 col-lg-4 col-md-12">
-            <a href="/admin/division-batches" class="tab-expand">
+            <a href="/admin/master-data/division-batches" class="tab-expand">
                 <div class="card row1-data-card">
                     <div class="card-body d-flex justify-content-between">
                         <div>
                             <img src="/image/admin/dashboard/division.png" alt="">
                         </div>
                         <div class="d-flex flex-column">
-                            <h5 class="fw-normal pt-1">DIVISION BATCHES</h5>
-                            <h3 class="align-self-end"><%= locals.divisionBatchCount %></h3>
+                            <h6 class="fw-normal pt-1">DIVISION BATCHES</h6>
                         </div>
                     </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-xl-3 col-lg-4 col-md-12">
+            <a href="/admin/master-data/pre-requisites" class="tab-expand">
+                <div class="card row1-data-card">
+                    <div class="card-body d-flex justify-content-between">
+                        <div>
+                            <img src="/image/admin/dashboard/preRequisites.png" alt="">
+                        </div>
+                        <div>
+                            <h6 class="fw-normal pt-1">PRE-REQUISITES</h6> 
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    
+        <div class="col-xl-3 col-lg-4 col-md-12">
+            <a href="/admin/master-data/completed-courses" class="tab-expand">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between">
+                        <div>
+                            <img src="/image/admin/dashboard/completeCourse.png" alt="" >
+                        </div>
+                        <div>
+                            <h6 class="fw-normal pt-1">COMPLETED COURSES</h6>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+       
+        <div class="col-xl-3 col-lg-4 col-md-12">
+            <a href="/admin/master-data/bonus-bid-points" class="tab-expand">
+                <div class="card">
+                    <div class="card-body d-flex justify-content-between">
+                        <div>
+                          <img src="/image/admin/dashboard/bonusBidPoints.png" alt="Bonus Bid Points">
+                        </div>  
+                        <div>
+                          <h6 class="fw-normal pt-1">BONUS BID POINTS</h6>
+                       </div>
+                    </div>   
                 </div>
             </a>
         </div>
@@ -163,13 +190,5 @@
     $(document).ready(function(){
         setActiveMenuItem(`<%- active %>`) 
     });
-</script>
-<%- include('../partials/footerEnd') %>
-<%- include('../partials/footer') %>
-<script>
-     $(document).ready(function(){
-        setActiveMenuItem(`<%- active %>`)
-
-});
 </script>
 <%- include('../partials/footerEnd') %>

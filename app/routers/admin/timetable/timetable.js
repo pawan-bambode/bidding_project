@@ -3,6 +3,7 @@ const timetable = require('../../../controllers/admin/timetable/timetable');
 const upload = require('../../../middlewares/multerUpload');
 const timetableExcel = require('../../../controllers/admin/excel/timetable/timetable');
 
+router.get('/dashboard/timetable', timetable.getPage);
 router.get('/timetable', timetable.getPage);
 router.post('/timetable-delete-modal/acadsession', timetable.deleteByAcadSession);
 router.post('/timetable-delete-modal/delete', timetable.delete);

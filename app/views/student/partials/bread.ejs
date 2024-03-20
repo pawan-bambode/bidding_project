@@ -1,0 +1,22 @@
+<div class="main-content">
+    <div class="breadcrumbs-container">
+        <ul class="breadcrumb">
+            <% if (breadcrumbs) {
+                let lengthOfBreadCrumbs = breadcrumbs.length;
+                for (let crumbs of breadcrumbs) {
+                    let crumbName, crumbUrl;
+                    if (lengthOfBreadCrumbs == 2) {
+                        crumbName = crumbs.name === 'ADMIN' ? 'Dashboard' : crumbs.name;
+                        crumbUrl = crumbs.url === '/admin' ? '/admin/dashboard' : crumbs.url;
+                        %><li><a href="<%- crumbUrl %>"><%- crumbName %></a></li><%
+                    } else {
+                        if (crumbs.name != 'ADMIN') {
+                            crumbName = crumbs.name;
+                            crumbUrl = crumbs.url;
+                            %><li><a href="<%- crumbUrl %>"><%- crumbName %></a></li><%
+                        }
+                    }
+                }
+            } %>
+        </ul>  
+    </div>

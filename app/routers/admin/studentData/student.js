@@ -3,10 +3,11 @@ const upload = require('../../../middlewares/multerUpload');
 const studentData = require('../../../controllers/admin/student/studentData');
 const studentDataExcel = require('../../../controllers/admin/excel/studentData/studentdata');
 
-router.get('/student-data', studentData.getPage);
+router.get('/dashboard/student-data', studentData.getPage);
+router.get('/master-data/student-data', studentData.getPage);
+
 router.post('/student-data/check-old-password', studentData.checkOldPassword);
 router.post('/student-data/update-password', studentData.updatePassword);
-router.post('/student-data-raw/refresh', studentData.refresh);
 router.post('/student-data/update', studentData.update);
 router.post('/student-data/delete', studentData.delete);
 router.post('/student-data/delete-all', studentData.deleteAll);

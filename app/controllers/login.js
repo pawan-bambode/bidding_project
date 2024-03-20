@@ -11,13 +11,11 @@ let store = new RedisStore({
     client: redisClient,
     ttl: 260
 })
-const OrganizationSlug = require('../models/OrganizationSlug')
-
+const OrganizationSlug = require('../models/OrganizationSlug');
 
 module.exports = {
 
     renderLoginPage: (req, res, next) => {
-
         OrganizationSlug.fetchAll().then(result => {
             res.render('login')
         })
@@ -25,7 +23,6 @@ module.exports = {
     },
 
     postLogin: (req, res, next) => {
-
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
@@ -34,7 +31,6 @@ module.exports = {
                 errors: errors.array()
             });
         }
-
 
         req.session.username = req.body.username
         req.session.email = 'bkapilsharma@gmail.com'

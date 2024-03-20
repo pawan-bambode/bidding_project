@@ -10,7 +10,7 @@ const setRouter = require("./router");
 const biddingResponse = require('./app/controllers/student/bidding/biddingProcess');
 const {
     verifySubdomain
-} = require('./app/middlewares/domain')
+} = require('./app/middlewares/domain');
 const {
     v4: uuidv4
 } = require('uuid');
@@ -73,19 +73,15 @@ get_breadcrumbs = function (url) {
 
     for (i = 0; i < arr.length; i++) {
         acc = i != arr.length - 1 ? acc + "/" + arr[i] : null;
-        if (acc == '/management') {
-            acc = '/management/dashboard'
-        }
+        
         if (acc == '/admin') {
-            acc = '/admin/dashboard'
+           // acc = '/admin/dashboard'
         }
         rtn[i] = {
             name: arr[i].toUpperCase(),
             url: acc
         };
-        if (acc == '/management/dashboard') {
-            acc = '/management'
-        }
+       
         if (acc == '/admin/dashboard') {
             acc = '/admin'
         }
@@ -109,6 +105,10 @@ app.use((req, res, next) => {
 
 app.use(verifySubdomain);
 app.use(device.capture());
+app.use((req, res, next) =>{
+    req.sidebarActive = req.originalUrl;
+    next();
+});
 
 setRouter(app)
 

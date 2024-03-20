@@ -1,0 +1,121 @@
+
+@media (max-width:650px) {
+    .left-sidebar {
+        width: 230px;
+        height: 50vh;
+    }
+
+    .nmims-logo {
+        transform: scale(0.6);
+    }
+}
+
+
+@media (min-width:1200px) {
+    .row1-data-card:hover {
+        transform: scale(1.06);
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        background: #ad0000;
+        color: #fff !important;
+    }
+
+    .table-responsive {
+        overflow-x: hidden;
+    }
+}
+
+@media (max-width:1200px) {
+    .main {
+        left: 0;
+    }
+
+    .top-navbar {
+        left: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .top-navbar__list {
+        margin-left: auto;
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    .nmims-logo-smalldevices {
+        display: inline;
+        width: 125px;
+        height: 40px;
+        padding-left: 1em;
+    }
+
+    .hamburger-smalldevices {
+        display: inline;
+        transform: scale(1.2);
+    }
+
+    .left-sidebar-toggle {
+        display: none;
+    }
+
+    .left-sidebar {
+        transform: translateX(-100%);
+    }
+
+    .left-sidebar-open {
+        transform: translateX(0);        
+        transition: all 500ms ease-in-out;
+    }
+}
+
+
+
+
+  @media screen and (max-width: 768px) {
+      .left-sidebar {
+          width: 200px;
+      }
+      #content {
+          width: calc(100% - 60px);
+          left: 200px;
+      }
+      #content nav .nav-link {
+          display: none;
+      }
+      .student-footer {
+        left: 0;
+    }
+  }
+  @media screen and (max-width: 576px) {
+      #content nav form .form-input input {
+          display: none;
+      }
+      #content nav form .form-input button {
+          width: auto;
+          height: auto;
+          background: transparent;
+          border-radius: none;
+          color: var(--dark);
+      }
+      #content nav form.show .form-input input {
+          display: block;
+          width: 100%;
+      }
+      #content nav form.show .form-input button {
+          width: 36px;
+          height: 100%;
+          border-radius: 0 36px 36px 0;
+          color: var(--light);
+          background: var(--red);
+      }
+      #content nav form.show~.notification,
+      #content nav form.show~.profile {
+          display: none;
+      }
+      #content main .box-info {
+          grid-template-columns: 1fr;
+      }
+      .student-footer {
+        left: 0;
+    }
+  }

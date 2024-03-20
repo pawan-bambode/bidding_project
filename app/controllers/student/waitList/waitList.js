@@ -26,7 +26,7 @@ module.exports = {
                 startAndEndTime: result[1].recordset[0] != undefined? result[1].recordset[0] : '',
                 dropdownAcadSessionList: result[2].recordset,
                 areaList: result[3].recordset,
-                courseList: result[4].recordset,
+                courseList: result[4].recordset !== undefined ? result[4].recordset: '',
                 concentrationId: result[5].recordset[0].concentrationId,
                 waitListCourses: result[6].recordset,
                 roundDetails: result[7].recordset[0] !== undefined ? result[7].recordset[0]: '',

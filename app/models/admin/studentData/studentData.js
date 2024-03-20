@@ -10,8 +10,8 @@ module.exports = class StudentsData {
            .query(`SELECT TOP ${showEntry} sd.id, sd.sap_id, sd.roll_no, sd.student_name, sd.email, 
                    p.program_name, sd.bid_points, sd.year_of_joining, sd.previous_elective_credits
                    FROM [${slug}].student_data sd 
-                   INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND 
-                   p.bidding_session_lid= @biddingId  AND sd.bidding_session_lid = @biddingId AND p.active = 1`)
+                   INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id 
+                   WHERE sd.active = 1 AND p.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId`)
        })
    }
 
@@ -21,7 +21,8 @@ module.exports = class StudentsData {
             .input('biddingId',sql.Int,biddingId)
             .query(`SELECT COUNT(*) 
                     FROM [${slug}].student_data sd 
-                    INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND  p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId`)
+                    INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id 
+                    WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId AND p.active = 1`)
         })
     }
     static programList(slug,biddingId) {
@@ -30,14 +31,16 @@ module.exports = class StudentsData {
         .input('biddingId',sql.Int,biddingId)
         .query(`SELECT p.program_id,p.program_name
                 FROM [${slug}].student_data sd 
-                INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND 
-                p.bidding_session_lid = @biddingId AND sd.bidding_session_lid = @biddingId GROUP BY p.program_id,p.program_name`)
+                INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id 
+                WHERE sd.active = 1 AND 
+                p.bidding_session_lid = @biddingId AND sd.bidding_session_lid = @biddingId AND p.active = 1 GROUP BY p.program_id,p.program_name`)
     })
     }
 
 
     static showEntry(slug, biddingId, showEntry, programId) {
-        if (programId) {
+
+        if (programId != '-1') {
             return poolConnection.then(pool => {
                 return pool.request()
                     .input('biddingId', sql.Int, biddingId)
@@ -45,7 +48,7 @@ module.exports = class StudentsData {
                     .query(`SELECT TOP ${showEntry} sd.id, sd.sap_id, sd.roll_no, sd.student_name, 
                             sd.email, p.program_name, sd.bid_points, sd.year_of_joining, sd.previous_elective_credits
                             FROM [${slug}].student_data sd 
-                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId`);
+                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.active = 1`);
             });
         } else {
             return poolConnection.then(pool => {
@@ -54,7 +57,8 @@ module.exports = class StudentsData {
                     .query(`SELECT TOP ${showEntry} sd.id, sd.sap_id, sd.roll_no, sd.student_name, 
                             sd.email, p.program_name, sd.bid_points,sd.year_of_joining, sd.previous_elective_credits
                             FROM [${slug}].student_data sd 
-                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId`);
+                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id 
+                            WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId AND p.active = 1`);
             });
         }
     }
@@ -67,7 +71,7 @@ module.exports = class StudentsData {
                     .input('programId', sql.Int, programId)
                     .query(`SELECT COUNT(*)
                             FROM [${slug}].student_data sd 
-                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId`);
+                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.active = 1`);
             });
         } else {
             return poolConnection.then(pool => {
@@ -75,7 +79,8 @@ module.exports = class StudentsData {
                     .input('biddingId', sql.Int, biddingId)
                     .query(`SELECT COUNT(*)
                             FROM [${slug}].student_data sd 
-                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId`);
+                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id 
+                            WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId AND p.active = 1`);
             });
         }
     }
@@ -98,7 +103,7 @@ module.exports = class StudentsData {
                     .query(`SELECT sd.id, sd.sap_id, sd.roll_no, sd.student_name, sd.email, p.program_name,
                             sd.bid_points, sd.year_of_joining, sd.previous_elective_credits
                             FROM [${slug}].student_data sd 
-                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND (sd.sap_id LIKE @letterSearch OR sd.student_name LIKE @letterSearch OR sd.roll_no LIKE @letterSearch OR sd.email LIKE @letterSearch OR p.program_name LIKE @letterSearch OR sd.bid_points LIKE @letterSearch OR sd.year_of_joining LIKE @letterSearch)`);
+                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.active = 1 AND(sd.sap_id LIKE @letterSearch OR sd.student_name LIKE @letterSearch OR sd.roll_no LIKE @letterSearch OR sd.email LIKE @letterSearch OR p.program_name LIKE @letterSearch OR sd.bid_points LIKE @letterSearch OR sd.year_of_joining LIKE @letterSearch)`);
             });
         } else {
             return poolConnection.then(pool => {
@@ -108,7 +113,8 @@ module.exports = class StudentsData {
                     .query(`SELECT TOP ${showEntry} sd.id, sd.sap_id, sd.roll_no, sd.student_name, sd.email,
                             p.program_name, sd.bid_points, sd.year_of_joining, sd.previous_elective_credits
                             FROM [${slug}].student_data sd 
-                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId  AND sd.bidding_session_lid = @biddingId AND (sd.sap_id LIKE @letterSearch OR sd.student_name LIKE @letterSearch OR sd.roll_no LIKE @letterSearch OR sd.email LIKE @letterSearch OR p.program_name LIKE @letterSearch OR sd.bid_points LIKE @letterSearch OR sd.year_of_joining LIKE @letterSearch)`);
+                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id 
+                            WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId AND p.active = 1 AND(sd.sap_id LIKE @letterSearch OR sd.student_name LIKE @letterSearch OR sd.roll_no LIKE @letterSearch OR sd.email LIKE @letterSearch OR p.program_name LIKE @letterSearch OR sd.bid_points LIKE @letterSearch OR sd.year_of_joining LIKE @letterSearch)`);
             });
         }
     }
@@ -122,7 +128,7 @@ module.exports = class StudentsData {
                     .input('programId', sql.Int, programId)
                     .query(`SELECT COUNT(*)
                             FROM [${slug}].student_data sd 
-                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND (sd.sap_id LIKE @letterSearch OR sd.student_name LIKE @letterSearch OR sd.roll_no LIKE @letterSearch OR sd.email LIKE @letterSearch OR p.program_name LIKE @letterSearch OR sd.bid_points LIKE @letterSearch OR sd.year_of_joining LIKE @letterSearch) `);
+                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.active = 1 AND(sd.sap_id LIKE @letterSearch OR sd.student_name LIKE @letterSearch OR sd.roll_no LIKE @letterSearch OR sd.email LIKE @letterSearch OR p.program_name LIKE @letterSearch OR sd.bid_points LIKE @letterSearch OR sd.year_of_joining LIKE @letterSearch) `);
             });
         } else {
             return poolConnection.then(pool => {
@@ -131,7 +137,8 @@ module.exports = class StudentsData {
                     .input('biddingId', sql.Int, biddingId)
                     .query(`SELECT COUNT(*)
                             FROM [${slug}].student_data sd 
-                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId  AND sd.bidding_session_lid = @biddingId AND (sd.sap_id LIKE @letterSearch OR sd.student_name LIKE @letterSearch OR sd.roll_no LIKE @letterSearch OR sd.email LIKE @letterSearch OR p.program_name LIKE @letterSearch OR sd.bid_points LIKE @letterSearch OR sd.year_of_joining LIKE @letterSearch)`);
+                            INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND p.bidding_session_lid= @biddingId  AND sd.bidding_session_lid = @biddingId AND
+                            p.active = 1 AND (sd.sap_id LIKE @letterSearch OR sd.student_name LIKE @letterSearch OR sd.roll_no LIKE @letterSearch OR sd.email LIKE @letterSearch OR p.program_name LIKE @letterSearch OR sd.bid_points LIKE @letterSearch OR sd.year_of_joining LIKE @letterSearch)`);
             });
         }
     }
@@ -148,7 +155,8 @@ module.exports = class StudentsData {
                                 sd.previous_elective_credits
                                 FROM [${slug}].student_data sd 
                                 INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id
-                                WHERE sd.bidding_session_lid = @bidding_session_lid AND sd.active = '1' AND (sd.sap_id LIKE @letterSearch OR sd.student_name LIKE @letterSearch OR sd.roll_no LIKE @letterSearch OR sd.email LIKE @letterSearch OR p.program_name LIKE @letterSearch OR sd.bid_points LIKE @letterSearch OR sd.year_of_joining LIKE @letterSearch) ORDER BY sd.id OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`);
+                                WHERE sd.bidding_session_lid = @bidding_session_lid AND sd.active = '1' 
+                                AND p.active = 1 AND (sd.sap_id LIKE @letterSearch OR sd.student_name LIKE @letterSearch OR sd.roll_no LIKE @letterSearch OR sd.email LIKE @letterSearch OR p.program_name LIKE @letterSearch OR sd.bid_points LIKE @letterSearch OR sd.year_of_joining LIKE @letterSearch) ORDER BY sd.id OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`);
                 });
         } else {
             return poolConnection.then(pool => {
@@ -159,7 +167,8 @@ module.exports = class StudentsData {
                             sd.bid_points, sd.year_of_joining, sd.previous_elective_credits
                             FROM [${slug}].student_data sd 
                             INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id
-                            WHERE sd.bidding_session_lid = @bidding_session_lid AND sd.active = '1'AND (sd.sap_id LIKE @letterSearch OR sd.student_name LIKE  @letterSearch OR sd.roll_no LIKE @letterSearch OR sd.email LIKE @letterSearch OR p.program_name LIKE @letterSearch OR sd.bid_points LIKE @letterSearch OR sd.year_of_joining LIKE @letterSearch)`);
+                            WHERE sd.bidding_session_lid = @bidding_session_lid AND sd.active = '1'
+                            AND p.active = 1 AND (sd.sap_id LIKE @letterSearch OR sd.student_name LIKE  @letterSearch OR sd.roll_no LIKE @letterSearch OR sd.email LIKE @letterSearch OR p.program_name LIKE @letterSearch OR sd.bid_points LIKE @letterSearch OR sd.year_of_joining LIKE @letterSearch)`);
             });
         }
     }
@@ -174,7 +183,8 @@ module.exports = class StudentsData {
                         .query(`SELECT COUNT(*)
                                 FROM [${slug}].student_data sd 
                                 INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id
-                                WHERE sd.bidding_session_lid = @bidding_session_lid AND sd.active = '1' AND (sd.sap_id LIKE @letterSearch OR sd.student_name LIKE  @letterSearch OR sd.roll_no LIKE @letterSearch OR sd.email LIKE @letterSearch OR p.program_name LIKE @letterSearch OR sd.bid_points LIKE @letterSearch OR sd.year_of_joining LIKE @letterSearch)`);
+                                WHERE sd.bidding_session_lid = @bidding_session_lid AND sd.active = '1' 
+                                AND p.active = 1 AND (sd.sap_id LIKE @letterSearch OR sd.student_name LIKE  @letterSearch OR sd.roll_no LIKE @letterSearch OR sd.email LIKE @letterSearch OR p.program_name LIKE @letterSearch OR sd.bid_points LIKE @letterSearch OR sd.year_of_joining LIKE @letterSearch)`);
                 });
         
     }
@@ -184,11 +194,11 @@ module.exports = class StudentsData {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('programId', sql.Int, programId)
-                .query(`SELECT TOP ${showEntry} sd.sap_id, sd.roll_no, sd.student_name, sd.email,
-                        p.program_name,sd.bid_points,sd.year_of_joining
+                .query(`SELECT TOP ${showEntry} sd.id, sd.sap_id, sd.roll_no, sd.student_name, sd.email,
+                        p.program_name,sd.bid_points,sd.year_of_joining, sd.previous_elective_credits
                         FROM [${slug}].student_data sd
                         INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id 
-                        WHERE sd.active = 1 AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.bidding_session_lid = @biddingId ORDER BY sd.id`);
+                        WHERE sd.active = 1 AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.bidding_session_lid = @biddingId AND p.active = 1 ORDER BY sd.id`);
         });
     }
 
@@ -200,7 +210,7 @@ module.exports = class StudentsData {
                 .query(`SELECT sap_id, student_name
                         FROM [${slug}].student_data sd
                         INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id 
-                        WHERE sd.active = 1 AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.bidding_session_lid = @biddingId ORDER BY sd.id`);
+                        WHERE sd.active = 1 AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.bidding_session_lid = @biddingId AND p.active = 1 ORDER BY sd.id`);
         });
     }
 
@@ -212,7 +222,7 @@ module.exports = class StudentsData {
                 .query(`SELECT COUNT(*)
                         FROM [${slug}].student_data sd
                         INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id 
-                        WHERE sd.active = 1 AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.bidding_session_lid = @biddingId`);
+                        WHERE sd.active = 1 AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.bidding_session_lid = @biddingId AND p.active = 1`);
         });
     }
 
@@ -222,11 +232,12 @@ module.exports = class StudentsData {
                 .input('biddingId', sql.Int, biddingId)
                 .input('programId', sql.Int, programId)
                 .input('sapId', sql.NVarChar(sql.MAX), sapId)
-                .query(`SELECT TOP ${showEntry} sd.sap_id, sd.roll_no, sd.student_name, sd.email,
-                        p.program_name,sd.bid_points,sd.year_of_joining
+                .query(`SELECT TOP ${showEntry} sd.id, sd.sap_id, sd.roll_no, sd.student_name, sd.email,
+                        p.program_name,sd.bid_points,sd.year_of_joining, sd.previous_elective_credits
                         FROM [${slug}].student_data sd
                         INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id 
-                        WHERE sd.active = 1 AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.bidding_session_lid = @biddingId AND sd.sap_id = @sapId`);
+                        WHERE sd.active = 1 AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.bidding_session_lid = @biddingId AND sd.sap_id = @sapId 
+                        AND p.active = 1`);
         });
     }
 
@@ -238,7 +249,9 @@ module.exports = class StudentsData {
                 .input('sapId', sql.NVarChar(sql.MAX), sapId)
                 .query(`SELECT COUNT(*) 
                         FROM [${slug}].student_data sd 
-                        INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id WHERE sd.active = 1 AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.bidding_session_lid = @biddingId AND sd.sap_id = @sapId`);
+                        INNER JOIN [${slug}].programs p ON p.program_id = sd.program_id 
+                        WHERE sd.active = 1 AND sd.bidding_session_lid = @biddingId AND p.program_id = @programId AND p.bidding_session_lid = @biddingId AND sd.sap_id = @sapId 
+                        AND p.active = 1`);
         });
     }
 
@@ -276,7 +289,7 @@ module.exports = class StudentsData {
                 .execute(`[${slug}].[sp_update_student_data]`);
         });
     }
-
+    
     static delete(studentId, slug, userId, biddingSessionId) {
         return poolConnection.then(pool => {
             return pool.request()
@@ -285,6 +298,21 @@ module.exports = class StudentsData {
                 .input('bidding_session_lid', sql.Int, biddingSessionId)
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_delete_student_data]`);
+        });
+    }
+    static deleteAll(slug, userId, biddingSessionId, deleteStudentsId) {
+        deleteStudentsId = Object.keys(deleteStudentsId).map(key => {
+            const id = deleteStudentsId[key];
+            return { id: parseInt(id) }; 
+        });
+        
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(deleteStudentsId))
+                .input('last_modified_by', sql.Int, userId)
+                .input('bidding_session_lid', sql.Int, biddingSessionId)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_delete_all_student_data]`);
         });
     }
 

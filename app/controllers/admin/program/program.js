@@ -1,9 +1,10 @@
-const program = require('../../../../models/admin/programs/program');
-const isJsonString = require('../../../../utils/util');
+const program = require('../../../models/admin/program/program');
+const isJsonString = require('../../../utils/util');
 
 module.exports = {
 
     getPage: (req, res) => {
+        let sidebarActive = req.sidebarActive.split('/');
         Promise.all([
         program.getList(res.locals.slug, res.locals.biddingId),
         program.getCount(res.locals.slug, res.locals.biddingId),
@@ -13,7 +14,7 @@ module.exports = {
             programList: result[0].recordset,
             pageCount: result[1].recordset[0][''],
             programListFromDbo: result[2].recordset,
-            active: 'dashboard',
+            active: sidebarActive[2],
             breadcrumbs: req.breadcrumbs
         });
         });

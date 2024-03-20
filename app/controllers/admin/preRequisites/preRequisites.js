@@ -3,6 +3,7 @@ const isJsonString = require('../../../utils/util');
 
 module.exports = {
   getPage: (req, res) => {
+    let sidebarActive = req.sidebarActive.split('/');
     Promise.all([
       preRequisites.getList(res.locals.slug, res.locals.biddingId, req.body.showEntry),
       preRequisites.getCount(res.locals.slug, res.locals.biddingId)
@@ -10,7 +11,7 @@ module.exports = {
       res.render('admin/preRequisites/index.ejs', {
         preRequitiesList: result[0].recordset,
         pageCount: result[1].recordset[0][''],
-        active: 'dashboard',
+        active: sidebarActive[2],
         breadcrumbs: req.breadcrumbs
       });
     });

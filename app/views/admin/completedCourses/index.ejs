@@ -2,22 +2,9 @@
 <%- include('../partials/head') %>
 <%- include('../partials/leftSidebar.ejs') %>
 <%- include('../partials/header.ejs') %>
+<%- include('../partials/bread.ejs') %>
 
-<div class="main-content">
-  <div class="breadcrumbs-container">
-      <ul class="breadcrumb">
-          <% if (breadcrumbs) { %>
-              <% for (let crumbs of breadcrumbs) { %>
-                  <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;%>
-                  <li>
-                      <a href="<%- crumbs.url %>"><%- crubm_name %></a>
-                  </li>
-              <% } %>
-          <% } %>
-      </ul>
-  </div>
-
-  <div class="card card-custom-border-curv">
+    <div class="card card-custom-border-curv">
       <div class="card-header-custom d-flex justify-content-between p-2">
           <h4 class="ms-2">Completed Courses</h4>
           <div>
@@ -25,14 +12,14 @@
               <button type="button" class="btn btn-success me-2" data-bs-target="#upload-complete-courses-modal" data-bs-toggle="modal">Upload Completed Courses</button>
           </div>
       </div>
-      <div class="card-body table-responsive custom-table">
+      <div class="card-body table-responsive">
           <div class="d-flex justify-content-between">
               <div>
                   <label>Show Entries</label>
                   <select class="form-select" id="changeEntry">
-                      <%for(let page of locals.page_filter){%>
-                          <option value="<%-page%>"><%-page%></option>
-                      <%}%>
+                      <% for(let page of locals.page_filter) { %>
+                          <option value="<%- page %>"><%- page %></option>
+                      <% } %>
                   </select>
               </div>
               <div>
@@ -44,7 +31,7 @@
                   </div>
               </div>
           </div>
-          <table class="table custom_row table-bordered mt-4" id="complete-courses-table">
+          <table class="table table-bordered mt-4" id="complete-courses-table">
               <thead>
                   <tr>
                       <th>#</th>
@@ -64,7 +51,7 @@
                               <input class="checkbox-complete-course" type="checkbox" name="complete-courses" data-id="<%- completeCourse.id %>">
                           </td>
                       </tr>
-                  <%}%>
+                  <% } %>
               </tbody>
           </table>
           <div class="d-flex justify-content-between">
@@ -76,8 +63,9 @@
               </div>
           </div>
       </div>
-  </div>
-  <div class="modal" id="upload-complete-courses-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
+    </div>
+
+    <div class="modal" id="upload-complete-courses-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
       <div class="modal-dialog modal-lg">
           <div class="modal-content">
               <div class="modal-header">
@@ -86,7 +74,7 @@
               </div>
               <div class="modal-body">
                   <div class="d-flex">
-                      <label class="form-label me-3">Import Completed Courses :</label>
+                      <label class="form-label me-4">Import Completed Courses :</label>
                       <form enctype="multipart/form-data" action="/admin/completed-courses/upload" method="post" id="upload-complete-course-form">
                           <input type="file" name="import-complete-course" id="import-complete-course" accept=".xlsx">
                   </div>
@@ -101,413 +89,237 @@
               </div>
           </div>
       </div>
-  </div>
+    </div>
 </div>
 
 <%- include('../partials/footer.ejs') %> 
+
 <script>
-   $(document).ready(function(){
+
+$(document).ready(function () {
     $('.select2').select2();
-    
-    setActiveMenuItem(`<%- active %>`)
-    
-    if($('#complete-courses-table tbody tr').length > 0){
-      $('#complete-courses-checkbox').removeClass('d-none');
+
+    let test = '<%- pageCount %>';
+    let rowCount = $('#changeEntry').val();
+    $('#page-no').html(test);
+    paginationData(rowCount, parseInt(test));
+    setActiveMenuItem(`<%- active %>`);
+
+    if ($('#complete-courses-table tbody tr').length > 0) {
+        $('#complete-courses-checkbox').removeClass('d-none');
     }
 
-    $('#complete-courses-table').on('change','#complete-courses-checkbox', function() {
+    $('#complete-courses-table').on('change', '#complete-courses-checkbox', function () {
         if (this.checked) {
-           $('.checkbox-complete-course').prop('checked',true);
-           $('#delete-all-complete-coures').removeClass('disabled');
+            $('.checkbox-complete-course').prop('checked', true);
+            $('#delete-all-complete-coures').removeClass('disabled');
         } else {
-          $('.checkbox-complete-course').prop('checked',false);
-           $('#delete-all-complete-coures').addClass('disabled');  
+            $('.checkbox-complete-course').prop('checked', false);
+            $('#delete-all-complete-coures').addClass('disabled');
         }
     });
-    $('#complete-courses-table').on('change','.checkbox-complete-course', function() {
+
+    $('#complete-courses-table').on('change', '.checkbox-complete-course', function () {
         if (this.checked) {
-           $('#delete-all-complete-coures').removeClass('disabled');
+            $('#delete-all-complete-coures').removeClass('disabled');
         } else {
-           $('#delete-all-complete-coures').addClass('disabled');  
+            $('#delete-all-complete-coures').addClass('disabled');
         }
     });
+
     $('#delete-all-complete-coures').on('click', function () {
-    let deleteCompleteCourseArray = [];
-    $('#complete-courses-table tbody tr td input[type="checkbox"]:checked').each(function (ele, index) {
-        let completeCourseId = Number($(index).attr("data-id"));
-        deleteCompleteCourse = {
-            id: completeCourseId
+        let deleteCompleteCourseArray = [];
+        $('#complete-courses-table tbody tr td input[type="checkbox"]:checked').each(function (ele, index) {
+            let completeCourseId = Number($(index).attr("data-id"));
+            deleteCompleteCourse = {
+                id: completeCourseId
+            }
+            deleteCompleteCourseArray.push(deleteCompleteCourse);
+        });
+
+        if (deleteCompleteCourseArray.length > 0) {
+            ConfirmationForAllDelete('Are you sure to delete the selected Completed Courses ?').then(result => {
+                if (result) {
+                    let ApiObj = {
+                        url: '/admin/completed-courses/delete-all',
+                        type: 'POST',
+                        data: { deleteCompleteCourseArray },
+                        dataType: 'JSON'
+                    }
+                    ajaxApi(ApiObj).then(result => {
+                        createToastMessage(result.description);
+                    }).catch(error => {
+                        createToastError(JSON.stringify(error.responseJSON.description));
+                    })
+                }
+            });
         }
-        deleteCompleteCourseArray.push(deleteCompleteCourse);
     });
-  
-    if(deleteCompleteCourseArray.length > 0){
-      ConfirmationForAllDelete('Are you sure to delete the selected Completed Courses ?').then(result =>{
-      if(result){
+
+    $('#changeEntry').on('change', function () {
+        let showEntry = $(this).val();
         let ApiObj = {
-             url:'/admin/completed-courses/delete-all',
-             type:'POST',
-             data:{deleteCompleteCourseArray},
-             dataType:'JSON'
-            }
-             ajaxApi(ApiObj).then(result =>{
-              createToastMessage(result.description);
-             }).catch(error =>{
-              createToastError(JSON.stringify(error.responseJSON.description));
-             })
+            type: 'POST',
+            url: '/admin/completed-courses/showEntry',
+            data: {
+                showEntry: showEntry
+            },
+            datatype: 'JSON'
         }
-    });
-    }  
-});
-
-$('#program-name-filter').on('change', function() {
-    let programId = $(this).val();
-    let showEntry = $('#changeEntry').val();
-
-    let ApiObj = {
-        type: 'POST',
-        url: '/admin/course/filter-by/programId',
-        data: {
-            programId: programId,
-            showEntry: showEntry
-        },
-        dataType: 'JSON'
-    };
-
-    ajaxApi(ApiObj)
-        .then(result => {
-      
-            let sessionName = `<option  >Select Session</option>`;
-            if (result.sessionList.length > 0) {
-                result.sessionList.forEach(element => {
-                    sessionName += `<option value="${element.sap_acad_session_id}">${element.acad_session}</option>`;
-                });
-                paginationData(showEntry,result.workloadLength)
-                AjaxtTable(result.workload);
-            } else {
-                sessionName += `<option value="">No Session Found!</option>`;
-            }
-
-            $("#session-name-filter").html(sessionName);
-            AjaxtTable(result.workload);
-        })
-        .catch(error => {
-          createToastError(JSON.stringify(error.responseJSON.description));
-        });
-});
-
-$(document).on('change', '#session-name-filter', function() {
-    let sessionId = $(this).val();
-    let programId = $('#program-name-filter').val();
-    let showEntry = $('#changeEntry').val();
-
-    let ApiObj = {
-        type: 'POST',
-        url: '/admin/course/filter-by/session-id',
-        data: {
-            programId: programId,
-            showEntry: showEntry,
-            sessionId: sessionId
-        },
-        dataType: 'JSON'
-    };
-
-    ajaxApi(ApiObj)
-        .then(result => {
-            let courseName = `<option>Select Session</option>`;
-            if (result.moduleList.length > 0) {
-                result.moduleList.forEach(element => {
-                  courseName += `<option value="${element.course_id}">${element.course_name}</option>`;
-                });
-                AjaxtTable(result.workload);
-            } else {
-              courseName += `<option value="">No Session Found!</option>`;
-            }
-
-            $("#course-name-filter").html(courseName);
-            paginationData(showEntry,result.workloadLength)
-            AjaxtTable(result.workload);
-        })
-        .catch(error => {
-          createToastError(JSON.stringify(error.responseJSON.description));
-        });
-});
-$(document).on('change', '#course-name-filter', function() {
-
-    let sessionId = $('#session-name-filter').val();
-    let programId = $('#program-name-filter').val();
-    let showEntry = $('#changeEntry').val();
-    let courseId = $(this).val();
-
-    let ApiObj = {
-        type: 'POST',
-        url: '/admin/course/filter-by/course-id',
-        data: {
-            programId: programId,
-            showEntry: showEntry,
-            sessionId: sessionId,
-            courseId:courseId
-        },
-        dataType: 'JSON'
-    };
-    ajaxApi(ApiObj)
-        .then(result => {
-            AjaxtTable(result.workload);
-            paginationData(showEntry,result.workloadLength)
-        })
-        .catch(error => {
-          createToastError(JSON.stringify(error.responseJSON.description));
-        });
-});
-
-
-      $('#changeEntry').on('change',function(){
-         let showEntry = $(this).val();
-         let ApiObj = {
-             type:'POST',
-             url:'/admin/completed-courses/showEntry',
-             data:{
-              showEntry:showEntry
-             },
-             datatype:'JSON'
-          }
-           ajaxApi(ApiObj).then(result=>{
-           paginationData(showEntry,result.length)
-             AjaxtTable(result.data);
-             $('#searchkeyword').val('');
-           }).catch(error =>{
+        ajaxApi(ApiObj).then(result => {
+            paginationData(showEntry, result.length)
+            AjaxtTable(result.data);
+            $('#searchkeyword').val('');
+        }).catch(error => {
             createToastError(JSON.stringify(error.responseJSON.description));
-         })    
-     })
- 
-      let test = '<%- pageCount %>';
-      let rowCount = $('#changeEntry').val();
-      $('#page-no').html(test);
-      paginationData(rowCount, parseInt(test));
-  
-         $('#searchkeyword').on('input',function(){
-           let searchValue = $(this).val().trim();
-           let pageNo = $(this).attr('data-lp');
-           let showEntry = $('#changeEntry').val();
+        })
+    });
 
-           $.ajax({
-            type:'POST',
-            url:'/admin/completed-courses/search',
-            data:{
-              searchLetter:searchValue,
-              pageNo:pageNo,
-              showEntry:showEntry
-             },
-            success:function(data){
-             paginationData(rowCount,data.length)
-              AjaxtTable(data.data)
-           }
-          })
-         })
-         $(".pagination-search").on('click', '.pagination li', function () {
-                 let pageNo = $(this).attr('data-lp')
-                let searchValue = $('#searchkeyword').val();
-                 let showEntry = $('#changeEntry').val();
-                   $.ajax({
-                       type:'POST',
-                       url:'/admin/completed-courses/search',
-                       data:{
-                         searchLetter:searchValue,
-                         pageNo:pageNo,
-                         showEntry:showEntry
-                       },
-                  success:function(data){
-                  AjaxtTable(data.data)
-           }
-         })
-         })
-        function AjaxtTable(courseList) {
-               
-               $("#course-table tbody").empty();
-               let AjaxTable = ``;
-              if (courseList.length > 0) {
-                 let count = 1;
-                  for (course of courseList) {
-                     AjaxTable +=
-                          `<tr>
-                              <td>${count++}</td>
-                              <td>${course.student_name}</td>
-                              <td>${course.course_name}</td>
-                              <td>
-                                <input class="checkbox-complete-course" type="checkbox" name="complete-courses" data-id="${course.id}" >
-                              </td>
-                           </tr>`
-                   }
-               }
-               $('#page-no').val(courseList.length);        
-               $("#complete-courses-table tbody").html(AjaxTable);
-          }
-
-    $('#edit-course-modal').on('shown.bs.modal',function(){
-      $('.select2').select2();
-    })
-
-     $('#import-complete-course').on('change', function(){
-        let importCompleteCourse = $(this).val();
-        if(importCompleteCourse != ''){
-            $('#upload-complete-course-button').removeClass('d-none');
-        }
-      });
-      $(document).ready(function() {
-      $('#upload-complete-course-form').on('submit', function(event) {
-        event.preventDefault(); 
-        var formData = new FormData(this); 
+    $('#searchkeyword').on('input', function () {
+        let searchValue = $(this).val().trim();
+        let pageNo = $(this).attr('data-lp');
+        let showEntry = $('#changeEntry').val();
+        $('#changeEntry').val($('#changeEntry :first-child').val());
 
         $.ajax({
-          type: 'POST',
-          url: '/admin/completed-courses/upload', 
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function(response) {
-            createToastMessage(response.description);
-          },
-          error: function(xhr, status, error) {
-            showError(JSON.stringify(xhr.responseJSON));
-          }
-        });
-      });
-      
-      $('#course-table').on('click','.delete-course',function(){
-        let id = $(this).attr('data-id');
-        $(this).closest('tr').remove();
-        let ApiObj = {
-          type:'POST',
-          url:'/admin/course/delete',
-          data:{
-            id:id
-          },
-          datatype:'JSON'
-        }
-        ajaxApi(ApiObj).then(result=>{
-          createToastMessage(result.description);
-        }).catch(error =>{
-          createToastError(JSON.stringify(error.responseJSON.description));
-        })
-      })
-      $('#edit-course-modal').on('click','#update-course',function(){
-            let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
-            let id = $('#course-id').val();
-            let courseName = $('#course-name').val().replace(/\s+/g,' ').trim();
-            let credits = $('#course-credits').val();
-            let yearOfIntroduction = $('#year-of-introduction').val();
-            let minDemandCriteria   = $('#min-demand-criteria').val();
-            
-            let isCredits =  IsNumber(credits);
-            let isMinDemandCri  = IsNumber(minDemandCriteria);
-               if (!isCredits) {
-                  $('#error-credits').removeClass('d-none');
-                  return;
-                } else {
-                  $('#error-credits').addClass('d-none');
-                }
-
-                if (!isMinDemandCri) {
-                  $('#error-min-demand-criteria').removeClass('d-none');
-                  return;
-                } else {
-                  $('#error-min-demand-criteria').addClass('d-none');
-                }
-
-            let editCourse = {
-              id:id,
-              course_name: courseName,
-              credits: credits,
-              year_of_introduction : yearOfIntroduction,
-              min_demand_criteria : minDemandCriteria
+            type: 'POST',
+            url: '/admin/completed-courses/search',
+            data: {
+                searchLetter: searchValue,
+                pageNo: pageNo,
+                showEntry: showEntry
+            },
+            success: function (data) {
+                paginationData(rowCount, data.length)
+                AjaxtTable(data.data);
+                $('#page-no').html(data.length);
             }
-            
-     
-            let ApiObj = {
-                type:'POST',
-                url:'/admin/course/update',
-                data: {
-                   editCourse:JSON.stringify(editCourse),
-                  biddingSessionId:biddingSessionId
-                },
-                dataType: 'JSON' 
-                }
-                ajaxApi(ApiObj).then(result => {
-                  createToastMessage(result.description);
-                }).catch(error => {
-                  createToastError(JSON.stringify(error.responseJSON.description));
-                })
-            
-        });
-        $('#course-table').on('click','.edit-course',function(){
-          let courseName = $(this).attr('data-course-name')
-          let credits = $(this).attr('data-credits');
-          let dataYearOfIntroduction = $(this).attr('data-year-of-introduction');
-          let dataMinDemandCriteria =  $(this).attr('data-min-demand-criteria');
-          let id = $(this).attr('data-id');
-          
-          $('#edit-course-modal #course-id').val(id);
-          $('#edit-course-modal #course-name').val(courseName);
-          $('#edit-course-modal #course-credits').val(credits);
-          $('#edit-course-modal #year-of-introduction').val(dataYearOfIntroduction);
-          $('#edit-course-modal #min-demand-criteria').val(dataMinDemandCriteria);
         })
+    })
 
-     
+    $(".pagination-search").on('click', '.pagination li', function () {
+        let pageNo = $(this).attr('data-lp')
+        let searchValue = $('#searchkeyword').val();
+        let showEntry = $('#changeEntry').val();
+        $.ajax({
+            type: 'POST',
+            url: '/admin/completed-courses/search',
+            data: {
+                searchLetter: searchValue,
+                pageNo: pageNo,
+                showEntry: showEntry
+            },
+            success: function (data) {
+                AjaxtTable(data.data);
+                $('#page-no').html(data.length);
+            }
+        })
+    })
+
+    $('#edit-course-modal').on('shown.bs.modal', function () {
+        $('.select2').select2();
+    })
+
+    $('#import-complete-course').on('change', function () {
+        let importCompleteCourse = $(this).val();
+        if (importCompleteCourse != '') {
+            $('#upload-complete-course-button').removeClass('d-none');
+        }
     });
     
-    function ConfirmationForAllDelete(message) {
+    $('#upload-complete-course-form').on('submit', function (event) {
+        event.preventDefault();
+        var formData = new FormData(this);
+
+        $.ajax({
+            type: 'POST',
+            url: '/admin/completed-courses/upload',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                createToastMessage(response.description);
+            },
+            error: function (xhr, status, error) {
+                showError(JSON.stringify(xhr.responseJSON));
+            }
+        });
+    });
+
+    function AjaxtTable(courseList) {
+
+        $("#complete-courses-table tbody").empty();
+        let AjaxTable = ``;
+        if (courseList.length > 0) {
+            let count = 1;
+            for (course of courseList) {
+                AjaxTable +=
+                    `<tr>
+                            <td>${count++}</td>
+                            <td>${course.student_name}</td>
+                            <td>${course.course_name}</td>
+                            <td>
+                                <input class="checkbox-complete-course" type="checkbox" name="complete-courses" data-id="${course.id}" >
+                            </td>
+                        </tr>`
+            }
+        }
+        $('#page-no').val(courseList.length);
+        $("#complete-courses-table tbody").html(AjaxTable);
+    }
+});
+
+function ConfirmationForAllDelete(message) {
     return new Promise((success, failed) => {
-    let dialog = document.createElement('div');
-    dialog.classList.add('dialogConfirmation');
-   
+        let dialog = document.createElement('div');
+        dialog.classList.add('dialogConfirmation');
 
-    let dialogBox = document.createElement('div');
-    dialogBox.classList.add('dialogBox');
-    dialog.appendChild(dialogBox);
-    
-    let messageBox = document.createElement('div');
-    messageBox.classList.add('messageBox');
-    dialogBox.appendChild(messageBox);
 
-    let dialogHeading = document.createElement('h1');
-    dialogHeading.classList.add('dialogHeading');
-    dialogHeading.textContent = 'Confirmation';
-    messageBox.appendChild(dialogHeading); 
+        let dialogBox = document.createElement('div');
+        dialogBox.classList.add('dialogBox');
+        dialog.appendChild(dialogBox);
 
-    let dialogMessage = document.createElement('p');
-    dialogMessage.classList.add('dialogMessage');
-    dialogMessage.textContent = message;
-    messageBox.appendChild(dialogMessage);
+        let messageBox = document.createElement('div');
+        messageBox.classList.add('messageBox');
+        dialogBox.appendChild(messageBox);
 
-    let buttonContainer = document.createElement('div');
-    buttonContainer.classList.add('buttonContainer');
-    dialogBox.appendChild(buttonContainer);
+        let dialogHeading = document.createElement('h1');
+        dialogHeading.classList.add('dialogHeading');
+        dialogHeading.textContent = 'Confirmation';
+        messageBox.appendChild(dialogHeading);
 
-    let yesButton = document.createElement('button');
-    yesButton.classList.add('okButton');
-    yesButton.textContent = 'Yes';
-    buttonContainer.appendChild(yesButton);
+        let dialogMessage = document.createElement('p');
+        dialogMessage.classList.add('dialogMessage');
+        dialogMessage.textContent = message;
+        messageBox.appendChild(dialogMessage);
 
-    let noButton = document.createElement('button');
-    noButton.classList.add('cancelButton');
-    noButton.textContent = 'No';
-    buttonContainer.appendChild(noButton);
+        let buttonContainer = document.createElement('div');
+        buttonContainer.classList.add('buttonContainer');
+        dialogBox.appendChild(buttonContainer);
 
-    document.querySelector('body').append(dialog);
-    yesButton.addEventListener('click', function () {
-        document.querySelector('.dialogConfirmation').remove();
-        success(true);
-    });
+        let yesButton = document.createElement('button');
+        yesButton.classList.add('okButton');
+        yesButton.textContent = 'Yes';
+        buttonContainer.appendChild(yesButton);
 
-    noButton.addEventListener('click',  function (){
-        document.querySelector('.dialogConfirmation').remove();
-        success(false);
-    });
-})
+        let noButton = document.createElement('button');
+        noButton.classList.add('cancelButton');
+        noButton.textContent = 'No';
+        buttonContainer.appendChild(noButton);
+
+        document.querySelector('body').append(dialog);
+        yesButton.addEventListener('click', function () {
+            document.querySelector('.dialogConfirmation').remove();
+            success(true);
+        });
+
+        noButton.addEventListener('click', function () {
+            document.querySelector('.dialogConfirmation').remove();
+            success(false);
+        });
+    })
 }
 
-   })
 
 </script>
 

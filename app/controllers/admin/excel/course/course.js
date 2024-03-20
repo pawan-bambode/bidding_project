@@ -1,42 +1,82 @@
-const excel = require('excel4node');
+const excel = require('exceljs');
 const xlsx = require('xlsx');
 const course = require('../../../../models/admin/course/course');
 const isJsonString = require('../../../../utils/util');
+const biddingSession = require('../../../../models/admin/biddingsession/biddingsession');
 
-module.exports = {
+module.exports = {  
   generateExcel: (req, res) => {
-    const workbook = new excel.Workbook();
-    const worksheet = workbook.addWorksheet('Sheet1');
+      const workbook = new excel.Workbook();
+      workbook.creator = `${res.locals.fullName}`;
+      const worksheet = workbook.addWorksheet('Sheet1');
+      let filePath;
+      let formulaevalue = '';
+      biddingSession.acadSessions(res.locals.biddingId)
+          .then(result => {
+              const dropdownOptions = [];
+              result.recordset.forEach(item => {
+                  dropdownOptions.push(item.acad_session);
+              });
 
-    worksheet.column(1).setWidth(15);
-    worksheet.column(2).setWidth(10);
-    worksheet.column(3).setWidth(10);
-    worksheet.column(4).setWidth(10);
-    worksheet.column(5).setWidth(20);
-    worksheet.column(6).setWidth(15);
-    worksheet.column(7).setWidth(20);
-    worksheet.column(8).setWidth(20);
+              worksheet.columns = [
+                  { header: 'courseName', key: 'courseName', width: 15 },
+                  { header: 'courseId', key: 'courseId', width: 10 },
+                  { header: 'credits', key: 'credits', width: 10 },
+                  { header: 'programId', key: 'programId', width: 10 },
+                  { header: 'acadSession', key: 'acadSession', width: 20 },
+                  { header: 'areaName', key: 'areaName', width: 15 },
+                  { header: 'yearOfIntroduction', key: 'yearOfIntroduction', width: 20 },
+                  { header: 'minDemandCriteria', key: 'minDemandCriteria', width: 20 }
+              ];
+  
+              worksheet.getRow(1).eachCell((cell) => {
+                  cell.font = { bold: true };
+                  cell.alignment = { horizontal: 'center', vertical: 'center' };
+              });
+             
+              for(let i = 0 ;i<dropdownOptions.length;i++){
+                if(i == 0){
+                  formulaevalue = ''
+                  formulaevalue += "\""+dropdownOptions[i]+',';
+                }
+                else if (i== dropdownOptions.length-1){
+                  formulaevalue += dropdownOptions[i]+'"';
+                }
+                else{
+                  formulaevalue += dropdownOptions[i]+',';
+                }
+              }
+              let array = [];
+            
+              array.push(formulaevalue);
 
-    worksheet.cell(1, 1).string('courseName').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 2).string('courseId').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 3).string('credits').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 4).string('programId').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 5).string('acadSession').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 6).string('areaName').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 7).string('yearOfIntroduction').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-    worksheet.cell(1, 8).string('minDemandCriteria').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
+              for (let rowNumber = 2; rowNumber <= 2000; rowNumber++) {
+                  const cell = worksheet.getCell(`E${rowNumber}`); 
+                  cell.dataValidation = {
+                      type: 'list',
+                      formulae: array,
+                      allowBlank: true,
+                      showErrorMessage: true,
+                      errorTitle: 'Invalid Entry',
+                      error: 'Please select a value from the dropdown list.'
+                  };
+              }
+              filePath = __dirname + '/sampleForImportCourse.xlsx';
+              return workbook.xlsx.writeFile(filePath);
+          })
+          .then(() => {
 
-    const filePath = __dirname + '/sampleForImportCourse.xlsx';
-    workbook.write(filePath, (err, stats) => {
-      if (err) {
-        return res.status(500).send('Error generating Excel file');
-      }
-      res.sendFile(filePath, (err) => {
-        if (err) {
-          return res.status(500).send('Error sending Excel file');
-        }
-      });
-    });
+              res.sendFile(filePath, (err) => {
+                  if (err) {
+                      console.error('Error sending Excel file:', err);
+                      return res.status(500).send('Error sending Excel file');
+                  }
+              });
+          })
+          .catch(error => {
+              console.error('Error generating Excel file:', error);
+              return res.status(500).send('Error generating Excel file');
+          });
   },
 
   upload: (req, res) => {

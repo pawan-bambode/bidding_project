@@ -2,86 +2,67 @@
 <%- include('../partials/head') %>
 <%- include('../partials/leftSidebar.ejs') %>
 <%- include('../partials/header.ejs') %>
+<%- include('../partials/bread.ejs') %>
 
-<div class="main-content">
-<div class="breadcrumbs-container">
-      <ul class="breadcrumb">
-        <% if (breadcrumbs) { %>
-            <% for (let crumbs of breadcrumbs) { %>
-                <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
-                 %>
-                <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
-            <% } %>
-        <% } %>
-    </ul>
-    </div>
-
-    <div class="card card-custom-border-curv" >
+    <div class="card card-custom-border-curv">
         <div class="card-header-custom d-flex justify-content-between p-2">
             <h4 class="ms-2">Pre-Requisites</h4>
             <div>
-            <button type="button" class="btn btn-success me-2"  data-bs-target="#upload-pre-requisites-modal" data-bs-toggle="modal">Upload Pre-Requisites</button>
+                <button type="button" class="btn btn-success me-2" data-bs-target="#upload-pre-requisites-modal" data-bs-toggle="modal">Upload Pre-Requisites</button>
             </div>
         </div>
-        <div class="card-body table-responsive custom-table">
-
-          <div class="d-flex justify-content-between">
-            <div>
-                <label>Show Entries</label>
-                <select class="form-select" id="changeEntry">
-                    <%for(let page of locals.page_filter){%>
-                       <option value="<%-page%>"><%-page%></option>
-                    <%}%>
-                </select>
+        <div class="card-body table-responsive">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <label>Show Entries</label>
+                    <select class="form-select" id="changeEntry">
+                        <% for(let page of locals.page_filter){ %>
+                        <option value="<%- page %>"><%- page %></option>
+                        <% } %>
+                    </select>
+                </div>
+                <div>
+                    <div class="table-searchbar-container d-flex justify-content-around p-1">
+                        <button type="button" id="searchkeyword-button" class="border-0 outline-0">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+                    </div>
+                </div>
             </div>
-    
-            <div>
-              <div class="table-searchbar-container d-flex justify-content-around p-1">
-                <button type="button" id="searchkeyword-button" class="border-0 outline-0">
-                    <i class="fas fa-search"></i>
-                </button>
-                <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
-            </div>
-            </div>
-        </div>
-            <table class="table custom_row table-bordered mt-4" id="pre-requisite-table">
+            <table class="table table-bordered mt-4" id="pre-requisite-table">
                 <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Program Name</th>
-                    <th>Acad Session</th>
-                    <th>Course Name</th>
-                    <th>Type</th>
-                    <th>Pre-Requisite Course Name</th>
-                    <th>Actions</th>
-                  </tr>
+                    <tr>
+                        <th>#</th>
+                        <th>Program Name</th>
+                        <th>Acad Session</th>
+                        <th>Course Name</th>
+                        <th>Type</th>
+                        <th>Pre-Requisite Course Name</th>
+                        <th>Actions</th>
+                    </tr>
                 </thead>
                 <tbody>
-                  <% let count = 1 %>
-                  <% for(let preRequite of preRequitiesList) { %>
-                    <tr data-id="<%- preRequite.id %>"
-                      data-course-name="<%- preRequite.course_name%>"  data-pre-requites-type="<%- preRequite.type %>" data-pre-requisite-course-name ="<%- preRequite.pre_req_course_name %>">
-                      <td><%- count++ %></td>
-                      <td><%- preRequite.program_name %></td>
-                      <td><%- preRequite.acad_session %></td>
-                      <td><%- preRequite.course_name %></td>
-                      <td><%- preRequite.type %></td>
-                      <td><%- preRequite.pre_req_course_name %></td>
-                      <td>
-                      <a class="edit-pre-requisite" data-bs-target="#edit-pre-requisite-modal" data-bs-toggle="modal" 
-                        ><i class="fa fa-edit"></i></a>
-                      <a class="delete-pre-requisite" ><i class="fas fa-trash text-danger"></i>
-                      </a>
-                      </td>
+                    <% let count = 1 %>
+                    <% for(let preRequite of preRequitiesList) { %>
+                    <tr data-id="<%- preRequite.id %>" data-course-name="<%- preRequite.course_name %>" data-pre-requites-type="<%- preRequite.type %>" data-pre-requisite-course-name="<%- preRequite.pre_req_course_name %>">
+                        <td><%- count++ %></td>
+                        <td><%- preRequite.program_name %></td>
+                        <td><%- preRequite.acad_session %></td>
+                        <td><%- preRequite.course_name %></td>
+                        <td><%- preRequite.type %></td>
+                        <td><%- preRequite.pre_req_course_name %></td>
+                        <td>
+                            <a class="edit-pre-requisite" data-bs-target="#edit-pre-requisite-modal" data-bs-toggle="modal"><i class="fa fa-edit"></i></a>
+                            <a class="delete-pre-requisite"><i class="fas fa-trash text-danger"></i></a>
+                        </td>
                     </tr>
-                    
-                  <%}%>
+                    <% } %>
                 </tbody>
-              </table>
-              <div class="d-flex justify-content-between">
+            </table>
+            <div class="d-flex justify-content-between">
                 <div>
-                    <p>Total entries :&nbsp;<span id="page-no"></span>
-                    </p>
+                    <p>Total entries: <span id="page-no"></span></p>
                 </div>
                 <div>
                     <p id="pagination" class="pagination-search"></p>
@@ -89,39 +70,34 @@
             </div>
         </div>
     </div>
+
     <div class="modal" id="upload-pre-requisites-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
-        <div class="modal-dialog">
-          <div class="modal-content">
-         
-            <div class="modal-header">
-              <h5 class="modal-title">Upload Pre-Requisites</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            
-            <div class="modal-body">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Pre-Requisites</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
                     <div class="d-flex">
-                    <label class="form-label me-3">Import Pre-Requisites :</label>
-                    <form enctype="multipart/form-data" action="/admin/pre-requities/upload" method="post" id="upload-pre-requisites-form">
-                    <input type="file" name="import-pre-requisites" id="import-pre-requisites" accept=".xlsx">
+                        <label class="form-label me-3">Import Pre-Requisites :</label>
+                        <form enctype="multipart/form-data" action="/admin/pre-requities/upload" method="post" id="upload-pre-requisites-form">
+                            <input type="file" name="import-pre-requisites" id="import-pre-requisites" accept=".xlsx">
                     </div>
                     <div class="d-flex justify-content-between align-item-center mt-5">
-                    <input type="submit" class="btn btn-success mt-2 d-none" id="upload-pre-requisites-button" value="Upload Pre-Requisites"></input> 
-                    </form> 
-                
-                  <a href="/admin/pre-requisites/generate-excel" download="sampleForImportPreRequisites.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample for Import Pre-Requisites</a>
-                 </div>
-             
+                        <input type="submit" class="btn btn-success mt-2 d-none" id="upload-pre-requisites-button" value="Upload Pre-Requisites"></input>
+                        </form>
+                        <a href="/admin/pre-requisites/generate-excel" download="sampleForImportPreRequisites.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample for Import Pre-Requisites</a>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
-      
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-           
-          </div>
         </div>
-      </div>
+    </div>
 
-      <div class="modal" id="edit-pre-requisite-modal" data-bs-backdrop="static">
+    <div class="modal" id="edit-pre-requisite-modal" data-bs-backdrop="static">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -129,30 +105,29 @@
                     <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                  <div class="row empty">
-                  <div class="col-md-6">
-                  <input type="hidden" id="pre-requisites-id">
-                  <label class="mb-2 form-label" for="course-name">Course Name :</label>
-                  <input class="form-control is-empty" type="text" id="course-name" disabled>
-                  <span class="text-danger d-none is-in-valid" ></span>
-                  </div>
-                    <div class="col-md-6">
-                        <label class="mb-2 form-label" for="pre-requisites-course-name">Pre-Requisite Course Name :</label>
-                        <input class="form-control is-empty" type="text" id="pre-requisites-course-name" disabled>
-                    </div>
+                    <div class="row empty">
+                        <div class="col-md-6">
+                            <input type="hidden" id="pre-requisites-id">
+                            <label class="mb-2 form-label" for="course-name">Course Name :</label>
+                            <input class="form-control is-empty" type="text" id="course-name" disabled>
+                            <span class="text-danger d-none is-in-valid"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="mb-2 form-label" for="pre-requisites-course-name">Pre-Requisite Course Name :</label>
+                            <input class="form-control is-empty" type="text" id="pre-requisites-course-name" disabled>
+                        </div>
                     </div>
                     <div class="row empty">
-                      <div class="col-md-6">
-                          <label class="mb-2 form-label" for="update-pre-requisite-type">Pre-Requisite Type:</label>
-                          <select class="form-control form-select custom-select is-empty select2" id="update-pre-requisite-type">
-                              <option value="-1" disabled selected>-- Select Pre-Requisite Type --</option>
-                              <option value="1">Exclusive</option>
-                              <option value="2">Inclusive</option>
-                          </select>
-                          <p id="error-pre-requisite-type" class="text-danger d-none is-in-valid">Please Select Pre-Requisite Type!</p>
-                      </div>
-                  </div>
-                  
+                        <div class="col-md-6">
+                            <label class="mb-2 form-label" for="update-pre-requisite-type">Pre-Requisite Type:</label>
+                            <select class="form-control form-select custom-select is-empty select2" id="update-pre-requisite-type">
+                                <option value="-1" disabled selected>-- Select Pre-Requisite Type --</option>
+                                <option value="1">Exclusive</option>
+                                <option value="2">Inclusive</option>
+                            </select>
+                            <p id="error-pre-requisite-type" class="text-danger d-none is-in-valid">Please Select Pre-Requisite Type!</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
@@ -161,175 +136,178 @@
             </div>
         </div>
     </div>
+</div>
+<%- include('../partials/footer.ejs') %>
 
-    <%- include('../partials/footer.ejs') %>
 <script>
-   $(document).ready(function(){
+$(document).ready(function () {
     $('.select2').select2();
 
-    setActiveMenuItem(`<%- active %>`)
-
-    $('#import-pre-requisites').on('change', function(){
-        let importPreRequisites = $(this).val();
-        if(importPreRequisites != ''){
-            $('#upload-pre-requisites-button').removeClass('d-none');
-        }
-      });
-     
-      $('#upload-pre-requisites-form').on('submit', function(event) {
-        event.preventDefault(); 
-        var formData = new FormData(this); 
-
-        $.ajax({
-          type: 'POST',
-          url: '/admin/pre-requisites/upload', 
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function(response) {
-            createToastMessage(response.description);
-          },
-          error: function(xhr, status, error) {
-            showError(JSON.stringify(xhr.responseJSON));
-          }
-        });
-      });
-      
-      $('#pre-requisite-table').on('click','.delete-pre-requisite',function(){
-        let id = $(this).closest('tr').data('id');
-        
-        let ApiObj = {
-          type:'POST',
-          url:'/admin/pre-requisites/delete',
-          data:{
-            id:id
-          },
-          datatype:'JSON'
-        }
-        ajaxApi(ApiObj).then(result=>{
-          $(this).closest('tr').remove();
-          createToastMessage(result.description);
-        }).catch(error =>{
-          createToastError(JSON.stringify(error.responseJSON.description));;
-        })
-      })  
-
-      $('#pre-requisite-table').on('click','.edit-pre-requisite',function(){
-          let courseName = $(this).closest('tr').data('course-name')
-          let preRequisiteCourseName = $(this).closest('tr').data('pre-requisite-course-name');
-          let type = $(this).closest('tr').data('pre-requites-type').replace(/\s+/g,' ').trim().toLowerCase();
-          let id = $(this).closest('tr').data('id');
-          let typeId = type === 'exclusive' ? 1 : 2;
-
-          $('#edit-pre-requisite-modal #pre-requisites-id').val(id);
-          $('#edit-pre-requisite-modal #course-name').val(courseName);
-          $('#edit-pre-requisite-modal #pre-requisites-course-name').val(preRequisiteCourseName);
-          $('#update-pre-requisite-type').val(typeId).trigger('change');
-    
-
-        })
-    
-        $('#edit-pre-requisite-modal').on('click','#update-pre-requisite',function(){
-            let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
-            let id = $('#pre-requisites-id').val();
-            let preRequisiteType   = $('#update-pre-requisite-type option:selected').text();
-
-            let isValidInput = isModalFieldEmpty('#edit-pre-requisite-modal .modal-body');  
-
-         if(isValidInput){
-          
-            let editPreRequisites = {
-              id : id,
-              type:preRequisiteType
-            }  
-            let ApiObj = {
-                type:'POST',
-                url:'/admin/pre-requisites/update',
-                data: { 
-                  editPreRequisites:JSON.stringify(editPreRequisites),
-                   biddingSessionId:biddingSessionId
-                },
-                dataType: 'JSON' 
-                }
-                ajaxApi(ApiObj).then(result => {
-                  createToastMessage(result.description);
-                }).catch(error => {
-                    createToastError(JSON.stringify(error.responseJSON.description));
-                })
-              }
-        });
-     
-    
-    $('#changeEntry').on('change',function(){
-      let showEntry = $(this).val();
-      let ApiObj = {
-          type:'POST',
-          url:'/admin/pre-requisites/showEntry',
-          data:{
-            showEntry:showEntry
-          },
-          datatype:'JSON'
-        }
-        ajaxApi(ApiObj).then(result=>{
-          paginationData(showEntry,result.length)
-            AjaxtTable(result.data);
-            $('#searchkeyword').val('');
-        }).catch(error =>{
-          createToastError(JSON.stringify(error.responseJSON.description));
-        })    
-    })
- 
     let test = '<%- pageCount %>';
     let rowCount = $('#changeEntry').val();
     $('#page-no').html(test);
     paginationData(rowCount, parseInt(test));
+    setActiveMenuItem(`<%- active %>`);
   
-        $('#searchkeyword').on('input',function(){
-         let PreRequisiteValue = $(this).val().trim();
-         $.ajax({
-          type:'POST',
-          url:'/admin/pre-requisites/search',
-          data:{
-            searchLetter:PreRequisiteValue
-          },
-          success:function(data){
-           paginationData(rowCount,data.length)
-            AjaxtTable(data.data)
-          }
-         })
-        })
+    $('#import-pre-requisites').on('change', function () {
+        let importPreRequisites = $(this).val();
+        if (importPreRequisites != '') {
+            $('#upload-pre-requisites-button').removeClass('d-none');
+        }
+    });
 
-        $('#edit-pre-requisite-modal').on('click', '.modal-close', function() {
-           $(this).closest('.modal-content').find(`.is-in-valid`).addClass('d-none');
+    $('#upload-pre-requisites-form').on('submit', function (event) {
+        event.preventDefault();
+        var formData = new FormData(this);
+
+        $.ajax({
+            type: 'POST',
+            url: '/admin/pre-requisites/upload',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                createToastMessage(response.description);
+            },
+            error: function (xhr, status, error) {
+                showError(JSON.stringify(xhr.responseJSON));
+            }
         });
+    });
 
-        $(".pagination-search").on('click', '.pagination li', function () {
-                let pageNo = $(this).attr('data-lp')
-                let searchValue = $(this).val();
-                let showEntry = $('#changeEntry').val();
-                  $.ajax({
-                      type:'POST',
-                      url:'/admin/pre-requisites/search',
-                      data:{
-                        searchLetter:searchValue,
-                        pageNo:pageNo,
-                        showEntry:showEntry
-                      },
-                 success:function(data){
-                 AjaxtTable(data.data)
-          }
-         })
-        })
-        function AjaxtTable(preRequisitesList) {
-            
-            $("#pre-requisite-table tbody").empty();
-            let AjaxTable = ``;
-            if (preRequisitesList.length > 0) {
-                let count = 1;
-                for (preRequisites of preRequisitesList) {
-                    AjaxTable +=
-                        `<tr data-id="${preRequisites.id}"
-                                 data-course-name="${preRequisites.course_name}"  data-pre-requites-type="${preRequisites.type}"  data-pre-requisite-course-name  ="${preRequisites.pre_req_course_name}">
+    $('#pre-requisite-table').on('click', '.delete-pre-requisite', function () {
+        let id = $(this).closest('tr').data('id');
+
+        let ApiObj = {
+            type: 'POST',
+            url: '/admin/pre-requisites/delete',
+            data: {
+                id: id
+            },
+            datatype: 'JSON'
+        };
+        ajaxApi(ApiObj).then(result => {
+            $(this).closest('tr').remove();
+            createToastMessage(result.description);
+        }).catch(error => {
+            createToastError(JSON.stringify(error.responseJSON.description));
+        });
+    });
+
+    $('#pre-requisite-table').on('click', '.edit-pre-requisite', function () {
+
+        let courseName = $(this).closest('tr').data('course-name');
+        let preRequisiteCourseName = $(this).closest('tr').data('pre-requisite-course-name');
+        let type = $(this).closest('tr').data('pre-requites-type').replace(/\s+/g, ' ').trim().toLowerCase();
+        let id = $(this).closest('tr').data('id');
+        let typeId = type === 'exclusive' ? 1 : 2;
+
+        $('#edit-pre-requisite-modal #pre-requisites-id').val(id);
+        $('#edit-pre-requisite-modal #course-name').val(courseName);
+        $('#edit-pre-requisite-modal #pre-requisites-course-name').val(preRequisiteCourseName);
+        $('#update-pre-requisite-type').val(typeId).trigger('change');
+    });
+
+    $('#edit-pre-requisite-modal').on('click', '#update-pre-requisite', function () {
+        let biddingSessionId = $('#biddingSessionDropdown').data('session-id');
+        let id = $('#pre-requisites-id').val();
+        let preRequisiteType = $('#update-pre-requisite-type option:selected').text();
+
+        let isValidInput = isModalFieldEmpty('#edit-pre-requisite-modal .modal-body');
+
+        if (isValidInput) {
+            let editPreRequisites = {
+                id: id,
+                type: preRequisiteType
+            };
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/pre-requisites/update',
+                data: {
+                    editPreRequisites: JSON.stringify(editPreRequisites),
+                    biddingSessionId: biddingSessionId
+                },
+                dataType: 'JSON'
+            };
+            ajaxApi(ApiObj).then(result => {
+                createToastMessage(result.description);
+            }).catch(error => {
+                createToastError(JSON.stringify(error.responseJSON.description));
+            });
+        }
+    });
+
+    $('#changeEntry').on('change', function () {
+        let showEntry = $(this).val();
+        let ApiObj = {
+            type: 'POST',
+            url: '/admin/pre-requisites/showEntry',
+            data: {
+                showEntry: showEntry
+            },
+            datatype: 'JSON'
+        };
+        ajaxApi(ApiObj).then(result => {
+            paginationData(showEntry, result.length);
+            AjaxtTable(result.data);
+            $('#searchkeyword').val('');
+        }).catch(error => {
+            createToastError(JSON.stringify(error.responseJSON.description));
+        });
+    });
+
+    $('#searchkeyword').on('input', function () {
+        let PreRequisiteValue = $(this).val().trim();
+        $('#changeEntry').val($('#changeEntry :first-child').val());
+
+        $.ajax({
+            type: 'POST',
+            url: '/admin/pre-requisites/search',
+            data: {
+                searchLetter: PreRequisiteValue
+            },
+            success: function (data) {
+                paginationData(rowCount, data.length);
+                AjaxtTable(data.data);
+                $('#page-no').html(data.length);
+            }
+        });
+    });
+
+    $('#edit-pre-requisite-modal').on('click', '.modal-close', function () {
+        $(this).closest('.modal-content').find(`.is-in-valid`).addClass('d-none');
+    });
+
+    $(".pagination-search").on('click', '.pagination li', function () {
+        let pageNo = $(this).data('lp');
+        let searchValue = $(this).val();
+        let showEntry = $('#changeEntry').val();
+        $.ajax({
+            type: 'POST',
+            url: '/admin/pre-requisites/search',
+            data: {
+                searchLetter: searchValue,
+                pageNo: pageNo,
+                showEntry: showEntry
+            },
+            success: function (data) {
+                AjaxtTable(data.data);
+                $('#page-no').html(data.length);
+            }
+        });
+    });
+
+    function AjaxtTable(preRequisitesList) {
+        $("#pre-requisite-table tbody").empty();
+        let AjaxTable = ``;
+        if (preRequisitesList.length > 0) {
+            let count = 1;
+            for (preRequisites of preRequisitesList) {
+                AjaxTable +=
+                    `<tr data-id = "${preRequisites.id}" 
+                         data-course-name = "${preRequisites.course_name}"  
+                         data-pre-requites-type = "${preRequisites.type}"  
+                         data-pre-requisite-course-name = "${preRequisites.pre_req_course_name}">
                             <td>${count++}</td>
                             <td>${preRequisites.program_name}</td>
                             <td>${preRequisites.acad_session}</td>
@@ -340,19 +318,17 @@
                               <a class="edit-pre-requisite" data-bs-target="#edit-pre-requisite-modal" data-bs-toggle="modal"> 
                                   <i class="fa fa-edit"></i>
                                 </a>
-                                <a data-id="${preRequisites.id}" class="delete-pre-requisite">
+                                <a class="delete-pre-requisite">
                                     <i class="fas fa-trash text-danger"></i>
                                 </a>
-                                
                             </td>
-                        </tr>`
-                }
-            }       
-            $("#pre-requisite-table tbody").html(AjaxTable);
+                        </tr>`;
+            }
         }
-   })
+        $("#pre-requisite-table tbody").html(AjaxTable);
+    }
+});
 
 </script>
-
 <%- include('../partials/footerEnd.ejs') %>
 

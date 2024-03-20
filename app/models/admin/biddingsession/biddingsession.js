@@ -2,11 +2,11 @@ const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class BiddingSession {
   
-    static allBiddingSession(slug, status) {
+    static biddingSessions(slug, status) {
         if (status) { 
             return poolConnection.then(pool => {
                 return pool.request()
-                    .query(`SELECT bs.id , RTRIM(LTRIM(bs.bidding_name)) AS biddingName, 
+                    .query(`SELECT bs.id, RTRIM(LTRIM(bs.bidding_name)) AS biddingName, 
                             STRING_AGG(CONCAT(bas.acad_session, ':', bas.acad_session_lid), ',') AS acad_sessions_and_ids, bs.start_date, bs.end_date, sd.student_count, c.course_count, ps.max_credits, ps.min_credits 
                             FROM [${slug}].bidding_session bs
                             INNER JOIN [${slug}].bidding_acad_sessions bas ON bas.bidding_session_lid = bs.id 
@@ -34,15 +34,16 @@ module.exports = class BiddingSession {
         }
     }
 
-    static acadSessionList(biddingId) {
+    static acadSessions(biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingSessionId', sql.Int, biddingId)
-                .query(`SELECT id, sap_acad_session_id, acad_session FROM [dbo].acad_sessions`);
+                .query(`SELECT id, sap_acad_session_id AS acadSessionId, acad_session 
+                        FROM [dbo].acad_sessions WHERE sap_acad_session_id IN(34,35,36)`);
         });
     }
 
-    static activeList(slug) {
+    static active(slug) {
         return poolConnection.then(pool => {
             return pool.request()
                 .query(`SELECT id, bidding_name ,active, status FROM [${slug}].bidding_session WHERE active = 1`);

@@ -39,9 +39,10 @@
         <div class="card card-custom-border-curv mt-5 active-round round-wise-modal d-none">
             <div class="card-header-custom d-flex justify-content-between p-1">
                 <h3 class="ms-2">Confirmed Courses</h3>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#swap-modal">Swap</button>
             </div>
             <div class="card-body table-responsive">
-                <table class="table custom_row table-bordered mt-4 custom-table" id="confirm-courses-table">
+                <table class="table table-bordered mt-4" id="confirm-courses-table">
                     <thead>
                         <th>#</th>
                         <th>Area</th>
@@ -76,7 +77,7 @@
                 <h3 class="ms-2">WaitList Courses</h3>
             </div>
             <div class="card-body table-responsive">
-                <table class="table custom_row table-bordered mt-4 custom-table" id="add-drop-wait-list">
+                <table class="table table-bordered mt-4" id="add-drop-wait-list">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -99,7 +100,7 @@
                             waitListRanked.forEach(function(rank) { 
                                 if(waitList.division_batch_lid == rank.div_batch_lid){
                                     rankValue = rank.rank;
-                                }
+                                }});
                         %>
                         <tr 
                             data-wait-list-id = "<%- waitList.id %>"
@@ -139,7 +140,7 @@
                             <% } %>
                             
                         </tr>
-                        <% }); }); %>
+                        <%  }); %>
                     </tbody>                    
                 </table>
             </div>
@@ -182,7 +183,7 @@
                 </div>
             </div>
   
-            <table class="table custom_row table-bordered mt-4 custom-table" id="add-drop-availale-table">
+            <table class="table table-bordered mt-4" id="add-drop-availale-table">
                 <thead>
                     <th>#</th>
                     <th>Area</th>
@@ -208,6 +209,41 @@
            <p>There is not any Add Drop Rounds</p>
         </div>
     </div>
+    <div class="modal" tabindex="-1" data-bs-backdrop="static" id="swap-modal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Swap Courses</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+             
+              <div class="mt-4">
+                <select class="form-select form-control select2 mt-4" id="confirm-filter">
+                    <option value="-1" selected disabled>--Select Confirmed Courses--</option>
+                    <% for (let confirmCourse of confirmation) { %>
+                        <option value="<%- confirmCourse.course_lid %>" data-id="<%- confirmCourse.Id %>" data-concentration-id="<%- confirmCourse.concentration_lid %>" data-div-batch-id="<%- confirmCourse.batchId %>"><%- confirmCourse.course_name %>-<%- confirmCourse.division %></option>
+                    <% } %>
+                </select>
+                
+              </div>
+              <div class="mt-4">
+                <select class="form-select form-control select2 mt-4" id="course-swap-filter">
+                    <option value="-1" selected disabled>--Select Available Courses--</option>
+                    <% for (let availCourse of courseList) { %>
+                        <option value="<%- availCourse.course_lid %>" data-div-batch-id="<%- availCourse.division_batch_lid %>"><%- availCourse.course_name %>-<%- availCourse.division %></option>
+                    <% } %>
+                </select>
+                
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="add-swap">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
 </div>   
     
 <%- include('../partials/footer.ejs') %>
@@ -219,8 +255,9 @@
     let roundDetails = JSON.parse(`<%- JSON.stringify(roundDetails) %>`);
     let concentrationId = `<%- concentrationId %>`;
     let studentId = $('#student-data').data('student-lid');
-
-    avilableCourses(availCourse, false);
+    if(availCourse != ''){
+        avilableCourses(availCourse, false);
+    }
     setActiveMenuItem(`<%- active %>`);
 
     if(roundDetails != '') {
@@ -313,11 +350,50 @@
         $('#end-time').html(roundEndTime);
         $('.round-name').html(roundName);
         $('.round-name').attr('data-round-id', roundId);
-        $('#bidding-table').html('');
+
         $('.round-wise-modal').addClass('d-none')           
         $('.active-round').removeClass('d-none');
         $('.empty-round').addClass('d-none');
     })
+
+    $('#swap-modal').on('click','#add-swap',function() {
+
+        let id = $('#confirm-filter').find(':selected').data('id');
+        let courseLidToAdd = $("#course-swap-filter").val();
+        let studentId = $('#student-data').data('student-id');
+        let concentrationId = $('#confirm-filter').find(':selected').data('concentration-id');
+        let divBatchLidToDrop = $('#confirm-filter').find(':selected').data('div-batch-id');
+        let divBatchLidToAdd = $('#course-swap-filter').find(':selected').data('div-batch-id');
+        let roundId = $('.round-name').data('round-id');
+        let bidPoint = 0;
+
+        let ApiObj = {
+          type:'POST',
+          url:'/student/add-drop/swap',
+          data:{
+            id: id,
+            studentId: studentId,
+            courseLidToAdd: courseLidToAdd,
+            concentrationId:concentrationId,
+            divBatchLidToAdd: divBatchLidToAdd,
+            divBatchLidToDrop: divBatchLidToDrop,
+            roundId: roundId,
+            bidPoint: bidPoint
+          },
+          datatype:'JSON'
+          }
+          ajaxApi(ApiObj).then(result=>{
+           let resultValue = JSON.parse(result.swap);
+           if(resultValue.status == 0){
+            createToastError(resultValue.description);
+            } 
+            else if(resultValue.status == 1){
+              createToastMessage(resultValue.description);
+            }
+          }).catch(error =>{
+              createToastError(JSON.stringify(error.responseJSON.description));;
+          })    
+        })
     
     $('#confirm-courses-table').on('click', '.drop-course', function () {
 

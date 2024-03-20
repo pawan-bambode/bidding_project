@@ -1,24 +1,12 @@
 <%- include('../../partials/head') %>
 <%- include('../../partials/leftSidebar.ejs') %>
 <%- include('../../partials/header.ejs') %>
-
-<div class="main-content">
-    <div class="breadcrumbs-container">
-        <ul class="breadcrumb">
-            <% if (breadcrumbs) { %>
-                <% for (let crumbs of breadcrumbs) { %>
-                    <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
-                     %>
-                    <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
-                <% } %>
-            <% } %>
-        </ul>
-    </div>
+<%- include('../../partials/bread.ejs') %>
 
     <div class="card card-custom-border-curv">
         <div class="card-header-custom d-flex justify-content-between p-1">
             <h4 class="ms-2">Programs</h4>
-                <button type="button" class="btn add-btn-program me-2" data-bs-target="#import-program-modal" data-bs-toggle="modal">
+                <button type="button" class="btn add-btn-plus me-2" data-bs-target="#import-program-modal" data-bs-toggle="modal">
                     <i class="fas fa-plus"></i>
                 </button>  
         </div>
@@ -42,7 +30,7 @@
                 </div>
             </div>
 
-            <table class="table custom_row table-bordered mt-4 custom-table" id="program-table">
+            <table class="table table-bordered mt-4" id="program-table">
                 <thead>
                     <th>#</th>
                     <th>Program Code</th>
@@ -59,7 +47,9 @@
                             <td><%-program.program_name %></td>
                             <td><%-program.abbr %></td>
                             <td><a class="edit-program" data-bs-target="#edit_program" data-bs-toggle="modal"><i class="fa fa-edit"></i></a>
-                                <a class="delete-program" data-id="<%-program.id %>"><i class="fa-solid fa-trash text-danger"></i></a>
+                                <a class="delete-program">
+                                    <i class="fa-solid fa-trash text-danger"></i>
+                                </a>
                             </td>
                         </tr>
                     <%}%>
@@ -90,7 +80,7 @@
                 <div class="col-md-3 border-end custm-padd-for-imp-program custm-padd pe-2 ps-2" >
                 
                     <label class="mb-2" for="select-program" >Select Program :</label>
-                        <input type="search" class="form-control p3 mb-3 searchItemProgramCustom" placeholder="Search Program" id="search-program" autocomplete="off">
+                        <input type="search" class="form-control p3 mb-3 search-in-filter" placeholder="Search Program" id="search-program" autocomplete="off">
                         <% for(let program of programListFromDbo) { %> 
                         <div class="border p-3 mb-3 rounded program-div" data-program-name="<%- program.program_name%>"  data-program-abbr="<%- program.abbr %>" data-program-id="<%-program.program_id %>" data-program-code ="<%-program.program_name.split('-')[1] %>" ><%-program.program_name %></div>
                         <% }%>
@@ -148,289 +138,300 @@
 <%- include('../../partials/footer.ejs') %>
 
 <script>
-    $(document).ready(function() {
-        let test = '<%- pageCount %>';
-        let rowCount = $('#changeEntry').val();
-        $('#page-no').html(test);
-        paginationData(rowCount, parseInt(test));
+    
+$(document).ready(function() {
+    let test = '<%- pageCount %>';
+    let rowCount = $('#changeEntry').val();
+    $('#page-no').html(test);
+    paginationData(rowCount, parseInt(test));
 
-        setActiveMenuItem(`<%- active %>`)
+    setActiveMenuItem(`<%- active %>`)
 
-        $('#searchkeyword').on('input',function(){
+    $('#searchkeyword').on('input',function(){
 
         let searchValue = $(this).val().trim();
         let showEntry = $('#changeEntry').val();
+        $('#changeEntry').val($('#changeEntry :first-child').val());
        
-            $.ajax({
+        $.ajax({
             type:'POST',
-            url:'/admin/program/search',
+            url:'/admin/programs/search',
             data:{
-            searchLetter:searchValue,
-            showEntry:showEntry
+                searchLetter:searchValue,
+                showEntry:showEntry
             },
             success:function(data){
-            paginationData(rowCount,data.length)
-            AjaxtTable(data.data);
-            $('#page-no').html(data.length);
+                paginationData(rowCount,data.length)
+                AjaxtTable(data.data);
+                $('#page-no').html(data.length);
             }
-            })
-     })       
-     $('#import-program-modal').on('show.bs.modal', function () {
+        })
+    })
+
+    $('#import-program-modal').on('show.bs.modal', function () {
         $('.left-sidebar').addClass('d-none');
     });
     
     $('#import-program-modal').on('click','.full-modal-left-sidebar', function () {
-           $('.left-sidebar').removeClass('d-none');
-          });
+        $('.left-sidebar').removeClass('d-none');
+    });
 
-$(".pagination-search").on('click','.pagination li',function(){
-            let keyword = $("#searchkeyword").val();
-            let showEntry = $('#changeEntry').val();
-            let pageNo = $(this).attr('data-lp');
+    $(".pagination-search").on('click','.pagination li',function(){
+        let keyword = $("#searchkeyword").val();
+        let showEntry = $('#changeEntry').val();
+        let pageNo = $(this).data('lp');
          
-            $.ajax({
-                type: "POST",
-                url: "/admin/program/search",
-                data: {
-                    searchLetter: keyword,
-                    pageNo: pageNo,
-                    showEntry:showEntry
-                },
-                success: function (data) {
-                    AjaxtTable(data.data);
-                   $('#page-no').html(data.length);
-                }
-            });
-        });
-
-        $('#changeEntry').on('change',function(){
-        let showEntry = $(this).val();
-        let ApiObj = {
-            type:'POST',
-            url:'/admin/program/showEntry',
-            data:{
+        $.ajax({
+            type: "POST",
+            url: "/admin/programs/search",
+            data: {
+                searchLetter: keyword,
+                pageNo: pageNo,
                 showEntry:showEntry
             },
-            datatype:'JSON'
+            success: function (data) {
+                AjaxtTable(data.data);
+                $('#page-no').html(data.length);
             }
-            ajaxApi(ApiObj).then(result=>{
-            paginationData(showEntry,result.length)
-            AjaxtTable(result.data)
-            $('#searchkeyword').val('');
-            }).catch(error =>{
-           createToastError(JSON.stringify(error.responseJSON.description));;
-            })    
-        })
+        });
+    });
 
-        $(document).on('click','.program-div', function(event) {
+    $('#changeEntry').on('change',function(){
+        let showEntry = $(this).val();
+        let ApiObj = {
+        type:'POST',
+        url:'/admin/programs/showEntry',
+        data:{
+            showEntry:showEntry
+        },
+        datatype:'JSON'
+        }
+        ajaxApi(ApiObj).then(result=>{
+        paginationData(showEntry,result.length)
+        AjaxtTable(result.data)
+        $('#searchkeyword').val('');
+        }).catch(error =>{
+            createToastError(JSON.stringify(error.responseJSON.description));;
+        })    
+    })
 
-            let programCode = $(this).data('program-code');
-            let programName = $(this).data('program-name');
-            let programAbbr = $(this).data('program-abbr');
-            let programId   = $(this).data('program-id');
+    $(document).on('click','.program-div', function(event) {
 
-            let importRow = `
-            <tr data-program-name="${programName}" data-program-id="${programId}" data-program-abbr="${programAbbr}" data-program-code="${programCode}">
+        let programCode = $(this).data('program-code');
+        let programName = $(this).data('program-name');
+        let programAbbr = $(this).data('program-abbr');
+        let programId   = $(this).data('program-id');
+
+        let importRow = `
+            <tr data-program-name="${programName}" data-program-id="${programId}" 
+                data-program-abbr="${programAbbr}" data-program-code="${programCode}"
+            >
                 <td>${programName}</td>
                 <td>${programCode}</td>
                 <td>${programAbbr}</td>
-                <td><i class="fa fa-trash text-danger delete-import-program"></i></td>
+                <td>
+                    <i class="fa fa-trash text-danger delete-import-program"></i>
+                </td>
             </tr>`;
 
             let importProgramTbody = $('.import-program-table tbody');
             importProgramTbody.append(importRow);
             if($('.import-program-table tbody tr').length > 0)
-         {
-            $('#import-program-modal #import-program').removeClass('disabled');
-                       }
+            {
+                $('#import-program-modal #import-program').removeClass('disabled');
+            }
 
             $(this).remove();
-        });
+    });
 
-        $(document).on('click', '.delete-import-program', function(event) {
-            let parent = $(this).closest('tr');
+    $(document).on('click', '.delete-import-program', function(event) {
+        let parent = $(this).closest('tr');
             
-            let programName = parent.data('program-name');
-            let programCode = parent.data('program-code');
-            let programAbbr = parent.data('program-abbr');
-            let programId = parent.data('program-id');
+        let programName = parent.data('program-name');
+        let programCode = parent.data('program-code');
+        let programAbbr = parent.data('program-abbr');
+        let programId = parent.data('program-id');
 
-            let programDiv = $('<div>').addClass('program-div border mb-3 rounded p-3');
-                programDiv.html(programName)
-                programDiv.attr('data-program-name', programName);
-                programDiv.attr('data-program-code', programCode);
-                programDiv.attr('data-program-abbr', programAbbr);
-                programDiv.attr('data-program-id', programId);
+        let programDiv = $('<div>').addClass('program-div border mb-3 rounded p-3');
+        programDiv.html(programName)
+        programDiv.attr('data-program-name', programName);
+        programDiv.attr('data-program-code', programCode);
+        programDiv.attr('data-program-abbr', programAbbr);
+        programDiv.attr('data-program-id', programId);
 
-             parent.remove();
+        parent.remove();
             
-            let importProgramTableFlag = $(`.import-program-table tbody tr[data-program-id = "${programId}"]`).length == 0;
-            let importProgramSelDropFlag = $(`#importProgram .custm-padd-for-imp-program .program-div[data-program-id=${programId}]`).length == 0;
+        let importProgramTableFlag = $(`.import-program-table tbody tr[data-program-id = "${programId}"]`).length == 0;
+        let importProgramSelDropFlag = $(`#importProgram .custm-padd-for-imp-program .program-div[data-program-id=${programId}]`).length == 0;
 
-            if(importProgramTableFlag && importProgramSelDropFlag){
-                $('#import-program-modal .custm-padd-for-imp-program').append(programDiv);
-            }
+        if(importProgramTableFlag && importProgramSelDropFlag){
+            $('#import-program-modal .custm-padd-for-imp-program').append(programDiv);
+        }
            
-        });
+    });
          
       
-        $(document).on('click','#import-program',function(){
-            let importProgramArray = [];
-          let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
+    $(document).on('click','#import-program',function(){
+        let importProgramArray = [];
+        let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
         
-          $('.import-program-table tbody tr').each((index,element) => {
+        $('.import-program-table tbody tr').each((index,element) => {
             
             let importProgram = {};
             let programName = $(element).data('program-name');
             let id = $(element).data('program-id');
             let programAbbr = $(element).data('program-abbr');
             let programCode = $(element).data('program-code');
-            
+
             importProgram.program_name = programName;
             importProgram.program_id = id;
             importProgram.program_abbr = programAbbr;
             importProgram.program_code = programCode;
             importProgramArray.push(importProgram);
-          });
+        });
           
-          const programIdArray = importProgramArray.map(item => item.program_id );
-          const duplicateProgramInsert = programIdArray.filter((value,index) => programIdArray.indexOf(value) !== index);
+        const programIdArray = importProgramArray.map(item => item.program_id );
+        const duplicateProgramInsert = programIdArray.filter((value,index) => programIdArray.indexOf(value) !== index);
           
-          if(duplicateProgramInsert.length >0){
+        if(duplicateProgramInsert.length >0){
             alert('Duplicate data found in input');
-          }
-          else{
-           let ApiObj = {
+        }
+        else{
+            let ApiObj = {
                 type: 'POST',
-                url: '/admin/program/create',
+                url: '/admin/programs/create',
                 data: {
                     inputJSON: JSON.stringify(importProgramArray),
                     biddingSessionId:biddingSessionId
                 },
                 dataType: 'JSON' 
-            }
-            
+            }   
             ajaxApi(ApiObj).then(result => {
                 createToastMessage(result.description);
             }).catch(error => {
                createToastError(JSON.stringify(error.responseJSON.description));
             })
         }
-        })
+    })
         
-        $('.searchItemProgramCustom').on('input', function () {
-            selectItems = $('.program-div')
+    $('.search-in-filter').on('input', function () {
+        selectItems = $('.program-div')
 
-            var text = $('.searchItemProgramCustom').val().toLowerCase();
+        let text = $('.search-in-filter').val().toLowerCase();
 
-            for (let item of selectItems) {
-                if (item.textContent.toLowerCase().indexOf(text) > -1) {
-                    $(item).removeClass("d-none");
-                } else {
-                    $(item).addClass("d-none");
-                }
-            };
-        })
-
-        $('#program-table').on('click','.edit-program',function(){
-            let program_name = $(this).closest('tr').data('program-name');
-            let program_code = $(this).closest('tr').data('program-code');
-            let program_abbr = $(this).closest('tr').data('program-abbr');
-            let program_id   = $(this).closest('tr').data('id');
-
-            $('#program_name').val(program_name);
-            $('#program_code').val(program_code);
-            $('#program_abbr').val(program_abbr);
-            $('#program_id').val(program_id);
-       
-        });
-
-        $('#edit_program').on('click','#updateProgram',function(){
-            let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
-            let edit_program  = {};
-            let program_name = $('#program_name').val().replace(/\s+/g, ' ').trim();
-            let program_code = $('#program_code').val();
-            let program_abbr = $('#program_abbr').val().replace(/\s+/g, ' ').trim();
-            let program_id   = $('#program_id').val();
-
-            let isRequiredFieldsEmpty = isModalFieldEmpty('#edit_program .modal-body');
-
-            
-            if(isRequiredFieldsEmpty){
-         
-            edit_program.program_name = program_name;
-            edit_program.id = program_id;
-            edit_program.program_code = program_code;
-            edit_program.program_abbr = program_abbr;
-            edit_program.bidding_session_lid = biddingSessionId;
-        
-            let ApiObj = {
-                type:'POST',
-                url:'/admin/program/update',
-                data: edit_program,
-                dataType: 'JSON' 
-                }
-                ajaxApi(ApiObj).then(result => {
-                    createToastMessage(result.description);
-                }).catch(error => {
-                    createToastError(JSON.stringify(error.responseJSON.description));
-                   createToastError(JSON.stringify(error.responseJSON.description));
-                })
+        for (let item of selectItems) {
+            if (item.textContent.toLowerCase().indexOf(text) > -1) {
+                $(item).removeClass("d-none");
+            } else {
+                $(item).addClass("d-none");
             }
-        });
-        $(document).on('click','.delete-program',function(){
-            let deleteProgramRow = $(this).data('id');
-            let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
+        };
+    })
+
+    $('#program-table').on('click','.edit-program',function(){
+
+        let program_name = $(this).closest('tr').data('program-name');
+        let program_code = $(this).closest('tr').data('program-code');
+        let program_abbr = $(this).closest('tr').data('program-abbr');
+        let program_id   = $(this).closest('tr').data('id');
+
+        $('#program_name').val(program_name);
+        $('#program_code').val(program_code);
+        $('#program_abbr').val(program_abbr);
+        $('#program_id').val(program_id);
+    
+    });
+
+    $('#edit_program').on('click','#updateProgram',function(){
+        let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
+        let edit_program  = {};
+        let program_name = $('#program_name').val().replace(/\s+/g, ' ').trim();
+        let program_code = $('#program_code').val();
+        let program_abbr = $('#program_abbr').val().replace(/\s+/g, ' ').trim();
+        let program_id   = $('#program_id').val();
+        let isRequiredFieldsEmpty = isModalFieldEmpty('#edit_program .modal-body');
         
-            let ApiObj = {
-                url:'/admin/program/delete',
-                type:'POST',
-                data:{
-                   program_id:deleteProgramRow,
-                   biddingSessionId:biddingSessionId
-                },
-                dataType:'JSON'
+        if(isRequiredFieldsEmpty){
+     
+        edit_program.program_name = program_name;
+        edit_program.id = program_id;
+        edit_program.program_code = program_code;
+        edit_program.program_abbr = program_abbr;
+        edit_program.bidding_session_lid = biddingSessionId;
+    
+        let ApiObj = {
+            type:'POST',
+            url:'/admin/programs/update',
+            data: edit_program,
+            dataType: 'JSON' 
             }
-            ajaxApi(ApiObj).then(result =>{
+            ajaxApi(ApiObj).then(result => {
                 createToastMessage(result.description);
-            }).catch(error =>{
-               createToastError(JSON.stringify(error.responseJSON.description));;
+            }).catch(error => {
+                createToastError(JSON.stringify(error.responseJSON.description));
+               createToastError(JSON.stringify(error.responseJSON.description));
             })
+        }
+    });
 
+    $(document).on('click','.delete-program',function(){
+        let deleteId = $(this).closest('tr').data('id');
+        let biddingId = $('#biddingSessionDropdown').attr('data-session-id');
+    
+        let ApiObj = {
+            url:'/admin/programs/delete',
+            type:'POST',
+            data:{
+               program_id:deleteId,
+               biddingSessionId:biddingId
+            },
+            dataType:'JSON'
+        }
+        ajaxApi(ApiObj).then(result =>{
+            createToastMessage(result.description);
+        }).catch(error =>{
+           createToastError(JSON.stringify(error.responseJSON.description));;
         })
+    })
 
-        $('#edit_program').on('click', '.modal-close', function() {
-           $(this).closest('.modal-content').find(`.is-in-valid`).addClass('d-none');
-        });
+    $('#edit_program').on('click', '.modal-close', function() {
+       $(this).closest('.modal-content').find(`.is-in-valid`).addClass('d-none');
+    });
 });
+
 function AjaxtTable(programList) {
             
-             if ($('#student-data-checkbox').prop('checked')) {
-              $('#student-data-checkbox').prop('checked', false);
-             }
-            $("#program-table tbody").empty();
-            let AjaxTable = ``;
-            if (programList.length > 0) {
-                let count = 1;
+    if ($('#student-data-checkbox').prop('checked')) {
+            $('#student-data-checkbox').prop('checked', false);
+        }
+        $("#program-table tbody").empty();
+        let AjaxTable = ``;
+        if(programList.length > 0) {
+            let count = 1;
                 for (program of programList) {
                     AjaxTable +=
-                        `<tr data-id="${program.id}" data-program-code="${program.program_code}" data-program-name="${program.program_name}" data-program-abbr = "${program.abbr}">
-                            <td>${count++}</td>
-                            <td>${program.program_code}</td>
-                            <td>${program.program_name}</td>
-                            <td>${program.abbr}</td>
-                            <td>
-                                <a class="edit-program" data-bs-target="#edit_program" data-bs-toggle="modal" >
-                            <i class="fa fa-edit"></i></a>
-                            <a class="delete-program" data-id="${program.id}"><i class="fa-solid fa-trash text-danger"></i></a>
-                            </td>
-                        </tr>`
+                         `<tr data-id="${program.id}" data-program-code="${program.program_code}" 
+                              data-program-name="${program.program_name}" data-program-abbr = "${program.abbr}"
+                            >
+                                <td>${count++}</td>
+                                <td>${program.program_code}</td>
+                                <td>${program.program_name}</td>
+                                <td>${program.abbr}</td>
+                                <td>
+                                    <a class="edit-program" data-bs-target="#edit_program" data-bs-toggle="modal" >
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <a class="delete-program">
+                                        <i class="fa-solid fa-trash text-danger"></i>
+                                    </a>
+                                </td>
+                            </tr>`
                 }
-            }      
-            $("#program-table tbody").html(AjaxTable);
-            $('#searchkeyword').val();
-        }
+        } 
 
+    $("#program-table tbody").html(AjaxTable);
+    $('#searchkeyword').val();
+}
    
 </script>
   

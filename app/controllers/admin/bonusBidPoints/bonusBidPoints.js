@@ -2,12 +2,12 @@ const bonusBidPoints = require('../../../models/admin/bonusBidPoints/bonusbidpoi
 const isJsonString = require('../../../utils/util');
 
 module.exports = {
-    
     getPage: (req, res) => {
+        let sidebarActive = req.sidebarActive.split('/');
         Promise.all([bonusBidPoints.getList(res.locals.slug, res.locals.biddingId)])
             .then(result => {
                 res.render('admin/bonusBidPoints/index', {
-                    active: 'dashboard',
+                    active: sidebarActive[2],
                     breadcrumbs: req.breadcrumbs,
                     bonusBidPoints: result[0].recordset
                 });

@@ -43,7 +43,7 @@
                 <h3 class="ms-2">Confirmed Courses</h3>
             </div>
             <div class="card-body table-responsive">
-                <table class="table custom_row table-bordered mt-4 custom-table" id="confirm-courses-table">
+                <table class="table table-bordered mt-4" id="confirm-courses-table">
                     <thead>
                         <th>#</th>
                         <th>Area</th>
@@ -62,7 +62,7 @@
                                 <td><%- count++ %></td>
                                 <td><%- confirmCourse.area_name %></td>
                                 <td><%- confirmCourse.acad_session %></td>
-                                <td><%- confirmCourse.course_name %></td>
+                                <td><%- confirmCourse.course_name %>-<%- confirmCourse.division %></td>
                                 <td><%- confirmCourse.faculty_name %></td>
                                 <td><%- confirmCourse.credits %></td>
                                 <td><%- confirmCourse.bid_points %></td>
@@ -78,7 +78,7 @@
                 <h3 class="ms-2">Winning Courses</h3>
             </div>
             <div class="card-body table-responsive">
-                <table class="table custom_row table-bordered mt-4 custom-table" id="winning-course-table">
+                <table class="table table-bordered mt-4" id="winning-course-table">
                     <thead>
                         <th>#</th>
                         <th>Area</th>
@@ -93,8 +93,7 @@
                         <% if(winningCourseList != '') {
                             %>
                             <% let count = 1 %>
-                            <% for(let winningCourse of winningCourseList) { 
-                                %>
+                            <% for(let winningCourse of winningCourseList) { %>
                                 <tr data-faculty-id="<%- winningCourse.faculty_id %>" 
                                     data-faculty-name="<%- winningCourse.faculty_name %>" 
                                     data-area-name="<%- winningCourse.area_name %>"
@@ -146,7 +145,7 @@ $(document).ready(function() {
     let active = `<%- active %>`;
     $('#sidebar .side-menu li.' + `<%- active %>`).addClass('active');
 
-    let studentId = $('#student-data').data('student-lid');
+    let studentId = $('#student-data').data('student-id');
     let roundSettings = JSON.parse(`<%- JSON.stringify(roundDetails) %>`);
     let roundId = roundSettings.round_lid;
     let confirmationRoundId = $('.round-name').data('round-id');
@@ -182,70 +181,71 @@ $(document).ready(function() {
         studentId: studentId      
     });
 
-    socket.on('activeConfirmationRound', function(data) {
-        $('.round-wise-modal').addClass('d-none');
-        let roundName = data.roundDetails[0].roundName;
-        let roundId = data.roundDetails[0].round_lid;
-        let roundStartTime = data.roundDetails[0].startTime;
-        let roundEndTime = data.roundDetails[0].endTime;
-        let considerationSet = data.considerationSet;
-        let confirmCourse = data.confirmationCourse;
-        let winningCourse = data.winningCourse;
-        let count = 0;
+    // socket.on('activeConfirmationRound', function(data) {
+    //     console.log('values of data', data);
+    //     $('.round-wise-modal').addClass('d-none');
+    //     let roundName = data.roundDetails[0].roundName;
+    //     let roundId = data.roundDetails[0].round_lid;
+    //     let roundStartTime = data.roundDetails[0].startTime;
+    //     let roundEndTime = data.roundDetails[0].endTime;
+    //     let considerationSet = data.considerationSet;
+    //     let confirmCourse = data.confirmationCourse;
+    //     let winningCourse = data.winningCourse;
+    //     let count = 0;
          
-        winningCourse.forEach(winCourse => {
+    //     winningCourse.forEach(winCourse => {
             
-            let facultyId = winCourse.faculty_id;
-            let facultyName = winCourse.faculty_name;
-            let areaName = winCourse.area_name;
-            let acadSession = winCourse.acad_session;
-            let acadSessionId = winCourse.sap_acad_session_id;
-            let courseName = winCourse.course_name;
-            let courseId = winCourse.course_id;
-            let courseLid = winCourse.course_lid;
-            let credits = winCourse.credits;
-            let bidPoints = winCourse.bid_points;
-            let division = winCourse.division;
-            let concentrationId = winCourse.concentration_lid;
-            let divisionBatchId = winCourse.id;
-            let isDropped = winCourse.is_dropped;
-            let isWaitListed = winCourse.is_waitlisted;
-            let isWinning = winCourse.is_winning;
-            let roundId = winCourse.round_lid; 
-            let row =
-                `<tr data-faculty-id="${facultyId}" data-faculty-name="${facultyName}" 
-                     data-area-name="${areaName}" data-acad-session-id="${acadSessionId}" 
-                     data-acad-session="${acadSession}" data-course-name="${courseName}"
-                     data-course-id="${courseId}" data-credits="${credits}" 
-                     data-bid-points="${bidPoints}" data-division="${division}" 
-                     data-concentration-lid="${concentrationId}" data-division-batch-lid="${divisionBatchId}" 
-                     data-is-dropped="${isDropped}" data-is-waitlist="${isWaitListed}" data-is-winning="${isWinning}"
-                      data-course-lid="${courseLid}" data-round-id ="${roundId}"
-                    >
-                        <td>${count++}</td>
-                        <td>${areaName}</td>
-                        <td>${acadSession}</td>
-                        <td>${courseName}-${division}</td>
-                        <td>${facultyName}</td>
-                        <td>${credits}</td>
-                        <td>${bidPoints}</td>
-                        <td>
-                            <button class="btn btn-success confirm-courses me-1">
-                                <i class="fa-solid fa-check"></i> Confirm
-                            </button>
-                        </td>
-                </tr>`; 
-            $('#winning-course-table tbody').append(row);
-        });
+    //         let facultyId = winCourse.faculty_id;
+    //         let facultyName = winCourse.faculty_name;
+    //         let areaName = winCourse.area_name;
+    //         let acadSession = winCourse.acad_session;
+    //         let acadSessionId = winCourse.sap_acad_session_id;
+    //         let courseName = winCourse.course_name;
+    //         let courseId = winCourse.course_id;
+    //         let courseLid = winCourse.course_lid;
+    //         let credits = winCourse.credits;
+    //         let bidPoints = winCourse.bid_points;
+    //         let division = winCourse.division;
+    //         let concentrationId = winCourse.concentration_lid;
+    //         let divisionBatchId = winCourse.id;
+    //         let isDropped = winCourse.is_dropped;
+    //         let isWaitListed = winCourse.is_waitlisted;
+    //         let isWinning = winCourse.is_winning;
+    //         let roundId = winCourse.round_lid; 
+    //         let row =
+    //             `<tr data-faculty-id="${facultyId}" data-faculty-name="${facultyName}" 
+    //                  data-area-name="${areaName}" data-acad-session-id="${acadSessionId}" 
+    //                  data-acad-session="${acadSession}" data-course-name="${courseName}"
+    //                  data-course-id="${courseId}" data-credits="${credits}" 
+    //                  data-bid-points="${bidPoints}" data-division="${division}" 
+    //                  data-concentration-lid="${concentrationId}" data-division-batch-lid="${divisionBatchId}" 
+    //                  data-is-dropped="${isDropped}" data-is-waitlist="${isWaitListed}" data-is-winning="${isWinning}"
+    //                   data-course-lid="${courseLid}" data-round-id ="${roundId}"
+    //                 >
+    //                     <td>${count++}</td>
+    //                     <td>${areaName}</td>
+    //                     <td>${acadSession}</td>
+    //                     <td>${courseName}-${division}</td>
+    //                     <td>${facultyName}</td>
+    //                     <td>${credits}</td>
+    //                     <td>${bidPoints}</td>
+    //                     <td>
+    //                         <button class="btn btn-success confirm-courses me-1">
+    //                             <i class="fa-solid fa-check"></i> Confirm
+    //                         </button>
+    //                     </td>
+    //             </tr>`; 
+    //         $('#winning-course-table tbody').append(row);
+    //     });
     
-        $('#start-time').html(data.roundDetails[0].startTime);
-        $('#end-time').html(data.roundDetails[0].endTime);
-        $('.round-name').html(roundName);
-        $('.round-name').attr('data-round-id', roundId);
+    //     $('#start-time').html(data.roundDetails[0].startTime);
+    //     $('#end-time').html(data.roundDetails[0].endTime);
+    //     $('.round-name').html(roundName);
+    //     $('.round-name').attr('data-round-id', roundId);
     
-        $('.bidding-round-wise').removeClass('d-none');
-        $('.empty-bidding-round-wise').addClass('d-none');  
-    })
+    //     $('.bidding-round-wise').removeClass('d-none');
+    //     $('.empty-bidding-round-wise').addClass('d-none');  
+    // })
       
     socket.emit('roundEnded', { 
          slugName: "<%- slug %>",
@@ -254,7 +254,7 @@ $(document).ready(function() {
     });       
 
     $('#winning-course-table').on('click', '.confirm-courses', function () {
-        let studentId = $('#student-data').data('student-lid');
+        let studentId = $('#student-data').data('student-id');
         let concentrationId = $(this).closest('tr').data('concentration-lid');
         let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
         let bidPoints = $(this).closest('tr').data('bid-points');
@@ -288,7 +288,9 @@ $(document).ready(function() {
         };
 
         ajaxApi(ApiObj)
-            .then(result => {})
+            .then(result => {
+                createToast(result.description, 'alert-success', 'message-content');
+            })
             .catch(error => {
                 createToastError(JSON.stringify(error.responseJSON.description));;
             });
@@ -298,7 +300,7 @@ $(document).ready(function() {
 
     $('#confirm-courses-table').on('click', '.unconfirm-courses', function(){
 
-        let studentId = $('#student-data').data('student-lid');
+        let studentId = $('#student-data').data('student-id');
         let concentrationId = $(this).closest('tr').data('concentration-lid');
         let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
         let bidPoints = $(this).closest('tr').data('bid-points');
@@ -332,7 +334,9 @@ $(document).ready(function() {
         };
 
         ajaxApi(ApiObj)
-            .then(result => {})
+            .then(result => {
+                createToast(result.description, 'alert-success', 'message-content');
+            })
             .catch(error => {
                 createToastError(JSON.stringify(error.responseJSON.description));;
             });

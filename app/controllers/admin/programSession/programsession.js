@@ -1,11 +1,10 @@
-const express = require('express');
-const ProgramSession = require('../../../../models/admin/programs/programsession');
-const programSession = require('../../../../models/admin/programs/programsession');
-const isJsonString = require('../../../../utils/util');
+const programSession = require('../../../models/admin/programSession/programsession');
+const isJsonString = require('../../../utils/util');
 
 module.exports = {
     
     getPage: (req, res) => {
+        let sidebarActive = req.sidebarActive.split('/');
         Promise.all([
             programSession.getList(res.locals.slug, res.locals.biddingId),
             programSession.getCount(res.locals.slug, res.locals.biddingId)
@@ -13,14 +12,14 @@ module.exports = {
             res.render('admin/programs/programsession/index.ejs', {
                 programSessionList: result[0].recordset,
                 pageCount: result[1].recordset[0][''],
-                active: 'dashboard',
+                active: sidebarActive[2],
                 breadcrumbs: req.breadcrumbs
             });
         });
     },
 
     refresh: (req, res) => {
-        ProgramSession.refresh(res.locals.slug, res.locals.biddingId, res.locals.userId)
+        programSession.refresh(res.locals.slug, res.locals.biddingId, res.locals.userId)
             .then(result => {
                 res.status(200).json(JSON.parse(result.output.output_json));
             })
@@ -60,6 +59,7 @@ module.exports = {
             programSession.search(req.body.pageNo, req.body.searchLetter, req.body.showEntry, res.locals.slug, res.locals.biddingId, res.locals.userId),
             programSession.searchCount(req.body.pageNo, req.body.searchLetter, res.locals.slug, res.locals.biddingId, res.locals.userId)
         ]).then(result => {
+            
             res.json({
                 status: '200',
                 programSessionList: result[0].recordset,
@@ -67,6 +67,7 @@ module.exports = {
                 length: result[1].recordset[0]['']
             });
         }).catch(error => {
+
             if (isJsonString.isJsonString(error.originalError.info.message)) {
                 res.status(500).json(JSON.parse(error.originalError.info.message));
             } else {

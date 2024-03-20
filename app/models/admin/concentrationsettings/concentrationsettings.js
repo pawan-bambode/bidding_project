@@ -6,16 +6,17 @@ module.exports = class ConcentrationSettings {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .query(`SELECT cs.id, a.id AS area_Id, concentration_name, concentration_lid, 
-                        cs.bidding_session_lid,
-                        IIF(total_elective_credits IS NULL, 0, total_elective_credits) AS total_elective_credits,
-                        IIF(max_credits_per_area IS NULL, 0, max_credits_per_area) AS max_credits_per_area,
-                        IIF(no_of_areas_to_cover IS NULL, 0, no_of_areas_to_cover) AS no_of_areas_to_cover,
-                        IIF(min_credits_per_area IS NULL, 0, min_credits_per_area) AS min_credits_per_area,  
-                        IIF(primary_area IS NULL, 'NA', primary_area) AS primary_area,
-                        IIF(min_credits_in_primary_area IS NULL, 0, min_credits_in_primary_area) AS min_credits_in_primary_area 
+                .query(`SELECT cs.id, a.id AS area_Id, concentration_name AS name,
+                        concentration_lid AS concentraionId, 
+                        cs.bidding_session_lid AS biddingId,
+                        IIF(total_elective_credits IS NULL, 0, total_elective_credits) AS totalCredits,
+                        IIF(max_credits_per_area IS NULL, 0, max_credits_per_area) AS maxCreditsPerArea,
+                        IIF(no_of_areas_to_cover IS NULL, 0, no_of_areas_to_cover) AS noofAreasToCover,
+                        IIF(min_credits_per_area IS NULL, 0, min_credits_per_area) AS minCreditsPerArea,  
+                        IIF(primary_area IS NULL, 'NA', primary_area) AS primaryArea,
+                        IIF(min_credits_in_primary_area IS NULL, 0, min_credits_in_primary_area) AS minCreditsInPriArea 
                         FROM [${slug}].concentration_settings cs
-                        LEFT JOIN [${slug}].areas a ON a.area_name = cs.primary_area AND cs.active = 1 AND cs.bidding_session_lid = @biddingId AND a.active = 1 AND a.bidding_session_lid = @biddingId`);
+                        LEFT JOIN [${slug}].areas a ON a.area_name = cs.primary_area AND cs.active = 1 AND cs.bidding_session_lid = @biddingId AND a.active = 1 AND a.bidding_session_lid = @biddingId WHERE cs.active = 1 AND cs.bidding_session_lid = @biddingId`);
         });
     }
 
@@ -34,28 +35,30 @@ module.exports = class ConcentrationSettings {
                 return pool.request() 
                     .input('biddingId', sql.Int, biddingId)
                     .input('pageNo', sql.Int, pageNo)
-                    .query(`SELECT id, concentration_name,
-                            IIF(total_elective_credits IS NULL, 0, total_elective_credits) AS total_elective_credits,
-                            IIF(max_credits_per_area IS NULL, 0, max_credits_per_area) AS max_credits_per_area,
-                            IIF(no_of_areas_to_cover IS NULL, 0, no_of_areas_to_cover) AS no_of_areas_to_cover,
-                            IIF(min_credits_per_area IS NULL, 0, min_credits_per_area) AS min_credits_per_area,
-                            IIF(primary_area IS NULL, 'NA', primary_area) AS primary_area,
-                            IIF(min_credits_in_primary_area IS NULL, 0, min_credits_in_primary_area) AS min_credits_in_primary_area
-                            FROM [${slug}].concentration_settings WHERE active = 1 AND bidding_session_lid = @biddingId
+                    .query(`SELECT id, concentration_name AS name,
+                            IIF(total_elective_credits IS NULL, 0, total_elective_credits) AS totalCredits,
+                            IIF(max_credits_per_area IS NULL, 0, max_credits_per_area) AS maxCreditsPerArea,
+                            IIF(no_of_areas_to_cover IS NULL, 0, no_of_areas_to_cover) AS noofAreasToCover,
+                            IIF(min_credits_per_area IS NULL, 0, min_credits_per_area) AS minCreditsPerArea,
+                            IIF(primary_area IS NULL, 'NA', primary_area) AS primaryArea,
+                            IIF(min_credits_in_primary_area IS NULL, 0, min_credits_in_primary_area) AS minCreditsInPriArea
+                            FROM [${slug}].concentration_settings 
+                            WHERE active = 1 AND bidding_session_lid = @biddingId
                             ORDER BY a.id DESC OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`);
             });
         } else {
             return poolConnection.then(pool => {
                 return pool.request() 
                     .input('biddingId', sql.Int, biddingId)
-                    .query(`SELECT TOP ${showEntry} id, concentration_name,
-                            IIF(total_elective_credits IS NULL, 0, total_elective_credits) AS total_elective_credits,
-                            IIF(max_credits_per_area IS NULL, 0, max_credits_per_area) AS max_credits_per_area,
-                            IIF(no_of_areas_to_cover IS NULL, 0, no_of_areas_to_cover) AS no_of_areas_to_cover, 
-                            IIF(min_credits_per_area IS NULL, 0, min_credits_per_area) AS min_credits_per_area,
-                            IIF(primary_area IS NULL, 'NA', primary_area) AS primary_area,
-                            IIF(min_credits_in_primary_area IS NULL, 0, min_credits_in_primary_area) AS min_credits_in_primary_area
-                            FROM [${slug}].concentration_settings WHERE active = 1 AND bidding_session_lid = @biddingId`);
+                    .query(`SELECT TOP ${showEntry} id, concentration_name AS name,
+                            IIF(total_elective_credits IS NULL, 0, total_elective_credits) AS totalCredits,
+                            IIF(max_credits_per_area IS NULL, 0, max_credits_per_area) AS maxCreditsPerArea,
+                            IIF(no_of_areas_to_cover IS NULL, 0, no_of_areas_to_cover) AS noofAreasToCover, 
+                            IIF(min_credits_per_area IS NULL, 0, min_credits_per_area) AS minCreditsPerArea,
+                            IIF(primary_area IS NULL, 'NA', primary_area) AS primaryArea,
+                            IIF(min_credits_in_primary_area IS NULL, 0, min_credits_in_primary_area) AS minCreditsInPriArea
+                            FROM [${slug}].concentration_settings 
+                            WHERE active = 1 AND bidding_session_lid = @biddingId`);
             });
         }
     }
@@ -69,6 +72,7 @@ module.exports = class ConcentrationSettings {
     }
 
     static search(slug, biddingId, pageNo, letterSearch, showEntry) {
+     
         showEntry = showEntry ? showEntry : 10;
         if (pageNo) {
             return poolConnection.then(pool => {
@@ -77,14 +81,17 @@ module.exports = class ConcentrationSettings {
                     .input('bidding_session_lid', sql.Int, biddingId)
                     .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
                     .query(`SELECT cs.id, a.id AS area_Id, cs.concentration_name,
-                            IIF(total_elective_credits IS NULL, 0, total_elective_credits) AS total_elective_credits,
-                            IIF(max_credits_per_area IS NULL, 0, max_credits_per_area) AS max_credits_per_area,
-                            IIF(no_of_areas_to_cover IS NULL, 0, no_of_areas_to_cover) AS no_of_areas_to_cover, 
-                            IIF(min_credits_per_area IS NULL, 0, min_credits_per_area) AS min_credits_per_area,
-                            IIF(primary_area IS NULL, 'NA', primary_area) AS primary_area,
-                            IIF(min_credits_in_primary_area IS NULL, 0, min_credits_in_primary_area) AS min_credits_in_primary_area 
+                            IIF(total_elective_credits IS NULL, 0, total_elective_credits) AS totalCredits,
+                            IIF(max_credits_per_area IS NULL, 0, max_credits_per_area) AS maxCreditsPerArea,
+                            IIF(no_of_areas_to_cover IS NULL, 0, no_of_areas_to_cover) AS noofAreasToCover, 
+                            IIF(min_credits_per_area IS NULL, 0, min_credits_per_area) AS minCreditsPerArea,
+                            IIF(primary_area IS NULL, 'NA', primary_area) AS name,
+                            IIF(min_credits_in_primary_area IS NULL, 0, min_credits_in_primary_area) AS minCreditsInPriArea 
                             FROM [${slug}].concentration_settings cs
-                            LEFT JOIN [${slug}].areas a ON a.area_name = cs.primary_area AND cs.active = 1 AND cs.bidding_session_lid = @bidding_session_lid AND a.active = 1 AND a.bidding_session_lid = @bidding_session_lid WHERE cs.concentration_name LIKE @letterSearch OR cs.total_elective_credits LIKE @letterSearch OR cs.max_credits_per_area LIKE @letterSearch OR cs.no_of_areas_to_cover LIKE @letterSearch OR cs.min_credits_per_area LIKE @letterSearch OR cs.primary_area LIKE @letterSearch OR cs.min_credits_in_primary_area LIKE @letterSearch`);
+                            LEFT JOIN [${slug}].areas a ON a.area_name = cs.primary_area AND cs.active = 1 AND cs.bidding_session_lid = @bidding_session_lid AND a.active = 1 AND a.bidding_session_lid = @bidding_session_lid 
+                            WHERE cs.active = 1 AND cs.bidding_session_lid = @bidding_session_lid
+                            AND a.active = 1 AND a.bidding_session_lid = @bidding_session_lid 
+                            AND (cs.concentration_name LIKE @letterSearch OR cs.total_elective_credits LIKE @letterSearch OR cs.max_credits_per_area LIKE @letterSearch OR cs.no_of_areas_to_cover LIKE @letterSearch OR cs.min_credits_per_area LIKE @letterSearch OR cs.primary_area LIKE @letterSearch OR cs.min_credits_in_primary_area LIKE @letterSearch)`);
             });
         } else {
             return poolConnection.then(pool => {
@@ -92,27 +99,34 @@ module.exports = class ConcentrationSettings {
                     .input('pageNo', sql.Int, pageNo)
                     .input('bidding_session_lid', sql.Int, biddingId)
                     .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
-                    .query(`SELECT cs.id, a.id AS area_Id, cs.concentration_name ,
-                            IIF(total_elective_credits IS NULL, 0, total_elective_credits) AS total_elective_credits,
-                            IIF(max_credits_per_area IS NULL, 0, max_credits_per_area) AS max_credits_per_area,
-                            IIF(no_of_areas_to_cover IS NULL, 0, no_of_areas_to_cover) AS no_of_areas_to_cover, IIF(min_credits_per_area IS NULL, 0, min_credits_per_area) AS min_credits_per_area,  
-                            IIF(primary_area IS NULL, 'NA', primary_area) AS primary_area,
-                            IIF(min_credits_in_primary_area IS NULL, 0, min_credits_in_primary_area) AS min_credits_in_primary_area  
+                    .query(`SELECT cs.id, a.id AS area_Id, cs.concentration_name AS name,
+                            IIF(total_elective_credits IS NULL, 0, total_elective_credits) AS totalCredits,
+                            IIF(max_credits_per_area IS NULL, 0, max_credits_per_area) AS maxCreditsPerArea,
+                            IIF(no_of_areas_to_cover IS NULL, 0, no_of_areas_to_cover) AS noofAreasToCover,
+                            IIF(min_credits_per_area IS NULL, 0, min_credits_per_area) AS minCreditsPerArea,  
+                            IIF(primary_area IS NULL, 'NA', primary_area) AS primaryArea,
+                            IIF(min_credits_in_primary_area IS NULL, 0, min_credits_in_primary_area) AS minCreditsInPriArea  
                             FROM [${slug}].concentration_settings cs
-                            LEFT JOIN [${slug}].areas a ON a.area_name = cs.primary_area AND cs.active = 1 AND cs.bidding_session_lid = @bidding_session_lid AND a.active = 1 AND a.bidding_session_lid = @bidding_session_lid WHERE cs.concentration_name LIKE @letterSearch OR cs.total_elective_credits LIKE @letterSearch OR cs.max_credits_per_area LIKE @letterSearch OR cs.no_of_areas_to_cover LIKE @letterSearch  OR cs.min_credits_per_area LIKE @letterSearch OR cs.primary_area LIKE @letterSearch OR cs.min_credits_in_primary_area LIKE @letterSearch`);
+                            LEFT JOIN [${slug}].areas a ON a.area_name = cs.primary_area AND cs.active = 1 AND cs.bidding_session_lid = @bidding_session_lid AND a.active = 1 AND a.bidding_session_lid = @bidding_session_lid 
+                            WHERE cs.active = 1 AND cs.bidding_session_lid = @bidding_session_lid
+                            AND a.active = 1 AND a.bidding_session_lid = @bidding_session_lid
+                            AND(cs.concentration_name LIKE @letterSearch OR cs.total_elective_credits LIKE @letterSearch OR cs.max_credits_per_area LIKE @letterSearch OR cs.no_of_areas_to_cover LIKE @letterSearch  OR cs.min_credits_per_area LIKE @letterSearch OR cs.primary_area LIKE @letterSearch OR cs.min_credits_in_primary_area LIKE @letterSearch)`);
             });
         }
     }
 
-    static searchCount(slug, biddingId, pageNo, letterSearch, showEntry) {
-        showEntry = showEntry ? showEntry : 10;
+    static searchCount(slug, biddingId, pageNo, letterSearch) {
+     
         return poolConnection.then(pool => {
             return pool.request()
                 .input('pageNo', sql.Int, pageNo)
                 .input('bidding_session_lid', sql.Int, biddingId)
                 .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
-                .query(`SELECT COUNT(*) FROM [${slug}].concentration_settings WHERE active = 1 
-                        AND bidding_session_lid = @bidding_session_lid AND (concentration_name LIKE @letterSearch)`);
+                .query(`SELECT COUNT(*) FROM [${slug}].concentration_settings cs
+                        INNER JOIN [${slug}].areas a ON a.area_name = cs.primary_area
+                        WHERE cs.active = 1 AND cs.bidding_session_lid = @bidding_session_lid 
+                        AND a.active = 1 AND a.bidding_session_lid = @bidding_session_lid 
+                        AND (concentration_name LIKE @letterSearch OR cs.total_elective_credits LIKE @letterSearch OR cs.max_credits_per_area LIKE @letterSearch OR cs.no_of_areas_to_cover LIKE @letterSearch  OR cs.min_credits_per_area LIKE @letterSearch OR cs.primary_area LIKE @letterSearch OR cs.min_credits_in_primary_area LIKE @letterSearch)`);
         });
     }
 

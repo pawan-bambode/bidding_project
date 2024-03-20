@@ -1,23 +1,12 @@
 <%- include('../partials/head') %>
 <%- include('../partials/leftSidebar.ejs') %>
 <%- include('../partials/header.ejs') %>
+<%- include('../partials/bread.ejs') %>
 
-<div class="main-content">
-    <div class="breadcrumbs-container">
-        <ul class="breadcrumb">
-            <% if (breadcrumbs) { %>
-                <% for (let crumbs of breadcrumbs) { %>
-                    <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
-                     %>
-                    <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
-                <% } %>
-            <% } %>
-        </ul>
-    </div>
     <div class="card card-custom-border-curv">
         <div class="card-header-custom d-flex justify-content-between p-1">
             <h4 class="ms-2"> Areas</h4>
-                <button type="button" class="btn btn-danger ms-auto me-3"  id="refresh-areas">
+                <button type="button" class="btn btn-danger ms-auto me-3" id="refresh-areas">
                     <i class="fa-solid fa-rotate p-1"></i>Refresh
                 </button>  
         </div>
@@ -41,7 +30,7 @@
                 </div>
             </div>
 
-            <table class="table custom_row table-bordered mt-4 custom-table" id="areas-table">
+            <table class="table table-bordered mt-4" id="areas-table">
                 <thead>
                     <th>#</th>
                     <th>Area Name</th>     
@@ -95,10 +84,11 @@
 </div>
 
 <%- include('../partials/footer.ejs') %>
+
 <script>
    
 $(document).ready(function() {
-
+    
     let test = '<%- pageCount %>';
     let rowCount = $('#changeEntry').val();
     $('#page-no').html(test);
@@ -107,13 +97,13 @@ $(document).ready(function() {
     setActiveMenuItem(`<%- active %>`);
 
     $('#searchkeyword').on('input', function() {
-
         let areaValue = $(this).val().trim();
         let showEntry = $('#changeEntry').val();
+        $('#changeEntry').val($('#changeEntry :first-child').val());
 
         $.ajax({
             type: 'POST',
-            url: '/admin/area/search',
+            url: '/admin/areas/search',
             data: {
                 searchLetter: areaValue,
                 showEntry: showEntry
@@ -127,14 +117,13 @@ $(document).ready(function() {
     });
 
     $(".pagination-search").on('click', '.pagination li', function() {
-
         let keyword = $("#searchkeyword").val();
         let showEntry = $('#changeEntry').val();
-        let pageNo = $(this).attr('data-lp');
+        let pageNo = $(this).data('lp');
 
         $.ajax({
             type: "POST",
-            url: "/admin/area/search",
+            url: "/admin/areas/search",
             data: {
                 searchLetter: keyword,
                 pageNo: pageNo,
@@ -148,11 +137,10 @@ $(document).ready(function() {
     });
 
     $('#changeEntry').on('change', function() {
-
         let showEntry = $(this).val();
         let ApiObj = {
             type: 'POST',
-            url: '/admin/area/showEntryAreaList',
+            url: '/admin/areas/showEntryAreaList',
             data: {
                 showEntry: showEntry
             },
@@ -171,9 +159,8 @@ $(document).ready(function() {
     });
 
     $('#refresh-areas').on('click', function() {
-
         let ApiObj = {
-            url: '/admin/area/refresh',
+            url: '/admin/areas/refresh',
             type: 'POST',
             data: {},
             datatype: 'JSON'
@@ -188,7 +175,6 @@ $(document).ready(function() {
     });
 
     function AjaxtTable(areaList) {
-
         $("#areas-table tbody").empty();
         let AjaxTable = ``;
         if (areaList.length > 0) {
@@ -204,6 +190,7 @@ $(document).ready(function() {
         $("#areas-table tbody").html(AjaxTable);
     }
 });
+
 </script>
   
 <%- include('../partials/footerEnd.ejs') %>

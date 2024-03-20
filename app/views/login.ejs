@@ -2,13 +2,11 @@
 
 <style>
   :root {
-    --login-bg-color: #e9ecef;
+    --login-bg-color: #f2f9fd;
     --welcome-color: #740e00;
     --bottom-line-color: #ff1f00;
   }
-
-
-
+  
   .background {
     background: var(--login-bg-color);
     position: fixed;
@@ -19,8 +17,7 @@
     height: 100vh;
     width: 100%;
   }
-
-
+  
   /* Custom CSS */
   .cust-btn-group {
     display: flex;
@@ -31,35 +28,35 @@
     border-radius: 25px;
     font-size: 18px;
   }
-
+  
   .cust-input-prepend {
     margin-right: 10px;
     width: 20px;
   }
-
+  
   .cust-btn-group input {
     border: none;
     width: 100%;
   }
-
+  
   .cust-btn-group input:focus {
     outline: none;
   }
-
+  
   .cust-btn-group select {
     border: none;
     width: 100%;
   }
-
+  
   .cust-btn-group select:focus {
     outline: none;
   }
-
-  #idenity option{
+  
+  #idenity option {
     border: none;
     width: 100%;
   }
-
+  
   .bottom-line {
     width: 100px;
     position: relative;
@@ -68,7 +65,7 @@
     background: var(--bottom-line-color);
     display: block;
   }
-
+  
   .bottom-line::after {
     content: '';
     width: 100%;
@@ -78,15 +75,13 @@
     left: 0;
     background: #6b6d6d;
   }
-
-
+  
   /* // Custom CSS */
-
-
+  
   img {
     width: 100%;
   }
-
+  
   .login-wrapper {
     overflow: hidden;
     padding: 15px;
@@ -98,7 +93,7 @@
     background: rgba(60, 171, 211, 0.8);
     border-radius: 30px;
   }
-
+  
   section.login-wrapper::before {
     content: "";
     position: absolute;
@@ -109,29 +104,28 @@
     height: 100%;
     background: rgb(255 255 255 / 80%);
   }
-
+  
   .inner-login-wrapper {
     height: 100%;
     width: 100%;
   }
-
+  
   .logo img {
     width: 170px;
   }
-
+  
   #login-left {
     padding: 150px 100px;
   }
-
+  
   #login-left .cust-btn-group i {
     color: #757575;
   }
-
+  
   #login-left h3 span {
     color: var(--welcome-color);
   }
-
-
+  
   .login-btn {
     display: block;
     margin: auto;
@@ -139,31 +133,31 @@
     padding: 7px 50px;
     border-radius: 25px;
   }
-
+  
   @media (max-width: 1200px) {
     .login-wrapper {
       width: 950px;
       top: calc(50% - 268px);
       left: calc(50% - 475px);
     }
-
+  
     #login-left {
       padding: 133px 50px;
     }
   }
-
+  
   @media (max-width: 1023px) {
     .login-wrapper {
       width: 700px;
       top: calc(50% - 230px);
       left: calc(50% - 350px);
     }
-
+  
     #login-left {
       padding: 49px 15px;
     }
   }
-
+  
   @media (max-width: 767px) {
     .login-wrapper {
       position: relative;
@@ -173,26 +167,23 @@
       left: 0;
       top: 0;
     }
-
+  
     .inner-login-wrapper {
       height: 100%;
       width: 100%;
     }
-
-
   }
 </style>
-</head>
 
 <body>
   <canvas class="background"></canvas>
-
+  
   <section class="login-wrapper">
     <div class="inner-login-wrapper">
       <div class="row">
         <div class="col-md-6" id="login-right">
           <div class="logo">
-            <img src="/image/logo/logo-nmims.png"  alt="Nmims Logo"/>
+            <img src="/image/logo/logo-nmims.png" alt="Nmims Logo" />
           </div>
           <object type="image/svg+xml" data="/image/svg/login-animate-nmims.svg">
             <img src="/image/svg/login-animate-nmims.svg" alt="Nmims Logo" />
@@ -200,23 +191,14 @@
         </div>
         <div class="col-md-6" id="login-left">
           <form action="/user/authenticate" method="POST" class="text-center">
-            <h3><span>Wel</span>come</h3>
+            <h3>Welcome</h3>
             <span class="bottom-line mx-auto"></span>
-             <div class="cust-btn-group mt-3 mb-3">
-              <div class="cust-input-prepend">
-                <i class="fas fa-user-group"></i>
-              </div>
-              <select name="userTypeId" id="user-type-lid">
-                <option value="2">Student</option>
-                <option value="1">Faculty</option>
-              </select>
-            </div>
-            
+  
             <div class="cust-btn-group mt-3 mb-3">
               <div class="cust-input-prepend">
                 <i class="fas fa-envelope"></i>
               </div>
-              <input type="text" name="username" placeholder="Username"  required autocomplete="off">
+              <input type="text" name="username" placeholder="Username" required autocomplete="off">
             </div>
             <div class="cust-btn-group mb-3">
               <div class="cust-input-prepend">
@@ -232,60 +214,45 @@
     </div>
   </section>
 
+<%- include('./student/partials/footer') %>
 
-  <%- include('./student/partials/footer') %>
+<script>
 
-  <!-- <script src="/js/particlejs.min.js"></script> -->
+  const cssRoot = document.querySelector(':root');
 
+  let org = 'nmims'
 
-  <!-- Page Level JavaScript Libaries End -->
-  <script>
- 
-    //DYNAMIC CSS
-    const cssRoot = document.querySelector(':root');
+  if (org !== 'nmims') {
+    cssRoot.style.setProperty("--login-bg-color", 'radial-gradient(circle, rgb(0 13 107) 0%, rgb(0 0 0) 100%)')
 
-    let org = 'nmims'
+    cssRoot.style.setProperty("--welcome-color", 'rgb(0 13 107)')
+  }
 
-    if (org !== 'nmims') {
-      cssRoot.style.setProperty("--login-bg-color",
-        'radial-gradient(circle, rgb(0 13 107) 0%, rgb(0 0 0) 100%)')
-
-      cssRoot.style.setProperty("--welcome-color",
-        'rgb(0 13 107)')
-    }
-
-
-    let loginErrorMessage = `<%- typeof(message) == 'string' ? message : null %>`;
-
-    if (loginErrorMessage) {
-      let simpleAlert = new SimpleAlert();
-       
-
-      simpleAlert.alert({
-        title: "Login failed!",
-        message: [{"":'User name or Password Invalid'}], 
-        type:"alert-danger",
-        buttons: {
-          positive: {
-            text: "Okay",
-            action: function () {
-              document.querySelector('.simple-alert').remove();
-            }
-          },
-          negative: {
-            text: "Cancel",
-            action: function () {
-              alert('Negative')
-            }
+  let loginErrorMessage = `<%- typeof(message) == 'string' ? message : null %>`;
+  if (loginErrorMessage) {
+    let simpleAlert = new SimpleAlert();
+    simpleAlert.alert({
+      title: "Login failed!",
+      message: [{ "": 'User name or Password Invalid' }],
+      type: "alert-danger",
+      buttons: {
+        positive: {
+          text: "Okay",
+          action: function () {
+            document.querySelector('.simple-alert').remove();
+          }
+        },
+        negative: {
+          text: "Cancel",
+          action: function () {
+            alert('Negative')
           }
         }
-      });
-    }
+      }
+    });
+  }
+  $("#devicecheck").val(localStorage.getItem('devicecheck'))
+</script>
 
-    $("#devicecheck").val(localStorage.getItem('devicecheck'))
-
-
-  </script>
 </body>
-
 </html>

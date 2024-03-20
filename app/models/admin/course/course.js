@@ -134,6 +134,7 @@ module.exports = class course {
                 return pool.request()
                     .input('bidding_session_lid', sql.Int, biddingId)
                     .input('letterSearch', sql.NVarChar, `%${letterSearch}%`)
+                    .input('pageNo', sql.Int, pageNo)
                     .query(`SELECT c.id, course_name, credits, program_id, ad.acad_session, 
                             area_name, min_demand_criteria, year_of_introduction
                             FROM [${slug}].courses c
@@ -390,10 +391,11 @@ module.exports = class course {
     }
    
     static getAvailableCourseList(slug, biddingId) {
+       
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .query(`SELECT  c.id, course_name, credits, program_id, 
+                .query(`SELECT c.id, course_name, credits, program_id, 
                         ad.acad_session, area_name, min_demand_criteria, year_of_introduction, 
                         c.sap_acad_session_id
                         FROM [${slug}].courses c
@@ -454,6 +456,7 @@ module.exports = class course {
             const id = deleteCourseIdJson[key];
             return { id: parseInt(id) }; 
         });
+        
         return poolConnection.then(pool => {
             return pool.request()
                 .input('last_modified_by', sql.Int, userId)

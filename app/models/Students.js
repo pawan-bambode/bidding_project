@@ -17,7 +17,7 @@ module.exports = class Students {
         });
     }
 
-    static concentrationList(slug, biddingId) {
+    static concentrations(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -26,7 +26,7 @@ module.exports = class Students {
         });
     }
 
-    static confirmaCourseList(slug, biddingId) {
+    static confirmaCourses(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -50,7 +50,7 @@ module.exports = class Students {
         });
     }
 
-    static completedCourseList(slug, biddingId, username) {
+    static completedCourses(slug, biddingId, username) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -58,16 +58,10 @@ module.exports = class Students {
                 .query(`SELECT cc.id, cc.course_name 
                         FROM [${slug}].completed_courses cc 
                         WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND cc.sap_id = @sapId`)
-                .then(result => {
-                    return result.recordset;
-                })
-                .catch(err => {
-                    throw err;
-                });
         });
     }
-
-    static dropCourseList(slug, biddingId) {
+    
+    static dropCourses(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -79,7 +73,7 @@ module.exports = class Students {
         });
     }
 
-    static winningCourseList(slug, biddingId) {
+    static winningCourses(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -93,7 +87,7 @@ module.exports = class Students {
         });
     }
 
-    static waitListCouresList(slug, biddingId) {
+    static waitListCouress(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -175,6 +169,7 @@ module.exports = class Students {
 
     // Procedures code starts from here.
     static saveSpecialization(slug, selectConcentration, biddingId, UserId) {
+
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), selectConcentration)

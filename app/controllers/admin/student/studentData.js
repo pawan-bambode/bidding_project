@@ -1,9 +1,12 @@
 const studentData = require('../../../models/admin/studentData/studentData');
 const hash = require('../../../utils/hash');
 const User = require('../../../models/User');
+const isJsonString = require('../../../utils/util');
 
 module.exports = {
     getPage: (req, res) => {
+        let sidebarActive = req.sidebarActive.split('/');
+        
         Promise.all([
         studentData.getList(res.locals.slug, res.locals.biddingId),
         studentData.getCount(res.locals.slug, res.locals.biddingId),
@@ -13,7 +16,7 @@ module.exports = {
             studentDataList: result[0].recordset,
             pageCount: result[1].recordset[0][''],
             programList: result[2].recordset,
-            active: 'dashboard',
+            active: sidebarActive[2],
             breadcrumbs: req.breadcrumbs
         });
         });
@@ -42,23 +45,7 @@ module.exports = {
         }
         });
     },
-    refresh :(req,res) =>{
-        studentData.refresh(res.locals.slug,res.locals.biddingId,res.locals.userId).then(result =>{
-        res.status(200).json(JSON.parse(result.output.output_json));
-    
-        }).catch(error => {
-        if(isJsonString.isJsonString(error.originalError.info.message)){
-            res.status(500).json(JSON.parse(error.originalError.info.message));
-        }
-        else{
-            res.status(500).json({
-                status:500,
-                description:error.originalError.info.message,
-                data:[]
-            });
-        }
-        })
-    },
+ 
     update:(req,res) =>{
         studentData.update(res.locals.slug,res.locals.biddingId,res.locals.userId,req.body).then(result =>{
         res.status(200).json(JSON.parse(result.output.output_json));
@@ -95,7 +82,7 @@ module.exports = {
         });
     },
     deleteAll :(req, res) => {
-        studentData.deleteAll(req.body, res.locals.slug, res.locals.userId,res.locals.biddingId)
+        studentData.deleteAll(res.locals.slug, res.locals.userId,res.locals.biddingId, req.body)
         .then(result => {
             res.status(200).json(JSON.parse(result.output.output_json));
         })

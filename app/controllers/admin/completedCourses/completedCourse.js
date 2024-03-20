@@ -1,12 +1,11 @@
 const completedCourses = require('../../../models/admin/completedCourses/completedCourses');
 const isJsonString = require('../../../utils/util');
-const excel = require('excel4node');
-const xlsx = require('xlsx');
 const path = require('path');
 
 module.exports = {
     
-    getList: (req, res) => {
+    getPage: (req, res) => {
+        let sidebarActive = req.sidebarActive.split('/');
         Promise.all([
             completedCourses.getList(res.locals.slug, res.locals.biddingId, req.body.showEntry),
             completedCourses.getCount(res.locals.slug, res.locals.biddingId)
@@ -14,7 +13,7 @@ module.exports = {
             res.render('admin/completedCourses/index.ejs', {
                 completeCouseList: result[0].recordset,
                 pageCount: result[1].recordset[0][''],
-                active: 'dashboard',
+                active: sidebarActive[2],
                 breadcrumbs: req.breadcrumbs
             });
         });

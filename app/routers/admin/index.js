@@ -1,3 +1,4 @@
+const dashboard = require("../../controllers/admin/dashboard");
 const {
     isLoggedIn,
     check,
@@ -6,11 +7,12 @@ const {
 
 function AdminRoute(app) {
     
-    // Admin side all routes
-    const adminDashboard = require('../../routers/admin/dashboard/dashboard');
+    // admin side all dashboard routers
+    const dashboard = require('../../routers/admin/dashboard/dashboard');
     const biddingSession = require('../../routers/admin/biddingsession/biddingsession');
-    const program = require('../../routers/admin/programs/programs');
+    const program = require('../../routers/admin/program/programs');
     const course = require('../../routers/admin/courses/courses');
+    const programSession = require('../../routers/admin/programSession/programSession');
     const area = require('../../routers/admin/areas/areas');
     const specialization = require('../../routers/admin/specialization/specialization');
     const concentrationSettings = require('../../routers/admin/concentrationsettings/concentration');
@@ -19,8 +21,9 @@ function AdminRoute(app) {
     const completedCourse = require('./completedCourses/completedCourses');
     const divisionBatches = require('../../routers/admin/divisionBatches/divisionBatches');
     const timetable = require('../../routers/admin/timetable/timetable');
-    const binddingRound = require('../../routers/admin/biddingrounds/biddingrounds');
+    const roundSettings = require('../../routers/admin/roundSettings/roundSettings');
     const bonusBiddingPoint = require('../../routers/admin/bonusBidPoints/bonusBidPoint');
+    const manual = require('../../routers/admin/manual/manual');
 
     const student = require('../../routers/student/student');
     const demandEstimation = require('../../routers/student/demandEstimation/demandEstimation');
@@ -30,10 +33,11 @@ function AdminRoute(app) {
     const waitList = require('../../routers/student/waitList/waitList');
     const addDrop = require('../../routers/student/addDrop/addDrop');
 
-    app.use('/admin/', isLoggedIn, checkPermission, adminDashboard);
+    app.use('/admin/', isLoggedIn, checkPermission, dashboard);
     app.use('/admin/', biddingSession);
     app.use('/admin/', program);
     app.use('/admin/', course);
+    app.use('/admin/', programSession);
     app.use('/admin/', area);
     app.use('/admin/', specialization);
     app.use('/admin/', concentrationSettings);
@@ -42,8 +46,9 @@ function AdminRoute(app) {
     app.use('/admin/', completedCourse);
     app.use('/admin/', divisionBatches);
     app.use('/admin/', timetable);
-    app.use('/admin/', binddingRound);
+    app.use('/admin/', roundSettings);
     app.use('/admin/', isLoggedIn, checkPermission, bonusBiddingPoint);
+    app.use('/admin/', isLoggedIn, checkPermission, manual);
 
     app.use('/student/', isLoggedIn, checkPermission, student);
     app.use('/student', isLoggedIn, checkPermission, demandEstimation);

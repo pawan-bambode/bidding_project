@@ -1,7 +1,9 @@
 document.onreadystatechange = function () {
+  
   if (document.readyState == 'interactive') {
+   
     if (window.location.pathname.toString().trim() !== "/user/login") {
-      let timeout = 20 /* default session-timeout duration in milliseconds */
+      let timeout = 20 
       let flag = false
       $(window).on(`mousemove mouseup mousedown scroll keyup click wheel mousewheel touchend`, () => {
         if (timeout < 6 && !flag) {

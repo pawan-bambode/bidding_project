@@ -86,7 +86,7 @@ module.exports = class Confirmation {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('studentLid', sql.Int, studentId)
-                .query(`SELECT db.id, seb.id AS Id, t.faculty_id, c.area_name, c.acad_session, 
+                .query(`SELECT db.id AS batchId, seb.id AS Id, t.faculty_id, c.area_name, c.acad_session, 
                         c.sap_acad_session_id, c.course_name, c.course_id, t.faculty_name, c.credits, seb.bid_points, db.division,
                         seb.concentration_lid, seb.course_lid, is_dropped, is_waitlisted, is_winning, round_lid     
                         FROM [${slug}].student_elective_bidding  seb
@@ -161,7 +161,8 @@ module.exports = class Confirmation {
     }
 
     static roundEnd(slug ,roundId, biddingSessionId) {
-      if((roundId == 3) || (roundId = 5)) {
+
+      if((roundId == 3) || (roundId == 5)) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('round_lid', sql.Int, roundId)

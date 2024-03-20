@@ -66,4 +66,6 @@ module.exports = class AddDrop {
                 .execute(`[${slug}].[sp_add_drop_drop]`);
         });
     }
+
+
 };

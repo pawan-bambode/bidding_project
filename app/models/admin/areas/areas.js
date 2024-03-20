@@ -25,7 +25,7 @@ module.exports = class Area {
                     .input('biddingId', sql.Int, biddingId)
                     .input('pageNo', sql.Int, pageNo)
                     .query(`SELECT a.id, a.area_name FROM [${slug}].areas a WHERE a.active = 1 AND 
-                            a.bidding_session_lid = @biddingId ORDER BY a.id DESC  OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`);
+                            a.bidding_session_lid = @biddingId ORDER BY a.id DESC OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`);
             });
         } else {
             return poolConnection.then(pool => {

@@ -49,7 +49,9 @@ module.exports = class preRequisites {
                             type, pre_req_course_name, pre_req_course_id 
                             FROM [${slug}].pre_requisites pr
                             INNER JOIN [${slug}].courses c ON pr.course_id = c.course_id AND c.bidding_session_lid = @biddingId
-                            INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId WHERE pr.active = 1 AND pr.bidding_session_lid = @biddingId AND (p.program_name LIKE @letterSearch OR pr.acad_session LIKE  @letterSearch OR pr.course_name LIKE @letterSearch OR type LIKE @letterSearch OR pre_req_course_name LIKE @letterSearch) ORDER BY pr.id DESC OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`);
+                            INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId 
+                            WHERE pr.active = 1 AND pr.bidding_session_lid = @biddingId AND
+                            p.active = 1 AND p.bidding_session_lid = @biddingId AND (p.program_name LIKE @letterSearch OR pr.acad_session LIKE  @letterSearch OR pr.course_name LIKE @letterSearch OR type LIKE @letterSearch OR pre_req_course_name LIKE @letterSearch) ORDER BY pr.id DESC OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`);
             });
         } else {
             return poolConnection.then(pool => {
@@ -62,6 +64,7 @@ module.exports = class preRequisites {
                             INNER JOIN [${slug}].courses c ON pr.course_id = c.course_id AND c.bidding_session_lid = @biddingId
                             INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId
                             WHERE pr.active = 1 AND pr.bidding_session_lid = @biddingId 
+                            AND p.active = 1 AND p.bidding_session_lid = @biddingId 
                             AND (p.program_name LIKE @letterSearch OR pr.acad_session LIKE @letterSearch OR pr.course_name LIKE @letterSearch OR type LIKE @letterSearch OR pre_req_course_name LIKE @letterSearch)`);
             });
         }
@@ -77,7 +80,8 @@ module.exports = class preRequisites {
                             type, pre_req_course_name, pre_req_course_id
                             FROM [${slug}].pre_requisites pr
                             INNER JOIN [${slug}].courses c ON pr.course_id = c.course_id AND c.bidding_session_lid = @biddingId
-                            INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId WHERE pr.active = 1 AND pr.bidding_session_lid = @biddingId ORDER BY pr.id DESC OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`)
+                            INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId 
+                            WHERE p.active = 1 AND p.bidding_session_lid = @biddingId AND pr.active = 1 AND pr.bidding_session_lid = @biddingId ORDER BY pr.id DESC OFFSET (@pageNo - 1) * ${showEntry} ROWS FETCH NEXT ${showEntry} ROWS ONLY`)
             });
         } else {
             return poolConnection.then(pool => {
@@ -88,7 +92,7 @@ module.exports = class preRequisites {
                             FROM [${slug}].pre_requisites pr
                             INNER JOIN [${slug}].courses c ON pr.course_id = c.course_id AND c.bidding_session_lid = @biddingId
                             INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId
-                            WHERE pr.active = 1 AND pr.bidding_session_lid = @biddingId `)
+                            WHERE p.active = 1 AND p.bidding_session_lid = @biddingId AND pr.active = 1 AND pr.bidding_session_lid = @biddingId ORDER BY pr.id DESC`)
             });
         }
     }

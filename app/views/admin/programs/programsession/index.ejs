@@ -1,19 +1,8 @@
 <%- include('../../partials/head') %>
 <%- include('../../partials/leftSidebar.ejs') %>
 <%- include('../../partials/header.ejs') %>
+<%- include('../../partials/bread.ejs') %>
 
-<div class="main-content">
-    <div class="breadcrumbs-container">
-        <ul class="breadcrumb">
-            <% if (breadcrumbs) { %>
-                <% for (let crumbs of breadcrumbs) { %>
-                    <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;
-                     %>
-                    <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
-                <% } %>
-            <% } %>
-        </ul>
-    </div>
     <div class="card card-custom-border-curv">
         <div class="card-header-custom d-flex justify-content-between p-1">
             <h4 class="ms-2">Program Sessions</h4>
@@ -41,12 +30,12 @@
                 </div>
             </div>
 
-            <table class="table custom_row table-bordered mt-4 custom-table" id="program-sessions-table">
+            <table class="table table-bordered mt-4" id="program-sessions-table">
                 <thead>
                     <th>#</th>
                     <th>Acad Session</th>
                     <th>Program Name</th>
-                    <th>Year</th>
+                    <th>Academic Year</th>
                     <th>Minimum Credits</th>
                     <th>Maximum Credits</th>
                     <th>Action</th>
@@ -54,18 +43,20 @@
                 <tbody>
                     <% let count = 1 %>
                     <%for(let programSession of programSessionList) { %>
-                        <tr>
+                        <tr data-id="<%-programSession.id %>" data-min-credits ="<%- programSession.min_credits %>"
+                            data-max-credits ="<%- programSession.max_credits %>"
+                            data-acad-session = "<%- programSession.acad_session %>"
+                        >
                             <td><%- count++ %></td>
                             <td><%-programSession.acad_session %></td>
                             <td><%-programSession.program_name %></td>
                             <td><%-programSession.year %></td>
                             <td><%-programSession.min_credits %></td>
                             <td><%-programSession.max_credits %></td>
-                            <td><a class="edit-program-sessions" data-bs-target="#edit-program-sessions" data-bs-toggle="modal" data-id="<%-programSession.id %>" data-min-credits ="<%- programSession.min_credits %>"
-                                data-max-credits ="<%- programSession.max_credits %>"
-                            data-acad-session = "<%- programSession.acad_session %>"
-                                ><i class="fa fa-edit"></i></a>
-                                
+                            <td>
+                                <a class="edit-program-sessions" data-bs-target="#edit-program-sessions" data-bs-toggle="modal">
+                                    <i class="fa fa-edit"></i>
+                                </a>    
                             </td>
                         </tr>
                     <%}%>
@@ -92,17 +83,17 @@
                     <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <label for="acad-session-disabled">Acad Session:</label>
-                    <input type="text" id="acad-session-disabled" class="form-control" autocomplete="off" disabled><br>
+                    <label for="acad-session">Acad Session:</label>
+                    <input type="text" id="acad-session" class="form-control" autocomplete="off" disabled>
 
-                    <div class="empty">
+                    <div class="empty mt-3">
                         <input type="hidden" id="program-session-id">
                         <label class="form-label" for="min-credits">Minimum Credits:</label>
                         <input class="form-control is-empty is-number" type="text" id="min-credits" autocomplete="off">
-                        <span class="text-danger d-none is-in-valid"></span><br>
+                        <span class="text-danger d-none is-in-valid"></span>
                     </div>
 
-                    <div class="empty">
+                    <div class="empty mt-3">
                         <label class="form-label" for="max-credits">Maximum Credits:</label>
                         <input class="form-control is-empty is-number" type="text" id="max-credits" autocomplete="off">
                         <span class="text-danger d-none is-in-valid"></span>
@@ -116,60 +107,56 @@
         </div>
     </div>
 </div>
-<%- include('../../partials/footer.ejs') %>
-<script>
-    $(document).ready(function() {
-        let test = '<%- pageCount %>';
-        let rowCount = $('#changeEntry').val();
-        $('#page-no').html(test);
-        
-        setActiveMenuItem(`<%- active %>`)
 
-        paginationData(rowCount, parseInt(test));
+<%- include('../../partials/footer.ejs') %>
+
+<script>
+$(document).ready(function() {
+    let test = '<%- pageCount %>';
+    let rowCount = $('#changeEntry').val();
+    $('#page-no').html(test);
     
-     $('#refresh-program-sessions').on('click',function(){
+    setActiveMenuItem(`<%- active %>`)
+    paginationData(rowCount, parseInt(test));
+
+    $('#refresh-program-sessions').on('click',function(){
         let ApiObj = {
-            url:'/admin/program-session/refresh',
+            url:'/admin/program-sessions/refresh',
             type:'POST',
             data:{},
             datatype:'JSON'
         }
         ajaxApi(ApiObj).then(result=>{
-          createToastMessage(result.description);
+            createToastMessage(result.description);
         }).catch(error =>{
             createToastError(JSON.stringify(error.responseJSON.description));
         })
-     })
+    })
 
-
-
-
-     $('#update-program-sessions').on('click',function(){
+    $('#update-program-sessions').on('click',function(){
         let maxCredits = $('#edit-program-sessions #max-credits').val();
         let minCredits = $('#edit-program-sessions #min-credits').val();
         let programSessionId = $('#edit-program-sessions #program-session-id').val();
-
-
         let isRequiredFieldsEmpty = isModalFieldEmpty('#edit-program-sessions .modal-body');
          
-            if(isRequiredFieldsEmpty){
+        if(isRequiredFieldsEmpty){
          
-        let ApiObj = {
-            url:'/admin/program-session/update',
-            type:'POST',
-            data:{
-                id:programSessionId,
-                min_credits:minCredits,
-                max_credits:maxCredits
-            },
-            datatype:'JSON'
+            let ApiObj = {
+                url:'/admin/program-sessions/update',
+                type:'POST',
+                data:{
+                    id:programSessionId,
+                    min_credits:minCredits,
+                    max_credits:maxCredits
+                },
+                datatype:'JSON'
+            }
+            ajaxApi(ApiObj).then(result =>{
+                createToastMessage(result.description);
+            }).catch(error =>{
+                createToastError(JSON.stringify(error.responseJSON.description));;
+            })
         }
-        ajaxApi(ApiObj).then(result =>{
-            createToastMessage(result.description);
-        }).catch(error =>{
-            createToastError(JSON.stringify(error.responseJSON.description));;
-        })
-    }
     })   
 
     $('#edit-program-sessions').on('click', '.modal-close', function() {
@@ -177,110 +164,108 @@
     });
 
     $('#program-sessions-table').on('click','.edit-program-sessions',function(){
-        let minCredits = $(this).data('min-credits');
-        let maxCredits = $(this).data('max-credits');
-        let acadSession = $(this).data('acad-session');
+        let minCredits = $(this).closest('tr').data('min-credits');
+        let maxCredits = $(this).closest('tr').data('max-credits');
+        let acadSession = $(this).closest('tr').data('acad-session');
+        let id = $(this).closest('tr').data('id');
 
-       let programSessionId = $(this).closest('a').attr('data-id');
-       $('#edit-program-sessions #program-session-id').val(programSessionId);
+       $('#edit-program-sessions #program-session-id').val(id);
        $('#edit-program-sessions #min-credits').val(minCredits);
        $('#edit-program-sessions #max-credits').val(maxCredits);
-       $('#edit-program-sessions #acad-session-disabled').val(acadSession);
+       $('#edit-program-sessions #acad-session').val(acadSession);
     })
+
     $('#searchkeyword').on('input',function(){
 
         let searchValue = $(this).val().trim();
         let showEntry = $('#changeEntry').val();
-    
-            
-            $.ajax({
+        $('#changeEntry').val($('#changeEntry :first-child').val());
+        $.ajax({
             type:'POST',
             url:'/admin/program-sessions/search',
             data:{
-            searchLetter:searchValue,
-            showEntry:showEntry
+                searchLetter:searchValue,
+                showEntry:showEntry
             },
             success:function(data){
-            paginationData(rowCount,data.length)
-            AjaxtTable(data.programSessionList );
-            $('#page-no').html(data.length);
+                paginationData(rowCount,data.length)
+                AjaxtTable(data.programSessionList );
+                $('#page-no').html(data.length);
             }
-            })
-        })       
+        })
+    })       
 
-$(".pagination-search").on('click','.pagination li',function(){
-    let keyword = $("#searchkeyword").val();
-    let showEntry = $('#changeEntry').val();
-    let pageNo = $(this).attr('data-lp');
- 
-    $.ajax({
-        type: "POST",
-        url: "/admin/program-sessions/search",
-        data: {
-            searchLetter: keyword,
-            pageNo: pageNo,
-            showEntry:showEntry
-        },
-        success: function (data) {
-            AjaxtTable(data.programSessionList);
-            paginationData(showEntry,data.length)
-            $('#page-no').html(data.length);
-        }
+    $(".pagination-search").on('click','.pagination li',function(){
+        
+        let keyword = $("#searchkeyword").val();
+        let showEntry = $('#changeEntry').val();
+        let pageNo = $(this).data('lp');
+    
+        $.ajax({
+            type: "POST",
+            url: "/admin/program-sessions/search",
+            data: {
+                searchLetter: keyword,
+                pageNo: pageNo,
+                showEntry:showEntry
+            },
+            success: function (data) {
+                AjaxtTable(data.programSessionList);
+                paginationData(showEntry,data.length)
+                $('#page-no').html(data.length);
+            }
+        });
     });
+
+    $('#changeEntry').on('change',function(){
+        let showEntry = $(this).val();
+        let ApiObj = {
+            type:'POST',
+            url:'/admin/program-sessions/showEntry',
+            data:{
+                showEntry:showEntry
+            },
+            datatype:'JSON'
+        }
+        ajaxApi(ApiObj).then(result=>{
+            paginationData(showEntry,result.length)
+            AjaxtTable(result.programSessionList)
+            $('#page-no').html(result.length)
+            $('#searchkeyword').val('');
+        }).catch(error =>{
+            createToastError(JSON.stringify(error.responseJSON.description));;
+        })    
+    })     
 });
 
-$('#changeEntry').on('change',function(){
-let showEntry = $(this).val();
-let ApiObj = {
-    type:'POST',
-    url:'/admin/program-sessions/showEntry',
-    data:{
-        showEntry:showEntry
-    },
-    datatype:'JSON'
+function AjaxtTable(programSessionList) {
+    $("#program-sessions-table tbody").empty();
+    let AjaxTable = ``;
+    if (programSessionList.length > 0) {
+        let count = 1;
+        for(programSession of programSessionList){
+            AjaxTable +=
+                    `<tr data-min-credits ="${programSession.min_credits}" 
+                         data-max-credits ="${programSession.max_credits}" 
+                         data-acad-session = "${programSession.acad_session}" 
+                         data-id="${programSession.id}"
+                        >
+                            <td>${count++}</td>
+                            <td>${programSession.acad_session}</td>
+                            <td>${programSession.program_name}</td>
+                            <td>${programSession.year}</td>
+                            <td>${programSession.min_credits}</td>
+                            <td>${programSession.max_credits}</td>
+                            <td>
+                                <a class="edit-program-sessions" data-bs-target="#edit-program-sessions"        data-bs-toggle="modal">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                            </td>
+                     </tr>`
+        }
     }
-    ajaxApi(ApiObj).then(result=>{
-    paginationData(showEntry,result.length)
-    AjaxtTable(result.programSessionList)
-    $('#page-no').html(result.length)
-    $('#searchkeyword').val('');
-    }).catch(error =>{
-    createToastError(JSON.stringify(error.responseJSON.description));;
-    })    
-})
-
-       
-});
-
-            function AjaxtTable(programSessionList) {
-           $("#program-sessions-table tbody").empty();
-           let AjaxTable = ``;
-           if (programSessionList.length > 0) {
-               let count = 1;
-               for (programSession of programSessionList) {
-                   AjaxTable +=
-                       `<tr>
-                           <td>${count++}</td>
-                           <td>${programSession.acad_session}</td>
-                           <td>${programSession.program_name}</td>
-                           <td>${programSession.year}</td>
-                           <td>${programSession.min_credits}</td>
-                           <td>${programSession.max_credits}</td>
-                           <td>
-                               <a class="edit-program-sessions" data-bs-target="#edit-program-sessions" data-bs-toggle="modal"
-                               data-min-credits ="${programSession.min_credits}"
-                               data-max-credits ="${programSession.max_credits}"
-                               data-acad-session = "${programSession.acad_session}"
-                               data-id="${programSession.id}">
-                           <i class="fa fa-edit"></i></a>
-                           
-                           </td>
-                       </tr>`
-               }
-           }
-                
-           $("#program-sessions-table tbody").html(AjaxTable);
-       }
+    $("#program-sessions-table tbody").html(AjaxTable);
+}
 </script>
   
 <%- include('../../partials/footerEnd.ejs') %>

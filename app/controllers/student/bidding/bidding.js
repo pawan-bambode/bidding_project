@@ -1,11 +1,12 @@
 const course = require('../../../models/admin/course/course');
 const divisionBatch = require('../../../models/admin/divisionBatches/divisionBatches');
-const programSession = require('../../../models/admin/programs/programsession');
+const programSession = require('../../../models/admin/programSession/programsession');
 const roundSetting = require('../../../models/admin/roundSettings/roundSettings');
 const concentrationSetting = require('../../../models/admin/concentrationsettings/concentrationsettings');
 const biddingClass = require('../../../models/student/bidding/bidding');
 const confirmation = require('../../../models/student/confirmation/confirmation');
 const isJsonString = require('../../../utils/util');
+const demandEstimation = require('../../../models/student/demandEstimation/demandEstimation');
 
 module.exports = {
     
@@ -19,7 +20,7 @@ module.exports = {
                     course.acadSessionList(res.locals.slug, res.locals.biddingId),
                     programSession.getCredits(res.locals.slug, res.locals.biddingId),
                     roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, round1Id),
-                    divisionBatch.biddingCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+                    divisionBatch.biddingCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId, round1Id, round2Id),
                     divisionBatch.courseList(res.locals.slug, res.locals.biddingId),
                     concentrationSetting.getList(res.locals.slug, res.locals.biddingId),
                     divisionBatch.areaList(res.locals.slug, res.locals.biddingId),
@@ -30,17 +31,19 @@ module.exports = {
                     roundSetting.listByOneDayBefore(res.locals.slug, res.locals.biddingId, round1Id, round2Id),
                     roundSetting.roundSettingTime(res.locals.slug, res.locals.biddingId, round1Id, round2Id),
                     confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),
-                    confirmation.getConfirmationForBidding(res.locals.slug, res.locals.biddingId, res.locals.studentId)
+                    confirmation.getConfirmationForBidding(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+                    biddingClass.currentRoundStatus(res.locals.slug, res.locals.biddingId),
+                    biddingClass.isStudentPartOfRound(res.locals.slug, res.locals.biddingId, res.locals.studentId, round1Id, round2Id)
                     
                 ])
             .then(result => {
-                
+               
                 res.render('student/bidding/index', {
                     active: bidding,
                     acadSessions: result[0].recordset,
                     creditList: result[1].recordset,
                     startAndEndTime: result[2].recordset[0] !== undefined ? result[2].recordset[0] : '',
-                    biddingCourseList: result[3].recordset,
+                    biddingCourseList:  result[3].recordset != undefined ? result[3].recordset : '',
                     courseList: result[4].recordset,
                     concentrationSetting: result[5].recordset[0],
                     areaList: result[6].recordset,
@@ -53,7 +56,9 @@ module.exports = {
                     roundSettingTime : result[12].recordset[0] != undefined ? result[12].recordset[0] :0,
                     confirmationCourse: result[13].recordset[0] != undefined ? result[13].recordset: '',
                     confirmationCourse12: result[14].recordset[0] != undefined ? result[14].recordset: '',
-                    slug: slug
+                    slug: slug,
+                    currentRoundStatus: result[15].recordset.length == 0 ? JSON.stringify({'round_status':'Round Not Found'}) : JSON.stringify(result[15].recordset[0]),
+                    isStudentPartOfRound: result[16].recordset.length >= 1? 1: 0
                 });
             })
             .catch(error => {
@@ -148,6 +153,39 @@ module.exports = {
             console.error("Error in roundWiseDetails:", error);
             res.status(500).send("Internal Server Error");
         });
-    }
+    },
+
+    coursesByAcad : (req, res) => {
+        Promise.all([
+            biddingClass.getCourseListByAcadSession(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.roundId, req.body.studentId),
+            demandEstimation.getAreaList(res.locals.slug, res.locals.biddingId, req.body.acadSessionId)
+            
+        ]).then(result => {
+            res.json({
+                status: "200",
+                message: "Sucessfull",
+                courseList: result[0].recordset,
+                areaList: result[1].recordset
+            });
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message);
+        });
+    },
+
+    coursesByArea : (req, res) => {
+        Promise.all([
+            biddingClass.coursesByArea(res.locals.slug, res.locals.biddingId, req.body.acadSessionId,req.body.roundId ,req.body.studentId ,req.body.areaName),
+            demandEstimation.coursesByArea(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaName)
+        ]).then(result => {
+            res.json({
+                status: "200",
+                message: "Sucessfull",
+                courseList: result[0].recordset,
+                courseListDrop: result[1].recordset,
+            });
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message);
+        });
+    },
     
 }

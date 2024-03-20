@@ -4,16 +4,17 @@ const isJsonString = require('../../../utils/util');
 
 module.exports = {
     getPage: (req, res) => {
+        let sidebarActive = req.sidebarActive.split('/');
         Promise.all([
             concentrationSettings.getList(res.locals.slug, res.locals.biddingId), 
             concentrationSettings.getCount(res.locals.slug, res.locals.biddingId), 
             Areas.getList(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
             res.render('admin/concentrationsettings/index.ejs', {
-                concentrationSettingList: result[0].recordset,
+                concentrationSettings: result[0].recordset,
                 pageCount: result[1].recordset[0][''],
                 areaList: result[2].recordset,
-                active: 'dashboard',
+                active: sidebarActive[2],
                 breadcrumbs: req.breadcrumbs
             });
         });

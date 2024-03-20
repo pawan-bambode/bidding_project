@@ -2,293 +2,295 @@
 <%- include('../partials/head') %>
 <%- include('../partials/leftSidebar.ejs') %>
 <%- include('../partials/header.ejs') %>
+<%- include('../partials/bread.ejs') %>
 
-<div class="main-content">
-  <div class="breadcrumbs-container">
-      <ul class="breadcrumb">
-          <% if (breadcrumbs) { %>
-              <% for (let crumbs of breadcrumbs) { %>
-                  <% let crubm_name = crumbs.name == 'ADMIN' ? 'Dashboard' : crumbs.name;%>
-                  <li><a href="<%- crumbs.url %>"><%- crubm_name %></a></li>
-              <% } %>
-          <% } %>
-      </ul>
-  </div>
+    <div class="card card-custom-border-curv">
+        <div class="card-header-custom d-flex justify-content-between p-2">
+            <h4 class="ms-2">Division Batches</h4>
+            <div>
+                <button class="btn btn-danger disabled" id="delete-all-division-batches">Delete All Division Batches</button>
+                <button type="button" class="btn btn-success me-2" data-bs-target="#upload-division-batches-modal" data-bs-toggle="modal">Upload Division Batches</button>
+            </div>
+        </div>
+        <div class="card-body table-responsive">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <label>Show Entries</label>
+                    <select class="form-select" id="changeEntry">
+                        <%for(let page of locals.page_filter){%>
+                            <option value="<%-page%>"><%-page%></option>
+                        <%}%>
+                    </select>
+                </div>
+                <div class="col-md-3 mt-4">
+                    <select class="form-select form-control select2" id="program-name-filter">
+                        <option value="-1" selected>Select Program</option>
+                        <%for(let prog of programList){%>
+                            <option value="<%-prog.program_id%>"><%-prog.program_name%></option>
+                        <%}%>
+                    </select>
+                </div>
+                <div class="col-md-2 mt-4">
+                    <select class="form-select form-control select2" id="session-name-filter">
+                        <option value="-1" selected>Select Session</option>
+                    </select>
+                </div>
+                <div>
+                    <div class="table-searchbar-container d-flex justify-content-around p-1">
+                        <button type="button" id="searchkeyword-button" class="border-0 outline-0">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+                    </div>
+                </div>
+            </div>
+            <table class="table table-bordered mt-4" id="division-batches-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Program Name</th>
+                        <th>Acad Session</th>
+                        <th>Course Name</th>
+                        <th>Division</th>
+                        <th>Batch</th>
+                        <th>Maximum Seats</th>
+                        <th>Actions <input class="d-none" type="checkbox" name="all-division-batches-checkbox" id="all-division-batches-checkbox"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% let count = 1 %>
+                    <% for(let divisionBatch of divisionBatchList) { %>
+                        <tr data-id="<%- divisionBatch.id %>" 
+                            data-program-name="<%- divisionBatch.program_name %>" 
+                            data-acad-session="<%- divisionBatch.acad_session %>" 
+                            data-division-batches-course-name="<%- divisionBatch.course_name %>" 
+                            data-division="<%- divisionBatch.division %>" 
+                            data-batch="<%- divisionBatch.batch %>" 
+                            data-max-seats="<%- divisionBatch.max_seats %>">
+                            <td><%- count++ %></td>
+                            <td><%- divisionBatch.program_name %></td>
+                            <td><%- divisionBatch.acad_session %></td>
+                            <td><%- divisionBatch.course_name %></td>
+                            <td><%- divisionBatch.division %></td>
+                            <td><%- divisionBatch.batch %></td>
+                            <td><%- divisionBatch.max_seats %></td> 
+                            <td>
+                                <a class="edit-division-batches" data-bs-target="#edit-division-batches-modal" data-bs-toggle="modal">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a class="delete-division-batches">
+                                    <i class="fas fa-trash text-danger"></i>
+                                </a>
+                                <input class="d-none checkbox-division-batches" type="checkbox" name="division-batches" data-id="<%- divisionBatch.id %>">
+                            </td>
+                        </tr>  
+                    <%}%>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries: <span id="page-no"></span></p>
+                </div>
+                <div>
+                    <p id="pagination" class="pagination-search"></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <div class="card card-custom-border-curv">
-      <div class="card-header-custom d-flex justify-content-between p-2">
-          <h4 class="ms-2">Division Batches</h4>
-          <div>
-              <button class="btn btn-danger disabled" id="delete-all-division-batches">Delete All Division Batches</button>
-              <button type="button" class="btn btn-success me-2" data-bs-target="#upload-division-batches-modal" data-bs-toggle="modal">Upload Division Batches</button>
-          </div>
-      </div>
-      <div class="card-body table-responsive custom-table">
-          <div class="d-flex justify-content-between">
-              <div>
-                  <label>Show Entries</label>
-                  <select class="form-select" id="changeEntry">
-                      <%for(let page of locals.page_filter){%>
-                          <option value="<%-page%>"><%-page%></option>
-                      <%}%>
-                  </select>
-              </div>
-              <div class="col-md-3 mt-4">
-                  <select class="form-select form-control select2" id="program-name-filter">
-                      <option value="-1" selected>Select Program</option>
-                      <%for(let prog of programList){%>
-                          <option value="<%-prog.program_id%>"><%-prog.program_name%></option>
-                      <%}%>
-                  </select>
-              </div>
-              <div class="col-md-2 mt-4">
-                  <select class="form-select form-control select2" id="session-name-filter">
-                      <option value="-1" selected>Select Session</option>
-                  </select>
-              </div>
-              <div>
-                  <div class="table-searchbar-container d-flex justify-content-around p-1">
-                      <button type="button" id="searchkeyword-button" class="border-0 outline-0">
-                          <i class="fas fa-search"></i>
-                      </button>
-                      <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
-                  </div>
-              </div>
-          </div>
-          <table class="table custom_row table-bordered mt-4" id="division-batches-table">
-              <thead>
-                  <tr>
-                      <th>#</th>
-                      <th>Program Name</th>
-                      <th>Acad Session</th>
-                      <th>Course Name</th>
-                      <th>Division</th>
-                      <th>Batch</th>
-                      <th>Maximum Seats</th>
-                      <th>Actions <input class="d-none" type="checkbox" name="all-division-batches-checkbox" id="all-division-batches-checkbox"></th>
-                  </tr>
-              </thead>
-              <tbody>
-                  <% let count = 1 %>
-                  <% for(let divisionBatch of divisionBatchList) { %>
-                      <tr data-id="<%- divisionBatch.id %>" data-program-name="<%- divisionBatch.program_name %>" data-acad-session="<%- divisionBatch.acad_session %>" data-division-batches-course-name="<%- divisionBatch.course_name %>" data-division="<%- divisionBatch.division %>" data-batch="<%- divisionBatch.batch %>" data-max-seats="<%- divisionBatch.max_seats %>">
-                          <td><%- count++ %></td>
-                          <td><%- divisionBatch.program_name %></td>
-                          <td><%- divisionBatch.acad_session %></td>
-                          <td><%- divisionBatch.course_name %></td>
-                          <td><%- divisionBatch.division %></td>
-                          <td><%- divisionBatch.batch %></td>
-                          <td><%- divisionBatch.max_seats %></td> 
-                          <td>
-                              <a class="edit-division-batches" data-bs-target="#edit-division-batches-modal" data-bs-toggle="modal"><i class="fa fa-edit"></i></a>
-                              <a data-id="<%- divisionBatch.id %>" class="delete-division-batches"><i class="fas fa-trash text-danger"></i></a>
-                              <input class="d-none checkbox-division-batches" type="checkbox" name="division-batches" data-id="<%- divisionBatch.id %>">
-                          </td>
-                      </tr>  
-                  <%}%>
-              </tbody>
-          </table>
-          <div class="d-flex justify-content-between">
-              <div>
-                  <p>Total entries: <span id="page-no"></span></p>
-              </div>
-              <div>
-                  <p id="pagination" class="pagination-search"></p>
-              </div>
-          </div>
-      </div>
-  </div>
-
-  <div class="modal" id="upload-division-batches-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title">Upload Division Batches</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
+    <div class="modal" id="upload-division-batches-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Division Batches</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
                 <div class="modal-body">
                     <div class="d-flex">
-                        <label class="form-label me-3">Import Division Batches:</label>
+                        <label class="form-label me-4">Import Division Batches :</label>
                         <form enctype="multipart/form-data" action="/admin/division-batches/upload" method="post" id="upload-division-batches-form">
                             <input type="file" name="import-division-batches" id="import-division-batches" accept=".xlsx">
                     </div>
                     <div class="d-flex justify-content-between align-items-center mt-5">
                         <input type="submit" class="btn btn-success mt-2 d-none" id="upload-division-batches-button" value="Upload Division Batches">
                     </form>
-                    </div>
                      <a href="/admin/division-batches/generate-excel" download="sampleForImportDivisionBatches.xlsx" name="sample-for-import-division-batches" class="text-decoration-none align-self-end">Sample for Import Division Batches</a>
                 </div>
-            
-              <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              </div>
-          </div>
-      </div>
-  </div>
- 
-  <div class="modal" id="edit-division-batches-modal">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Update Division Batch</h3>
-                <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row empty">
-                    <div class="col-md-6">
-                        <label class="mb-2 form-label" for="program-name">Program Name:</label>
-                        <input class="form-control is-empty" type="text" id="program-name" disabled>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="mb-2 form-label" for="acad-session">Acad Session:</label>
-                        <input class="form-control is-empty" type="text" id="acad-session" disabled>
-                    </div>
-                </div> 
-
-                <div class="row empty">
-                    <div class="col-md-6">
-                        <label class="mb-2 form-label" for="course-name">Course Name:</label>
-                        <input class="form-control is-empty" type="text" id="course-name" disabled>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="mb-2 form-label" for="division">Division:</label>
-                        <input class="form-control is-empty" type="text" id="division" disabled>     
-                    </div>
-                </div> 
-                <div class="row empty">
-                    <div class="col-md-6">
-                        <label class="mb-2 form-label" for="max-seats">Max Seats:</label>
-                        <input class="form-control is-empty is-number" type="text" id="max-seats">
-                        <span class="text-danger d-none is-in-valid"></span>
-                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-primary" id="update-division-batches">Update</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-  </div>
+ 
+    <div class="modal" id="edit-division-batches-modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Update Division Batch</h3>
+                    <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row empty">
+                        <div class="col-md-6">
+                            <label class="mb-2 form-label" for="program-name">Program Name:</label>
+                            <input class="form-control is-empty" type="text" id="program-name" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="mb-2 form-label" for="acad-session">Acad Session:</label>
+                            <input class="form-control is-empty" type="text" id="acad-session" disabled>
+                        </div>
+                    </div> 
+
+                    <div class="row empty">
+                        <div class="col-md-6">
+                            <label class="mb-2 form-label" for="course-name">Course Name:</label>
+                            <input class="form-control is-empty" type="text" id="course-name" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="mb-2 form-label" for="division">Division:</label>
+                            <input class="form-control is-empty" type="text" id="division" disabled>     
+                        </div>
+                    </div> 
+                    <div class="row empty">
+                        <div class="col-md-6">
+                            <label class="mb-2 form-label" for="max-seats">Max Seats:</label>
+                            <input class="form-control is-empty is-number" type="text" id="max-seats">
+                            <span class="text-danger d-none is-in-valid"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" id="update-division-batches">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal position-absolute bottom-0 end-3" id="confirmation-delete-all-courses">
         <div class="modal-dialog">
             <div class="modal-content">
-                 <div class="modal-header">
-                      <h3 class="modal-title">Delete All Courses</h3>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                      <div class="d-flex flex-column p-3">
-                          <h4>You are sure to delete all courses?</h4>
-                          <div>
-                              <button class="btn btn-success">Yes</button>
-                              <button class="btn btn-danger">No</button>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="modal-footer">
-                     <button class="btn" data-bs-dismiss="modal">Close</button>
-                  </div>
+                <div class="modal-header">
+                    <h3 class="modal-title">Delete All Courses</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex flex-column p-3">
+                        <h4>You are sure to delete all courses?</h4>
+                        <div>
+                            <button class="btn btn-success">Yes</button>
+                            <button class="btn btn-danger">No</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
           </div>
-      </div>
+        </div>
     </div>
 
-    <%- include('../partials/footer.ejs') %>   
+<%- include('../partials/footer.ejs') %> 
+
 <script>
-   $(document).ready(function(){
 
-      $('.select2').select2();
+$(document).ready(function(){
 
-      setActiveMenuItem(`<%- active %>`)
+    $('.select2').select2();
+
+    let test = '<%- pageCount %>';
+    let rowCount = $('#changeEntry').val();
+    $('#page-no').html(test);
+    paginationData(rowCount, parseInt(test));
+    setActiveMenuItem(`<%- active %>`)
       
-      if($('#division-batches-table tbody tr').length > 0){
+    if($('#division-batches-table tbody tr').length > 0){
       $('#all-division-batches-checkbox').removeClass('d-none');
     }
 
-      $('#import-division-batches').on('change', function(){
+    $('#import-division-batches').on('change', function(){
         let importDivisionBatch = $(this).val();
         if(importDivisionBatch != ''){
             $('#upload-division-batches-button').removeClass('d-none');
         }
-      });
+    });
     
-      $('#upload-division-batches-form').on('submit', function(event) {
-         console.log('inside the function');
-         event.preventDefault(); 
-         var formData = new FormData(this); 
+    $('#upload-division-batches-form').on('submit', function(event) {
+        
+        event.preventDefault(); 
+        var formData = new FormData(this); 
 
-          $.ajax({
+        $.ajax({
             type: 'POST',
             url: '/admin/division-batches/upload', 
             data: formData,
             processData: false,
             contentType: false,
             success: function(response) {
-              createToastMessage(response.description);
+                createToastMessage(response.description);
             },
             error: function(xhr, status, error) {
-              showError(JSON.stringify(xhr.responseJSON));
+                showError(JSON.stringify(xhr.responseJSON));
             }
-          });
-       })
+        });
+    })
 
-      $('#edit-division-batches-modal').on('click','#update-division-batches',function(){
+    $('#edit-division-batches-modal').on('click','#update-division-batches',function(){
 
-            let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
-            let divisionId = $('#max-seats').data('id');
-            let maxSeats   = $('#max-seats').val();        
-            let isRequiredFieldsEmpty = isModalFieldEmpty('#edit-division-batches-modal .modal-body');
-
-            if(isRequiredFieldsEmpty){            
+        let biddingSessionId = $('#biddingSessionDropdown').data('session-id');
+        let divisionId = $('#max-seats').data('id');
+        let maxSeats   = $('#max-seats').val();        
+        let isRequiredFieldsEmpty = isModalFieldEmpty('#edit-division-batches-modal .modal-body');
+        if(isRequiredFieldsEmpty){            
             if(isRequiredFieldsEmpty){
-              let editDivisionBatches = {
-                id:divisionId,
-                max_seats : maxSeats
-              }
+                let editDivisionBatches = {
+                    id:divisionId,
+                    max_seats : maxSeats
+                }
             
-            let ApiObj = {
-                  type:'POST',
-                  url:'/admin/division-batches/update',
-                  data: {
-                    editDivisionBatches:JSON.stringify(editDivisionBatches),
-                    biddingSessionId:biddingSessionId
-                  },
-                  dataType: 'JSON' 
+                let ApiObj = {
+                    type:'POST',
+                    url:'/admin/division-batches/update',
+                    data: {
+                        editDivisionBatches:JSON.stringify(editDivisionBatches),
+                        biddingSessionId:biddingSessionId
+                    },
+                    dataType: 'JSON' 
                 }
                 ajaxApi(ApiObj).then(result => {
-                  createToastMessage(result.description);
+                    createToastMessage(result.description);
                 }).catch(error => {
                     createToastError(JSON.stringify(error.responseJSON.description));
                 })  
-              } 
-            }   
-         });
+            } 
+        }   
+    });
 
-      $('#division-batches-table').on('click','.edit-division-batches',function(){
+    $('#division-batches-table').on('click','.edit-division-batches',function(){
 
-          let division = $(this).closest('tr').data('division').replace(/\s+/g,' ').trim();
-          let batch = $(this).closest('tr').data('batch');
-          let maxSeats = $(this).closest('tr').data('max-seats');
-          let inputBatchCount =  $(this).closest('tr').data('input-batch-count');
-          let id = $(this).closest('tr').data('id');
-          let courseName = $(this).closest('tr').data('division-batches-course-name');
-          let programName = $(this).closest('tr').data('program-name');
-          let acadSession = $(this).closest('tr').data('acad-session');
+        let division = $(this).closest('tr').data('division').replace(/\s+/g,' ').trim();
+        let batch = $(this).closest('tr').data('batch');
+        let maxSeats = $(this).closest('tr').data('max-seats');
+        let inputBatchCount =  $(this).closest('tr').data('input-batch-count');
+        let id = $(this).closest('tr').data('id');
+        let courseName = $(this).closest('tr').data('division-batches-course-name');
+        let programName = $(this).closest('tr').data('program-name');
+        let acadSession = $(this).closest('tr').data('acad-session');
+        $('#edit-division-batches-modal #max-seats').attr('data-id',id);
+        $('#edit-division-batches-modal #acad-session').val(acadSession);
+        $('#edit-division-batches-modal #program-name').val(programName);
+        $('#edit-division-batches-modal #division').val(division);
+        $('#edit-division-batches-modal #course-name').val(courseName);
+        
+        $('#edit-division-batches-modal #batch').val(batch);
+        $('#edit-division-batches-modal #max-seats').val(maxSeats);
+        $('#edit-division-batches-modal #input-batch-count').val(inputBatchCount);
+    })
 
-          $('#edit-division-batches-modal #max-seats').attr('data-id',id);
-          $('#edit-division-batches-modal #acad-session').val(acadSession);
-          $('#edit-division-batches-modal #program-name').val(programName);
-          $('#edit-division-batches-modal #division').val(division);
-          $('#edit-division-batches-modal #course-name').val(courseName);
-          
-          $('#edit-division-batches-modal #batch').val(batch);
-          $('#edit-division-batches-modal #max-seats').val(maxSeats);
-          $('#edit-division-batches-modal #input-batch-count').val(inputBatchCount);
-       })
-
-      $('#division-batches-table').on('change','#all-division-batches-checkbox', function() {
+    $('#division-batches-table').on('change','#all-division-batches-checkbox', function() {
 
         if (this.checked) {
            $('.checkbox-division-batches').removeClass('d-none');
@@ -302,136 +304,141 @@
         }
     });
 
-      $('#division-batches-table').on('click','.delete-division-batches',function(){
-         let id = $(this).attr('data-id');
-         $(this).closest('tr').remove();
-         let ApiObj = {
+    $('#division-batches-table').on('click','.delete-division-batches',function(){
+
+        let id = $(this).closest('tr').data('id');
+        $(this).closest('tr').remove();
+
+        let ApiObj = {
             type:'POST',
             url:'/admin/division-batches/delete',
             data:{
-              id:id
+                id:id
             },
             datatype:'JSON'
         }
         ajaxApi(ApiObj).then(result=>{
-          createToastMessage(result.description);
+            createToastMessage(result.description);
         }).catch(error =>{
-          createToastError(JSON.stringify(error.responseJSON.description));;
+            createToastError(JSON.stringify(error.responseJSON.description));;
         })
-      })
+    })
 
-      $('#delete-all-division-batches').on('click', function () {
+    $('#delete-all-division-batches').on('click', function () {
+
         let deleteDivisionBatchesArray = [];
         $('#division-batches-table tbody tr td input[type="checkbox"]:checked').each(function (ele, index) {
-          let divisionId = Number($(index).attr("data-id"));
+            let divisionId = Number($(index).data("id"));
             deleteDivision = {
-               id: divisionId
-           }
-          deleteDivisionBatchesArray.push(deleteDivision);
-        });
-        if(deleteDivisionBatchesArray.length > 0){
-          ConfirmationForAllDelete('Are you sure to delete the selected Division Batches ?').then(result =>{
-          if(result){
-            let ApiObj = {
-                url:'/admin/division-batches/delete-all',
-                type:'POST',
-                data:{deleteDivisionBatchesArray},
-                dataType:'JSON'
-                }
-                ajaxApi(ApiObj).then(result =>{
-                  createToastMessage(result.description);
-                }).catch(error =>{
-                  createToastError(JSON.stringify(error.responseJSON.description));;
-                })
+                id: divisionId
             }
-         });
-       }  
-     });
+            deleteDivisionBatchesArray.push(deleteDivision);
+        });
 
-     $('#changeEntry').on('change',function(){
-      let showEntry = $(this).val();
-      let programId = $('#program-name-filter').val();
-      let acadSessionId = $('#session-name-filter').val();
+        if(deleteDivisionBatchesArray.length > 0){
+            ConfirmationForAllDelete('Are you sure to delete the selected Division Batches ?').then(result =>{
+                if(result){
+                    let ApiObj = {
+                        url:'/admin/division-batches/delete-all',
+                        type:'POST',
+                        data:{deleteDivisionBatchesArray},
+                        dataType:'JSON'
+                    }
+                    ajaxApi(ApiObj).then(result =>{
+                        createToastMessage(result.description);
+                    }).catch(error =>{
+                        createToastError(JSON.stringify(error.responseJSON.description));;
+                    })
+                }
+            });
+        }  
+    });
 
-      
-      let ApiObj = {
-          type:'POST',
-          url:'/admin/division-batches/showEntry',
-          data:{
-            showEntry:showEntry,
-            programId: programId,
-            acadSessionId: acadSessionId
-          },
-          datatype:'JSON'
+    $('#changeEntry').on('change',function(){
+
+        let showEntry = $(this).val();
+        let programId = $('#program-name-filter').val();
+        let acadSessionId = $('#session-name-filter').val();
+
+        let ApiObj = {
+            type:'POST',
+            url:'/admin/division-batches/showEntry',
+            data:{
+                showEntry:showEntry,
+                programId: programId,
+                acadSessionId: acadSessionId
+            },
+            datatype:'JSON'
         }
         ajaxApi(ApiObj).then(result=>{
-          paginationData(showEntry,result.length)
-            AjaxtTable(result.data)
-            $('#page-no').html();
-            $('#searchkeyword').val('');
+            paginationData(showEntry,result.length)
+                AjaxtTable(result.data)
+                $('#page-no').html();
+                $('#searchkeyword').val('');
         }).catch(error =>{
-          createToastError(JSON.stringify(error.responseJSON.description));;
+            createToastError(JSON.stringify(error.responseJSON.description));;
         })    
     })
- 
-    let test = '<%- pageCount %>';
-    let rowCount = $('#changeEntry').val();
-    $('#page-no').html(test);
-    paginationData(rowCount, parseInt(test));
-  
-        $('#searchkeyword').on('input',function(){
-         let searchValue = $(this).val().trim();
-         let showEntry = $('#changeEntry').val();
-         let programId = $('#program-name-filter').val();
-         let acadSessionId = $('#session-name-filter').val();
 
-         $.ajax({
-          type:'POST',
-          url:'/admin/division-batches/search',
-          data:{
-            searchLetter:searchValue,
-            showEntry:showEntry,
-            programId: programId,
-            acadSessionId: acadSessionId
-          },
-          success:function(data){
-            paginationData(rowCount,data.length)
-            AjaxtTable(data.data);
-           
-          }
-         })
-        })
-        $(".pagination-search").on('click', '.pagination li', function () {
-                let pageNo = $(this).attr('data-lp')
-                let searchValue = $(this).val();
-                let showEntry = $('#changeEntry').val();
-                let programId = $('#program-name-filter').val();
-                let acadSessionId = $('#session-name-filter').val();
-                  $.ajax({
-                      type:'POST',
-                      url:'/admin/division-batches/search',
-                      data:{
-                        searchLetter:searchValue,
-                        pageNo:pageNo,
-                        showEntry:showEntry,
-                        programId: programId,
-                       acadSessionId: acadSessionId
-                      },
-                 success:function(data){
-                 AjaxtTable(data.data)
-          }
-         })
-        })
+    $('#searchkeyword').on('input',function(){
 
-        $('#edit-division-batches-modal').on('click', '.modal-close', function() {
-           $(this).closest('.modal-content').find(`.is-in-valid`).addClass('d-none');
-        });
-        $('#program-name-filter').on('change', function() {
-     
-          let programId = $(this).val();
-          let showEntry = $('#changeEntry').val();
-        
-          let ApiObj = {
+        let searchValue = $(this).val().trim();
+        let showEntry = $('#changeEntry').val();
+        let programId = $('#program-name-filter').val();
+        let acadSessionId = $('#session-name-filter').val();
+        $('#changeEntry').val($('#changeEntry :first-child').val());
+
+        $.ajax({
+            type:'POST',
+            url:'/admin/division-batches/search',
+            data:{
+                searchLetter:searchValue,
+                showEntry:showEntry,
+                programId: programId,
+                acadSessionId: acadSessionId
+            },
+            success:function(data){
+                paginationData(rowCount,data.length)
+                AjaxtTable(data.data); 
+                $('#page-no').html(data.length);
+            }
+        })
+    })
+
+    $(".pagination-search").on('click', '.pagination li', function () {
+
+        let pageNo = $(this).data('lp')
+        let searchValue = $(this).val();
+        let showEntry = $('#changeEntry').val();
+        let programId = $('#program-name-filter').val();
+        let acadSessionId = $('#session-name-filter').val();
+            $.ajax({
+                type:'POST',
+                url:'/admin/division-batches/search',
+                data:{
+                    searchLetter:searchValue,
+                    pageNo:pageNo,
+                    showEntry:showEntry,
+                    programId: programId,
+                    acadSessionId: acadSessionId
+                },
+                    success:function(data){
+                    AjaxtTable(data.data);
+                    $('#page-no').html(data.length);
+                }
+            })
+    })
+
+    $('#edit-division-batches-modal').on('click', '.modal-close', function() {
+        $(this).closest('.modal-content').find(`.is-in-valid`).addClass('d-none');
+    });
+
+    $('#program-name-filter').on('change', function() {
+    
+        let programId = $(this).val();
+        let showEntry = $('#changeEntry').val();
+    
+        let ApiObj = {
               type: 'POST',
               url: '/admin/division-batches/filter-by-programId',
               data: {
@@ -440,103 +447,100 @@
               },
               dataType: 'JSON'
           };
-
           ajaxApi(ApiObj)
               .then(result => {
-        
-                  let sessionName = `<option value="-1" >Select Session</option>`;
+                let sessionName = `<option value="-1" >Select Session</option>`;
+
                   if (result.sessionList.length > 0) {
-                      result.sessionList.forEach(element => {
-                          sessionName += `<option value="${element.sap_acad_session_id}">${element.acad_session}</option>`;
-                      });
-                      paginationData(showEntry,result.workloadLength)
-                      AjaxtTable(result.workload);
+                    result.sessionList.forEach(element => {
+                        sessionName += `<option value="${element.sap_acad_session_id}">${element.acad_session}</option>`;
+                    });
+                    paginationData(showEntry,result.workloadLength)
+                    AjaxtTable(result.workload);
                   } else {
-                      sessionName += `<option value="">No Session Found!</option>`;
+                    sessionName += `<option value="">No Session Found!</option>`;
                   }
 
                   $("#session-name-filter").html(sessionName);
                   AjaxtTable(result.workload);
                   $('#searchkeyword').val('');
                   $('#page-no').html(result.workloadLength);
-              })
-              .catch(error => {
-                  createToastError(JSON.stringify(error.responseJSON.description));;
-              });
-          });
+            })
+            .catch(error => {
+                createToastError(JSON.stringify(error.responseJSON.description));;
+            });
+    });
 
-          $('#session-name-filter').on('change',function() {
-            let sessionId = $(this).val();
-            let programId = $('#program-name-filter').val();
-            let showEntry = $('#changeEntry').val();
+    $('#session-name-filter').on('change',function() {
 
-            let ApiObj = {
-                type: 'POST',
-                url: '/admin/division-batches/filter-by-session-id',
-                data: {
-                    programId: programId,
-                    showEntry: showEntry,
-                    sessionId: sessionId
-                },
-                dataType: 'JSON'
-            };
-
-            ajaxApi(ApiObj)
-                .then(result => {
-                    paginationData(showEntry,result.workloadLength)
-                    AjaxtTable(result.workload);
-                    $('#searchkeyword').val('');
-                    $('#page-no').html(result.workloadLength);
-                })
-                .catch(error => {
-                    createToastError(JSON.stringify(error.responseJSON.description));;
-                });
-        });
-     
-     function AjaxtTable(divisionBatchesList) {
+        let sessionId = $(this).val();
+        let programId = $('#program-name-filter').val();
+        let showEntry = $('#changeEntry').val();
+        let ApiObj = {
+            type: 'POST',
+            url: '/admin/division-batches/filter-by-session-id',
+            data: {
+                programId: programId,
+                showEntry: showEntry,
+                sessionId: sessionId
+            },
+            dataType: 'JSON'
+        };
+        ajaxApi(ApiObj)
+            .then(result => {
+                paginationData(showEntry,result.workloadLength)
+                AjaxtTable(result.workload);
+                $('#searchkeyword').val('');
+                $('#page-no').html(result.workloadLength);
+            })
+            .catch(error => {
+                createToastError(JSON.stringify(error.responseJSON.description));;
+            });
+    });
+});    
+function AjaxtTable(divisionBatchesList) {
           
-            $("#division-batches-table tbody").empty();
-            let AjaxTable = ``;
-            if (divisionBatchesList.length > 0) {
-                let count = 1;
-                for (divisionBatches of divisionBatchesList) {
-                    AjaxTable +=
-                        `<tr data-id="${divisionBatches.id}"
-                                data-division-batches-course-name="${divisionBatches.course_name}"  data-division="${divisionBatches.division}" data-batch ="${divisionBatches.batch}" data-max-seats="${divisionBatches.max_seats}"
-                                data-program-name="${divisionBatches.program_name}"
-                      data-acad-session="${divisionBatches.acad_session}"
-                                >
-                            <td>${count++}</td>
-                            <td>${divisionBatches.program_name}</td>
-                            <td>${divisionBatches.acad_session}</td>
-                            <td>${divisionBatches.course_name}</td>
-                            <td>${divisionBatches.division}</td>
-                            <td>${divisionBatches.batch}</td>
-                            <td>${divisionBatches.max_seats}</td>
-                            <td>
-                            
-                              <a class="edit-division-batches" data-bs-target="#edit-division-batches-modal" data-bs-toggle="modal"> 
-                                    <i class="fa fa-edit"></i>
-                                </a>
-                                <a data-id="${divisionBatches.id}" class="delete-division-batches">
-                                    <i class="fas fa-trash text-danger"></i>
-                                </a>
-                                <input class="d-none checkbox-division-batches" type="checkbox" name="division-batches" data-id="${divisionBatches.id}">
-                            </td>
-                        </tr>`
-                }
+    $("#division-batches-table tbody").empty();
+    let AjaxTable = ``;
+    if (divisionBatchesList.length > 0) {
+        let count = 1;
+        for (divisionBatches of divisionBatchesList) {
+            AjaxTable +=
+                `<tr data-id="${divisionBatches.id}"
+                     data-division-batches-course-name="${divisionBatches.course_name}"  
+                     data-division="${divisionBatches.division}" 
+                     data-batch ="${divisionBatches.batch}" 
+                     data-max-seats="${divisionBatches.max_seats}"
+                     data-program-name="${divisionBatches.program_name}"
+                     data-acad-session="${divisionBatches.acad_session}" >
+                    <td>${count++}</td>
+                    <td>${divisionBatches.program_name}</td>
+                    <td>${divisionBatches.acad_session}</td>
+                    <td>${divisionBatches.course_name}</td>
+                    <td>${divisionBatches.division}</td>
+                    <td>${divisionBatches.batch}</td>
+                    <td>${divisionBatches.max_seats}</td>
+                    <td>
+                        <a class="edit-division-batches" data-bs-target="#edit-division-batches-modal" data-bs-toggle="modal"> 
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <a class="delete-division-batches">
+                            <i class="fas fa-trash text-danger"></i>
+                        </a>
+                        <input class="d-none checkbox-division-batches" type="checkbox" name="division-batches" data-id="${divisionBatches.id}">
+                    </td>
+                </tr>`
             }        
             $("#division-batches-table tbody").html(AjaxTable);
-         }
-           
-      })
-   
-     function ConfirmationForAllDelete(message) {
-        return new Promise((success, failed) => {
+    }
+}      
+
+function ConfirmationForAllDelete(message) {
+    return new Promise((success, failed) => {
+
         let dialog = document.createElement('div');
         dialog.classList.add('dialogConfirmation');
       
-
         let dialogBox = document.createElement('div');
         dialogBox.classList.add('dialogBox');
         dialog.appendChild(dialogBox);
@@ -580,8 +584,8 @@
             success(false);
         });
     })
-  }
-</script>
+}
 
+</script>
 <%- include('../partials/footerEnd.ejs') %>
 

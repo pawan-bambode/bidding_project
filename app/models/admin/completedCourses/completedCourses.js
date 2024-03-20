@@ -9,8 +9,8 @@ module.exports = class completedCourses {
                 .input('biddingId', sql.Int, biddingId)
                 .query(`SELECT TOP ${showEntry} cc.id, sd.student_name, cc.course_name 
                         FROM [${slug}].completed_courses cc 
-                        INNER JOIN [${slug}].student_data sd ON cc.sap_id = sd.sap_id WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND sd.bidding_session_lid = @biddingId
-                        ORDER BY cc.id`);
+                        INNER JOIN [${slug}].student_data sd ON cc.sap_id = sd.sap_id 
+                        WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND sd.bidding_session_lid = @biddingId AND sd.active = 1 ORDER BY cc.id`);
         });
     }
 
@@ -19,7 +19,8 @@ module.exports = class completedCourses {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .query(`SELECT COUNT(*) FROM [${slug}].completed_courses cc 
-                        INNER JOIN [${slug}].student_data sd ON cc.sap_id = sd.sap_id WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId`);
+                        INNER JOIN [${slug}].student_data sd ON cc.sap_id = sd.sap_id 
+                        WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND sd.bidding_session_lid = @biddingId AND sd.active = 1`);
         });
     }
 

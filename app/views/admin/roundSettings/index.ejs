@@ -1,13 +1,1128 @@
 <%- include('../partials/head') %>
-<%- include ('../partials/leftSidebar') %>
-<%- include ('../partials/header') %>
-<div class="main-content">      
+<%- include('../partials/leftSidebar.ejs') %>
+<%- include('../partials/header.ejs') %>
+<%- include('../partials/bread.ejs') %>
+
+    <div class="card card-custom-border-curv">
+        <div class="card-header-custom d-flex justify-content-between p-1">
+            <h4 class="ms-2">Round Settings</h4>
+                <% if (predefineRounds.length > 0) { %>
+                    <button type="button" class="btn add-btn-plus ms-auto me-3" data-bs-toggle="modal" data-bs-target="#add-round-settings-modal">
+                        <i class="fa-solid fa-plus p-1"></i>
+                    </button>  
+                <% } %>
+        </div>
+        <div class="card-body table-responsive">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <label>Show Entries</label>
+                    <select class="form-select" id="changeEntry">
+                        <%for(let page of locals.page_filter){%>
+                            <option value="<%-page%>"><%-page%></option>
+                        <%}%>
+                    </select>
+                </div>
+                <div>
+                    <div class="table-searchbar-container d-flex justify-content-around p-1">
+                        <button type="button" id="searchkeyword-button" class="border-0 outline-0">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <input type="search" id="searchkeyword" placeholder="Enter keywords" class="table-searchbar" autocomplete="off" size="24">
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-bordered mt-4" id="bidding-rounds-table">
+                <thead>
+                    <th>#</th>
+                    <th>Round Name</th>
+                    <th>Total Students</th>
+                    <th>Total Courses</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Actions</th>   
+                </thead>
+                <tbody>
+                    <% let count = 1 %>
+                    <%for(let round of biddingRounds) {%>
+                        <tr 
+                            data-round-id="<%- round.id %>" 
+                            data-round-lid="<%-round.round_lid %>" 
+                            data-bit-limit="<%- round.bid_limit %>" 
+                            data-start-time="<%- round.start_date_time_attr %>" 
+                            data-end-time="<%- round.end_date_time_attr %>" 
+                            data-total-students="<%- round.total_students %>" 
+                            data-total-course="<%- round.total_courses %>" 
+                            data-is-bid-limit="<%- round.is_bid_limit %>" 
+                            data-bid-limit-points="<%- round.bid_limit %>"
+                            data-round-name="<%-round.round_name %>"
+                        >
+
+                            <td><%- count++ %></td>
+                            <td><%- round.round_name %></td>
+                            <td><%- round.total_students %></td>
+                            <td><%- round.total_courses %></td> 
+                            <td><%- round.start_date_time %></td>
+                            <td><%- round.end_date_time %></td>
+                            <td>
+                                <a class="update-round-settings" data-bs-target="#update-round-settings" data-bs-toggle="modal">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a class="delete-round">
+                                    <i class="fa-solid fa-trash text-danger"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    <%}%>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <p>Total entries :&nbsp;
+                        <span id="page-no"></span>
+                    </p>
+                </div>
+                <div>
+                    <p id="pagination" class="pagination-search"></p>
+                </div>
+            </div>
+        </div>
+    </div>  
+
+    <!-- Beginning of student mapping modal -->
+    <div class="modal round-mapping-count" id="student-mapping-modal" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Select Students</h5>
+                    <div class="d-flex justify-content-between">
+                        <h5 class="px-3">Total Selected Students  : 
+                            <span id="total-selected-students">0</span>
+                        </h5>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-responsive table-bordered mt-4">
+                        <thead>
+                            <th>Id
+                                 <input type="checkbox" name="checked-students" id="checked-students">
+                            </th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Program</th>
+                        </thead>
+                        <tbody>
+                            <% for(let student of students) { %>
+                                <tr data-student-id="<%- student.student_lid %>">
+                                    <td><input type="checkbox" class="student-id-round">
+                                        <%- student.sap_id %>
+                                    </td>
+                                    <td><%- student.student_name %></td>
+                                    <td><%- student.email %></td>
+                                    <td><%- student.program_name %></td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success disabled" data-bs-dismiss="modal" id="save-sel-students">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Student mapping modal has been closed -->
+
+    <!-- Beginning of course mapping modal -->
+    <div class="modal round-mapping-count" id="course-mapping-modal" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Select Courses</h5>
+                    <div class="d-flex justify-content-between">
+                    <h5>Total Selected Courses : <span id="total-selected-courses">0</span></h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>  
+                </div>
+                <div class="modal-body">
+                    <table class="table table-responsive table-bordered mt-4">
+                        <thead>
+                            <th>Name</th>
+                            <th>Credits</th>
+                            <th>Action <input type="checkbox" name="checked-courses" id="checked-courses"></th>
+                        </thead>
+                        <tbody>
+                            <% for(let course of courses) { 
+                                %>
+                                <tr data-course-id="<%- course.id %>">
+                                    <td class="d-none"><%-course.id %></td>
+                                    <td><%- course.course_name %></td>
+                                    <td><%- course.credits %></td>
+                                    <td><input type="checkbox" class="courses-id-round"> </td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success disabled" id="save-sel-courses" data-bs-dismiss="modal">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Course mapping modal has been closed -->
+    
+    <!-- Beginning of Update student mapping modal -->
+    <div class="modal round-mapping-count" id="update-student-mapping-modal" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Update Round Settings </h5>
+                    <div class="d-flex justify-content-between">
+                        <h4 class="px-3">Total Selected Students  : 
+                            <span id="selected-student-count">0</span>
+                        </h4>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-responsive table-bordered mt-4" id ="course-list-checked">
+                        <thead>
+                            <th>
+                                Id 
+                                <input type="checkbox" name="checked-students" id="update-checked-students">
+                            </th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Program</th>
+                        </thead>
+                        <tbody>
+                            <% for(let student of students) { %>
+                                    <tr data-student-id = "<%- student.student_lid %>">
+                                        <td>
+                                            <input type="checkbox" class="update-student-id-round">
+                                            <%- student.sap_id %>
+                                        </td>
+                                        <td><%- student.student_name %></td>
+                                        <td><%- student.email %></td>
+                                        <td><%- student.program_name %></td>
+                                    </tr>
+                                <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success" data-bs-dismiss="modal" id="update-total-student">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- update student mapping modal has been closed -->
+
+    <!-- Beginning of Update course mapping modal -->
+    <div class="modal round-mapping-count" id="update-course-mapping-modal" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Update  Bidding Rounds</h3>
+                    <div class="d-flex justify-content-between">
+                        <h4>Total Selected Courses :
+                            <span id="update-courses-count">0</span>
+                        </h4>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>  
+                </div>
+                <div class="modal-body">
+                    <table class="table table-responsive table-bordered mt-4">
+                        <thead>
+                            <th>Name</th>
+                            <th>Credits</th>
+                            <th>Action 
+                                <input type="checkbox" name="update-checked-students" id="update-checked-courses">
+                            </th>
+                        </thead>
+                        <tbody>
+                            <% for(let course of courses) { %>
+                                <tr data-course-id = "<%-course.id %>" >
+                                    <td class="d-none"><%-course.id %></td>
+                                    <td><%- course.course_name %></td>
+                                    <td><%- course.credits %></td>
+                                    <td><input type="checkbox" class="round-settings-courses"> </td>
+                                </tr>
+                                <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success disabled" id="update-course" data-bs-dismiss="modal">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Update courses mapping modal has been closed -->
+
+    <!-- Beginning of add date time modal -->
+    <div class="modal" id="add-date-time-modal" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>Select Date Time</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <label class="mb-2" for="start-date-time">Start date time :</label>
+                    <input type="hidden" id="round-id">
+                    <input class="form-control" type="datetime-local" id="start-date-time">
+                    <label class="mb-2" for="end-date-time">End date time :</label>
+                    <input class="form-control" type="datetime-local" id="end-date-time">  
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success disabled" data-bs-dismiss="modal" id="save-date-time">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+     <!-- Add date time modal has been closed -->
+
+      <!-- Beginning of add round settings modal -->
+    <div class="modal" id="add-round-settings-modal">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Select Round Settings</h4>
+                    <button class="btn-close full-modal-left-sidebar" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body row custum-imp-program">
+                    <div class="col-md-3 border-end pe-2 ps-2" >
+                        <label class="mb-2" for="select-round" >Select Round Settings :</label>
+                        <input type="search" class="form-control p3 mb-3 search-in-filter" placeholder="Search Round Settings" id="select-round">
+                        <% for(let preDefineRound of predefineRounds ) { %>
+                            <div class="border p-3 mb-3 rounded rounds-div" 
+                            data-bidding-name="<%- locals.biddingName %>&nbsp;-&nbsp;<%-preDefineRound.round_name %>" 
+                            data-bidding-id ="<%- preDefineRound.id %>">
+                                <% if(locals.biddingName) { %>
+                                    <%- locals.biddingName %>&nbsp; - &nbsp;<%-preDefineRound.round_name %>
+                                <% } %>
+                            </div>
+                        <% } %>
+                  
+                    </div>
+                    <div class="col-md-9 custm_padd p-2 ps-2">
+                        <table class="table-responsive table-bordered table import-round-table" id="import-round-table">
+                            <thead>
+                                <th>Rounds Name</th>
+                                <th>Total Students</th>
+                                <th>Total Courses</th>
+                                <th>Start Date Time</th>
+                                <th>End Date Time</th>
+                                <th>Set Bid Point</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success disabled" id="import-rounds">Import Round Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Add round settings modal has been closed -->
+
+    <!-- Beginning of update round settings modal -->
+    <div class="modal" id="update-round-settings" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Round Settings</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="bidding-rounds">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label" for="round-name">Round Name :</label>
+                            <input class="form-control" type="text" id="round-name" disabled>
+                        </div>
+                    </div>
+                      
+                    <div class="row empty">
+                        <div class="col-md-6">
+                            <label class="mb-2" for="start-date-time">Start date time :</label>
+                            <input class="form-control is-empty" type="datetime-local" id="round-start-time">
+                            <span class="text-danger d-none is-in-valid" ></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="mb-2" for="end-date-time">End date time :</label>
+                            <input class="form-control is-empty" type="datetime-local" id="round-end-time"> 
+                            <span class="text-danger d-none is-in-valid" ></span>
+                        </div>
+                    </div>
+                   
+                    <div class="row empty mt-4">
+                        <div class="col-md-6 d-flex">          
+                            <div class="input-group mb-3">
+                                <button class="btn btn-danger text-white" type="button"  data-bs-target="#update-student-mapping-modal" data-bs-toggle="modal" >Total Students</button>
+                                <input type="text" class="form-control is-empty is-number" placeholder="total students" id="total-students"  autocomplete="off" disabled>
+                                <span class="text-danger d-none is-in-valid" ></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 d-none update-total-course round-wise-hide">
+                            <div class="input-group mb-3">
+                                <button class="btn btn-danger text-white" type="button" data-bs-target="#update-course-mapping-modal" data-bs-toggle="modal" >Total Courses</button>
+                                <input type="text" class="form-control is-empty is-number" placeholder="total courses" id="total-courses" autocomplete="off" disabled>
+                                <span class="text-danger d-none is-in-valid" ></span>
+                            </div>
+                        </div>
+                        <div class="is-bid-limit round-wise-hide col-md-6 d-none">
+                            <div>
+                                <label for="bid-point-limit-per-bid" class="form-label">Bid Point Limit Per Bid :</label>
+                                <div class="d-flex is-bid-limit-check">
+                                    <div class="d-flex pe-4 justify-content-between">
+                                        <div class="d-flex justify-content-between pe-4">
+                                            <label for="yes" class="px-2">Yes</label>
+                                            <input type="radio" name="bid-point-limit" id="yes" value="Yes" class="px-2">
+                                        </div>
+                                        <input type="text" class="form-control bid-point-limit-per-bid is-number d-none" size="8" placeholder="Enter bid Points" id="edit-bid-limit-points">
+                                    </div>
+                                    <span class="text-danger d-none is-in-valid" >Enter Bid Points</span>
+                                    <div>
+                                        <label for="no">No</label>
+                                        <input type="radio" name="bid-point-limit" id="no" value="No">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" id="update-rounds">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Update round settings modal has been closed -->
 </div>
-</main>
-<%- include('../partials/footer') %>
+
+<%- include('../partials/footer.ejs') %>
 <script>
-     $(document).ready(function(){
-        setActiveMenuItem(`<%- active %>`) 
-});
+$(document).ready(function() {
+    
+    let pageCount = `<%- pageCount %>`;
+    let studentList = [];
+    let courseList = [];
+    let roundWiseStudents = [];
+    let roundWiseCourses = [];
+    let updateRoundWiseStudents = [];
+    let updateRoundWiseCourses = [];
+    let importRoundDetails = [];
+    setActiveMenuItem(`<%- active %>`)
+    $('#page-no').html(pageCount);
+    
+    // Triggered when selecting a pre-defined round name with the bidding name in the "select round settings" event
+    $(document).on('click', '.rounds-div', function(event) {
+        studentList = [];
+        courseList = [];
+        let canProceed = true;
+        let roundName = $(this).data('bidding-name');
+        let id = $(this).data('bidding-id');
+    
+        $('#import-round-table tbody tr').each(function(index, ele) {
+            let totalStudents = Number($(ele).find('td.total-students').text());
+            let totalCourses = Number($(ele).find('td.total-course-count').text());
+            let startDateTime = $(ele).children('td.start-date-time').text();
+            let endDateTime = $(ele).children('td.end-date-time').text();
+            if ((totalStudents === 0) || (totalCourses === 0) || startDateTime === 'NA' || endDateTime === 'NA') {
+                createToastError('Please Enter Previous Row Entry First')
+                canProceed = false;
+                return false; 
+           }
+        });
+        if (!canProceed) {
+            return;
+        }
+
+        let importRow = `
+        <tr data-round-name = "${roundName}" data-round-id = "${id}">
+            <td>${roundName}</td>
+            <td class="total-students">
+                <button data-bs-target="#student-mapping-modal" data-bs-toggle="modal" class="w-100 p-0 border-0">
+                    <div class = "w-100" >
+                        <span class="badge bg-danger w-100">
+                            <i class="fa-solid fa-circle-plus"></i>
+                        </span>
+                    </div>
+                </button>
+            </td>
+            ${id == '1' ?
+             `<td class="total-course-count">
+                   <button data-bs-target="#course-mapping-modal" data-bs-toggle="modal" type="button" class="w-100 p-0 border-0">
+                      <div id="add-course-mapping-modal" class="w-100">
+                           <span class="badge bg-danger w-100">
+                             <i class="fa-solid fa-circle-plus"></i>
+                           </span>
+                       </div>
+                    </button>
+             </td>` :
+            `<td class="total-course-count disabled">NA</td>`}
+            <td class="start-date-time">NA</td>
+            <td colspan="2" class="date-time-cell d-none">
+                <button data-bs-target="#add-date-time-modal" data-bs-toggle="modal" class="btn btn-primary" id="add-date-time">
+                    Add Date Time
+                </button>
+            </td>
+            <td class="end-date-time">NA</td>
+            <td class="${id != '2' && id != '4' ? 'disabled-in-bidding-rounds' : ''}"><label for = "yes">Yes</label>
+                <input type = "radio" name ="bid-point-limit-${id}" id = "yes" value = "Yes">
+                <input type = "text" id ="bid-point-limit-per-bid" class ="d-none" size="8" placeholder="Enter bid Points">
+                <label for = "no">No</label>
+                <input type = "radio" name ="bid-point-limit-${id}" id = "no" value = "No">
+                </td>
+            <td><i class="fa fa-trash text-danger delete-round"></i></td>
+        </tr>`;
+        let importRoundsTbody = $('.import-round-table tbody');
+        importRoundsTbody.append(importRow);
+    
+        $(this).remove();
+    });
+   
+    // Triggered when clicking the "Add" button in the total student column of the previously created table, opening the student-mapping-modal
+    $('#student-mapping-modal').on('show.bs.modal',function(event){
+        $('#checked-students').prop('checked', false);
+        $('.student-id-round').prop('checked',false);
+        let roundId = $(event.relatedTarget).closest('tr').data('round-id');
+        $('#round-id').val(roundId);
+        $('#student-mapping-modal').attr('data-round-id', roundId);   
+    })
+    
+    // Triggered when clicking the "Add" button in the total Courses column of the previously created table, opening the course-mapping-modal
+    $('#course-mapping-modal').on('show.bs.modal', function (event) {
+        $('#checked-students').prop('checked', false);
+        $('.course-id-round').prop('checked', false);
+        let roundId = $(event.relatedTarget).closest('tr').data('round-id');
+        $('#round-id').val(roundId);
+        $('#course-mapping-modal').data('round-id', roundId);
+    });
+
+    // Triggered when saving the list of selected students by checking the checkboxes and then clicking the "Save" button in the student-mapping-modal
+    $('#student-mapping-modal').on('click', '#save-sel-students', function () {
+        let roundStudents = $('#student-mapping-modal .table tbody tr td input[type="checkbox"]:checked').length;
+        let students = [];
+        let roundId = $('#round-id').val();
+        $('#student-mapping-modal .table tbody tr td input[type="checkbox"]:checked').each(function (index, selStudents) {
+            students.push($(selStudents).closest('tr').data('student-id'));
+        });
+        $('#add-round-settings-modal .modal-body .table-responsive tbody tr').each(function (index, element) {
+            if ($(element).data('round-id') == roundId) {
+                $(this).data('total-student-counts', roundStudents);
+                $(element).children('td.total-course-count').removeClass('disabled');
+                $(this).children('td.total-students').html(roundStudents);
+            }
+        });
+        if (Number(roundId) > 1) {
+            $('#import-round-table tbody tr:last-child').find('.start-date-time').addClass('d-none');
+            $('#import-round-table tbody tr:last-child').find('.end-date-time').addClass('d-none');
+            $('#import-round-table tbody tr:last-child').find('.date-time-cell').removeClass('d-none');
+            
+            $('#add-date-time').removeClass('d-none');
+            $('#import-round-table tbody tr:last-child').find('.date-time-cell button').attr('data-round-id', roundId);
+
+        }
+        roundWiseStudents.push(students);
+        $('#student-mapping-modal').removeData('round-id');
+    });
+
+    // Triggered when saving the list of selected courses by checking the checkboxes and then clicking the "Save" button in the course-mapping-modal
+    $('#course-mapping-modal').on('click', '#save-sel-courses', function() {
+        let courses = $('#course-mapping-modal .table tbody tr td input[type="checkbox"]:checked').length;
+
+        $('#course-mapping-modal .table tbody tr td input[type="checkbox"]:checked').each(function(index, selCourses) {
+            courseList.push($(selCourses).closest('tr').data('course-id'));
+        });
+
+        let roundId = $('#course-mapping-modal').data('round-id');
+       
+        $('#add-round-settings-modal .modal-body .table-responsive tbody tr').each(function(index, element) {
+            if ($(element).data('round-id') == roundId) {
+                $(this).attr('data-total-courses-counts', courses);
+                $(this).children('td.total-course-count').html(courses);
+                $('#import-round-table tbody tr:last-child').find('.start-date-time').addClass('d-none');
+                $('#import-round-table tbody tr:last-child').find('.end-date-time').addClass('d-none');
+                $('#import-round-table tbody tr:last-child').find('.date-time-cell').removeClass('d-none');
+                $('#import-round-table tbody tr:last-child').find('.date-time-cell button').attr('data-round-id', roundId);
+            }
+        });
+
+        roundWiseCourses.push(courseList);
+    });
+
+   // Triggered when saving the start and end time by clicking the "Save" button in the add-date-time-modal
+    $('#add-date-time-modal').on('click','#save-date-time',function(){
+
+        let startDateTime = $('#start-date-time').val().replace('T',' ');
+        let endDateTime = $('#end-date-time').val().replace('T',' ');
+        let roundId = $('#round-id').val();
+
+        $('#import-round-table tbody tr:last-child').find('.start-date-time').removeClass('d-none');
+        $('#import-round-table tbody tr:last-child').find('.end-date-time').removeClass('d-none');
+        $('#import-round-table tbody tr:last-child').find('.date-time-cell').addClass('d-none');
+
+        $('#add-date-time').addClass('d-none');
+        $('#add-round-settings-modal .modal-body .table-responsive tbody tr').each(function(index,element) {
+  
+            if(($(element).data('round-id')) == roundId){
+              $(element).children('.end-date-time').html(endDateTime);
+              $(element).children('.start-date-time').html(startDateTime);
+              $(element).attr('start-date-time',startDateTime);
+              $(element).attr('end-date-time',endDateTime);
+            }
+        });      
+   });   
+   
+
+    // Triggered when importing the round settings by clicking the "Import Rounds" button
+    $(document).on('click', '#import-rounds', function() {
+
+        let biddingSessionId = $('#biddingSessionDropdown').data('session-id');
+        let importRounds = [];
+
+        $('.import-round-table tbody tr').each((index, element) => {
+        
+            let importRound = {};
+            let biddingRoundsName = $(element).data('round-name');
+            let totalStudentCount = $(element).data('total-student-counts');
+            let totalCourseCount = $(element).data('total-courses-counts');
+            let startDateTime = $(element).attr('start-date-time').concat(':00.000');
+            let endDateTime = $(element).attr('end-date-time').concat(':00.000');
+            let roundId = $(element).data('round-id');
+            let isBidLimit = $(element).find(`input[name="bid-point-limit-${roundId}"]:checked`).val() === 'Yes' ? 1 : 0;
+            let bidPointLimit = isBidLimit === 1 ? $(element).find('#bid-point-limit-per-bid').val() : 0;
+            importRound.round_name = biddingRoundsName;
+            importRound.total_students = totalStudentCount;
+            importRound.total_courses = totalCourseCount;
+            importRound.start_date_time = startDateTime;
+            importRound.end_date_time = endDateTime;
+            importRound.round_id = roundId;
+            importRound.student_list = roundWiseStudents[index] != undefined ? roundWiseStudents[index] : [];
+            importRound.course_list = roundWiseCourses[index] != undefined ? roundWiseCourses[index] : [];
+            importRound.div_batch_list = [];
+            importRound.bid_limit = bidPointLimit;
+            importRound.is_bid_limit = isBidLimit;
+            importRounds.push(importRound);
+        });
+
+        let roundId = $('#import-round-table tbody tr:last').data('round-id');
+        let importRoundsDetails = {
+            round_setting: importRounds,
+        };
+
+        let ApiObj = {
+            type: 'POST',
+            url: '/admin/round-setting/create',
+            data: {
+                inputJSON: JSON.stringify(importRoundsDetails),
+                biddingSessionId: biddingSessionId
+            },
+            dataType: 'JSON'
+        };
+
+        ajaxApi(ApiObj)
+            .then(result => {
+                createToastMessage(result.description);
+            })
+            .catch(error => {
+                createToastError(error.responseJSON.description);
+            });
+    });
+
+    
+        $('#add-date-time-modal').on('show.bs.modal', function (e) {
+            let roundId = $('#add-date-time-modal').data('round-id');
+            $('#round-id').val(roundId);
+        });
+
+
+    //This function activates upon clicking the checkbox to select all students for a round in the student-mapping-modal.
+    $('#student-mapping-modal').on('change','#checked-students', function() {
+        if (this.checked) {
+           $('.student-id-round').removeClass('d-none');
+           $('.student-id-round').prop('checked', true);
+           $('#save-sel-students').removeClass('disabled');
+           let selStudents = $('#student-mapping-modal .table tbody input[type="checkbox"]:checked').length;
+           $('#total-selected-students').html(selStudents);
+        } else {
+        $('.student-id-round').prop('checked', false); 
+           $('#save-sel-students').addClass('disabled');  
+           $('#total-selected-students').html(0);
+        }
+    });
+
+    $('#student-mapping-modal').on('change','.student-id-round', function() {
+        if (this.checked) {
+            let roundStudents = $('#student-mapping-modal table tbody input[type="checkbox"]:checked').length;
+            $('#save-sel-students').removeClass('disabled');
+            $('#total-selected-students').html(roundStudents);
+        } else {
+            let roundStudents = $('#student-mapping-modal table tbody input[type="checkbox"]:checked').length;
+            if(roundStudents == 0 ){
+                $('#save-sel-students').addClass('disabled'); 
+            }
+            $('#total-selected-students').html(roundStudents);   
+        }
+    });
+
+     //This function activates upon clicking the checkbox to select all courses for a round in the course-mapping-modal.
+    $('#course-mapping-modal').on('change','#checked-courses', function() {
+        if (this.checked) {
+            $('.courses-id-round').prop('checked', true);
+           let courseCount = $('#course-mapping-modal .table tbody input[type="checkbox"]:checked').length;
+           $('#save-sel-courses').removeClass('disabled');
+           $('#total-selected-courses').html(courseCount);
+           
+        } else {
+           $('.courses-id-round').prop('checked', false);
+           $('#save-sel-courses').addClass('disabled');  
+           $('#total-selected-courses').html(0);
+        }
+    });
+
+    $('#course-mapping-modal').on('change','.courses-id-round', function() {
+        if (this.checked) {
+            let courseCount = $('#course-mapping-modal .table tbody input[type="checkbox"]:checked').length;
+            $('#save-sel-courses').removeClass('disabled');
+            $('#total-selected-courses').html(courseCount);
+        } else {
+            let courseCount = $('#course-mapping-modal .table tbody input[type="checkbox"]:checked').length;
+            if(courseCount == 0 ){
+                $('#save-sel-students').addClass('disabled'); 
+            }
+            $('#total-selected-courses').html(courseCount);   
+        }
+    });
+    //This function is invoked when the user updates the course list for a round in the update-course-mapping-modal.
+    $('#update-course-mapping-modal').on('change','#update-checked-courses',function(){
+        
+        if(this.checked){
+            $('.round-settings-courses').prop('checked', true);
+            let roundCourses = $('#update-course-mapping-modal .table tbody tr td input[type="checkbox"]:checked').length;
+            $('#update-course').removeClass('disabled');
+            $('#selected-courses-count').html(roundCourses);
+        }
+        else{
+            $('.round-settings-courses').prop('checked', false);
+            $('#selected-courses-count').html(0);
+        }
+    })
+
+    $('#update-course-mapping-modal').on('change','.round-settings-courses', function() {
+        if (this.checked) {
+            let courseCount = $('#update-course-mapping-modal .table tbody input[type="checkbox"]:checked').length;
+            $('#update-course').removeClass('disabled');
+            $('#update-courses-count').html(courseCount);
+        } else {
+            let courseCount = $('#update-course-mapping-modal .table tbody input[type="checkbox"]:checked').length;
+            if(courseCount == 0 ){
+                $('#update-course').addClass('disabled'); 
+            }
+            $('#update-courses-count').html(courseCount);   
+        }
+    });
+
+    //This function is invoked when the user updates the student list for a round in the update-student-mapping-modal.
+    $('#update-student-mapping-modal').on('change','.update-student-id-round',function(){
+        if(this.checked){
+
+            let roundStudents = $('#update-student-mapping-modal .table tbody input[type="checkbox"]:checked').length;
+            $('.update-student-id-round').removeClass('d-none');
+            $('#update-total-student').removeClass('disabled');
+            $('#selected-student-count').html(roundStudents);
+       }else{
+	        let roundStudents = $('#update-student-mapping-modal .table tbody input[type="checkbox"]:checked').length;
+	        if(roundStudents == 0){
+	            $('#update-total-student').addClass('disabled');
+	        }
+            $('#selected-student-count').html(roundStudents);
+            }
+    })
+
+    //This function triggers when the user clicks the 'edit' button ('update-round-settings') in the 'Total Actions' column of the homepage table, opening the update-round-settings modal.
+    $('#update-round-settings').on('show.bs.modal', function(event) {
+    
+        let updateRoundId = $(event.relatedTarget).closest('tr').data('round-id');
+        let updateRoundLid = $(event.relatedTarget).closest('tr').data('round-lid');
+        let bitLimit = $(event.relatedTarget).closest('tr').data('bit-limit');
+        let totalStudent = $(event.relatedTarget).closest('tr').data('total-students');
+        let totalCourses = $(event.relatedTarget).closest('tr').data('total-course');
+        let startDate = $(event.relatedTarget).closest('tr').data('start-time');
+        let endDate = $(event.relatedTarget).closest('tr').data('end-time');
+        let isBidLimit = $(event.relatedTarget).closest('tr').data('is-bid-limit');
+        let bidLimitPoints = $(event.relatedTarget).closest('tr').data('bid-limit-points');
+        let roundName = $(event.relatedTarget).closest('tr').data('round-name');
+
+        $(`#update-course-mapping-modal .table tbody tr`).find('.round-settings-courses').prop('checked', false);
+        $(`#update-student-mapping-modal .table tbody tr`).find('input[type="checkbox"]').prop('checked', false);
+
+        let ApiObj = {
+            type: 'POST',
+            url: '/admin/round-settings/mappings',
+            data: {
+                roundId: updateRoundLid
+            },
+            datatype: 'JSON'
+        };
+
+        ajaxApi(ApiObj).then(result => {
+            let studentList = result.studentsMapping;
+            let courseList = result.coursesMapping;
+
+            $('#update-student-mapping-modal #selected-student-count').html(studentList.length);
+            $('#selected-courses-count').html(courseList.length);
+
+            studentList.forEach(student => {
+                $(`#update-student-mapping-modal .table tbody tr[data-student-id=${student.student_lid}] input[type="checkbox"]`).prop('checked', true);
+            });
+
+            courseList.forEach(course => {
+                $(`#update-course-mapping-modal .table tbody tr[data-course-id=${course.course_lid}]`).find('.round-settings-courses').prop('checked', true);
+            });
+        }).catch(error => {
+
+        });
+
+        if (isBidLimit == '1') {
+            $('#update-round-settings .is-bid-limit').removeClass('d-none');
+            $('#update-round-settings #edit-bid-limit-points').val(bidLimitPoints);
+            $('#update-round-settings input[value="Yes"]').prop('checked', true);
+            $('#update-round-settings #edit-bid-limit-points').removeClass('d-none');
+        } else {
+            $('#update-round-settings .is-bid-limit').addClass('d-none');
+            $('#update-round-settings input[value="No"]').prop('checked', false);
+        }
+
+        $('#update-round-settings #round-start-time').val(startDate).trigger('input');
+        $('#update-round-settings #round-end-time').val(endDate).trigger('input');
+        $('#update-round-settings #round-name').val(roundName);
+
+        $('#update-round-settings #total-students').val(totalStudent);
+        $('#update-round-settings #total-courses').val(totalCourses);
+        $('#round-id').val(updateRoundId);
+        $(this).attr('data-round-id', updateRoundId);
+
+        if (updateRoundLid == 1) {
+            $('#update-round-settings .update-total-course').removeClass('d-none');
+        } else {
+            $('#update-round-settings .update-total-course').addClass('d-none');
+            $('#update-round-settings .bid-limit').removeClass('d-none');
+        }
+
+        $('#checked-students').prop('checked', false);
+        $('#bidding-rounds').val(updateRoundId);
+        $('#bidding-rounds').attr('round-lid', updateRoundLid);
+    }); 
+
+    //This function is specifically designed for Bidding I and Bidding II. It activates when the user clicks on the 'Bid Point Limit Per Bid' column in the add-round-settings-modal.
+    $('#import-round-table').on('click', 'input[name^="bid-point-limit"]', function() {
+        const isChecked = $(this).val();
+        const closestRow = $(this).closest('tr');
+        const bidLimitPerBid = closestRow.find('#bid-point-limit-per-bid');
+
+        if (isChecked === 'Yes') {
+            bidLimitPerBid.removeClass('d-none').focus();
+        } else {
+            bidLimitPerBid.val(0).addClass('d-none');
+        }
+    });
+
+    //This function is tailored for Bidding I and Bidding II. It activates when the user updates round settings and clicks on the 'Bid Point Limit Per Bid' column in the add-round-settings-modal.
+    $('#update-round-settings').on('click', 'input[name="bid-point-limit"]', function() {
+        const closestDiv = $(this).closest('div.is-bid-limit-check');
+        const bidLimitPerBid = $closestDiv.find('.bid-point-limit-per-bid');
+    
+        if ($(this).val() === 'Yes') {
+            bidLimitPerBid.removeClass('d-none').focus();
+        } else {
+            bidLimitPerBid.addClass('d-none');
+        }
+    });
+
+  //This function triggers when the user fills in the end-date-time value in the add-date-time-modal.
+    $('#add-date-time-modal').on('change','#end-date-time',function(){
+        $('#save-date-time').removeClass('disabled');
+        $('#add-round-settings-modal #import-rounds').removeClass('disabled');
+    })
+         
+    // Triggered when updating the round setting and updating the student count by changing the checked checkboxe
+    $('#update-student-mapping-modal').on('click', '#update-total-student', function() {
+        updateRoundWiseStudents = [];
+        let students = $('#update-student-mapping-modal .table tbody tr td input[type="checkbox"]:checked').length;
+        
+        $('#update-student-mapping-modal .table tbody tr td input[type="checkbox"]:checked').each(function(index, selStudents) {
+            studentList.push($(selStudents).closest('tr').data('student-id'));
+        });
+
+        let roundId = $('#student-mapping-modal').data('round-id');
+
+        $('#add-round-settings-modal .modal-body .table-responsive tbody tr').each(function(index, element) {      
+            let tableRoundId = $(element).data('round-id');
+
+            if (tableRoundId == roundId) {
+                $(this).attr('data-total-student-counts', students);
+                $(element).children('td.total-course-count').removeClass('disabled');
+                $(this).children('td.total-students').html(students);        
+            }
+        });
+
+        if (Number(roundId) > 1) {
+            $('#add-date-time').removeClass('d-none');
+            $('#add-date-time').attr('data-round-id', roundId);
+        }
+
+        updateRoundWiseStudents.push(studentList);
+        $('#total-students').val(studentList.length);
+        $('#selected-student-count').html(studentList.length);
+    });
+
+
+    // Triggered when the add date-time modal is opened
+    $('#add-date-time-modal').on('show.bs.modal', function(event) {
+        $('#start-date-time').val('');
+        $('#end-date-time').val('');
+        let roundId = $(event.relatedTarget).data('round-id');
+        $('#round-id').val(roundId);
+        $('#add-date-time').data('round-id', roundId);
+    });
+
+    // Triggered when updating the course by clicking the "Update Course" button in the update-course-mapping-modal
+    $('#update-course-mapping-modal').on('click', '#update-course', function() {
+        let courses = $('#update-course-mapping-modal .table tbody tr td input[type="checkbox"]:checked').length;
+
+        $('#update-course-mapping-modal .table tbody tr td input[type="checkbox"]:checked').each(function(index, selCourses) {
+            courseList.push($(selCourses).closest('tr').data('course-id'));
+        });
+
+        let roundId = $('#update-round-settings').data('round-id');
+
+        updateRoundWiseCourses.push(courseList);
+        $('#total-courses').val(courseList.length);
+        $('#selected-courses-count').html(courseList.length);
+    });
+
+   // Triggered when updating the student list by clicking the "Update" button in the update-student-mapping-modal
+    $('#update-student-mapping-modal').on('click', '#update-total-student', function() {
+        studentList = [];
+
+        $('#update-student-mapping-modal .table tbody tr td input[type="checkbox"]:checked').each(function(index, selStudent) {
+            studentList.push($(selStudent).closest('tr').data('student-id'));
+        });
+
+        roundWiseStudents.push(studentList);
+        $('#total-students').val(studentList.length);
+        $('#selected-student-count').html(studentList.length);
+    });
+
+    // Triggered when deleting a round by clicking the trash bin icon in the action column of the side table inside the add-round-settings-modal
+    $('.import-round-table').on('click', '.delete-round', function(event) {
+        $('#add-date-time').addClass('d-none');
+        $('#import-rounds').addClass('disabled');
+
+        let roundName = $(this).closest('tr').data('round-name');
+        let roundId = $(this).closest('tr').data('round-id');
+        let students = $(this).closest('tr').data('total-student-counts');
+        let courses = $(this).closest('tr').data('total-courses-counts');
+
+        let roundsDiv = $('<div>').addClass('border p-3 mb-3 rounded rounds-div');
+        roundsDiv.html(roundName);
+        roundsDiv.attr('data-bidding-name', roundName);
+        roundsDiv.attr('data-bidding-id', roundId);
+
+        $(this).closest('tr').remove();
+
+        roundsDiv.insertAfter('#add-round-settings-modal .search-in-filter');
+        roundsDiv.addClass('d-block');
+    });
+    
+  // Executed when the delete button on the home page is clicked in the bidding-rounds-table
+    $('#bidding-rounds-table').on('click', '.delete-round', function() {
+        let deleteBiddingRoundId = $(this).closest('tr').data('round-lid');
+        let biddingSessionId = $('#biddingSessionDropdown').data('session-id');
+        let ApiObj = {
+            url: '/admin/round-setting/delete',
+            type: 'POST',
+            data: {
+                biddingRoundId: deleteBiddingRoundId,
+                biddingSessionId: biddingSessionId
+            },
+            dataType: 'JSON'
+        };
+        ajaxApi(ApiObj)
+            .then(result => {
+                $(this).closest('tr').remove();
+                createToastMessage(result.description);
+            })
+            .catch(error => {
+                createToastError(JSON.stringify(error.responseJSON.description));
+            });
+    });
+
+   // Executed when the update button on the home page is clicked in the bidding-rounds-table
+    $('#update-round-settings').on('click', '#update-rounds', function() {
+        let biddingSessionId = $('#biddingSessionDropdown').data('session-id');
+        let startDateTime = $('#round-start-time').val().replace('T', ' ').concat(':00.000');
+        let endDateTime = $('#round-end-time').val().replace('T', ' ').concat(':00.000');
+        let students = $('#total-students').val();
+        let courses = $('#total-courses').val();
+        let id = $('#bidding-rounds').val();
+        let roundLid = $('#bidding-rounds').attr('round-lid');
+        let bidPoints = $('.bid-point-limit-per-bid').val();
+        let isBidLimit = bidPoints > 0 ? 1 : 0;
+
+        if (updateRoundWiseStudents.length == 0) {
+            $("#update-total-student").trigger('click');
+        }
+        if (updateRoundWiseCourses.length == 0) {
+            $("#update-course").trigger('click');
+        }
+
+        let updateRound = {
+            id: id,
+            round_id: roundLid,
+            total_students: students,
+            total_courses: courses,
+            start_date_time: startDateTime,
+            end_date_time: endDateTime,
+            student_list: updateRoundWiseStudents[0],
+            course_list: updateRoundWiseCourses[0],
+            div_batch_list: [],
+            bid_limit: bidPoints,
+            is_bid_limit: isBidLimit
+        };
+
+        let updateRoundDetails = {
+            round_setting: updateRound,
+        };
+
+        let ApiObj = {
+            type: 'POST',
+            url: '/admin/round-setting/update',
+            data: {
+                inputJSON: JSON.stringify(updateRoundDetails)
+            },
+            dataType: 'JSON'
+        };
+
+        ajaxApi(ApiObj)
+            .then(result => {
+                createToastMessage(result.description);
+            })
+            .catch(error => {
+                createToastError(JSON.stringify(error.responseJSON.description));
+            });
+    }); 
+
+    // Called when the search input searches for a word
+    $('#searchkeyword').on('input', function() {
+        let areaValue = $(this).val().trim();
+        let showEntry = $('#changeEntry').val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/admin/round-setting/search',
+            data: {
+                searchLetter: areaValue,
+                showEntry: showEntry
+            },
+            success: function(data) {
+                paginationData(showEntry, data.length);
+                AjaxtTable(data.data);
+                $('#page-no').html(data.length);
+            }
+        });
+    });
+
+    // Triggered when clicking the pagination tag to navigate pages
+    $(".pagination-search").on('click', '.pagination li', function() {
+        let keyword = $("#searchkeyword").val();
+        let showEntry = $('#changeEntry').val();
+        let pageNo = $(this).attr('data-lp');
+
+        $.ajax({
+            type: "POST",
+            url: "/admin/round-setting/search",
+            data: {
+                searchLetter: keyword,
+                pageNo: pageNo,
+                showEntry: showEntry
+            },
+            success: function(data) {
+                AjaxtTable(data.data);
+                $('#page-no').html(data.length);
+            }
+        });
+    });
+
+    $('.search-in-filter').on('input', function () {
+        selectItems = $('.rounds-div')
+        let text = $('.search-in-filter').val().toLowerCase();
+            for (let item of selectItems) {
+                if (item.textContent.toLowerCase().indexOf(text) > -1) {
+                    $(item).removeClass("d-none");
+                } else {
+                    $(item).addClass("d-none");
+                }
+            };
+    })
+});   
+    function AjaxtTable(rounds) {
+        
+        if ($('#student-data-checkbox').prop('checked')) {
+            $('#student-data-checkbox').prop('checked', false);
+        }
+
+        $("#student-data-table tbody").empty();
+        let AjaxTable = ``;
+        if (rounds.length > 0) {
+            let count = 1;
+            for (round of rounds) {
+                
+                AjaxTable +=
+                        `<tr 
+                            data-round-id="${round.id}" 
+                            data-round-lid="${round.round_lid}" 
+                            data-bit-limit="${round.id}" 
+                            data-start-time="${round.start_date_time_attr}" 
+                            data-end-time="${round.end_date_time_attr}" 
+                            data-total-students="${round.total_students}" 
+                            data-total-course="${round.total_courses}" 
+                            data-is-bid-limit="${round.total_students}" 
+                            data-bid-limit-points="${round.id}" 
+                            data-is-bid-limit="${round.is_bid_limit}"
+                            data-round-name = "${round.round_name}"
+                        >
+                                <td>${count++}</td>
+                                <td>${round.round_name}</td>
+                                <td>${round.total_students}</td>
+                                <td>${round.total_courses}</td>
+                                <td>${round.start_date_time}</td>
+                                <td>${round.end_date_time}</td>
+                                <td> 
+                                    <a data-bs-target="#update-round-settings" data-bs-toggle="modal">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <a class="delete-round"><i class="fa-solid fa-trash text-danger"></i></a>
+                                </td>
+                        </tr>`
+            }
+        }
+              
+        $("#bidding-rounds-table tbody").html(AjaxTable);
+    }
 </script>
-<%- include('../partials/footerEnd') %>
+ 
+
+
+<%- include('../partials/footerEnd.ejs') %>

@@ -4,6 +4,7 @@ const isJsonString = require('../../../utils/util');
 module.exports = {
 
     getPage: (req, res) => {
+        let sidebarActive = req.sidebarActive.split('/');
         Promise.all([
             specialization.getList(res.locals.slug, res.locals.biddingId, req.body.showEntry),
             specialization.getCount(res.locals.slug, res.locals.biddingId)
@@ -11,7 +12,7 @@ module.exports = {
             res.render('admin/specialization/index.ejs', {
                 specializationList: result[0].recordset,
                 pageCount: result[1].recordset[0][''],
-                active: 'dashboard',
+                active: sidebarActive[2],
                 breadcrumbs: req.breadcrumbs
             });
         });

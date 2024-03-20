@@ -1,23 +1,23 @@
 const student = require('../../../models/Students');
-const programSession = require('../../../models/admin/programs/programsession');
+const programSession = require('../../../models/admin/programSession/programsession');
 const course = require('../../../models/admin/course/course');
 
 module.exports = {
   
-    getDashBoard: (req, res) => {
+    getPage: (req, res) => {
       let studentHomePageUrl = req.route.path.split('/');
       let studentHomePage = studentHomePageUrl[studentHomePageUrl.length - 1];
 
       Promise.all([
         programSession.creditsPoint(res.locals.slug, res.locals.biddingId),
         student.studentDetail(res.locals.slug, res.locals.biddingId, res.locals.username),
-        student.concentrationList(res.locals.slug, res.locals.biddingId),
-        student.confirmaCourseList(res.locals.slug, res.locals.biddingId, res.locals),
-        student.dropCourseList(res.locals.slug, res.locals.biddingId, res.locals),
-        student.winningCourseList(res.locals.slug, res.locals.biddingId),
-        student.waitListCouresList(res.locals.slug, res.locals.biddingId),
+        student.concentrations(res.locals.slug, res.locals.biddingId),
+        student.confirmaCourses(res.locals.slug, res.locals.biddingId, res.locals),
+        student.dropCourses(res.locals.slug, res.locals.biddingId, res.locals),
+        student.winningCourses(res.locals.slug, res.locals.biddingId),
+        student.waitListCouress(res.locals.slug, res.locals.biddingId),
         student.confirmCreditsCounts(res.locals.slug, res.locals.biddingId),
-        student.completedCourseList(res.locals.slug, res.locals.biddingId, res.locals.useSapId)
+        student.completedCourses(res.locals.slug, res.locals.biddingId, res.locals.useSapId)
       ]).then(result => {
         res.render('student/dashboard/index', {
           active: studentHomePage,
@@ -30,7 +30,7 @@ module.exports = {
           winningCourseList: result[5].recordset,
           waitListCourseList: result[6].recordset,
           confirmCreditsCount: result[7].recordset[0].total_confirm_credits,
-          completeCoureseList: result[8].recordset
+          completedCoureses: result[8].recordset
         });
       });
     },
@@ -83,7 +83,7 @@ module.exports = {
     });
   },
 
-  saveSpecialization: (req, res) => {
+  save: (req, res) => {
     student.saveSpecialization(res.locals.slug, req.body.inputJSON, res.locals.biddingId, res.locals.userId).then(result => {
       res.status(200).json(JSON.parse(result.output.output_json));
     }).catch(error => {

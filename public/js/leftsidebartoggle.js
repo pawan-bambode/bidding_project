@@ -1,4 +1,4 @@
-$(document).on('click', '.fa-angles-left', function() {
+$('.top-navbar').on('click', '.fa-angles-left', function() {
     $('.left-sidebar').addClass('hide');
     $('.main').css('left', '80px');
     $('.top-navbar').css('left', '80px');
@@ -9,7 +9,7 @@ $(document).on('click', '.fa-angles-left', function() {
     $('.left-sidebar .side-menu li img').css('margin-left','0px');
 });
 
-$(document).on('click', '.fa-angles-right', function() {
+$('.top-navbar').on('click', '.fa-angles-right', function() {
     $('.left-sidebar').removeClass('hide');
     $('.main').css('left', '260px');
     $('.top-navbar').css('left', '260px');
@@ -20,11 +20,29 @@ $(document).on('click', '.fa-angles-right', function() {
     $('.left-sidebar .side-menu li img').css('margin-left','5px');
 })
 
+
+$('.hamburger-smalldevices').on('click', function() {
+    $('.left-sidebar').toggleClass('left-sidebar-open')
+})
+
+
+function delay(callback, ms) {
+    var timer = 0;
+    return function () {
+        var context = this;
+        var    args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+            callback.apply(context, args);
+        }, ms || 0);
+    };
+}
+
 $('.session-name').on('click', function () {
     let ulList = ``;
     let apiObj = {
         type: 'POST',
-        url: '/admin/bidding-session/active-list',
+        url: '/admin/bidding-sessions/active',
         dataType: 'JSON'
     };
 
@@ -55,7 +73,7 @@ $('#update-status').on('click', function () {
 
     let apiObj = {
         type: 'POST',
-        url: '/admin/bidding-session/update-status',
+        url: '/admin/bidding-sessions/update-status',
         data: {
             id: biddingSessionLid,
             bidding_name: biddingName
@@ -331,6 +349,13 @@ function createToastError(message) {
     };
 }
 
+function filterTable(tableId, id) {
+    
+    $('#' + tableId + ' tbody tr:visible').each(function () {
+        $(this).children(':first-child').text((id++));
+    });
+}
+
 function createToast(message, className, contentColorClassName) {
     const toastDiv = document.createElement('div');
     toastDiv.className = `position-fixed top-80 right-0 toast-alert ${className}`;
@@ -352,7 +377,6 @@ function createToast(message, className, contentColorClassName) {
 function applyOddRowStyles(element, rowIndex) {
     if (rowIndex % 2 == 0) {
         element.addClass('odd-row');
-        element.closest('table').removeClass('custom-table');
         element.closest('tbody').prev('thead').find('th').addClass('odd-row');
     }
 }
@@ -446,7 +470,7 @@ function convertMillisecondsToReadableTime(milliseconds) {
     let remainingMinutes = minutes % 60;
     let remainingSeconds = seconds % 60;
 
-    return `${hours} h:${remainingMinutes}M:${remainingSeconds}S`;
+    return ` ${hours}h: ${remainingMinutes}M: ${remainingSeconds}S`;
 }
 
 function calculateAreaFrequency(arr) {
@@ -709,16 +733,7 @@ function isModalFieldEmpty(modalName) {
                     if(inputElement.parent('div').hasClass('d-none')){
                         return true;
                       }
-                      else{
-                         inputValue = inputElement.select2('data')[0].id;
-                      if (inputValue == -1 || inputValue == undefined) {
-                          $(this).find('p').removeClass('d-none');
-                          isValid = false;
-                          return false;
-                      } else {
-                          $(this).find('p').addClass('d-none');
-                      }
-                  }
+                      
                    }
             });
         } else {
@@ -794,35 +809,22 @@ function validateAlphanumeric(inputStr) {
 
 function demandEstimationTimeCountDown(){
 
-
-  
     let endTime = $('#end-time').text();
     let startTime = $('#start-time').text(); 
 
-    if(startTime == '' && endTime == ''){
-        $('.empty-bidding-round-wise').find('p').html('No Bidding Round Present');
-        $('.empty-bidding-round-wise').removeClass('d-none');
-    }
     let endDateTime = new Date(endTime);
     let startDateTime = new Date(startTime);
     
     let currentDateTime = new Date();
     
     if(startDateTime <= currentDateTime){
-    let dateSubtraction = endDateTime - currentDateTime;
-    let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
-    $('.time-remaining').text(`Round ends in ${dateSubtractionValue}`);
-    $('.round-wise-modal').removeClass('d-none')
- 
-
-    }
- 
-    if(endDateTime == currentDateTime){
+        let dateSubtraction = endDateTime - currentDateTime;
         let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
-    $('.time-remaining').text(`Round ends in ${dateSubtractionValue}`);
     
-
+        $('.time-remaining').text(`Round Ends In ${dateSubtractionValue}`);
+        // $('.round-wise-modal').removeClass('d-none')
     }
+ 
     if(endDateTime < currentDateTime){
       
         $('.time-remaining').text(`Round ended`); 
@@ -833,18 +835,15 @@ function demandEstimationTimeCountDown(){
         $('.demand-estimation-status').addClass('d-none');
         $('.demand-estimation-modal').addClass('d-none');
         
-       }
+    }
  
     if(startDateTime > currentDateTime){
-    
-        $('.time-remaining').text(`Round has not started yet`);
+
+        $('.time-remaining').text(`Round Has Not Started Yet`);
         $('.time-remaining').attr('data-round-status','not-started');
         $('.save-select-course').addClass('d-none');
         $('.demand-estimation-status').addClass('d-none');
-        $('.time-remaining').removeClass('btn-danger');
-        $('.time-remaining').addClass('btn-success');
     }
-
 } 
 
 function calculateAcadSessionTotals(data) {
