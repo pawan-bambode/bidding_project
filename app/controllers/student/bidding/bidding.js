@@ -57,7 +57,8 @@ module.exports = {
                     confirmationCourse: result[13].recordset[0] != undefined ? result[13].recordset: '',
                     confirmationCourse12: result[14].recordset[0] != undefined ? result[14].recordset: '',
                     slug: slug,
-                    currentRoundStatus: result[15].recordset.length == 0 ? JSON.stringify({'round_status':'Round Not Found'}) : JSON.stringify(result[15].recordset[0]),
+                    currentRoundStatus: result[15].recordset.length == 0 ? JSON.parse(JSON.stringify({'round_status':'Round Not Found'})) : JSON.parse(JSON.stringify(result[15].recordset[0])),
+
                     isStudentPartOfRound: result[16].recordset.length >= 1? 1: 0
                 });
             })

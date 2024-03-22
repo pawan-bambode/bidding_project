@@ -231,12 +231,6 @@ function IsNumber(inputString) {
     return isNumber;
 }
 
-function updateCurrentTime() {
-    let currentDate = new Date();
-    let formattedDateTime = currentDate.toLocaleString();
-    $('#current-date-time').text(convertDateFormat(formattedDateTime)); 
-    demandEstimationTimeCountDown();
-}
 
 function withdrawBidding(arr, key, credits) {
     if (arr[key]) {
@@ -381,8 +375,7 @@ function applyOddRowStyles(element, rowIndex) {
     }
 }
 
-updateCurrentTime();
-setInterval(updateCurrentTime, 1000);
+
 
 function formatDate(todayDateVal, flag, noOfMonthBeforeActivity) {
     const padZero = (num) => (num < 10 ? '0' + num : num);
@@ -394,20 +387,30 @@ function formatDate(todayDateVal, flag, noOfMonthBeforeActivity) {
 
     const minDate = `${fullYear}-${formatMonth}-${date}`;
 
-    const maxDateYearInc = Math.floor((month + noOfMonthBeforeActivity) / 12);
-    const maxDateMonthInc = (month + noOfMonthBeforeActivity) % 12;
-    const updatedFullYear = fullYear + maxDateYearInc;
-    const formatMonthMax = padZero(maxDateMonthInc);
-
-    const maxDate = `${updatedFullYear}-${formatMonthMax}-${date}`;
-    
     const targetInput = flag ? '#add-bidding-session #end-date' : '#add-bidding-session #start-date';
 
     $(targetInput).attr('min', minDate);
     $('#add-bidding-session #end-date').attr('min', minDate);
     $('#add-bidding-session #start-date').attr('min', minDate);
-    $('#edit-bidding-session-modal #start-date').attr('min', minDate);
-    $('#edit-bidding-session-modal #end-date').attr('min',minDate);
+    $('#update-modal #start-date').attr('min', minDate);
+    $('#update-modal #end-date').attr('min',minDate);
+
+}
+function dateTimeLocal(){
+
+    const padZero = (num) => (num < 10 ? '0' + num : num);
+    let currentDate = new Date();
+    const fullYear = currentDate.getFullYear();
+    const month = currentDate.getMonth() + 1;
+    const formatMonth = padZero(month);
+    const date = padZero(currentDate.getDate());
+    const hours = padZero(currentDate.getHours());
+    const minutes = padZero(currentDate.getMinutes());
+
+
+    const minDate = `${fullYear}-${formatMonth}-${date}T${hours}:${minutes}`;
+    $('#add-date-time-modal #start-date-time').attr('min', minDate);
+    $('#add-date-time-modal #end-date-time').attr('min', minDate);
 }
 
 function isSessionDuplicate(sessionVal) {
@@ -434,44 +437,6 @@ function setActiveMenuItem(active) {
     $('#sidebar .side-menu li.' + active).addClass('active');
 }
 
-function convertDateFormat(inputDate) {
-    let [datePart, timePart] = inputDate.split(',');
-    let [firstComponent, secondComponent, year] = datePart.split(/[\/-]/);
-    let isDayFirst = firstComponent.length > secondComponent.length;
-    let day, month;
-
-    if (isDayFirst) {
-        [day, month] = [firstComponent, secondComponent];
-    } else {
-        [month, day] = [firstComponent, secondComponent];
-    }
-
-    let monthNames = [
-        'January', 'February', 'March', 'April',
-        'May', 'June', 'July', 'August',
-        'September', 'October', 'November', 'December'
-    ];
-
-    let monthName = monthNames[parseInt(month) - 1];
-    let formattedDate = `${day}-${monthName} ${year}`;
-    let formattedDateTime = `${formattedDate} ${timePart}`;
-
-    return formattedDateTime;
-}
-
-function convertMillisecondsToReadableTime(milliseconds) {
-    if (milliseconds == 0) {
-        return `0 h:0 M:0 S`;
-    }
-    let seconds = Math.floor(milliseconds / 1000);
-    let minutes = Math.floor(seconds / 60);
-    let hours = Math.floor(minutes / 60);
-
-    let remainingMinutes = minutes % 60;
-    let remainingSeconds = seconds % 60;
-
-    return ` ${hours}h: ${remainingMinutes}M: ${remainingSeconds}S`;
-}
 
 function calculateAreaFrequency(arr) {
     
@@ -806,45 +771,6 @@ function validateAlphanumeric(inputStr) {
         return false;
     }
 }
-
-function demandEstimationTimeCountDown(){
-
-    let endTime = $('#end-time').text();
-    let startTime = $('#start-time').text(); 
-
-    let endDateTime = new Date(endTime);
-    let startDateTime = new Date(startTime);
-    
-    let currentDateTime = new Date();
-    
-    if(startDateTime <= currentDateTime){
-        let dateSubtraction = endDateTime - currentDateTime;
-        let dateSubtractionValue = convertMillisecondsToReadableTime(dateSubtraction);
-    
-        $('.time-remaining').text(`Round Ends In ${dateSubtractionValue}`);
-        // $('.round-wise-modal').removeClass('d-none')
-    }
- 
-    if(endDateTime < currentDateTime){
-      
-        $('.time-remaining').text(`Round ended`); 
-        $('.bidding-round-wise').addClass('d-none');
-        $('.empty-bidding-round-wise').removeClass('d-none');   
-        $('.time-remaining').attr('data-round-status','end');
-        $('.save-select-course').addClass('d-none');
-        $('.demand-estimation-status').addClass('d-none');
-        $('.demand-estimation-modal').addClass('d-none');
-        
-    }
- 
-    if(startDateTime > currentDateTime){
-
-        $('.time-remaining').text(`Round Has Not Started Yet`);
-        $('.time-remaining').attr('data-round-status','not-started');
-        $('.save-select-course').addClass('d-none');
-        $('.demand-estimation-status').addClass('d-none');
-    }
-} 
 
 function calculateAcadSessionTotals(data) {
     

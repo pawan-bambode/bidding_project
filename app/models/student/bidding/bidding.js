@@ -106,56 +106,78 @@ module.exports = class Bidding {
         });
     }
     
-    static currentRoundStatus(slug, biddingId) {
+    static currentRoundStatus(slug, biddingId, roundFirstId, roundSecondId) {
        
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
+                .input('roundFirstId', sql.Int, roundFirstId)
+                .input('roundSecondId', sql.Int, roundSecondId)
                 .query(`
                     IF ((SELECT IIF(rs.end_date_time < GETDATE(), 1, 0) AS round_ended
                             FROM [${slug}].round_settings rs
                             INNER JOIN [dbo].elective_selection_rounds es ON es.id = rs.round_lid
-                            WHERE es.round_name = 'BIDDING_ROUND1'
+                            WHERE es.id = @roundFirstId
                             AND rs.active = 1
                             AND rs.bidding_session_lid = @biddingId) = 1)
-                    BEGIN
-                        SELECT rs.round_name,
+                        BEGIN
+                            SELECT 
+                            REPLACE(SUBSTRING(rs.round_name, CHARINDEX('-', rs.round_name) + LEN('-') + 1, LEN(rs.round_name)), '_', ' ') AS roundName,
                             IIF(rs.end_date_time < GETDATE(), 1, 0) AS round_ended,
                             IIF((rs.end_date_time > GETDATE() AND rs.start_date_time < GETDATE()), 1, 0) AS round_started,
-                            IIF(rs.start_date_time > GETDATE(), 1, 0) AS round_not_started_yet
-                        FROM [${slug}].round_settings rs
-                        INNER JOIN [dbo].elective_selection_rounds es ON es.id = rs.round_lid
-                        WHERE es.round_name = 'BIDDING_ROUND2'
-                        AND rs.active = 1
-                        AND rs.bidding_session_lid = @biddingId
-                    END
+                            IIF(rs.start_date_time > GETDATE(), 1, 0) AS round_not_started_yet,
+                            rs.bidding_session_lid
+                            FROM [${slug}].round_settings rs
+                            INNER JOIN [dbo].elective_selection_rounds es ON es.id = rs.round_lid
+                            WHERE es.id = @roundSecondId
+                            AND rs.active = 1
+                            AND rs.bidding_session_lid = @biddingId
+                        END
                     ELSE
-                    BEGIN
-                        SELECT rs.round_name,
+                        BEGIN
+                            SELECT 
+                            REPLACE(SUBSTRING(rs.round_name, CHARINDEX('-', rs.round_name) + LEN('-') + 1, LEN(rs.round_name)), '_', ' ') AS roundName,
                             IIF(rs.end_date_time < GETDATE(), 1, 0) AS round_ended,
                             IIF((rs.end_date_time > GETDATE() AND rs.start_date_time < GETDATE()), 1, 0) AS round_started,
-                            IIF(rs.start_date_time > GETDATE(), 1, 0) AS round_not_started_yet
-                        FROM [${slug}].round_settings rs
-                        INNER JOIN [dbo].elective_selection_rounds es ON es.id = rs.round_lid
-                        WHERE es.round_name = 'BIDDING_ROUND1'
-                        AND rs.active = 1
-                        AND rs.bidding_session_lid = @biddingId
-                    END
+                            IIF(rs.start_date_time > GETDATE(), 1, 0) AS round_not_started_yet,
+                            rs.bidding_session_lid
+                            FROM [${slug}].round_settings rs
+                            INNER JOIN [dbo].elective_selection_rounds es ON es.id = rs.round_lid
+                            WHERE es.id = @roundFirstId
+                            AND rs.active = 1
+                            AND rs.bidding_session_lid = @biddingId
+                        END
                 `);            
         });                 
     }
-    
-
-    static isStudentPartOfRound(slug, biddingId, studentId, roundId ,round2Id){
+   
+    static isStudentPartOfRound(slug, biddingId, studentId, roundFirstId ,roundSecondId){
+      
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('studentId', sql.Int, studentId)
-                .input('roundId', sql.Int, roundId)
-                .input('round2Id', sql.Int, round2Id)
-                .query(`SELECT * FROM [${slug}].student_round_mapping 
-                        WHERE round_lid IN(@roundId, @round2Id) AND student_lid = @studentId AND active = 1 AND 
-                        bidding_session_lid = @biddingId`);
+                .input('roundFirstId', sql.Int, roundFirstId)
+                .input('roundSecondId', sql.Int, roundSecondId)
+                .query(`IF ((SELECT IIF(rs.end_date_time < GETDATE(), 1, 0) AS round_ended
+                            FROM [${slug}].round_settings rs
+                            INNER JOIN [dbo].elective_selection_rounds es ON es.id = rs.round_lid
+                            WHERE es.id = @roundFirstId
+                            AND rs.active = 1
+                            AND rs.bidding_session_lid = @biddingId) = 1)
+                            BEGIN    
+                                SELECT * FROM [${slug}].student_round_mapping 
+                                WHERE round_lid = @roundSecondId AND student_lid = @studentId AND active = 1 AND 
+                                bidding_session_lid = @biddingId
+                            END 
+                        ELSE
+                            BEGIN
+                                SELECT * FROM [${slug}].student_round_mapping 
+                                WHERE round_lid = @roundFirstId AND student_lid = @studentId AND active = 1 AND 
+                                bidding_session_lid = @biddingId
+                            END
+
+                    `);
         });
     }
 

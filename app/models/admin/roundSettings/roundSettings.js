@@ -158,6 +158,8 @@ module.exports = class RoundSettings {
     }
 
     static listByOneDayBefore(slug, biddingId, round1Id, round2Id) {
+
+    
  
         return poolConnection.then(pool => {
             return pool.request()
@@ -174,7 +176,7 @@ module.exports = class RoundSettings {
                             FORMAT(start_date_time, 'dd-MMMM yyyy h:mm:ss tt') AS startTime,
                             FORMAT(end_date_time, 'dd-MMMM yyyy h:mm:ss tt') AS endTime, 
                             bidding_session_lid,
-                            SUBSTRING(round_name, CHARINDEX('-', round_name) + 1, LEN(round_name)) AS roundName
+                            REPLACE(SUBSTRING(round_name, CHARINDEX('-', round_name) + 1, LEN(round_name)), '_', ' ') AS roundName
                         FROM 
                             [${slug}].round_settings
                         WHERE 
@@ -191,7 +193,7 @@ module.exports = class RoundSettings {
                             FORMAT(start_date_time, 'dd-MMMM yyyy h:mm:ss tt') AS startTime,
                             FORMAT(end_date_time, 'dd-MMMM yyyy h:mm:ss tt') AS endTime, 
                             bidding_session_lid,
-                            SUBSTRING(round_name, CHARINDEX('-', round_name) + 1, LEN(round_name)) AS roundName
+                            REPLACE(SUBSTRING(round_name, CHARINDEX('-', round_name) + 1, LEN(round_name)), '_', ' ') AS roundName
                         FROM 
                             [${slug}].round_settings
                         WHERE 

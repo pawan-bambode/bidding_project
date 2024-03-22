@@ -277,7 +277,7 @@
                     <input type="hidden" id="round-id">
                     <input class="form-control" type="datetime-local" id="start-date-time">
                     <label class="mb-2" for="end-date-time">End date time :</label>
-                    <input class="form-control" type="datetime-local" id="end-date-time">  
+                    <input class="form-control" type="datetime-local" id="end-date-time"> 
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-success disabled" data-bs-dismiss="modal" id="save-date-time">Save</button>
@@ -352,12 +352,12 @@
                       
                     <div class="row empty">
                         <div class="col-md-6">
-                            <label class="mb-2" for="start-date-time">Start date time :</label>
+                            <label class="mb-2" for="round-start-time">Start date time :</label>
                             <input class="form-control is-empty" type="datetime-local" id="round-start-time">
                             <span class="text-danger d-none is-in-valid" ></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="mb-2" for="end-date-time">End date time :</label>
+                            <label class="mb-2" for="round-end-time">End date time :</label>
                             <input class="form-control is-empty" type="datetime-local" id="round-end-time"> 
                             <span class="text-danger d-none is-in-valid" ></span>
                         </div>
@@ -423,7 +423,8 @@ $(document).ready(function() {
     let importRoundDetails = [];
     setActiveMenuItem(`<%- active %>`)
     $('#page-no').html(pageCount);
-    
+
+
     // Triggered when selecting a pre-defined round name with the bidding name in the "select round settings" event
     $(document).on('click', '.rounds-div', function(event) {
         studentList = [];

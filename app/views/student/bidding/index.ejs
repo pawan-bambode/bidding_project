@@ -2,244 +2,234 @@
 <%- include('../partials/leftSidebarForStudent.ejs') %>
 <%- include('../partials/header.ejs') %>
 
+<main>
     <div class="main-content">
-    
-        <% if(roundDetails) { %> 
-            <ul class="d-flex round-wises justify-content-between align-items-end bidding-round-wise d-none">
-              <li class="ms-5 active" style="height: 58px;">
-                <a class="text-decoration-none text-dark">
-                  <div class="d-flex flex-column justify-content-center align-items-center h-100">
-                    <div class="d-flex justify-content-between align-items-center active-div">
-                      <h4 class="ms-2 round-name"></h4>
-                    </div>
-                  </div>
-                </a>
-              </li>
-            </ul>
-          <% } else { %>
-              <ul class="d-flex round-wises justify-content-between align-items-end bidding-round-wise d-none">
-                  <li class="ms-5" style="height: 58px;">
-                    <a class="text-decoration-none text-dark">
-                      <div class="d-flex flex-column justify-content-center align-items-center h-100">
-                        <div class="d-flex justify-content-between align-items-center active-div">
-                          <h4 class="ms-2 round-name"></h4>
-                        </div>
-                      </div>
-                    </a>
-                  </li>
-                </ul>
-          <% } %>
-                    
-        <div class="main-div-round-wise card-custom-border-curv p-3 bidding-round-wise d-none">
-            <div class="card card-custom-border-curv">
-                <div class="card-header-custom d-flex justify-content-between p-1">
-                    <h5 class="ms-2 round-name"></h5>
-                    <button class="btn btn-danger time-remaining me-5"></button>
+        <div class="card card-custom-border-curv round-message-container">
+            <div class="round-message">
+                <div class="card-header-custom d-flex justify-content-between">
+                    <h4 class="ms-2 round-name">
+                        <%= currentRoundStatus.round_status === 'Round Not Found' ? 'Bidding Round' : currentRoundStatus.roundName %>
+                    </h4>    
                 </div>
-            <div class="card-body table-responsive">
-                <div class="row ps-5 pe-5 round-wise-modal">
-                    <div class="col-md-4">
-                        <h6>Total Bid Points :&nbsp;
-                            <span id="total-bid-points"> <%- studentBidsPoints.student_bid_points %></span>
-                        </h6>
-                    </div>
-                    <div class="col-md-4">
-                        <h6>Remaining Bid Points :&nbsp;
-                            <span id="remaining-bid-points"><%- remaingBidPoints.student_bid_points %>
-                        </h6>
-                    </div>
-                    <div class="col-md-4">
-                        <h6>Credits Winning : &nbsp;
-                            <span id="credits-winning"></span>
-                        </h6>
-                    </div>
-                </div>
-                <div class="row ps-5 pe-5">
-                    <% for (let credit of creditList) { %>
-                        <div class="col-md-4">
-                            <h6><%- credit.acad_session %> 
-                                <%- credit.name %>
-                                Credits :&nbsp;
-                                <span class="credits-point-target" id="credits-points-target-<%- credit.id %>" data-id="<%-credit.id %>"><%-
-                                     credit.credits %></span>
-                            </h6>
-                        </div>
+                <div class="card-body table-responsive d-flex justify-content-center align-items-center">
+                    <% if (currentRoundStatus.round_ended == 1) {  %>
+                        <p>This Round Has Ended!</p>
+                    <% } else if (currentRoundStatus.round_status == 'Round Not Found') { %>
+                        <p>Round Not Found!</p>
                     <% } %>
-                </div>
-                <div class="row ps-5 pe-5">
-                    <% for (let acadSession of acadSessions) { %>
-                        <div class="col-md-4">
-                            <h6> Selected  <%- acadSession.name %> Credits :&nbsp;
-                                <span class="current-credit-points" data-id="<%- acadSession.id %>" id="credits-points-<%- acadSession.id %>">0</span>
-                            </h6>
-                        </div>
-                    <% } %>
-                </div>
-                <div class="row ps-5 pe-5">
-                    <div class="col-md-4">
-                        <h6>Start Time :&nbsp;
-                            <span id="start-time"></span>
-                            <span class="round-not-created d-none"></span>
-                        </h6>
-                    </div>
-                    <div class="col-md-4">
-                        <h6>End Time :&nbsp;
-                            <span id="end-time"></span>
-                            <span class="round-not-created d-none"></span>
-                        </h6>
-                    </div>
-                    <div class="col-md-4">
-                        <h6>Current Time : &nbsp;
-                            <span id="current-date-time"></span>
-                        </h6>
-                    </div>
                 </div>
             </div>
         </div>
-    
-        <div class="card card-custom-border-curv mt-5 round-wise-modal">
-            <div class="card-header-custom d-flex justify-content-between p-1">
-                <h3 class="ms-2">Confirmation Courses</h3>
+        
+        <div class="round-basic-details<%= (currentRoundStatus.round_not_started_yet == 1) ? '' : ' d-none' %>">
+            <ul class="d-flex round-wises justify-content-between align-items-end">
+                <li class="ms-5 active">
+                    <a class="text-decoration-none text-dark">
+                        <div class="d-flex flex-column justify-content-center align-items-center h-100">
+                            <div class="d-flex justify-content-between align-items-center active-div">
+                                <h4 class="ms-2 round-name" data-round-id="<%- roundDetails.round_lid %>"><%- roundDetails.roundName %></h4>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+             
+            <div class="main-div-round-wise card-custom-border-curv p-3">
+                <div class="card-header-custom d-flex justify-content-between p-1">
+                    <h5 class="ms-2 round-name"><%- roundDetails.roundName %></h5>
+                    <h5 class="time-remaining my-0 mx-1"></h5>
+                </div>
+                <div class="card-body table-responsive">
+                    <div class="row ps-5 pe-5">
+                        <div class="col-md-4 round-not-started-one-days">
+                            <h6>Bidding Name :&nbsp;
+                                <span id="total-bid-points"> <%- studentBidsPoints.student_bid_points %></span>
+                            </h6>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <h6>Remaining Bid Points :&nbsp;
+                                <span id="remaining-bid-points"><%- remaingBidPoints.student_bid_points %>
+                            </h6>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Credits Winning : &nbsp;
+                                <span id="credits-winning"></span>
+                            </h6>
+                        </div>
+                    </div>
+                    <div class="row ps-5 pe-5">
+                        <% for (let credit of creditList) { %>
+                            <div class="col-md-4">
+                                <h6><%- credit.acad_session %> 
+                                    <%- credit.name %>
+                                    Credits :&nbsp;
+                                    <span class="credits-point-target" id="credits-points-target-<%- credit.id %>" data-id="<%-credit.id %>"><%-
+                                            credit.credits %></span>
+                                </h6>
+                            </div>
+                        <% } %>
+                    </div>
+                    <div class="row ps-5 pe-5">
+                        <% for (let acadSession of acadSessions) { %>
+                            <div class="col-md-4">
+                                <h6> Selected  <%- acadSession.name %> Credits :&nbsp;
+                                    <span class="current-credit-points" data-id="<%- acadSession.id %>" id="credits-points-<%- acadSession.id %>">0</span>
+                                </h6>
+                            </div>
+                        <% } %>
+                    </div>
+                    <div class="row ps-5 pe-5">
+                        <div class="col-md-4">
+                            <h6>Start Time :&nbsp;
+                                <span id="start-time"><%- roundDetails.startTime %></span>
+                            </h6>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>End Time :&nbsp;
+                                <span id="end-time"><%- roundDetails.endTime %></span>
+                            </h6>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Current Time : &nbsp;
+                                <span id="current-date-time"></span>
+                            </h6>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body table-responsive">
-                <table class="table table-bordered mt-4" id="confirm-course-table">
-                    <thead>
-                        <tr>
+        </div> 
+    
+        <div class="round-wise-details<%= (currentRoundStatus.round_started == 1) ? '' : ' d-none' %>">
+            <div class="card card-custom-border-curv mt-5">
+                <div class="card-header-custom d-flex justify-content-between p-1">
+                    <h3 class="ms-2">Confirmation Courses</h3>
+                </div>
+                <div class="card-body table-responsive">
+                    <table class="table table-bordered mt-4" id="confirm-course-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Area</th>
+                                <th>Course</th>
+                                <th>Acad Session</th>
+                                <th>Faculty</th>
+                                <th>Credits</th>
+                                <th>Your Bid</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        
+            <div class="card card-custom-border-curv mt-5">
+                <div class="card-header-custom d-flex justify-content-between p-1">
+                    <h3 class="ms-2">Bidding Course</h3>
+                </div>
+                <div class="col-md-3 mt-4 ms-5">
+                    <select class="form-select form-control select2 d-none" id="bidding-acad-session">
+                        <option value="" selected>Select Acad Session</option>
+                        <option value="1">Select All</option>
+                        <option value="34">Trimester IV</option>
+                        <option value="35">Trimester V</option>
+                        <option value="36">Trimester VI</option>
+                    </select>
+                </div>
+                <div class="card-body table-responsive">
+                    <table class="table table-bordered mt-4" id="bidding-table">
+                        <thead>
                             <th>#</th>
                             <th>Area</th>
                             <th>Course</th>
                             <th>Acad Session</th>
                             <th>Faculty</th>
                             <th>Credits</th>
+                            <th>Available Seats</th>
+                            <th>Total Bidders</th>
+                            <th>MRB</th>
+                            <th>Winning status</th>
                             <th>Your Bid</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                            <th>Change Bid</th>
+                            <th>Withdraw</th>
+                        </thead>
+                        <tbody>
                         
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    
-        <div class="card card-custom-border-curv mt-5 round-wise-modal">
-            <div class="card-header-custom d-flex justify-content-between p-1">
-                <h3 class="ms-2">Bidding Course</h3>
-            </div>
-            <div class="col-md-3 mt-4 ms-5">
-                <select class="form-select form-control select2 d-none" id="bidding-acad-session">
-                    <option value="" selected>Select Acad Session</option>
-                    <option value="1">Select All</option>
-                    <option value="34">Trimester IV</option>
-                    <option value="35">Trimester V</option>
-                    <option value="36">Trimester VI</option>
-                </select>
-            </div>
-            <div class="card-body table-responsive">
-                <table class="table table-bordered mt-4" id="bidding-table">
-                    <thead>
-                        <th>#</th>
-                        <th>Area</th>
-                        <th>Course</th>
-                        <th>Acad Session</th>
-                        <th>Faculty</th>
-                        <th>Credits</th>
-                        <th>Available Seats</th>
-                        <th>Total Bidders</th>
-                        <th>MRB</th>
-                        <th>Winning status</th>
-                        <th>Your Bid</th>
-                        <th>Change Bid</th>
-                        <th>Withdraw</th>
-                    </thead>
-                    <tbody>
-                    
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    
-        <div class="card card-custom-border-curv mt-5 bidding-modal round-wise-modal" id="bidding-modal">
-            <div class="card-header-custom d-flex justify-content-between p-1">
-                <h3 class="ms-2">Available Courses</h3>
-            </div>
-            <div class="card-body table-responsive">
-                
-                <div class="row">
-                    <div class="col-md-3 mt-4 ms-2">
-                        <select class="form-select form-control select2" id="acad-session-change">
-                            <option selected disabled value="-1">--Select Acad Session-- </option>
-                                <%for(let acadSession of acadSessions) { %>
-                                    <option value="<%- acadSession.id %>"><%- acadSession.name %></option>
-                                <% } %>
-                        </select>
-                    </div>
-                    <div class="col-md-3 mt-4 ms-2">
-                        <select class="form-select form-control select2 d-none" id="area-change">
-                            <option value="" selected>Select Area</option>
-                            <option value="All">Select All Areas</option>
-                                <% for (let area of areaList) { %>
-                                    <option value="<%-area.area_name %>"><%-area.area_name %></option>
-                                <% } %>
-                        </select>
-                    </div>
-                    <div class="col-md-3 mt-4 ms-2">
-                        <select class="form-select form-control select2 d-none" id="course-filter">
-                            <option value="" selected>Select Course</option>
-                            <option value="All">Select All Courses</option>
-                                <% for (let biddingCourse of courseList) { %>
-                                    <option value="<%-biddingCourse.course_id %>"><%-biddingCourse.course_name %></option>
-                                <% } %>
-                        </select>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
-            
-                <table class="table table-bordered mt-4" id="bidding-trimester-select-table">
-                    <thead>
-                        <th>#</th>
-                        <th>Area</th>
-                        <th>Course</th>
-                        <th>Trimester</th>
-                        <th>Course Timings</th>
-                        <th>Credits</th>
-                        <th>Available Seats</th>
-                        <th>Total Bidders</th>
-                        <th>MRB</th>
-                        <th>Action</th>
-                    </thead>        
-                    <tbody>
-                    </tbody>
-                </table>
             </div>
-        </div>   
-    </div>
-
-    <div class="card card-custom-border-curv round-message-container d-none">
-        <div class="card-header-custom d-flex justify-content-between">
-            <h4 class="ms-2 round-name">Bidding Round</h4>
-        </div>
-        <div class="card-body table-responsive d-flex justify-content-center align-items-center">
-            <p></p>
-        </div>
-    </div>
-
-</main>
+            <div class="card card-custom-border-curv mt-5" id="bidding-modal">
+                <div class="card-header-custom d-flex justify-content-between p-1">
+                    <h3 class="ms-2">Available Courses</h3>
+                </div>
+                <div class="card-body table-responsive">
+                
+                    <div class="row">
+                        <div class="col-md-3 mt-4 ms-2">
+                            <select class="form-select form-control select2" id="acad-session-change">
+                                <option selected disabled value="-1">--Select Acad Session-- </option>
+                                    <%for(let acadSession of acadSessions) { %>
+                                        <option value="<%- acadSession.id %>"><%- acadSession.name %></option>
+                                    <% } %>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mt-4 ms-2">
+                            <select class="form-select form-control select2 d-none" id="area-change">
+                                <option value="" selected>Select Area</option>
+                                <option value="All">Select All Areas</option>
+                                    <% for (let area of areaList) { %>
+                                        <option value="<%-area.area_name %>"><%-area.area_name %></option>
+                                    <% } %>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mt-4 ms-2">
+                            <select class="form-select form-control select2 d-none" id="course-filter">
+                                <option value="" selected>Select Course</option>
+                                <option value="All">Select All Courses</option>
+                                    <% for (let biddingCourse of courseList) { %>
+                                        <option value="<%-biddingCourse.course_id %>"><%-biddingCourse.course_name %></option>
+                                    <% } %>
+                            </select>
+                        </div>
+                    </div>
+                
+                    <table class="table table-bordered mt-4" id="bidding-trimester-select-table">
+                        <thead>
+                            <th>#</th>
+                            <th>Area</th>
+                            <th>Course</th>
+                            <th>Trimester</th>
+                            <th>Course Timings</th>
+                            <th>Credits</th>
+                            <th>Available Seats</th>
+                            <th>Total Bidders</th>
+                            <th>MRB</th>
+                            <th>Action</th>
+                        </thead>        
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div> 
+        </div>        
+    </div>  
+</main> 
 
 <footer>
     <div class="student-footer text-center">
-        <div class="student-footer-div">
-            <div class="d-flex justify-content-center align-items-center round-wise-modal d-none">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <% for(let acadSession of acadSessions) {%>
-                            <h6 class="p-1 px-3 credit-points">Selected <%- acadSession.name %>  Credits :&nbsp;
-                                <span class="credits-points-<%- acadSession.id %>">0</span>
-                            </h6>
-                        <% } %> 
-                        <h5 class="text-danger time-remaining"></h5>
-                    </div>
-                </div>
-            </div>
-        </div>    
+        <div class="d-flex justify-content-center align-items-center round-wise-details d-none">
+            <% if(currentRoundStatus.round_started == 1) { %>
+                <% for(let acadSession of acadSessions) {%>
+                    <h6 class="p-1 px-3 credit-points">Selected <%- acadSession.name %> Credits :&nbsp;
+                        <span class="credits-points-<%- acadSession.id %>">0</span>
+                    </h6>
+                <% } %> 
+                <h5 class="text-danger time-remaining"></h5>
+            <% } %>        
+        </div> 
     </div>
 </footer>
 
@@ -251,10 +241,20 @@ $(document).ready(function() {
     $('.select2').select2({
         dropdownParent: $('#bidding-modal')
     });
+ 
+    $('#student-data').attr('data-isEligibleForRound', '<%= isStudentPartOfRound %>');
+    $('#sidebar .side-menu li.' + `<%- active %>`).addClass('active');
+    
+    let userId = $('#student-data').data('user-id');
+    let activeBidding = $('#student-data').data('active-bidding');
+    
+    let roundDetails = JSON.parse(`<%- JSON.stringify(roundDetails) %>`);
+    let isStudentPartOfRound = `<%- isStudentPartOfRound %>`;
+    var currentRoundStatus = JSON.parse(`<%- JSON.stringify(currentRoundStatus) %>`);
 
     let socket = io();
-    demandEstimationTimeCountDown();
-
+    let studentId = $('#student-data').data('student-id');
+    
     $('#area-change').on('change', function () {
         let acadSessionId = $('#acad-session-change').val();
         let areaName = $(this).val();
@@ -319,124 +319,130 @@ $(document).ready(function() {
             biddingCourses(result.courseList, false);     
         });
     });
+    
 
-    let userId = $('#student-data').data('user-id');
-    let currentRoundStatus  = JSON.parse(`<%- currentRoundStatus %>`);
-    let roundDetails = JSON.parse(`<%- JSON.stringify(roundDetails) %>`);
-    let isStudentPartOfRound = `<%- isStudentPartOfRound %>`;
+    socket.emit('biddingPageLoadTime', { 
+        slugName: "<%- slug %>",
+        activeBidding:activeBidding,
+        biddingTime: JSON.parse(`<%- JSON.stringify(roundDetails) %>`),
+        studentId: studentId
+    });
+    let biddingCourseFlag = false;
+    socket.on('remainingTime', data =>{
+        console.log('values of data', data);
+        console.log('valuesof biddingCourses', biddingCourses);
+        isEligibleForRound = data.studentList;
+        $('#current-date-time').text(data.currentDateTime);
+     
+        if(data.currentRoundStatus.length > 0){
+            if(data.currentRoundStatus[0].round_not_started_yet == '1'){
+    
+                    if(data.roundDetails.length > 0){
+                        
+                        if(isEligibleForRound == 1){
+                            $('.round-message-container').addClass('d-none');
+                            $('.round-basic-details').removeClass('d-none');
+                            $('.round-basic-details').find('.round-name').text(data.roundDetails[0].roundName);
+                            $('.round-basic-details').find('.round-name').attr('round-id', data.roundDetails[0].round_lid);
+                            $('.round-basic-details').find('#start-time').text(data.roundDetails[0].startTime);
+                            $('.round-basic-details').find('#end-time').text(data.roundDetails[0].endTime);
+                        }else{
 
-    $('#sidebar .side-menu li.' + `<%- active %>`).addClass('active');
-
-    console.log('values of currentRoundStatus', currentRoundStatus);
-
-    if(currentRoundStatus.round_ended == 1){
-        $('.round-wise-modal').addClass('d-none');
-        $('.bidding-round-wise').addClass('d-none');
-        $('.round-message-container').removeClass('d-none');
-        $('.round-message-container p').text('This Round Has Ended!')
-    }
-    else if(currentRoundStatus.round_not_started_yet == 1){
-       
-        if((roundDetails != '')){
-            
-            let roundName = roundDetails.roundName.replaceAll('_', ' ');
-            let roundId = roundDetails.round_lid;
-
-            $('.round-name').html(roundName);
-            $('.round-name').attr('data-round-id', roundId);
-
-            if(isStudentPartOfRound == 1 ){
-                
-                let roundStartTime = roundDetails.startTime;
-                let roundEndTime = roundDetails.endTime;
-                $('#student-data').attr('data-isStudentPartOfRound', true);
-            
-                $('#start-time').html(roundStartTime);
-                $('#end-time').html(roundEndTime);
-            
-                $('.bidding-round-wise').removeClass('d-none');
-                $('.round-message-container').addClass('d-none');
-                $('.round-wise-modal').addClass('d-none');
+                            $('.round-message-container .round-name').text(data.roundDetails[0].roundName);
+                            $('.round-message-container p').text('You are not eligible for this round');
+                            $('.round-basic-details').addClass('d-none');
+                        }
+                    }   
             }
-            else{
-                $('.bidding-round-wise').addClass('d-none');
-                $('.round-wise-modal').addClass('d-none') 
-                $('.round-message-container p').text('You are not eligible for this round')
-                $('.round-message-container').removeClass('d-none')
-
-                $('#student-data').attr('data-isStudentPartOfRound', false);     
+            else if(data.currentRoundStatus[0].round_started == '1'){
+                if(isEligibleForRound == 1){
+                    $('.round-message-container').addClass('d-none');
+                    $('.round-basic-details').removeClass('d-none');
+                    $('.round-wise-details').removeClass('d-none');
+                    $('.time-remaining').text(data.remainingTime);
+                }else{
+                    $('.round-message-container').removeClass('d-none');
+                    $('.round-message-container .round-name').text(data.roundDetails[0].roundName);
+                    $('.round-message-container p').text('You are not eligible for this round');
+                    $('.round-basic-details').addClass('d-none');
+                }
+               
             }
-        }
-        else{
-            $('.round-wise-modal').addClass('d-none');
+            if(data.currentRoundStatus[0].round_ended == '1'){
+                $('.round-message-container').removeClass('d-none');
+                $('.round-basic-details').addClass('d-none');
+                $('.round-wise-details').addClass('d-none');
+                $('.round-message-container .round-name').text(data.roundDetails[0].roundName);
+                $('.round-message-container p').text('This Round Has Ended!');
+            }
+        }else{
             $('.round-message-container').removeClass('d-none');
-            $('.round-message-container p').text('This Round Has Not Started Yet!')
-        } 
-    }
-    else if(currentRoundStatus.round_status == 'Round Not Found'){
-        $('.round-wise-modal').addClass('d-none');
-        $('.round-message-container').removeClass('d-none');
-        $('.round-message-container p').text('Round Not Found!')
-    }
-    else if(currentRoundStatus.round_started == '1'){
-
-        let roundName = roundDetails.roundName.replaceAll('_', ' ');
-            let roundId = roundDetails.round_lid;
-
-            $('.round-name').html(roundName);
-            $('.round-name').attr('data-round-id', roundId);
-
-            if(isStudentPartOfRound == 1){
-                let roundStartTime = roundDetails.startTime;
-                let roundEndTime = roundDetails.endTime;
-                $('#student-data').attr('data-isStudentPartOfRound', true);
-            
-                $('#start-time').html(roundStartTime);
-                $('#end-time').html(roundEndTime);
-            
-                $('.bidding-round-wise').removeClass('d-none');
-                $('.round-message-container').addClass('d-none');
-                $('.round-wise-modal').removeClass('d-none');
-            }
-            else{
-                $('#student-data').attr('data-isStudentPartOfRound', false);
-                $('.round-message-container p').text('You are not eligible for this round')
-                $('.round-message-container').removeClass('d-none');
-                $('.round-wise-modal').addClass('d-none')
-                $('.bidding-round-wise').addClass('d-none');
-            }
-    }
-    else{
-
-        if((roundDetails != '')){
-            let roundName = roundDetails.roundName.replaceAll('_', ' ');
-            let roundId = roundDetails.round_lid;
-
-            $('.round-name').html(roundName);
-            $('.round-name').attr('data-round-id', roundId);
-
-            if(isStudentPartOfRound == 1 ){
-                let roundStartTime = roundDetails.startTime;
-                let roundEndTime = roundDetails.endTime;
-                $('#student-data').attr('data-isStudentPartOfRound', true);
-            
-                $('#start-time').html(roundStartTime);
-                $('#end-time').html(roundEndTime);
-            
-                $('.bidding-round-wise').removeClass('d-none');
-                $('.round-message-container').addClass('d-none');
-                $('.round-wise-modal').removeClass('d-none');
-            }
-            else{
-                $('#student-data').attr('data-isStudentPartOfRound', false);
-                $('.round-message-container p').text('You are not eligible for this round')
-                $('.round-message-container').removeClass('d-none');
-                $('.round-wise-modal').addClass('d-none')
-                $('.bidding-round-wise').addClass('d-none');
-            }
+            $('.round-message-container p').text('Round Not Found!');
+            $('.round-basic-details').addClass('d-none');
+            $('.round-wise-details').addClass('d-none');
         }
-    }
-   
+    })
+
+    socket.emit('biddingPageLoad', { 
+        biddingTime: JSON.parse(`<%- JSON.stringify(roundSettingTime) %>`),
+        slugName: "<%- slug %>",
+        roundIId: 4,
+        roundId: 2,
+        studentId: studentId
+    });
+
+    function biddingCourses(biddingCourseList) {
+       
+       biddingCourseList.forEach(function(biddingCourse, index) {
+          
+       let { division_batch_lid: divisionBatchId, faculty_id: facultyId } = biddingCourse;
+       let existingElement = $(`#bidding-trimester-select-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
+       let existingFaculty = existingElement.filter(`[data-faculty-id="${facultyId}"]`);
+       let otherFacultyExists = existingElement.not(existingFaculty);
+       let lengthOfTable = $('#bidding-trimester-select-table tbody tr').length;
+         
+       if (existingElement.length === 0) {
+               let newRow = `<tr 
+                           data-area-name = "${biddingCourse.area_name}" 
+                           data-course-name = "${biddingCourse.course_name}"
+                           data-course-division-name = "${biddingCourse.course_name}-${biddingCourse.division}" 
+                           data-acad-session = "${biddingCourse.acad_session}" 
+                           data-division-batch-lid = "${biddingCourse.division_batch_lid}"
+                           data-faculty-id = "${biddingCourse.faculty_id}"
+                           data-credits = "${biddingCourse.credits}"
+                           data-max-seats = "${biddingCourse.max_seats}"
+                           data-acad-session-id = "${biddingCourse.sap_acad_session_id}"
+                           data-course-id = "${biddingCourse.course_id}"
+                           data-course-lid = "${biddingCourse.course_lid}"
+                           data-faculty-name = "${biddingCourse.faculty_name}"
+                       >
+
+                       <td class="id-column">${++lengthOfTable}</td>
+                       <td>${biddingCourse.area_name}</td>
+                       <td>${biddingCourse.course_name}-${biddingCourse.division}
+                       ${biddingCourse.is_favourite == 1 ?
+                       '<img class="added-star fav-course" src="/image/student/body-part-image/available-course/added-star.png" alt="added">' : ''}
+                       </td>
+                       <td>${biddingCourse.acad_session}</td>
+                       <td class='course-timing'>${biddingCourse.day_name}(${biddingCourse.StartTime} to ${biddingCourse.EndTime}) ${biddingCourse.faculty_name}</td>
+                       <td>${biddingCourse.credits}</td>
+                       <td>${biddingCourse.max_seats}</td>
+                       <td>0</td>
+                       <td>0</td>
+                       <td>
+                           <button class="btn border border-dark add-bidding">
+                               <i class="fa-solid fa-circle-plus" style="color:#5ca4ea"></i>
+                           </button>
+                       </td>
+                   </tr>`;
+               $('#bidding-trimester-select-table tbody').append(newRow);
+           } else {
+               let courseTiming = `<div>${biddingCourse.day_name}(${biddingCourse.StartTime} to ${biddingCourse.EndTime})`;
+               let contentToAppend = otherFacultyExists.length ? `${courseTiming} - ${biddingCourse.faculty_name})` : `${courseTiming}`;
+               existingElement.children('.course-timing').append(contentToAppend);
+           }
+       });
+   }
 });
 </script>
 

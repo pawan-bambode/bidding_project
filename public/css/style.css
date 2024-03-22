@@ -112,9 +112,7 @@ body {
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     transition: all 0.5s ease-in-out;
 } 
-.student-footer-div{
-    height: 60px;
-}
+
 .nmims-logo-smalldevices {
     display: none;
 }
@@ -153,6 +151,7 @@ body {
         display: none;
     }
 }
+
 
 /* TOPNAVBAR ENDS */
 .main-content {
@@ -1039,7 +1038,7 @@ studet-footer .footer-div {
 
 }
 
-ul.round-wises {
+.round-basic-details ul.round-wises {
     background-color:var(--primary-bg);
     height: 60px;
     width: 95%;
@@ -1048,23 +1047,18 @@ ul.round-wises {
     margin-inline-end: 0px;
     padding-inline-start: 0px; 
     position: relative;
-    top:20px;
-
+    top:16px;
 }
 
-ul.round-wises li.active {
+.round-basic-details ul.round-wises li.active {
     background-color: white;
     position: relative;
     border-radius: 16px 16px 0px 0px;
     padding: 10px;
 }
 
-input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-}
 
-ul.round-wises li.active::before {
+.round-basic-details ul.round-wises li.active::before {
     content: "";
     position: absolute;
     top: 40px;
@@ -1076,7 +1070,7 @@ ul.round-wises li.active::before {
     box-shadow: 9px 7px 0 var(--primary-white);
 
 }
-ul.round-wises li.active::after {
+.round-basic-details ul.round-wises li.active::after {
     content: "";
     position: absolute;
     top: 40px;

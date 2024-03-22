@@ -16,7 +16,7 @@
                     <button class="btn btn-white dropdown-toggle" type="button" id="defaultDropdown"
                         data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false"> 
                         <img src="/image/student/nav-bar-header/student.png" class="student-icon-image" alt=""> Hi! <%-locals.fullName%> 
-                        <input type="hidden" id="student-data" data-user-id= "<%- locals.userId %>" data-student-id ="<%- locals.studentId%>" >
+                        <input type="hidden" id="student-data" data-user-id= "<%- locals.userId %>" data-student-id ="<%- locals.studentId%>" data-active-bidding="<%- locals.biddingId %>" >
                     </button>
                     <ul class="dropdown-menu userprofile-dropdown-menu" aria-labelledby="defaultDropdown">
                         <li class="update-password"><a href="javascript:void(0)" class="dropdown-item"><i class="fa fa-unlock-alt"></i> Update Password</a></li>

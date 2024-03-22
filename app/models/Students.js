@@ -60,6 +60,13 @@ module.exports = class Students {
                         WHERE cc.active = 1 AND cc.bidding_session_lid = @biddingId AND cc.sap_id = @sapId`)
         });
     }
+
+    static activeBidding(slug){
+        return poolConnection.then(pool => {
+            return pool.request()
+                .query(`SELECT * FROM[${slug}].bidding_session where active = 1 AND status = 1`)
+        });
+    }
     
     static dropCourses(slug, biddingId) {
         return poolConnection.then(pool => {
