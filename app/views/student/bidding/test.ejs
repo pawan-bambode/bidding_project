@@ -36,7 +36,7 @@
              
             <div class="main-div-round-wise card-custom-border-curv p-3">
                 <div class="card-header-custom d-flex justify-content-between p-1">
-                    <h5 class="ms-2 round-name" data-round-id="<%- roundDetails.round_lid %>"><%- roundDetails.roundName %></h5>
+                    <h5 class="ms-2 round-name"><%- roundDetails.roundName %></h5>
                     <h5 class="time-remaining my-0 mx-1"></h5>
                 </div>
                 <div class="card-body table-responsive">
@@ -267,7 +267,7 @@ $(document).ready(function() {
     let roundId = JSON.parse(`<%- JSON.stringify(roundId) %>`)
     let considerationSet = JSON.parse(`<%- JSON.stringify(considerationSetList) %>`);
     let confirmatCourse =  JSON.parse(`<%- JSON.stringify(confirmationCourse12) %>`);
-
+   
     let concentrationId = concentrationSettingData.concentraionId;
     let biddingSessionId = concentrationSettingData.biddingId;
     let concentrationName = concentrationSettingData.concentration_name;
@@ -279,7 +279,7 @@ $(document).ready(function() {
     let divisionBatchId ;
 
     $('#bidding-table tbody td.winning').each(function() {
-        winningCredits += $(this).closest('tr').data('credits');
+    winningCredits += $(this).closest('tr').data('credits');
     });
 
     creditsList.forEach(item => {
@@ -358,7 +358,7 @@ $(document).ready(function() {
     });
 
     $('#bidding-trimester-select-table').on('click','.add-bidding',function() {
-        console.log('in button click now');
+       
         biddingRow = ``;
         let areaName = $(this).closest('tr').data('area-name');
         let courseName = $(this).closest('tr').data('course-name');
@@ -378,11 +378,10 @@ $(document).ready(function() {
         let tableId = $('#bidding-table tbody tr').length;
         let studentId = $('#student-data').data('student-id');
         let id = $(this).closest('tr').data('id');
-        let roundLid = $(this).closest('tr').data('round-id');
-
+        let roundLid = $(this).closest('tr').data('round-lid');
         let areaSwap = '';
-        let roundId = $('.main-div-round-wise .round-name').data('round-id');
-        
+        let roundId = $('.round-basic-details h4.round-name').data('round-id');
+
         let areaNameAndCredits = {
             area:areaName,
             credit:credits,
@@ -416,7 +415,7 @@ $(document).ready(function() {
         updateCreditsPointTargets(creditPointsPerTrimester);
        
         biddingRow = `<tr 
-                        data-id= "${id}" data-round-id ="${roundId}" data-area-name ="${areaName}" data-course-name ="${courseName}" 
+                        data-id= "${id}" data-round-id ="${roundLid}" data-area-name ="${areaName}" data-course-name ="${courseName}" 
                         data-acad-session ="${acadSession}" data-division-batch-lid ="${divisionBatchId}" data-faculty-id =${facultyId}
                         data-credits = "${credits}" data-max-seats ="${available}" data-course-time ="${courseTime}" 
                         data-acad-session-id = "${acadSessionId}" data-course-id ="${courseId}" data-course-lid="${courseLid}"
@@ -551,7 +550,6 @@ $(document).ready(function() {
 
     socket.on('addBiddingResponse', function(biddingReponseResult) {
 
-    console.log('valeusof biddingReponseResult------------>',biddingReponseResult)
     let isErrorResponse = biddingReponseResult.message.status === 0;
     let biddingResponseToUser = biddingReponseResult.message.description;
     if(isErrorResponse){
@@ -657,11 +655,11 @@ $('#bidding-table').on('click', '.withdraw-bidding', function() {
         let id = $(this).closest('tr').data('id');
         let totalBidPoints = Number($('#total-bid-points').html());
         let remainingBidPoints = Number($('#remaining-bid-points').html());
-        $(this).closest('tr').find('.student-previous-bid-point').html(bidPoints);
+        //$(this).closest('tr').find('.student-previous-bid-point').html(bidPoints);
         $(this).closest('tr').find('.student-current-bid-point').val('');
 
         $('#remaining-bid-points').html(remainingBidPoints - Number(bidPoints));
-    
+
         let bidJson = {
             id: id,
             previous_bid : previousBid,
@@ -876,38 +874,37 @@ function biddingCourses(biddingCourseList) {
 
 function updateTableForCurrentUser(userSpecificWinningStatus) {
 
-    let divisionBatchLidReponse = userSpecificWinningStatus.div_batch_lid;
-    let actualAvailableSeats = userSpecificWinningStatus.available_seats;
-    let minimumRequireBits = userSpecificWinningStatus.mrb;
-    let totalBidders = userSpecificWinningStatus.total_bidders;
-    let isWinning = userSpecificWinningStatus.is_winning;     
-    let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchLidReponse}"]`);
+let divisionBatchLidReponse = userSpecificWinningStatus.div_batch_lid;
+let actualAvailableSeats = userSpecificWinningStatus.available_seats;
+let minimumRequireBits = userSpecificWinningStatus.mrb;
+let totalBidders = userSpecificWinningStatus.total_bidders;
+let isWinning = userSpecificWinningStatus.is_winning;     
+let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchLidReponse}"]`);
 
-    if (targetRow.length > 0) {
+if (targetRow.length > 0) {
+    
+    let availableCountElement = targetRow.find('.available-count');
+    let mrbPointsElement = targetRow.find('.mrb-points');
+    let winningStatusElement = targetRow.find('.winning-status');
+    let totalBidder = targetRow.find('.total-bidder-counts');
 
-        let availableCountElement = targetRow.find('.available-count');
-        let mrbPointsElement = targetRow.find('.mrb-points');
-        let winningStatusElement = targetRow.find('.winning-status');
-        let totalBidder = targetRow.find('.total-bidder-counts');
+    targetRow.attr('data-id', userSpecificWinningStatus.studentBiddingId);
+    targetRow.attr('data-round-lid', userSpecificWinningStatus.round_lid);
+    availableCountElement.html(actualAvailableSeats);
+    totalBidder.html(totalBidders);
+    mrbPointsElement.html(minimumRequireBits);
 
-        targetRow.attr('data-id', userSpecificWinningStatus.studentBiddingId);
-        targetRow.attr('data-round-lid', userSpecificWinningStatus.round_lid);
-        availableCountElement.html(actualAvailableSeats);
-        totalBidder.html(totalBidders);
-        mrbPointsElement.html(minimumRequireBits);
-
-        if (isWinning) {  
-            winningStatusElement.html('Yes');
-            winningStatusElement.removeClass('losing').addClass('winning');
-        
-        } else {
-            winningStatusElement.html('No');
-            winningStatusElement.removeClass('winning').addClass('losing');
-            $('#bidding-table tbody tr[data-division-batch-lid="' + divisionBatchLidReponse + '"]').find('.withdraw-bidding').removeClass('disabled');
-        }
+    if (isWinning) {  
+        winningStatusElement.html('Yes');
+        winningStatusElement.removeClass('losing').addClass('winning');
+       
+    } else {
+        winningStatusElement.html('No');
+        winningStatusElement.removeClass('winning').addClass('losing');
+        $('#bidding-table tbody tr[data-division-batch-lid="' + divisionBatchLidReponse + '"]').find('.withdraw-bidding').removeClass('disabled');
     }
 }
-
+}
 </script>
 
 <%- include('../partials/footerEnd.ejs') %>

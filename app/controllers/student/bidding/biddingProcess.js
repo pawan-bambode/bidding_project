@@ -6,6 +6,7 @@ const divisionBatch = require('../../../models/admin/divisionBatches/divisionBat
 const addDrop = require('../../../models/student/addDrop/addDrop');
 const demandEstimation = require('../../../models/student/demandEstimation/demandEstimation');
 const course = require('../../../models/admin/course/course');
+const e = require('express');
 
 
 module.exports.respond = async (socket, io) => {
@@ -84,79 +85,91 @@ module.exports.respond = async (socket, io) => {
             });
     });
      
-    socket.on('addBidding', async biddingDetails => {
-        
+    socket.on('createOrJoinRoom', async (biddingDetails) => {
+        let roomId = biddingDetails.divisionBatchLid;
+    
+        if (io.sockets.adapter.rooms.has(roomId)) {
+            socket.join(roomId);
+        } else {
+            socket.join(roomId);
+        }
+    
         try {
             const { slugName, studentLid, round_lid, courseLid, divisionBatchLid, concentration_lid, biddingSessionId, userId } = biddingDetails;
-
+    
             const result = await bidding.addBidding(slugName, studentLid, round_lid, courseLid, concentration_lid, divisionBatchLid, userId, biddingSessionId);
-            
+    
             const parsedMessage = JSON.parse(result.output.output_json);
-           
+    
             if (parsedMessage.status === 1) {
-                const detailsResult = await bidding.getAddBiddingDetails(slugName, biddingSessionId, divisionBatchLid);
-                io.emit("addBiddingResponse", {
+                const detailsResult = await bidding.getAddBiddingDetails(slugName, biddingSessionId, divisionBatchLid, studentLid);
+                
+                io.in(roomId).emit("addBiddingResponse", { 
                     message: parsedMessage,
                     biddingDetails: detailsResult.recordset,
                     userId: userId
                 });
             } else {
-                io.emit("addBiddingResponse", {
+                io.in(roomId).emit("addBiddingResponse", { 
                     message: parsedMessage,
                     userId: userId
                 });
             }
         } catch (error) {
-           
-            io.emit("addBiddingResponse", {
+            io.in(roomId).emit("addBiddingResponse", { 
                 message: JSON.parse(error.originalError.info.message),
-                userId: biddingDetails.userId
+                userId:biddingDetails.userId
             });
         }
     });
-
+    
     socket.on('withdrawBidding', async biddingDetails => {
+        
         try {
             const { slugName, id, studentLid, round_lid, divisionBatchLid, biddingSessionId, userId } = biddingDetails;
-
+    
             const result = await bidding.withdrawBidding(slugName, id, studentLid, round_lid, divisionBatchLid, userId, biddingSessionId);
             const parsedMessage = JSON.parse(result.output.output_json);
-
+    
             if (parsedMessage.status === 1) {
                 const detailsResult = await Promise.all([
                     bidding.getWithdrawBiddingDetails(slugName, biddingSessionId, divisionBatchLid),
                     bidding.getWithdrawBiddingCourse(slugName, biddingSessionId, divisionBatchLid, studentLid)
                 ]);
-
-                io.emit("withdrawBiddingResponse", {
+    
+                socket.emit("withdrawBiddingResponse", {
                     message: parsedMessage,
                     withdrawBiddingCourse: detailsResult[0].recordset,
                     courseList: detailsResult[1].recordset,
                     userId: userId,
                     divisionId: divisionBatchLid
                 });
+    
+                socket.leave(divisionBatchLid);
             } else {
-                io.emit("withdrawBiddingResponse", {
+       
+                socket.emit("withdrawBiddingResponse", {
                     message: parsedMessage,
                     userId: userId
                 });
             }
         } catch (error) {
             
-            io.emit("withdrawBiddingResponse", {
+            socket.emit("withdrawBiddingResponse", {
                 message: JSON.parse(error.originalError.info.message),
                 userId: biddingDetails.userId
             });
         }
     });
-
+    
+    
     socket.on('studentBidding', async biddingDetails => {
         try {
             const { slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson } = biddingDetails;
 
             const result = await bidding.studentBidByPoints(slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson);
             const parsedMessage = JSON.parse(result.output.output_json);
-
+        
             if (parsedMessage.status === 1) {
                 const detailsResult = await Promise.all([
                     bidding.getBiddingWinningResponse(slugName, biddingSessionId, divBatchId),
@@ -176,6 +189,7 @@ module.exports.respond = async (socket, io) => {
                 });
             }
         } catch (error) {
+    
             io.emit("studentBiddingResponse", {
                 studentBiddingResponse: JSON.parse(error.originalError.info.message),
                 userId: biddingDetails.userId
@@ -288,61 +302,6 @@ module.exports.respond = async (socket, io) => {
         }
     });
         
-    // socket.on('demandEstimationPageLoad', (data) => {
-      
-    //     let slugName = data.slugName;
-    //     let biddingId = data.biddingTime.bidding_session_lid;
-    //     let startTime = data.biddingTime.startTime;
-    //     let roundId = data.roundId;       
-        
-    //     const startdatetimeDate = new Date(startTime);
-    //     const currentDateTime = new Date();
-    //     currentDateTime.setUTCHours(currentDateTime.getUTCHours() + 5, currentDateTime.getUTCMinutes() + 30)
-    //     startdatetimeDate.setUTCHours(startdatetimeDate.getUTCHours() +5, startdatetimeDate.getUTCMinutes()+ 30);
-
-    //     const startMinute = startdatetimeDate.getUTCMinutes();
-    //     const startHour = startdatetimeDate.getUTCHours();
-    //     const startDate = startdatetimeDate.getUTCDate();
-    //     const startMonth = startdatetimeDate.getUTCMonth() + 1; 
-
-    //     startdatetimeDate.setUTCDate(startdatetimeDate.getUTCDate());
-        
-    //     if (!isNaN(startdatetimeDate)) { 
-    //         const startCronSchedule = `${startMinute} ${startHour} ${startDate} ${startMonth} *`;
-            
-    //         cron.schedule(startCronSchedule, async () => {
-    //             try {
-    //                 const [roundSettingTimeResult, courseList] = await Promise.all([
-    //                     roundSetting.startAndEndTime(slugName, biddingId, roundId),
-    //                     demandEstimation.getAvailableCourseList(slugName, biddingId),
-    //                 ]);
-        
-    //                 // const studentIdsToSendTo = ['1105', '1106'];
-    
-    //                 studentIdsToSendTo.forEach(studentId => {
-    //                     const student = findStudentById(studentList, studentId);
-    //                     if (student) {
-    //                         io.to(student.socketId).emit('demandEsmationVisibleToStudent', {
-    //                             roundDetails: roundSettingTimeResult.recordset,
-    //                             courseList: courseList.recordset
-    //                         });
-    //                     } else {
-    //                         console.error(`Student with ID ${studentId} not found.`);
-    //                     }
-    //                 });
-    //             } catch (error) {
-    //                 console.error('Error:', error);
-    //                 io.emit('demandEsmationVisibleToStudent');
-    //             }
-    //         });
-    //     }
-        
-    //     function findStudentById(studentList, studentId) {
-    //         return studentList.find(student => student.id === studentId);
-    //     }
-        
-    // });
-
     socket.on('demandEstimationPageLoad', (data) => {
         
         let slugName = data.slugName;
@@ -453,7 +412,7 @@ module.exports.respond = async (socket, io) => {
                 bidding.currentRoundStatus(slug, biddingId, roundFirstId, roundSecondId),
                 bidding.isStudentPartOfRound(slug, biddingId, studendId, roundFirstId, roundSecondId),
                 roundSetting.listByOneDayBefore(slug, biddingId, roundFirstId, roundSecondId),
-                divisionBatch.biddingCourse(slug, biddingId, studendId),
+                divisionBatch.biddingCourse(slug, biddingId, studendId, roundFirstId, roundSecondId),
             ]);
 
             if(detailsResult[2].recordset.length > 0){
@@ -462,7 +421,7 @@ module.exports.respond = async (socket, io) => {
                 const endTime = new Date(detailsResult[2].recordset[0].endTime).getTime();
                 remainingTime = calculateRemainingTime(startTime, endTime);
             }
-           
+        
             socket.emit('remainingTime',  {
                 remainingTime: remainingTime,
                 currentRoundStatus: detailsResult[0].recordset,
@@ -490,20 +449,16 @@ module.exports.respond = async (socket, io) => {
         const enddateTime = new Date(endTime);
         const currentDateTime = new Date();
 
-        currentDateTime.setUTCHours(currentDateTime.getUTCHours() + 5, currentDateTime.getUTCMinutes() + 30)
-        startdatetimeDate.setUTCHours(startdatetimeDate.getUTCHours(), startdatetimeDate.getUTCMinutes());
-        enddateTime.setUTCHours(enddateTime.getUTCHours(), enddateTime.getUTCMinutes());
+        const startMinute = startdatetimeDate.getMinutes();
+        const startHour = startdatetimeDate.getHours();
+        const startDate = startdatetimeDate.getDate();
+        const startMonth = startdatetimeDate.getMonth() + 1; 
 
-        const startMinute = startdatetimeDate.getUTCMinutes();
-        const startHour = startdatetimeDate.getUTCHours();
-        const startDate = startdatetimeDate.getUTCDate();
-        const startMonth = startdatetimeDate.getUTCMonth() + 1; 
-
-        startdatetimeDate.setUTCDate(startdatetimeDate.getUTCDate());
-        const endMinute = enddateTime.getUTCMinutes();
-        const endHour = enddateTime.getUTCHours();
-        const endDate = enddateTime.getUTCDate();
-        const endMonth = enddateTime.getUTCMonth() + 1; 
+        
+        const endMinute = enddateTime.getMinutes();
+        const endHour = enddateTime.getHours();
+        const endDate = enddateTime.getDate();
+        const endMonth = enddateTime.getMonth() + 1; 
 
         if (!isNaN(startdatetimeDate) && !isNaN(enddateTime)) { 
             const startCronSchedule = `${startMinute} ${startHour} ${startDate} ${startMonth} *`;
@@ -559,38 +514,7 @@ module.exports.respond = async (socket, io) => {
             });
         }
     });
-	
-
-    socket.on('addBidding', async biddingDetails => {
-        
-        try {
-            const { slugName, studentLid, round_lid, courseLid, divisionBatchLid, concentration_lid, biddingSessionId, userId } = biddingDetails;
-
-            const result = await bidding.addBidding(slugName, studentLid, round_lid, courseLid, concentration_lid, divisionBatchLid, userId, biddingSessionId);
-            const parsedMessage = JSON.parse(result.output.output_json);
-            
-            if (parsedMessage.status === 1) {
-                const detailsResult = await bidding.getAddBiddingDetails(slugName, biddingSessionId, divisionBatchLid);
-                io.emit("addBiddingResponse", {
-                    message: parsedMessage,
-                    biddingDetails: detailsResult.recordset,
-                    userId: userId
-                });
-            } else {
-                io.emit("addBiddingResponse", {
-                    message: parsedMessage,
-                    userId: userId
-                });
-            }
-        } catch (error) {
-            
-            io.emit("addBiddingResponse", {
-                message: JSON.parse(error.originalError.info.message),
-                userId: biddingDetails.userId
-            });
-        }
-    });
-        
+	        
     socket.on('withdrawBidding', async biddingDetails => {
         try {
             const { slugName, id, studentLid, round_lid, divisionBatchLid, biddingSessionId, userId } = biddingDetails;
@@ -625,40 +549,7 @@ module.exports.respond = async (socket, io) => {
             });
         }
     });
-        
-    socket.on('studentBidding', async biddingDetails => {
-        try {
-            const { slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson } = biddingDetails;
-
-            const result = await bidding.studentBidByPoints(slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson);
-            const parsedMessage = JSON.parse(result.output.output_json);
-            if (parsedMessage.status == 1) {
-                const detailsResult = await Promise.all([
-                    bidding.getBiddingWinningResponse(slugName, biddingSessionId, divBatchId),
-                    bidding.getMRBPointsResponse(slugName, biddingSessionId, divBatchId)
-                ]);
-
-                io.emit("studentBiddingResponse", {
-                    studentBiddingResponse: parsedMessage,
-                    minimumRequireBits: detailsResult[1].recordset[0],
-                    divisionId: divBatchId,
-                    userId: userId
-                });
-            } else {
-                io.emit("studentBiddingResponse", {
-                    studentBiddingResponse: parsedMessage,
-                    userId: userId
-                });
-            }
-        } catch (error) {
             
-            io.emit("studentBiddingResponse", {
-                studentBiddingResponse: JSON.parse(error.originalError.info.message),
-                userId: biddingDetails.userId
-            });
-        }
-    });
-    
     socket.on('roundEnded', (data) => {
 
         let endDateTime = data.startTime.endTime;
@@ -688,7 +579,5 @@ module.exports.respond = async (socket, io) => {
                     });
             });
         }
-    }); 
-    
-    
+    });   
 };
