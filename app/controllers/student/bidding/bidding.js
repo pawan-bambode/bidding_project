@@ -159,7 +159,7 @@ module.exports = {
     coursesByAcad : (req, res) => {
         Promise.all([
             biddingClass.getCourseListByAcadSession(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.roundId, req.body.studentId),
-            demandEstimation.getAreaList(res.locals.slug, res.locals.biddingId, req.body.acadSessionId)
+            demandEstimation.getAreaList(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.roundId, req.body.studentId)
             
         ]).then(result => {
             res.json({

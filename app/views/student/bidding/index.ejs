@@ -36,7 +36,7 @@
              
             <div class="main-div-round-wise card-custom-border-curv p-3">
                 <div class="card-header-custom d-flex justify-content-between p-1">
-                    <h5 class="ms-2 round-name" data-round-id="<%- roundDetails.round_lid %>"><%- roundDetails.roundName %></h5>
+                    <h5 class="ms-2 round-name"><%- roundDetails.roundName %></h5>
                     <h5 class="time-remaining my-0 mx-1"></h5>
                 </div>
                 <div class="card-body table-responsive">
@@ -130,14 +130,14 @@
                     <h3 class="ms-2">Bidding Course</h3>
                 </div>
                 <div class="col-md-3 mt-4 ms-5">
-                    <select class="form-select form-control select2 d-none" id="bidding-acad-session">
-                        <option value="" selected>Select Acad Session</option>
+                    <select class="form-select form-control bidding-acad-session" id="bidding-acad-session">
                         <option value="1">Select All</option>
                         <option value="34">Trimester IV</option>
                         <option value="35">Trimester V</option>
                         <option value="36">Trimester VI</option>
                     </select>
                 </div>
+                
                 <div class="card-body table-responsive">
                     <table class="table table-bordered mt-4" id="bidding-table">
                         <thead>
@@ -237,11 +237,8 @@
 <script>
     
 $(document).ready(function() {
-
-    $('.select2').select2({
-        dropdownParent: $('#bidding-modal')
-    });
- 
+    $('.select2').select2();
+  
     $('#student-data').attr('data-isEligibleForRound', '<%= isStudentPartOfRound %>');
     $('#sidebar .side-menu li.' + `<%- active %>`).addClass('active');
     
@@ -267,6 +264,9 @@ $(document).ready(function() {
     let roundId = JSON.parse(`<%- JSON.stringify(roundId) %>`)
     let considerationSet = JSON.parse(`<%- JSON.stringify(considerationSetList) %>`);
     let confirmatCourse =  JSON.parse(`<%- JSON.stringify(confirmationCourse12) %>`);
+    let totalBidPointBidByStudent = [];
+    let totalStudentBidPoints = `<%- studentBidsPoints.student_bid_points %>`
+    
 
     let concentrationId = concentrationSettingData.concentraionId;
     let biddingSessionId = concentrationSettingData.biddingId;
@@ -282,6 +282,10 @@ $(document).ready(function() {
         winningCredits += $(this).closest('tr').data('credits');
     });
 
+    if(considerationSet){
+        bidding(considerationSet);
+    }
+
     creditsList.forEach(item => {
         const { id, credits } = item;
 
@@ -292,10 +296,24 @@ $(document).ready(function() {
 
     let roundSettings = JSON.parse(`<%- JSON.stringify(roundDetails) %>`);
     
+    $('#bidding-acad-session').on('change', function(){
+
+        let id = $(this).val();
+        console.log('valuesof id', id);
+        
+        $("#bidding-table tbody tr").hide();
+        
+        $("#bidding-table tbody tr").filter(function () {
+            let rowAcadSessionId = $(this).data('acad-session-id');
+            return rowAcadSessionId == id;
+        }).show();
+    });
+
+
     $('#area-change').on('change', function () {
         let acadSessionId = $('#acad-session-change').val();
         let areaName = $(this).val();
-        let roundId = $('.round-name').data('round-id');
+        let roundId = $('.round-basic-details .round-name').data('round-id');
         let studentId = $('#student-data').data('student-id');
  
         let ApiObj = {
@@ -315,21 +333,20 @@ $(document).ready(function() {
                 result.courseList.forEach(area => {
                     courseName += `<option value="${area.course_id}">${area.course_name}</option>`;
                 });
-                biddingCourses(result.courseList, false);
             } else {
                 courseName += `<option value="">No Area Found!</option>`;
-                let firstChildren = $('#area-change').find(':first-child').val();
-               $('#area-change').val(firstChildren).trigger('change');
             }
             $("#course-filter").html(courseName);
+            $('#bidding-trimester-select-table tbody').html('');
+            biddingCourses(result.courseList, false);  
         })
     })
 
     $('#acad-session-change').on('change', function () {
         let acadSessionId = $(this).val();
-        let roundId = $('.round-name').data('round-id');
+        let roundId = $('.round-basic-details .round-name').data('round-id');
         let studentId = $('#student-data').data('student-id');
-    
+
         let ApiObj = {
             url: '/student/bidding/courses-by-acad',
             type: 'POST',
@@ -339,10 +356,10 @@ $(document).ready(function() {
                 studentId: studentId
             },
             dataType: 'JSON'
-        }
+        };
 
         ajaxApi(ApiObj).then(result => {
-            
+            console.log('valuesof result', result);
             let areaName = `<option selected  value="-1">--Select Area--</option>`;
             if (result.areaList.length > 0) {
                 result.areaList.forEach(area => {
@@ -353,13 +370,18 @@ $(document).ready(function() {
             }
 
             $("#area-change").html(areaName);
+
+            $('#bidding-trimester-select-table tbody').html('');
+
             biddingCourses(result.courseList, false);     
         });
     });
 
+
     $('#bidding-trimester-select-table').on('click','.add-bidding',function() {
-        console.log('in button click now');
+        
         biddingRow = ``;
+
         let areaName = $(this).closest('tr').data('area-name');
         let courseName = $(this).closest('tr').data('course-name');
         let credits = $(this).closest('tr').data('credits');
@@ -381,8 +403,8 @@ $(document).ready(function() {
         let roundLid = $(this).closest('tr').data('round-id');
 
         let areaSwap = '';
-        let roundId = $('.main-div-round-wise .round-name').data('round-id');
-        
+        let roundId = $('.round-wises .round-name').data('round-id');
+      
         let areaNameAndCredits = {
             area:areaName,
             credit:credits,
@@ -551,42 +573,41 @@ $(document).ready(function() {
 
     socket.on('addBiddingResponse', function(biddingReponseResult) {
 
-    console.log('valeusof biddingReponseResult------------>',biddingReponseResult)
-    let isErrorResponse = biddingReponseResult.message.status === 0;
-    let biddingResponseToUser = biddingReponseResult.message.description;
-    if(isErrorResponse){
-        createToast(biddingResponseToUser, 'alert-danger', 'error-message');
-    }
-    else{
-        let biddingAddedByUserId = biddingReponseResult.userId;
-        biddingReponseResult.biddingDetails.forEach(userSpecificWinningStatus => {
+        let isErrorResponse = biddingReponseResult.message.status === 0;
+        let biddingResponseToUser = biddingReponseResult.message.description;
+        if(isErrorResponse){
+            createToast(biddingResponseToUser, 'alert-danger', 'error-message');
+        }
+        else{
+            let biddingAddedByUserId = biddingReponseResult.userId;
+            biddingReponseResult.biddingDetails.forEach(userSpecificWinningStatus => {
 
-            let divisionBatchLidReponse = userSpecificWinningStatus.div_batch_lid;
-            let biddingUserId = userSpecificWinningStatus.userId;
-            const isCurrentUser = userId === biddingAddedByUserId;
-            const isSuccessResponse = biddingReponseResult.message.status === 1;
+                let divisionBatchLidReponse = userSpecificWinningStatus.div_batch_lid;
+                let biddingUserId = userSpecificWinningStatus.userId;
+                const isCurrentUser = userId === biddingAddedByUserId;
+                const isSuccessResponse = biddingReponseResult.message.status === 1;
 
-            if (isSuccessResponse) {
-                if (userId == biddingUserId) {
-                    $('#bidding-table tbody').append(biddingRow);
-                    arrangeTableId('bidding-trimester-select-table');
-                    $(`#bidding-trimester-select-table tr[data-division-batch-lid = ${divisionBatchLidReponse}]`).remove();
-                    updateTableForCurrentUser(userSpecificWinningStatus);
+                if (isSuccessResponse) {
+                    if (userId == biddingUserId) {
+                        $('#bidding-table tbody').append(biddingRow);
+                        arrangeTableId('bidding-trimester-select-table');
+                        $(`#bidding-trimester-select-table tr[data-division-batch-lid = ${divisionBatchLidReponse}]`).remove();
+                        updateTableForCurrentUser(userSpecificWinningStatus);
+                    }
+                    if(isCurrentUser){
+                    createToast(biddingResponseToUser, 'alert-success', 'message-content');
+                    }
+                } else {
+                    if (isCurrentUser) {
+                        createToast(biddingResponseToUser, 'alert-danger', 'error-message');
+                    }
                 }
-                if(isCurrentUser){
-                createToast(biddingResponseToUser, 'alert-success', 'message-content');
-                }
-            } else {
-                if (isCurrentUser) {
-                    createToast(biddingResponseToUser, 'alert-danger', 'error-message');
-                }
-            }
-        });
-    }
-});
+            });
+        }   
+    });     
 
     
-$('#bidding-table').on('click', '.withdraw-bidding', function() {
+    $('#bidding-table').on('click', '.withdraw-bidding', function() {
         
         let concentrationId = $(this).closest('tr').data('id');
         let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
@@ -647,6 +668,20 @@ $('#bidding-table').on('click', '.withdraw-bidding', function() {
     });
 
 
+    $('#bidding-table tbody tr').each(function(index, element) {
+        if(Number($(element).find('.student-previous-bid-point').html()) > 0){
+           let divBatchId =  $(element).data('division-batch-lid');
+           let bidPoints = Number($(element).find('.student-previous-bid-point').html());
+           let bidPointsStudentBid = {
+                divisionBatchId: divBatchId,
+                bidPoints: bidPoints     
+            }
+            totalBidPointBidByStudent.push(bidPointsStudentBid);
+        }
+    });
+
+
+
     $('#bidding-table').on('click', '.add-bidding-points', function () {
 
         let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
@@ -659,13 +694,35 @@ $('#bidding-table').on('click', '.withdraw-bidding', function() {
         let remainingBidPoints = Number($('#remaining-bid-points').html());
         $(this).closest('tr').find('.student-previous-bid-point').html(bidPoints);
         $(this).closest('tr').find('.student-current-bid-point').val('');
-
-        $('#remaining-bid-points').html(remainingBidPoints - Number(bidPoints));
+        let totalBidPointsByStudent = 0;
+     
     
         let bidJson = {
             id: id,
             previous_bid : previousBid,
             bid_points: bidPoints
+        }
+        let bidPointsStudentBid = {
+            divisionBatchId: divisionBatchId,
+            bidPoints: bidPoints     
+        }
+
+        if (totalBidPointBidByStudent.some(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId ===     divisionBatchId)) {
+            let bidPointBidByStudent = totalBidPointBidByStudent.find(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId);
+            bidPointBidByStudent.bidPoints = bidPoints;
+        } else {
+            totalBidPointBidByStudent.push(bidPointsStudentBid);
+        }
+
+        $.each(totalBidPointBidByStudent, function(index, bidPointBidByStudent) {
+            totalBidPointsByStudent += Number(bidPointBidByStudent.bidPoints);
+        });
+
+        $('#remaining-bid-points').html(Number(totalStudentBidPoints)- Number(totalBidPointsByStudent));
+        if(Number(totalStudentBidPoints)- Number(totalBidPointsByStudent) == 0){
+            $('#bidding-table tbody tr').each(function(index, element) {
+                $(element).find('.add-bidding-points').addClass('disabled');
+            });
         }
 
         socket.emit('studentBidding', {
@@ -741,14 +798,13 @@ $('#bidding-table').on('click', '.withdraw-bidding', function() {
         $('#credits-winning').html(winningCredits)
     });
 
-
-
     socket.emit('biddingPageLoadTime', { 
         slugName: "<%- slug %>",
         activeBidding:activeBidding,
         biddingTime: JSON.parse(`<%- JSON.stringify(roundDetails) %>`),
         studentId: studentId
     });
+
     let biddingCourseFlag = false;
     socket.on('remainingTime', data =>{
         
@@ -766,7 +822,7 @@ $('#bidding-table').on('click', '.withdraw-bidding', function() {
                             $('.round-message-container').addClass('d-none');
                             $('.round-basic-details').removeClass('d-none');
                             $('.round-basic-details').find('.round-name').text(data.roundDetails[0].roundName);
-                            $('.round-basic-details').find('.round-name').attr('round-id', data.roundDetails[0].round_lid);
+                            $('.round-basic-details').find('.round-name').attr('data-round-id', data.roundDetails[0].round_lid);
                             $('.round-basic-details').find('#start-time').text(data.roundDetails[0].startTime);
                             $('.round-basic-details').find('#end-time').text(data.roundDetails[0].endTime);
                         }else{
@@ -778,8 +834,12 @@ $('#bidding-table').on('click', '.withdraw-bidding', function() {
                     }   
             }
             else if(data.currentRoundStatus[0].round_started == '1'){
-                biddingCourses( data.biddingCourses);
+                
                 if(isEligibleForRound == 1){
+                    if(!biddingCourseFlag){
+                        biddingCourses( data.biddingCourses);
+                    }
+                    biddingCourseFlag = true;
                     $('.round-message-container').addClass('d-none');
                     $('.round-basic-details').removeClass('d-none');
                     $('.round-wise-details').removeClass('d-none');
@@ -873,6 +933,67 @@ function biddingCourses(biddingCourseList) {
         });
     }
 }
+
+function bidding(biddingCourseList) {
+
+    biddingCourseList.forEach(function(biddingCourse, index) {
+    
+    let { division_batch_lid: divisionBatchId, faculty_id: facultyId } = biddingCourse;
+    let existingElement = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
+    let existingFaculty = existingElement.filter(`[data-faculty-id="${facultyId}"]`);
+    let otherFacultyExists = existingElement.not(existingFaculty);
+    let lengthOfTable = $('#bidding-table tbody tr').length;
+
+    if (existingElement.length === 0) {
+        let newRow = `<tr 
+        data-area-name="${biddingCourse.area_name}" 
+        data-course-name="${biddingCourse.course_name}"
+        data-course-division-name="${biddingCourse.course_name}-${biddingCourse.division}" 
+        data-acad-session="${biddingCourse.acad_session}" 
+        data-division-batch-lid="${biddingCourse.division_batch_lid}"
+        data-faculty-id="${biddingCourse.faculty_id}"
+        data-credits="${biddingCourse.credits}"
+        data-max-seats="${biddingCourse.max_seats}"
+        data-acad-session-id="${biddingCourse.sap_acad_session_id}"
+        data-course-id="${biddingCourse.course_id}"
+        data-course-lid="${biddingCourse.course_lid}"
+        data-faculty-name="${biddingCourse.faculty_name}"
+        data-id="${biddingCourse.id}"
+        data-round-id="${biddingCourse.round_lid}"
+    >
+        <td class="id-column">${++lengthOfTable}</td>
+        <td>${biddingCourse.area_name}</td>
+        <td>${biddingCourse.course_name}-${biddingCourse.division}
+            ${biddingCourse.is_favourite == 1 ?
+            '<img class="added-star fav-course" src="/image/student/body-part-image/available-course/added-star.png" alt="added">' : ''}
+        </td>
+        <td>${biddingCourse.acad_session}</td>
+        <td class='course-timing'>${biddingCourse.faculty_date_time}</td>
+        <td>${biddingCourse.credits}</td>
+        <td>${biddingCourse.max_seats}</td>
+        <td>${biddingCourse.total_bidders}</td>
+        <td class="mrb-points">${biddingCourse.min_req_bid}</td>
+        <td class="winning-status ${biddingCourse.is_winning ? 'winning' : 'losing'}">${biddingCourse.is_winning ? 'Yes' : 'No'}</td>
+        <td class="student-previous-bid-point">${biddingCourse.bid_points}</td>
+        <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
+            <button class="btn border border-dark ms-2 add-bidding-points">
+                <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
+            </button>
+        </td>
+        <td>
+            <button class="btn border border-danger withdraw-bidding mt-1" ><img src='/image/student/body-part-image/bidding-round-image/withdraw.png'></button>
+        </td>
+    </tr>`;
+    $('#bidding-table tbody').append(newRow);
+
+        } else {
+            let courseTiming = `<div>${biddingCourse.faculty_date_time}`;
+            let contentToAppend = otherFacultyExists.length ? `${courseTiming} - ${biddingCourse.faculty_name})` : `${courseTiming}`;
+            existingElement.children('.course-timing').append(contentToAppend);
+        }
+    });
+}
+
 
 function updateTableForCurrentUser(userSpecificWinningStatus) {
 
