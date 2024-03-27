@@ -220,16 +220,20 @@
 
 <footer>
     <div class="student-footer text-center">
-        <div class="d-flex justify-content-center align-items-center round-wise-details d-none">
-            <% if(currentRoundStatus.round_started == 1) { %>
-                <% for(let acadSession of acadSessions) {%>
-                    <h6 class="p-1 px-3 credit-points">Selected <%- acadSession.name %> Credits :&nbsp;
-                        <span class="credits-points-<%- acadSession.id %>">0</span>
-                    </h6>
-                <% } %> 
-                <h5 class="text-danger time-remaining"></h5>
-            <% } %>        
-        </div> 
+        <div class="student-footer-div">
+            <div class="d-flex justify-content-center align-items-center round-wise-details d-none">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <% for(let acadSession of acadSessions) {%>
+                            <h6 class="p-1 px-3 credit-points">Selected <%- acadSession.name %>  Credits :&nbsp;
+                                <span class="credits-points-<%- acadSession.id %>">0</span>
+                            </h6>
+                        <% } %> 
+                        <h5 class="text-danger time-remaining"></h5>
+                    </div>
+                </div>
+            </div>
+        </div>    
     </div>
 </footer>
 
@@ -425,23 +429,8 @@ $(document).ready(function() {
         concentrationSettingOfStudent.max_credits_per_area -= +credits;
         concentrationSettingOfStudent.min_credits_in_primary_area -= +credits;
         concentrationSettingOfStudent.total_elective_credits -= +credits;
+      
        
-        const targetCredits = Number(creditPointsPerTrimester[`${acadSessionId}`].max_credits);
-
-        if (targetCredits > 0) {
-        
-            currentCreditsPoints[`${acadSessionId}`] += Number(credits);
-            const element = $(`.current-credit-points[data-id="${acadSessionId}"]`);
-        
-            if (element.length > 0) {
-            
-                element.text(currentCreditsPoints[`${acadSessionId}`]);
-                const updatedTargetCredits = targetCredits - Number(credits);
-                creditPointsPerTrimester[`${acadSessionId}`].max_credits = updatedTargetCredits;
-            }
-        }
-
-        updateCreditsPointTargets(creditPointsPerTrimester);
        
         biddingRow = `<tr 
                         data-id= "${id}" data-round-id ="${roundId}" data-area-name ="${areaName}" data-course-name ="${courseName}" 
@@ -694,48 +683,54 @@ $(document).ready(function() {
         let id = $(this).closest('tr').data('id');
         let totalBidPoints = Number($('#total-bid-points').html());
         let remainingBidPoints = Number($('#remaining-bid-points').html());
-        $(this).closest('tr').find('.student-previous-bid-point').html(bidPoints);
+
         $(this).closest('tr').find('.student-current-bid-point').val('');
         let totalBidPointsByStudent = 0;
-     
-        let bidJson = {
-            id: id,
-            previous_bid : previousBid,
-            bid_points: bidPoints
-        }
-        let bidPointsStudentBid = {
-            divisionBatchId: divisionBatchId,
-            bidPoints: bidPoints     
-        }
-
-        if (totalBidPointBidByStudent.some(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId ===     divisionBatchId)) {
-            let bidPointBidByStudent = totalBidPointBidByStudent.find(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId);
-            bidPointBidByStudent.bidPoints = bidPoints;
+        if (Number(totalStudentBidPoints) - Number(totalBidPointsByStudent) < bidPoints) {
+            alert('Your Remaining bid point is less than your bid point entered');
         } else {
-            totalBidPointBidByStudent.push(bidPointsStudentBid);
-        }
 
+            $(this).closest('tr').find('.student-previous-bid-point').html(bidPoints);
+            let bidJson = {
+                id: id,
+                previous_bid : previousBid,
+                bid_points: bidPoints
+            }
+            let bidPointsStudentBid = {
+                divisionBatchId: divisionBatchId,
+                bidPoints: bidPoints     
+            }
+        
+            if (totalBidPointBidByStudent.some(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId)) {
+                let bidPointBidByStudent = totalBidPointBidByStudent.find(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId);
+                bidPointBidByStudent.bidPoints = bidPoints;
+            } else {
+                totalBidPointBidByStudent.push(bidPointsStudentBid);
+            }
+        
         $.each(totalBidPointBidByStudent, function(index, bidPointBidByStudent) {
             totalBidPointsByStudent += Number(bidPointBidByStudent.bidPoints);
-        });
-
-        $('#remaining-bid-points').html(Number(totalStudentBidPoints)- Number(totalBidPointsByStudent));
-        if(Number(totalStudentBidPoints)- Number(totalBidPointsByStudent) == 0){
-            $('#bidding-table tbody tr').each(function(index, element) {
-                $(element).find('.add-bidding-points').addClass('disabled');
-            });
-        }
-
-        socket.emit('studentBidding', {
-            slugName: "<%- slug %>",
-            studentId: studentId,
-            roundId: roundId,
-            divBatchId: divisionBatchId,
-            userId: userId,
-            biddingSessionId: biddingSessionId,
-            inputJson: JSON.stringify(bidJson)
-        });
     });
+  
+    $('#remaining-bid-points').html(Number(totalStudentBidPoints) - Number(totalBidPointsByStudent));
+    if (Number(totalStudentBidPoints) - Number(totalBidPointsByStudent) <= 0) {
+        $('#bidding-table tbody tr').each(function(index, element) {
+            $(element).find('.add-bidding-points').addClass('disabled');
+        });
+    }
+
+    socket.emit('studentBidding', {
+        slugName: "<%- slug %>",
+        studentId: studentId,
+        roundId: roundId,
+        divBatchId: divisionBatchId,
+        userId: userId,
+        biddingSessionId: biddingSessionId,
+        inputJson: JSON.stringify(bidJson)
+    });
+}
+});
+
 
     socket.on('studentBiddingResponse', function(biddingReponseResult) {
 
@@ -1039,4 +1034,3 @@ function updateTableForCurrentUser(userSpecificWinningStatus) {
 
 </script>
 
-<%- include('../partials/footerEnd.ejs') %>
