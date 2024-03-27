@@ -480,26 +480,27 @@ $(document).ready(function() {
                 return;
             });
     });
+});
 
+function biddingCourses(biddingCourseList, isWithdraw) {
 
-    function biddingCourses(biddingCourseList, isWithdraw) {
+    if (!isWithdraw) {
+        $('#wait-list-availale-table tbody').empty();
+    }
 
-        if (!isWithdraw) {
-            $('#wait-list-availale-table tbody').empty();
-        }
+    if(biddingCourseList.length > 0 ) {
 
         biddingCourseList.forEach(function(biddingCourse, index) {
 
-            let {
-                division_batch_lid: divisionBatchId,
-                faculty_id: facultyId
-            } = biddingCourse;
+            let divisionBatchId = biddingCourse.division_batch_lid;
+            let facultyId = biddingCourse.faculty_id;    
             let existingElement = $(`#wait-list-availale-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
             let existingFaculty = existingElement.filter(`[data-faculty-id="${facultyId}"]`);
             let otherFacultyExists = existingElement.not(existingFaculty);
             let lengthOfTable = $('#wait-list-availale-table tbody tr').length;
 
             if (existingElement.length === 0) {
+
                 let newRow = `<tr data-area-name = "${biddingCourse.area_name}" 
                                   data-course-name = "${biddingCourse.course_name}"
                                   data-course-division-name = "${biddingCourse.course_name}-${biddingCourse.division}" 
@@ -542,8 +543,9 @@ $(document).ready(function() {
                 existingElement.children('.course-timing').append(contentToAppend);
             }
         });
-    }
-}); 
+    }   
+}
+
 </script>
 
 <%- include('../partials/footerEnd.ejs') %>

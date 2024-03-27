@@ -30,10 +30,16 @@ module.exports = {
     renderRegisterPage: (req, res, next) => {
         res.render('register.ejs');
     },
-
+    
+   
     authenticate: async (req, res, next) => {
+    
         try {
             const sess = req.session;
+
+            if(!req.session){
+                res.redirect('/user/login');
+            }
         
             let userData = await User.getUserDetails(req.body, res.locals.slug, res.locals.biddingId);
 
@@ -82,7 +88,8 @@ module.exports = {
                     res.redirect('/admin/dashboard');
                 } else if (req.body.username === userData.recordset[0].username && isVerified == true && userData.recordset[0].role_name === 'student') {
                     res.redirect('/student/dashboard');
-                } else {
+                } 
+                 else {
                     res.send('This user has no permissions.');
                 }
             } else {

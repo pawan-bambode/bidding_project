@@ -130,7 +130,7 @@ module.exports = class RoundSettings {
                 .input('roundId', sql.Int, roundId) 
                 .query(`SELECT round_lid, FORMAT(start_date_time, 'dd-MMMM yyyy h:mm:ss tt') AS startTime,
                         FORMAT(end_date_time, 'dd-MMMM yyyy h:mm:ss tt') AS endTime, 
-                        SUBSTRING(round_name, CHARINDEX('-', round_name) + 1, LEN(round_name)) AS roundName
+                        REPLACE(SUBSTRING(round_name, CHARINDEX('-', round_name) + 1, LEN(round_name)), '_', ' ') AS roundName
                         FROM [${slug}].round_settings
                         WHERE start_date_time <= DATEADD(HOUR, 24, GETDATE()) AND 
                         end_date_time > GETDATE() AND 

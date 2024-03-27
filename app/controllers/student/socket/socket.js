@@ -3,13 +3,87 @@ const cron = require('node-cron');
 const roundSetting = require('../../../models/admin/roundSettings/roundSettings');
 const confirmation = require('../../../models/student/confirmation/confirmation');
 const divisionBatch = require('../../../models/admin/divisionBatches/divisionBatches');
-const addDrop = require('../../../models/student/addDrop/addDrop');
 const demandEstimation = require('../../../models/student/demandEstimation/demandEstimation');
-const course = require('../../../models/admin/course/course');
-const e = require('express');
-
 
 module.exports.respond = async (socket, io) => {
+
+    socket.on('demandEstimationPageLoad', (data) => {
+        
+        let slugName = data.slugName;
+        let biddingId = data.biddingTime.bidding_session_lid;
+        let startTime = data.biddingTime.startTime;
+        let roundId = data.roundId;       
+        
+        const startDatetime = new Date(startTime);
+        
+        const startMinute = startDatetime.getMinutes();
+        const startHour = startDatetime.getHours();
+        const startDate = startDatetime.getDate();
+        const startMonth = startDatetime.getMonth() + 1; 
+
+        if (!isNaN(startDatetime)) { 
+            const startCronSchedule = `${startMinute} ${startHour} ${startDate} ${startMonth} *`;
+            
+            cron.schedule(startCronSchedule, async () => {
+                try {
+                    const[roundSettingTimeResult, courseList] = await Promise.all([
+                        roundSetting.startAndEndTime(slugName, biddingId, roundId),
+                        demandEstimation.getAvailableCourseList(slugName, biddingId),
+                    ]);
+
+                    io.emit('demandEsmationVisibleToStudent', {
+                        roundDetails: roundSettingTimeResult.recordset,
+                        courseList: courseList.recordset
+                    });
+                } catch (error) {
+                    console.error('Error:', error);
+                    io.emit('demandEsmationVisibleToStudent');
+                }
+            });
+        }
+    });
+
+    socket.on('demandEstimationLoadTime', async (data) => {
+
+        let slug = data.slugName;
+        let biddingId = data.activeBidding;
+        let roundId = 1;
+        let studendId = data.studentId
+        let remainingTime = '';
+
+        const intervalFunction = async () => {
+
+            let currentDateTime = convertDateFormat();
+            
+            if (remainingTime === "Round Ended") {
+                clearInterval(interval);
+            }
+            
+            const detailsResult = await Promise.all([
+                roundSetting.currentRoundStatus(slug, biddingId, roundId),
+                demandEstimation.isStudentPartOfRound(slug, biddingId, studendId, roundId),
+                roundSetting.demandEstimOneDayBefore(slug, biddingId, roundId),
+                demandEstimation.getAvailableCourseList(slug, biddingId)
+            ]);
+
+            if(detailsResult[2].recordset.length > 0){
+                const startTime = new Date(detailsResult[2].recordset[0].startTime).getTime();
+                const endTime = new Date(detailsResult[2].recordset[0].endTime).getTime();
+                remainingTime = calculateRemainingTime(startTime, endTime);
+            }
+        
+            socket.emit('remainingTimeForDemandEstimation',  {
+                remainingTime: remainingTime,
+                currentRoundStatus: detailsResult[0].recordset,
+                currentDateTime: currentDateTime,
+                studentList: detailsResult[1].recordset.length == 0 ?0:1,
+                roundDetails : detailsResult[2].recordset,
+                biddingCourses: detailsResult[3].recordset
+            });
+        };
+    
+        const interval = setInterval(intervalFunction, 1000);
+    });
 
     socket.on('biddingPageLoad', (data) => {
          
@@ -21,21 +95,21 @@ module.exports.respond = async (socket, io) => {
         let roundIId = data.roundIId;
         let studendId = data.studentId;
     
-        const startdatetimeDate = new Date(startTime);
-        const enddateTime = new Date(endTime);
+        const startDatetime = new Date(startTime);
+        const endDateTime = new Date(endTime);
     
-        const startMinute = startdatetimeDate.getMinutes();
-        const startHour = startdatetimeDate.getHours();
-        const startDate = startdatetimeDate.getDate();
-        const startMonth = startdatetimeDate.getMonth() + 1; 
+        const startMinute = startDatetime.getMinutes();
+        const startHour = startDatetime.getHours();
+        const startDate = startDatetime.getDate();
+        const startMonth = startDatetime.getMonth() + 1; 
 
-        
-        const endMinute = enddateTime.getMinutes();
-        const endHour = enddateTime.getHours();
-        const endDate = enddateTime.getDate();
-        const endMonth = enddateTime.getMonth() + 1; 
+        const endMinute = endDateTime.getMinutes();
+        const endHour = endDateTime.getHours();
+        const endDate = endDateTime.getDate();
+        const endMonth = endDateTime.getMonth() + 1; 
 
-        if (!isNaN(startdatetimeDate) && !isNaN(enddateTime)) { 
+        if (!isNaN(startDatetime) && !isNaN(endDateTime)) { 
+
             const startCronSchedule = `${startMinute} ${startHour} ${startDate} ${startMonth} *`;
             const endCronSchedule = `${endMinute} ${endHour} ${endDate} ${endMonth} *`;
             
@@ -68,8 +142,6 @@ module.exports.respond = async (socket, io) => {
                         divisionBatch.courseList(slugName, biddingId),
                         bidding.considerationSet(slugName, biddingId, studendId, roundId, roundIId),
                         confirmation.getConfirmCourseList(slugName, biddingId, studendId)
-
-
                     ]);
                 
                     io.emit('activeBiddingRound', {
@@ -98,6 +170,7 @@ module.exports.respond = async (socket, io) => {
         let roundSecondId = 4;
         let studendId = data.studentId
         let remainingTime = '';
+
         const intervalFunction = async () => {
 
             let currentDateTime = convertDateFormat();
@@ -134,6 +207,7 @@ module.exports.respond = async (socket, io) => {
     });
 
     socket.on('createOrJoinRoom', async (biddingDetails) => {
+
         const { divisionBatchLid } = biddingDetails;
         const roomId = divisionBatchLid;
     
@@ -167,35 +241,35 @@ module.exports.respond = async (socket, io) => {
     socket.on('withdrawBidding', async biddingDetails => {
         
         try {
+
             const { slugName, id, studentLid, round_lid, divisionBatchLid, biddingSessionId, userId } = biddingDetails;
-    
             const result = await bidding.withdrawBidding(slugName, id, studentLid, round_lid, divisionBatchLid, userId, biddingSessionId);
             const parsedMessage = JSON.parse(result.output.output_json);
     
             if (parsedMessage.status === 1) {
-                const detailsResult = await Promise.all([
-                    bidding.getWithdrawBiddingDetails(slugName, biddingSessionId, divisionBatchLid),
-                    bidding.getWithdrawBiddingCourse(slugName, biddingSessionId, divisionBatchLid, studentLid)
-                ]);
+
+                    const detailsResult = await Promise.all([
+                        bidding.getWithdrawBiddingDetails(slugName, biddingSessionId, divisionBatchLid),
+                        bidding.getWithdrawBiddingCourse(slugName, biddingSessionId, divisionBatchLid, studentLid)
+                    ]);
     
-                socket.emit("withdrawBiddingResponse", {
-                    message: parsedMessage,
-                    withdrawBiddingCourse: detailsResult[0].recordset,
-                    courseList: detailsResult[1].recordset,
-                    userId: userId,
-                    divisionId: divisionBatchLid
-                });
+                    socket.emit("withdrawBiddingResponse", {
+                        message: parsedMessage,
+                        withdrawBiddingCourse: detailsResult[0].recordset,
+                        courseList: detailsResult[1].recordset,
+                        userId: userId,
+                        divisionId: divisionBatchLid
+                    });
     
-                socket.leave(divisionBatchLid);
-            } else {
-       
-                socket.emit("withdrawBiddingResponse", {
-                    message: parsedMessage,
-                    userId: userId
-                });
-            }
-        } catch (error) {
-            
+                    socket.leave(divisionBatchLid);
+                } else {
+                        socket.emit("withdrawBiddingResponse", {
+                            message: parsedMessage,
+                            userId: userId
+                        });
+                }
+        } catch (error) { 
+
             socket.emit("withdrawBiddingResponse", {
                 message: JSON.parse(error.originalError.info.message),
                 userId: biddingDetails.userId
@@ -203,11 +277,11 @@ module.exports.respond = async (socket, io) => {
         }
     });
     
-    
     socket.on('studentBidding', async biddingDetails => {
-        try {
-            const { slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson } = biddingDetails;
 
+        try {
+
+            const { slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson } = biddingDetails;
             const result = await bidding.studentBidByPoints(slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson);
             const parsedMessage = JSON.parse(result.output.output_json);
         
@@ -237,9 +311,6 @@ module.exports.respond = async (socket, io) => {
             });
         }
     });
-    
-    
-
 
     socket.on('confirmationPageLoad', (data) => {
         
@@ -251,42 +322,46 @@ module.exports.respond = async (socket, io) => {
         let roundIId = data.roundIId;
         let studendId = data.studentId;
     
-        const startdatetimeDate = new Date(startTime);
-        const enddateTime = new Date(endTime);
-        const currentDateTime = new Date();
+        const startDatetime = new Date(startTime);
+        const endDateTime = new Date(endTime);
+        
+        const startMinute = startDatetime.getMinutes();
+        const startHour = startDatetime.getHours();
+        const startDate = startDatetime.getDate();
+        const startMonth = startDatetime.getMonth() + 1; 
 
-        const startMinute = startdatetimeDate.getMinutes();
-        const startHour = startdatetimeDate.getHours();
-        const startDate = startdatetimeDate.getDate();
-        const startMonth = startdatetimeDate.getMonth() + 1; 
-
-        const endMinute = enddateTime.getMinutes();
-        const endHour = enddateTime.getHours();
-        const endDate = enddateTime.getDate();
-        const endMonth = enddateTime.getMonth() + 1; 
+        const endMinute = endDateTime.getMinutes();
+        const endHour = endDateTime.getHours();
+        const endDate = endDateTime.getDate();
+        const endMonth = endDateTime.getMonth() + 1; 
 
         const startCronSchedule = `${startMinute} ${startHour} ${startDate} ${startMonth} *`;
         const endCronSchedule = `${endMinute} ${endHour} ${endDate} ${endMonth} *`;
-        
-        cron.schedule(startCronSchedule, async () => {
-            try {
-                const [roundSettingTimeResult, listByOneDayBeforeResult, winningCourse] = await Promise.all([
-                    roundSetting.roundSettingTime(slugName, biddingId, roundId, roundIId),
-                    roundSetting.listByOneDayBefore(slugName, biddingId, roundId, roundIId),
-                    confirmation.winningCourseList(slugName, biddingId, studendId,  roundId, roundIId)
-                ]);
-            
-                io.emit('confirmationVisibleToStudent', {
-                    roundSetting: roundSettingTimeResult.recordset,
-                    roundDetails: listByOneDayBeforeResult.recordset,
-                    winningCourse: winningCourse.recordset
-                });
-            } catch (error) {
-                console.error('Error:', error);
-                io.emit('confirmationVisibleToStudent');
-            }
-        });
-        
+
+        if (!isNaN(startDatetime)) { 
+
+            cron.schedule(startCronSchedule, async () => {
+                try {
+                    const [roundSettingTimeResult, listByOneDayBeforeResult, winningCourse] = await Promise.all([
+                        roundSetting.roundSettingTime(slugName, biddingId, roundId, roundIId),
+                        roundSetting.listByOneDayBefore(slugName, biddingId, roundId, roundIId),
+                        confirmation.winningCourseList(slugName, biddingId, studendId,  roundId, roundIId)
+                    ]);
+                
+                    io.emit('confirmationVisibleToStudent', {
+                        roundSetting: roundSettingTimeResult.recordset,
+                        roundDetails: listByOneDayBeforeResult.recordset,
+                        winningCourse: winningCourse.recordset
+                    });
+                } catch (error) {
+                    console.error('Error:', error);
+                    io.emit('confirmationVisibleToStudent');
+                }
+            });
+        } 
+
+        if(!isNaN(endDateTime)){
+
             cron.schedule(endCronSchedule, async () => {
                 try {
                     const [roundSettingTimeResult, listByOneDayBeforeResult, confirmCourse, winningCourse] = await Promise.all([
@@ -307,73 +382,9 @@ module.exports.respond = async (socket, io) => {
                     io.emit('confirmationVisibleToStudent');
                 }
             });
+        }       
     });
-     
-   
-    
-   
-   
-    socket.on('addDropPageLoad', (data) => {
-        
-        let slugName = data.slugName;
-        let biddingId = data.biddingTime.bidding_session_lid;
-        let startTime = data.biddingTime.start_date_time;
-        let endTime = data.biddingTime.end_date_time;
-        let roundId = data.roundId;
-        let roundIId = data.roundIId;
-        
-        const startdatetimeDate = new Date(startTime);
-        const enddateTime = new Date(endTime);
-        const currentDateTime = new Date();
 
-        const startMinute = startdatetimeDate.getMinutes();
-        const startHour = startdatetimeDate.getHours();
-        const startDate = startdatetimeDate.getDate();
-        const startMonth = startdatetimeDate.getMonth() + 1; 
-
-        const endMinute = enddateTime.getMinutes();
-        const endHour = enddateTime.getHours();
-        const endDate = enddateTime.getDate();
-        const endMonth = enddateTime.getMonth() + 1; 
-
-        const startCronSchedule = `${startMinute} ${startHour} ${startDate} ${startMonth} *`;
-        const endCronSchedule = `${endMinute} ${endHour} ${endDate} ${endMonth} *`;
-          
-        cron.schedule(startCronSchedule, async () => {
-            try {
-                const [roundSettingTimeResult, listByOneDayBeforeResult] = await Promise.all([
-                    roundSetting.roundSettingTime(slugName, biddingId, roundId, roundIId),
-                    roundSetting.listByOneDayBefore(slugName, biddingId, roundId, roundIId)
-                ]);
-            
-                io.emit('activeAddDropRound', {
-                    roundSetting: roundSettingTimeResult.recordset,
-                    roundDetails: listByOneDayBeforeResult.recordset
-                });
-            } catch (error) {
-                console.error('Error:', error);
-                io.emit('activeAddDropRound');
-            }
-        });
-        
-        cron.schedule(endCronSchedule, async () => {
-            try {
-                const [roundSettingTimeResult, listByOneDayBeforeResult] = await Promise.all([
-                    roundSetting.roundSettingTime(slugName, biddingId, roundId, roundIId),
-                    roundSetting.listByOneDayBefore(slugName, biddingId, roundId, roundIId),
-                ]);
-            
-                io.emit('activeAddDropRound', {
-                    roundSetting: roundSettingTimeResult.recordset,
-                    roundDetails: listByOneDayBeforeResult.recordset
-                });
-            } catch (error) {
-                console.error('Error:', error);
-                io.emit('activeAddDropRound');
-            }
-        });
-    });
-    
     socket.on('waitListPageLoaded', (data) => {
         
         let slugName = data.slugName;
@@ -381,14 +392,15 @@ module.exports.respond = async (socket, io) => {
         let startTime = data.biddingTime.startTime;
         let roundId = data.roundId;       
         
-        const startdatetimeDate = new Date(startTime);
+        const startDatetime = new Date(startTime);
         
-        const startMinute = startdatetimeDate.getMinutes();
-        const startHour = startdatetimeDate.getHours();
-        const startDate = startdatetimeDate.getDate();
-        const startMonth = startdatetimeDate.getMonth() + 1; 
+        const startMinute = startDatetime.getMinutes();
+        const startHour = startDatetime.getHours();
+        const startDate = startDatetime.getDate();
+        const startMonth = startDatetime.getMonth() + 1; 
 
-        if (!isNaN(startdatetimeDate)) { 
+        if (!isNaN(startDatetime)) { 
+            
             const startCronSchedule = `${startMinute} ${startHour} ${startDate} ${startMonth} *`;
             
             cron.schedule(startCronSchedule, async () => {
@@ -408,44 +420,103 @@ module.exports.respond = async (socket, io) => {
             });
         }
     });
-        
-    socket.on('demandEstimationPageLoad', (data) => {
+
+    socket.on('addDropPageLoad', (data) => {
         
         let slugName = data.slugName;
         let biddingId = data.biddingTime.bidding_session_lid;
-        let startTime = data.biddingTime.startTime;
-        let roundId = data.roundId;       
+        let startTime = data.biddingTime.start_date_time;
+        let endTime = data.biddingTime.end_date_time;
+        let roundId = data.roundId;
+        let roundIId = data.roundIId;
         
-        const startdatetimeDate = new Date(startTime);
-        const currentDateTime = new Date();
-      
-        const startMinute = startdatetimeDate.getMinutes();
-        const startHour = startdatetimeDate.getHours();
-        const startDate = startdatetimeDate.getDate();
-        const startMonth = startdatetimeDate.getMonth() + 1; 
+        const startDatetime = new Date(startTime);
+        const endDateTime = new Date(endTime);
+    
+        const startMinute = startDatetime.getMinutes();
+        const startHour = startDatetime.getHours();
+        const startDate = startDatetime.getDate();
+        const startMonth = startDatetime.getMonth() + 1; 
 
-        if (!isNaN(startdatetimeDate)) { 
-            const startCronSchedule = `${startMinute} ${startHour} ${startDate} ${startMonth} *`;
-            
+        const endMinute = endDateTime.getMinutes();
+        const endHour = endDateTime.getHours();
+        const endDate = endDateTime.getDate();
+        const endMonth = endDateTime.getMonth() + 1; 
+
+        const startCronSchedule = `${startMinute} ${startHour} ${startDate} ${startMonth} *`;
+        const endCronSchedule = `${endMinute} ${endHour} ${endDate} ${endMonth} *`;
+
+        if (!isNaN(startDatetime)) { 
+
             cron.schedule(startCronSchedule, async () => {
                 try {
-                    const [roundSettingTimeResult, courseList] = await Promise.all([
-                        roundSetting.startAndEndTime(slugName, biddingId, roundId),
-                        demandEstimation.getAvailableCourseList(slugName, biddingId),
+                    const [roundSettingTimeResult, listByOneDayBeforeResult] = await Promise.all([
+                        roundSetting.roundSettingTime(slugName, biddingId, roundId, roundIId),
+                        roundSetting.listByOneDayBefore(slugName, biddingId, roundId, roundIId)
                     ]);
-
-                    io.emit('demandEsmationVisibleToStudent', {
-                        roundDetails: roundSettingTimeResult.recordset,
-                        courseList: courseList.recordset
+                
+                    io.emit('activeAddDropRound', {
+                        roundSetting: roundSettingTimeResult.recordset,
+                        roundDetails: listByOneDayBeforeResult.recordset
                     });
                 } catch (error) {
                     console.error('Error:', error);
-                    io.emit('demandEsmationVisibleToStudent');
+                    io.emit('activeAddDropRound');
+                }
+            });
+        }
+
+        if (!isNaN(endDateTime)) { 
+
+            cron.schedule(endCronSchedule, async () => {
+                try {
+                    const [roundSettingTimeResult, listByOneDayBeforeResult] = await Promise.all([
+                        roundSetting.roundSettingTime(slugName, biddingId, roundId, roundIId),
+                        roundSetting.listByOneDayBefore(slugName, biddingId, roundId, roundIId),
+                    ]);
+                
+                    io.emit('activeAddDropRound', {
+                        roundSetting: roundSettingTimeResult.recordset,
+                        roundDetails: listByOneDayBeforeResult.recordset
+                    });
+                } catch (error) {
+                    console.error('Error:', error);
+                    io.emit('activeAddDropRound');
                 }
             });
         }
     });
-    
+
+    socket.on('roundEnded', (data) => {
+
+        let endDateTimeUser = data.startTime.endTime;
+        let roundId = data.startTime.round_lid;
+        let slugName = data.slugName;
+        let biddingSessionId = data.startTime.bidding_session_lid;
+
+        const endDateTime = new Date(endDateTimeUser);
+        const endMinute = endDateTime.getMinutes();
+        const endHour = endDateTime.getHours();
+        const endDate = endDateTime.getDate();
+        const endMonth = endDateTime.getMonth() + 1;
+        
+        if (!isNaN(endDateTime)) { 
+            const startCronSchedule = `${endMinute} ${endHour} ${endDate} ${endMonth} *`; 
+            cronScheduled = true;
+            cron.schedule(startCronSchedule, () => {
+            
+                    confirmation.roundEnd(slugName, roundId, biddingSessionId)
+                    .then(result => {
+                        socket.emit('roundEndResponse',{
+                            message: JSON.parse(result.output.output_json),
+                        })
+                    })
+                    .catch(error => {
+                    });
+            });
+        }
+    });   
+
     const calculateRemainingTime = (startTime, endTime) => {
 
         const endDateTime = new Date(endTime);
@@ -476,8 +547,8 @@ module.exports.respond = async (socket, io) => {
         return `Round Ends In ${hours} h:${minutes}M:${seconds}S`;
     };
     
-
     function convertDateFormat() {
+
         const currentDate = new Date(); 
         const day = currentDate.getDate();
         const monthIndex = currentDate.getMonth();
@@ -491,38 +562,6 @@ module.exports.respond = async (socket, io) => {
         ];
     
         const monthName = monthNames[monthIndex];
-    
         return `${day}-${monthName} ${year} ${timePart}`;
-    }
-                
-    socket.on('roundEnded', (data) => {
-
-        let endDateTime = data.startTime.endTime;
-        let roundId = data.startTime.round_lid;
-        let slugName = data.slugName;
-        let biddingSessionId = data.startTime.bidding_session_lid;
-
-        const enddateTime = new Date(endDateTime);
-        const endMinute = enddateTime.getMinutes();
-        const endHour = enddateTime.getHours();
-        const endDate = enddateTime.getDate();
-        const endMonth = enddateTime.getMonth() + 1;
-        const endYear = enddateTime.getFullYear();
-        
-        if (!isNaN(enddateTime)) { 
-            const startCronSchedule = `${endMinute} ${endHour} ${endDate} ${endMonth} *`; 
-            cronScheduled = true;
-            cron.schedule(startCronSchedule, () => {
-            
-                    confirmation.roundEnd(slugName, roundId, biddingSessionId)
-                    .then(result => {
-                        socket.emit('roundEndResponse',{
-                            message: JSON.parse(result.output.output_json),
-                        })
-                    })
-                    .catch(error => {
-                    });
-            });
-        }
-    });   
+    }           
 };

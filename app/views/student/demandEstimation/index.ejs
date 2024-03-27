@@ -3,246 +3,237 @@
 <%- include('../partials/header.ejs') %>
 
 <div class="main-content">
-    <% if(roundDetails) { %> 
-      <ul class="d-flex round-wises justify-content-between align-items-end bidding-round-wise">
-        <li class="ms-5 active" style="height: 58px;">
-          <a class="text-decoration-none text-dark">
-            <div class="d-flex flex-column justify-content-center align-items-center h-100">
-              <div class="d-flex justify-content-between align-items-center active-div">
-                <h4 class="ms-2 round-name"></h4>
-              </div>
+
+    <div class="card card-custom-border-curv round-message-container d-none">
+        <div class="round-message">
+            <div class="card-header-custom d-flex justify-content-between">
+                <h4 class="ms-2 round-name" data-round-id="1">
+                   Demand Estimation Round
+                </h4>    
             </div>
-          </a>
-        </li>
-      </ul>
-    <% } else { %>
-        <ul class="d-flex round-wises justify-content-between align-items-end bidding-round-wise">
-            <li class="ms-5" style="height: 58px;">
-              <a class="text-decoration-none text-dark">
-                <div class="d-flex flex-column justify-content-center align-items-center h-100">
-                  <div class="d-flex justify-content-between align-items-center active-div">
-                    <h4 class="ms-2 round-name"></h4>
-                  </div>
-                </div>
-              </a>
-            </li>
-          </ul>
-    <% } %>
-    
-    <div class="card card-custom-border-curv bidding-round-wise d-none">
-        <div class="card-header-custom d-flex justify-content-between p-1 align-items-center">
-            <h4 class="my-0 mx-1">Demand Estimation Round</h4>
-            <% 
-            const startTime = new Date(startAndEndTime.startTime);
-            const currentDate = new Date();
-            if (startTime > currentDate) { %>
-                <h5 class="time-remaining my-0 mx-1">Round Has Not Started Yet</h5>
-            <% } else { %>
-                <h5 class="time-remaining my-0 mx-1"></h5>
-            <% } %>
-        
+            <div class="card-body table-responsive d-flex justify-content-center align-items-center">
+                <% if (currentRoundStatus.round_ended == 1) {  %>
+                    <p>This Round Has Ended!</p>
+                <% } else if (currentRoundStatus.round_status == 'Round Not Found') { %>
+                    <p>Round Not Found!</p>
+                <% } %>
+            </div>
         </div>
+    </div>
+
+    <div class="round-basic-details<%= (currentRoundStatus.round_not_started_yet == 1) ? '' : ' d-none' %>">
+        <ul class="d-flex round-wises justify-content-between align-items-end">
+            <li class="ms-5 active" style="height: 58px;">
+                <a class="text-decoration-none text-dark">
+                    <div class="d-flex flex-column justify-content-center align-items-center h-100">
+                        <div class="d-flex justify-content-between align-items-center active-div">
+                            <h4 class="ms-2 round-name"><%- roundDetails.roundName %></h4>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        </ul>
+   
+        <div class="card card-custom-border-curv">
+            <div class="card-header-custom d-flex justify-content-between p-1 align-items-center">
+                <h4 class="my-0 mx-1">Demand Estimation Round</h4>
+                <h5 class="time-remaining my-0 mx-1"></h5>
+            </div>
              
-        <div class="card-body table-responsive">
-            <div class="row ps-5 pe-5 d-flex justify-content-between">
-                <div class="col-md-4">
-                    <h6>Minimum / Maximum Yearly Credits :&nbsp;
-                        <span id="yearly-credits"><%- totalCreditsCounts %></span>
-                    </h6>
+            <div class="card-body table-responsive">
+                <div class="row ps-5 pe-5 d-flex justify-content-between">
+                    <div class="col-md-4">
+                        <h6>Minimum / Maximum Yearly Credits :&nbsp;
+                            <span id="yearly-credits"><%- totalCreditsCounts %></span>
+                        </h6>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Concentration Name :&nbsp;
+                            <span class="d-none" id="concentration-name"><%- concentrationSet.name %></span>
+                            <span class="concentration-not-selected d-none">Select Concentration</span>
+                        </h6>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <h6>Concentration Name :&nbsp;
-                        <span class="d-none" id="concentration-name"><%- concentrationSet.name %></span>
-                        <span class="concentration-not-selected d-none">Select Concentration</span>
-                    </h6>
-                </div>
-            </div>
            
-            <div class="row ps-5 pe-5">
-                <% for(let credit of creditList) { %>
-                    <div class="col-md-4 credits-point-target">
-                        <h6><%- credit.name %> Credits :&nbsp;
-                            <span id="credits-points-target-<%- credit.id %>"><%- credit.credits %></span>
+                <div class="row ps-5 pe-5">
+                    <% for(let credit of creditList) { %>
+                        <div class="col-md-4 credits-point-target">
+                            <h6><%- credit.name %> Credits :&nbsp;
+                                <span id="credits-points-target-<%- credit.id %>"><%- credit.credits %></span>
+                            </h6>
+                        </div>
+                    <% } %>
+                </div>
+       
+                <div class="row ps-5 pe-5">
+                    <% for(let acadSession of acadSessions) {%>
+                        <div class="col-md-4 credit-points">
+                            <h6>Selected <%- acadSession.name %>  Credits :&nbsp;
+                                <span id="credits-points-<%- acadSession.id %>" class="credits-points-<%- acadSession.id %>">0</span>
+                            </h6>
+                        </div>
+                    <% } %>
+                </div>
+       
+                <div class="row ps-5 pe-5">
+                    <div class="col-md-4">
+                        <h6>Start Time :&nbsp;
+                            <span id="start-time"><%- roundDetails !== undefined ? roundDetails.startTime : '' %></span>
+                            <span class="round-not-created d-none">Demand Estimation Not Created Yet</span>
                         </h6>
                     </div>
-                <% } %>
-            </div>
-       
-            <div class="row ps-5 pe-5">
-                <% for(let acadSession of acadSessions) {%>
-                    <div class="col-md-4 credit-points">
-                        <h6>Selected <%- acadSession.name %>  Credits :&nbsp;
-                            <span id="credits-points-<%- acadSession.id %>" class="credits-points-<%- acadSession.id %>">0</span>
+                    <div class="col-md-4">
+                        <h6>End Time :&nbsp;
+                            <span id="end-time"><%- roundDetails !== undefined ? roundDetails.endTime : '' %></span>
+                            <span class="round-not-created d-none">Demand Estimation Not Created Yet</span>
                         </h6>
                     </div>
-                <% } %>
-            </div>
-       
-            <div class="row ps-5 pe-5">
-                <div class="col-md-4">
-                    <h6>Start Time :&nbsp;
-                        <span id="start-time"></span>
-                        <span class="round-not-created d-none">Demand Estimation Not Created Yet</span>
-                    </h6>
-                </div>
-                <div class="col-md-4">
-                    <h6>End Time :&nbsp;
-                        <span id="end-time"></span>
-                        <span class="round-not-created d-none">Demand Estimation Not Created Yet</span>
-                    </h6>
-                </div>
-                <div class="col-md-4">
-                    <h6>Current Time : &nbsp;
-                        <span id="current-date-time"></span>
-                    </h6>
+                    <div class="col-md-4">
+                        <h6>Current Time : &nbsp;
+                            <span id="current-date-time"></span>
+                        </h6>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
- 
-    <div class="card card-custom-border-curv mt-5 pb-1 bidding-round-wise d-none round-wise-modal">
-        <div class="card-header-custom d-flex justify-content-between p-1">
-            <h3 class="ms-2">Selected Courses</h3>
-            <div class="me-3 d-flex">
-                <button class="btn btn-danger me-3 selected-credits">
-                    <h6>Selected Course Credits :&nbsp;
-                        <% if (selectCourse.length > 0) { %>
-                            <span id="selected-course-credits"><%- concentrationSet.totalCredits %></span>
-                        <% } else { %>
-                            <span id="selected-course-credits">0</span>
-                        <% } %>
-                    </h6>
-                </button>
-                <button class="btn btn-danger me-3 areas-count">
-                    <h6>No.of Areas to cover :&nbsp;
-                        <span id="areas-count"><%- concentrationSet.areasCover %></span></h6>
-                </button>
-                <button class="btn btn-success me-3">
-                    <h6>Min Credits per Area :&nbsp;
-                        <span id="min-credits-per-area"><%- concentrationSet.minCreditsPerArea %></span>
-                    </h6>
-                </button>
-                <button class="btn btn-success me-3 max-credits-per-area">
-                    <h6>Max Credits per Area :&nbsp;
-                        <span id="max-credits-per-area"><%- concentrationSet.maxCreditsPerArea %></span>
-                    </h6>
-                </button>
-                <% if(concentrationSet.minCreditsInPrimayArea > 0) { %>
-                    <button class="btn btn-danger me-3 min-credits-in-primary-area">
-                        <h6>Min Credits in Primary Area :&nbsp;
-                            <span id="min-credits-in-primary-area"><%-concentrationSet.minCreditsInPrimayArea %></span>
+    
+    <div class="round-wise-details d-none">
+        <div class="card card-custom-border-curv mt-5 pb-1">
+            <div class="card-header-custom d-flex justify-content-between p-1">
+                <h3 class="ms-2">Selected Courses</h3>
+                <div class="me-3 d-flex">
+                    <button class="btn btn-danger me-3 selected-credits">
+                        <h6>Selected Course Credits :&nbsp;
+                            <% if (selectCourse.length > 0) { %>
+                                <span id="selected-course-credits"><%- concentrationSet.totalCredits %></span>
+                            <% } else { %>
+                                <span id="selected-course-credits">0</span>
+                            <% } %>
                         </h6>
                     </button>
-                <% } %>
-                <button class="btn btn-danger me-3 criteria-status"><h6>Criteria Not Met</h6></button>
-            </div>
-        </div>
-
-        <div class="card-body table-responsive">
-            <table class="table table-bordered mt-4" id="selected-course-table">
-                <thead>
-                    <th>#</th>
-                    <th>Area</th>
-                    <th>Course</th>
-                    <th>Acad Session</th>
-                    <th>Credits</th>
-                    <th class="hide-column-after-round-over">Action</th>
-                </thead>
-                <tbody>
-                    <% let selectedCourseIndex = 1 %>
-                    <% if (selectCourse.length > 0) { %>
-                        <% for (let selectedCourse of selectCourse) { %>
-                            <tr data-course-id="<%- selectedCourse.id %>"
-                                data-area="<%-selectedCourse.area_name %>"
-                                data-course-name="<%- selectedCourse.course_name %>"
-                                data-acad-session="<%-selectedCourse.acad_session %>"
-                                data-credits="<%-selectedCourse.credits %>"
-                                data-acad-session-id="<%-selectedCourse.sap_acad_session_id %>">
-                               
-                                <td class="index-row-demand-estimation"><%- selectedCourseIndex++ %></td>
-                                <td><%- selectedCourse.area_name %></td>
-                                <td><%- selectedCourse.course_name %></td>
-                                <td><%- selectedCourse.acad_session %></td>
-                                <td><%- selectedCourse.credits %></td>
-                                <td><button class="btn btn-danger cancel-course">Cancel</button></td>
-                            </tr>
-                        <% } %>
+                    <button class="btn btn-danger me-3 areas-count">
+                        <h6>No.of Areas to cover :&nbsp;
+                            <span id="areas-count"><%- concentrationSet.areasCover %></span></h6>
+                    </button>
+                    <button class="btn btn-success me-3">
+                        <h6>Min Credits per Area :&nbsp;
+                            <span id="min-credits-per-area"><%- concentrationSet.minCreditsPerArea %></span>
+                        </h6>
+                    </button>
+                    <button class="btn btn-success me-3 max-credits-per-area">
+                        <h6>Max Credits per Area :&nbsp;
+                            <span id="max-credits-per-area"><%- concentrationSet.maxCreditsPerArea %></span>
+                        </h6>
+                    </button>
+                    <% if(concentrationSet.minCreditsInPrimayArea > 0) { %>
+                        <button class="btn btn-danger me-3 min-credits-in-primary-area">
+                            <h6>Min Credits in Primary Area :&nbsp;
+                                <span id="min-credits-in-primary-area"><%-concentrationSet.minCreditsInPrimayArea %></span>
+                            </h6>
+                        </button>
                     <% } %>
-                </tbody>
-            </table>
-        </div>
-        <button class="btn btn-success save-select-course d-none w-50 m-auto mb-4">Save</button>
-    </div>
- 
-    <div class="card card-custom-border-curv mt-5 bidding-round-wise round-wise-modal d-none">
-        <div class="card-header-custom d-flex justify-content-between p-1">
-            <h3 class="ms-2">Available Courses</h3>
-        </div>
- 
-        <div class="card-body table-responsive">
-            <div class="d-flex">
-                <div class="col-md-3 ms-5">
-                    <label class="form-label mb-1" for="acad-session-change">Select Acad Session:</label>
-                    <select class="form-select form-control select2" id="acad-session-change">
-                        <option selected disabled value="-1">--Select Acad Session-- </option>
-                            <%for(let acadSession of acadSessions) { %>
-                                <option value="<%- acadSession.id %>"><%- acadSession.name %></option>
+                    <button class="btn btn-danger me-3 criteria-status"><h6>Criteria Not Met</h6></button>
+                </div>
+            </div>
+
+            <div class="card-body table-responsive">
+                <table class="table table-bordered mt-4" id="selected-course-table">
+                    <thead>
+                        <th>#</th>
+                        <th>Area</th>
+                        <th>Course</th>
+                        <th>Acad Session</th>
+                        <th>Credits</th>
+                        <th class="hide-column-after-round-over">Action</th>
+                    </thead>
+                    <tbody>
+                        <% let selectedCourseIndex = 1 %>
+                        <% if (selectCourse.length > 0) { %>
+                            <% for (let selectedCourse of selectCourse) { %>
+                                <tr data-course-id="<%- selectedCourse.id %>"
+                                    data-area="<%-selectedCourse.area_name %>"
+                                    data-course-name="<%- selectedCourse.course_name %>"
+                                    data-acad-session="<%-selectedCourse.acad_session %>"
+                                    data-credits="<%-selectedCourse.credits %>"
+                                    data-acad-session-id="<%-selectedCourse.sap_acad_session_id %>">
+                                
+                                    <td class="index-row-demand-estimation"><%- selectedCourseIndex++ %></td>
+                                    <td><%- selectedCourse.area_name %></td>
+                                    <td><%- selectedCourse.course_name %></td>
+                                    <td><%- selectedCourse.acad_session %></td>
+                                    <td><%- selectedCourse.credits %></td>
+                                    <td><button class="btn btn-danger cancel-course">Cancel</button></td>
+                                </tr>
                             <% } %>
-                    </select>
-                </div>
-                <div class="col-md-3 ms-5">
-                    <label class="form-label mb-1" for="area-change">Select Area:</label>
-                    <select class="form-select form-control select2" id="area-change">
-                        <option selected disabled value="-1">--Select Area-- </option>
-                    </select>
+                        <% } %>
+                    </tbody>
+                </table>
             </div>
+            <button class="btn btn-success save-select-course d-none w-50 m-auto mb-4">Save</button>
         </div>
-
-        <div class="card-body table-responsive">
-            <table class="table table-bordered mt-4" id="available-course-table">
-                <thead>
-                    <th>#</th>
-                    <th>Area</th>
-                    <th>Course</th>
-                    <th>Acad Session</th>
-                    <th>Credits</th>
-                    <th class="hide-column-after-round-over">Action</th>
-                </thead>
-                <tbody>
-                    <% let count = 1 %>
-                    <%for(let course of courseList) {%>
-                        <tr data-course-id="<%- course.id %>"
-                            data-area="<%- course.area_name %>" data-course-name="<%-course.course_name %>" data-acad-session="<%-course.acad_session %>" data-credits="<%- course.credits %>" data-acad-session-id="<%-course.sap_acad_session_id %>">
-
-                            <td><%- count++ %></td>
-                            <td><%-course.area_name %></td>
-                            <td><%-course.course_name %></td>
-                            <td><%-course.acad_session %></td>
-                            <td><%-course.credits %></td>
-                            <td><button class="btn btn-secondary add-course">Add</button></td>
-                        </tr>
-                    <%}%>
-                </tbody>
-            </table>
-
-            <div class="d-flex justify-content-between">
-                <div>
-                    <p>Total entries :&nbsp;
-                        <span id="page-no"></span>
-                    </p>
+    
+        <div class="card card-custom-border-curv mt-5">
+            <div class="card-header-custom d-flex justify-content-between p-1">
+                <h3 class="ms-2">Available Courses</h3>
+            </div>
+        
+            <div class="card-body table-responsive">
+                <div class="d-flex">
+                    <div class="col-md-3 ms-5">
+                        <label class="form-label mb-1" for="acad-session-change">Select Acad Session:</label>
+                        <select class="form-select form-control select2" id="acad-session-change">
+                            <option selected disabled value="-1">--Select Acad Session-- </option>
+                                <%for(let acadSession of acadSessions) { %>
+                                    <option value="<%- acadSession.id %>"><%- acadSession.name %></option>
+                                <% } %>
+                        </select>
+                    </div>
+                    <div class="col-md-3 ms-5">
+                        <label class="form-label mb-1" for="area-change">Select Area:</label>
+                        <select class="form-select form-control select2" id="area-change">
+                            <option selected disabled value="-1">--Select Area-- </option>
+                        </select>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<div class="card card-custom-border-curv round-message-container">
-    <div class="card-header-custom d-flex justify-content-between">
-        <h4 class="ms-2">Demand Estimation Round</h4>
-    </div>
-    <div class="card-body table-responsive d-flex justify-content-center align-items-center">
-        <p></p>
-    </div>
+            <div class="card-body table-responsive">
+                <table class="table table-bordered mt-4" id="available-course-table">
+                    <thead>
+                        <th>#</th>
+                        <th>Area</th>
+                        <th>Course</th>
+                        <th>Acad Session</th>
+                        <th>Credits</th>
+                        <th class="hide-column-after-round-over">Action</th>
+                    </thead>
+                    <tbody>
+                        <% let count = 1 %>
+                        <%for(let course of courseList) {%>
+                            <tr data-course-id="<%- course.id %>"
+                                data-area="<%- course.area_name %>" data-course-name="<%-course.course_name %>" data-acad-session="<%-course.acad_session %>" data-credits="<%- course.credits %>" data-acad-session-id="<%-course.sap_acad_session_id %>">
+
+                                <td><%- count++ %></td>
+                                <td><%-course.area_name %></td>
+                                <td><%-course.course_name %></td>
+                                <td><%-course.acad_session %></td>
+                                <td><%-course.credits %></td>
+                                <td><button class="btn btn-secondary add-course">Add</button></td>
+                            </tr>
+                        <%}%>
+                    </tbody>
+                </table>
+
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <p>Total entries :&nbsp;
+                            <span id="page-no"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
 </div>
 
 </main>
@@ -271,8 +262,6 @@
 <script>
 $(document).ready(function() {
 
-    demandEstimationTimeCountDown();
-    setInterval(demandEstimationTimeCountDown, 1000);
     setActiveMenuItem(`<%- active %>`);
 
     let socket = io();
@@ -282,6 +271,8 @@ $(document).ready(function() {
     let numOfAeaToCover = concentrationSet.areasCover;
     let maxCreditsPerAreas = concentrationSet.maxCreditsPerArea;
     let totalCredits = concentrationSet.totalCredits;
+    let activeBidding = $('#student-data').data('active-bidding');
+
     let selectedCourse = JSON.parse('<%- JSON.stringify(selectCourse) %>');
     let credits = `<%- JSON.stringify(creditList) %>`;  
     let parsedCredits = JSON.parse(credits);
@@ -299,80 +290,77 @@ $(document).ready(function() {
 
     let roundDetails = JSON.parse(`<%- JSON.stringify(roundDetails) %>`);
     let isStudentPartOfRound = `<%- isStudentPartOfRound %>`
-    let currentRoundStatus = JSON.parse(`<%- currentRoundStatus %>`);
+    let currentRoundStatus = (`<%- currentRoundStatus %>`);
     let studentId = $('#student-data').data('student-id');
+
+    socket.emit('demandEstimationLoadTime', { 
+        slugName: "<%- slug %>",
+        activeBidding:activeBidding,
+        biddingTime: JSON.parse(`<%- JSON.stringify(roundDetails) %>`),
+        studentId: studentId
+    });
+
+    let biddingCourseFlag = false;
+    socket.on('remainingTimeForDemandEstimation', data =>{
+        console.log('valuesof data', data);
     
-    if(currentRoundStatus.round_ended == 1){
-        $('.round-wise-modal').addClass('d-none');
-        $('.round-message-container').removeClass('d-none');
-        $('.round-message-container p').text('This Round Has Ended!')
-    }
-    else if(currentRoundStatus.round_not_started_yet == 1){
-
-        if((roundDetails != '')){
-            let roundName = roundDetails.roundName.replaceAll('_', ' ');
-            let roundId = roundDetails.round_lid;
-
-            $('.round-name').html(roundName);
-            $('.round-name').attr('data-round-id', roundId);
-
-            if(isStudentPartOfRound != 0 ){
-                let roundStartTime = roundDetails.startTime;
-                let roundEndTime = roundDetails.endTime;
-                $('#student-data').attr('data-isStudentPartOfRound', true);
+        isEligibleForRound = data.studentList;
+        $('#current-date-time').text(data.currentDateTime);
+        
+        if(data.currentRoundStatus.length > 0){
             
-                $('#start-time').html(roundStartTime);
-                $('#end-time').html(roundEndTime);
-            
-                $('.bidding-round-wise').removeClass('d-none');
-                $('.round-message-container').addClass('d-none');
-                $('.round-wise-modal').addClass('d-none');
+            if(data.currentRoundStatus[0].round_not_started_yet == '1'){
+    
+                    if(data.roundDetails.length > 0){
+                        
+                        if(isEligibleForRound == 1){
+                            
+                            $('.round-message-container').addClass('d-none');
+                            $('.round-basic-details').removeClass('d-none');
+                            $('.round-basic-details').find('.round-name').text(data.roundDetails[0].roundName);
+                            $('.round-basic-details').find('.round-name').attr('data-round-id', data.roundDetails[0].round_lid);
+                            $('.round-basic-details').find('#start-time').text(data.roundDetails[0].startTime);
+                            $('.round-basic-details').find('#end-time').text(data.roundDetails[0].endTime);
+                        }else{
+
+                            $('.round-message-container .round-name').text(data.roundDetails[0].roundName);
+                            $('.round-message-container p').text('You are not eligible for this round');
+                            $('.round-basic-details').addClass('d-none');
+                        }
+                    }   
             }
-            else{
-                $('#student-data').attr('data-isStudentPartOfRound', false);
-                $('.round-message-container p').text('You are not eligible for this round')
-                $('.round-wise-modal').addClass('d-none')
+            else if(data.currentRoundStatus[0].round_started == '1'){
+                
+                if(isEligibleForRound == 1){
+                    if(!biddingCourseFlag){
+                        availableCourse( data.biddingCourses);
+                    }
+                    biddingCourseFlag = true;
+                    $('.round-message-container').addClass('d-none');
+                    $('.round-basic-details').removeClass('d-none');
+                    $('.round-wise-details').removeClass('d-none');
+                    $('.time-remaining').text(data.remainingTime);
+                }else{
+                    $('.round-message-container').removeClass('d-none');
+                    $('.round-message-container .round-name').text(data.roundDetails[0].roundName);
+                    $('.round-message-container p').text('You are not eligible for this round');
+                    $('.round-basic-details').addClass('d-none');
+                }
+               
             }
-        }
-        else{
-            $('.round-wise-modal').addClass('d-none');
+            if(data.currentRoundStatus[0].round_ended == '1'){
+                $('.round-message-container').removeClass('d-none');
+                $('.round-basic-details').addClass('d-none');
+                $('.round-wise-details').addClass('d-none');
+                $('.round-message-container p').text('This Round Has Ended!');
+            }
+        }else{
             $('.round-message-container').removeClass('d-none');
-            $('.round-message-container p').text('This Round Has Not Started Yet!')
-        } 
-    }
-    else if(currentRoundStatus.round_status == 'Round Not Found'){
-        $('.round-wise-modal').addClass('d-none');
-        $('.round-message-container').removeClass('d-none');
-        $('.round-message-container p').text('Round Not Found!')
-    }
-    else{
-
-        if((roundDetails != '')){
-            let roundName = roundDetails.roundName.replaceAll('_', ' ');
-            let roundId = roundDetails.round_lid;
-
-            $('.round-name').html(roundName);
-            $('.round-name').attr('data-round-id', roundId);
-
-            if(isStudentPartOfRound != 0 ){
-                let roundStartTime = roundDetails.startTime;
-                let roundEndTime = roundDetails.endTime;
-                $('#student-data').attr('data-isStudentPartOfRound', true);
-            
-                $('#start-time').html(roundStartTime);
-                $('#end-time').html(roundEndTime);
-            
-                $('.bidding-round-wise').removeClass('d-none');
-                $('.round-message-container').addClass('d-none');
-                $('.round-wise-modal').removeClass('d-none');
-            }
-            else{
-                $('#student-data').attr('data-isStudentPartOfRound', false);
-                $('.round-message-container p').text('You are not eligible for this round')
-                $('.round-wise-modal').addClass('d-none')
-            }
+            $('.round-message-container p').text('Round Not Found!');
+            $('.round-basic-details').addClass('d-none');
+            $('.round-wise-details').addClass('d-none');
         }
-    }
+    })
 
     socket.emit('roundEnded', {
          slugName: "<%- slug %>",
@@ -810,7 +798,7 @@ $(document).ready(function() {
             }
 
             $("#area-change").html(areaName);
-            ajaxTable(result.courseList);
+            availableCourse(result.courseList);
             deleteSelectedCourse();
             $('#page-no').html(result.courseCount);
         });
@@ -832,7 +820,7 @@ $(document).ready(function() {
         }
         ajaxApi(ApiObj).then(result => {
            
-            ajaxTable(result.courseList);
+            availableCourse(result.courseList);
             deleteSelectedCourse();
             $('#page-no').html(result.courseCount);
         })
@@ -920,7 +908,7 @@ $(document).ready(function() {
     }); 
 });
 
-function ajaxTable(courseList) {
+function availableCourse(courseList) {
     
     $("#available-course-table tbody").empty();
     let courseArray = [];

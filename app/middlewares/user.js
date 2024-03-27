@@ -6,7 +6,7 @@ const {
 
 let store = new RedisStore({
     client: redisClient,
-    ttl: 3600
+    ttl: 60
 })
 
 module.exports = {
@@ -65,5 +65,12 @@ module.exports = {
                 return next(); 
             }
         })
+    },
+    checkSession : (req, res, next) => {
+        if (!req.session.userId) {
+            res.redirect('/user/login');
+        } else {
+            next();
+        }
     }
 }

@@ -26,7 +26,7 @@ module.exports = {
             demandEstimation.isStudentPartOfRound(res.locals.slug, res.locals.biddingId, res.locals.studentId,roundId),
             roundSetting.currentRoundStatus(res.locals.slug, res.locals.biddingId, roundId)
         ]).then(result => {
-
+            
             res.render('student/demandEstimation/index', {
                 active: demandEstimationActive,
                 demandEstimationRounds: result[0].recordset,
@@ -41,7 +41,7 @@ module.exports = {
                 roundDetails: result[9].recordset[0] !== undefined ? result[9].recordset[0] : '',
                 completedCourse: result[10].recordset !== undefined ? result[10].recordset: '',
                 isStudentPartOfRound: result[11].recordset.length,
-                currentRoundStatus: result[12].recordset.length == 0 ? JSON.stringify({'round_status':'Round Not Found'}) : JSON.stringify(result[12].recordset[0])
+                currentRoundStatus: result[12].recordset.length == 0 ?JSON.parse(JSON.stringify({'round_status':'Round Not Found'})) : JSON.parse(JSON.stringify(result[12].recordset[0]))
             });
         });
     },

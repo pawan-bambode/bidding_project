@@ -2,7 +2,8 @@ const dashboard = require("../../controllers/admin/dashboard");
 const {
     isLoggedIn,
     check,
-    checkPermission
+    checkPermission,
+    checkSession
 } = require("../../middlewares/user");
 
 function AdminRoute(app) {
@@ -34,29 +35,29 @@ function AdminRoute(app) {
     const addDrop = require('../../routers/student/addDrop/addDrop');
 
     app.use('/admin/', isLoggedIn, checkPermission, dashboard);
-    app.use('/admin/', biddingSession);
-    app.use('/admin/', program);
-    app.use('/admin/', course);
-    app.use('/admin/', programSession);
-    app.use('/admin/', area);
-    app.use('/admin/', specialization);
-    app.use('/admin/', concentrationSettings);
-    app.use('/admin/', studentData);
-    app.use('/admin/', preRequisites);
-    app.use('/admin/', completedCourse);
-    app.use('/admin/', divisionBatches);
-    app.use('/admin/', timetable);
-    app.use('/admin/', roundSettings);
-    app.use('/admin/', isLoggedIn, checkPermission, bonusBiddingPoint);
-    app.use('/admin/', isLoggedIn, checkPermission, manual);
+    app.use('/admin/', checkSession, biddingSession);
+    app.use('/admin/', checkSession, program);
+    app.use('/admin/', checkSession, course);
+    app.use('/admin/', checkSession, programSession);
+    app.use('/admin/', checkSession, area);
+    app.use('/admin/', checkSession, specialization);
+    app.use('/admin/', checkSession, concentrationSettings);
+    app.use('/admin/', checkSession, studentData);
+    app.use('/admin/', checkSession, preRequisites);
+    app.use('/admin/', checkSession, completedCourse);
+    app.use('/admin/', checkSession, divisionBatches);
+    app.use('/admin/', checkSession, timetable);
+    app.use('/admin/', checkSession, roundSettings);
+    app.use('/admin/', isLoggedIn, checkSession, checkPermission, bonusBiddingPoint);
+    app.use('/admin/', isLoggedIn, checkSession, checkPermission, manual);
 
-    app.use('/student/', isLoggedIn, checkPermission, student);
-    app.use('/student', isLoggedIn, checkPermission, demandEstimation);
-    app.use('/student', isLoggedIn, checkPermission, favouriteCourse);
-    app.use('/student', isLoggedIn, checkPermission, bidding);
-    app.use('/student', isLoggedIn, checkPermission, confirmation);
-    app.use('/student', isLoggedIn, checkPermission, waitList);
-    app.use('/student', isLoggedIn, checkPermission, addDrop);
+    app.use('/student/', isLoggedIn, checkSession, checkPermission, student);
+    app.use('/student', isLoggedIn, checkSession, checkPermission, demandEstimation);
+    app.use('/student', isLoggedIn, checkSession, checkPermission, favouriteCourse);
+    app.use('/student', isLoggedIn, checkSession, checkPermission, bidding);
+    app.use('/student', isLoggedIn, checkSession, checkPermission, confirmation);
+    app.use('/student', isLoggedIn, checkSession, checkPermission, waitList);
+    app.use('/student', isLoggedIn, checkSession, checkPermission, addDrop);
 }
 
 module.exports = AdminRoute;
