@@ -14,14 +14,19 @@ module.exports = {
             confirmation.getConfirmationForBidding(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, round1Id),
             roundSetting.listByOneDayBefore(res.locals.slug, res.locals.biddingId, round1Id, round2Id),
+            confirmation.currentRoundStatus(res.locals.slug, res.locals.biddingId, round1Id, round2Id),
+            confirmation.isStudentPartOfRound(res.locals.slug, res.locals.biddingId, res.locals.studentId, round1Id, round2Id)
+            
         ]).then(result => {
-           
+            
             res.render('student/confirmation/index', {
                 active: confirmationActive,
                 winningCourseList: result[0].recordset !== undefined ? result[0].recordset : '',
                 confirmCourseList: result[1].recordset,
                 startAndEndTime: result[2].recordset[0] != undefined? result[2].recordset[0] : '',
                 roundDetails: result[3].recordset[0] !== undefined ? result[3].recordset[0] : '',
+                currentRoundStatus: result[4].recordset.length == 0 ? JSON.parse(JSON.stringify({'round_status':'Round Not Found'})) : JSON.parse(JSON.stringify(result[4].recordset[0])),
+                isStudentPartOfRound: result[5].recordset.length >= 1? 1: 0
             });
         });
     },

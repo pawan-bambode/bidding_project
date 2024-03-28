@@ -302,8 +302,7 @@ $(document).ready(function() {
 
     let biddingCourseFlag = false;
     socket.on('remainingTimeForDemandEstimation', data =>{
-        console.log('valuesof data', data);
-    
+        
         isEligibleForRound = data.studentList;
         $('#current-date-time').text(data.currentDateTime);
         

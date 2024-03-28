@@ -3,7 +3,7 @@ const { sql, poolConnection } = require('../../../../config/db');
 module.exports = class Confirmation {
     
     static winningCourseList(slug, biddingId, studentId, round1Id, round2Id) {  
-     
+             
         let prevRound1 = Number(round1Id) - 1;
         let prevRound2 = Number(round2Id) - 1;  
         return poolConnection.then(pool => {
@@ -81,7 +81,7 @@ module.exports = class Confirmation {
     }
     
     static getConfirmationForBidding(slug, biddingId, studentId) { 
-       
+    
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -163,22 +163,97 @@ module.exports = class Confirmation {
     static roundEnd(slug ,roundId, biddingSessionId) {
 
       if((roundId == 3) || (roundId == 5)) {
+            return poolConnection.then(pool => {
+                return pool.request()
+                    .input('round_lid', sql.Int, roundId)
+                    .input('bidding_session_lid', sql.Int, biddingSessionId)
+                    .output('output_json', sql.NVarChar(sql.MAX))
+                    .execute(`[${slug}].[sp_confirmation_round_ends]`)
+            })
+        }
+        if(roundId == 1)  {
+            return poolConnection.then(pool => {
+                return pool.request()
+                    .input('round_lid', sql.Int, roundId)
+                    .input('bidding_session_lid', sql.Int, biddingSessionId)
+                    .output('output_json', sql.NVarChar(sql.MAX))
+                    .execute(`[${slug}].[sp_demand_estimation_round_ends]`)
+            })
+        }
+    }
+
+    static currentRoundStatus(slug, biddingId, roundFirstId, roundSecondId) {
+         
         return poolConnection.then(pool => {
             return pool.request()
-                .input('round_lid', sql.Int, roundId)
-                .input('bidding_session_lid', sql.Int, biddingSessionId)
-                .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[sp_confirmation_round_ends]`)
-        })
+                .input('biddingId', sql.Int, biddingId)
+                .input('roundFirstId', sql.Int, roundFirstId)
+                .input('roundSecondId', sql.Int, roundSecondId)
+                .query(`
+                    IF ((SELECT IIF(rs.end_date_time < GETDATE(), 1, 0) AS round_ended
+                            FROM [${slug}].round_settings rs
+                            INNER JOIN [dbo].elective_selection_rounds es ON es.id = rs.round_lid
+                            WHERE es.id = @roundFirstId
+                            AND rs.active = 1
+                            AND rs.bidding_session_lid = @biddingId) = 1)
+                        BEGIN
+                            SELECT 
+                            REPLACE(SUBSTRING(rs.round_name, CHARINDEX('-', rs.round_name) + LEN('-') + 1, LEN(rs.round_name)), '_', ' ') AS roundName,
+                            IIF(rs.end_date_time < GETDATE(), 1, 0) AS round_ended,
+                            IIF((rs.end_date_time > GETDATE() AND rs.start_date_time < GETDATE()), 1, 0) AS round_started,
+                            IIF(rs.start_date_time > GETDATE(), 1, 0) AS round_not_started_yet,
+                            rs.bidding_session_lid
+                            FROM [${slug}].round_settings rs
+                            INNER JOIN [dbo].elective_selection_rounds es ON es.id = rs.round_lid
+                            WHERE es.id = @roundSecondId
+                            AND rs.active = 1
+                            AND rs.bidding_session_lid = @biddingId
+                        END
+                    ELSE
+                        BEGIN
+                            SELECT 
+                            REPLACE(SUBSTRING(rs.round_name, CHARINDEX('-', rs.round_name) + LEN('-') + 1, LEN(rs.round_name)), '_', ' ') AS roundName,
+                            IIF(rs.end_date_time < GETDATE(), 1, 0) AS round_ended,
+                            IIF((rs.end_date_time > GETDATE() AND rs.start_date_time < GETDATE()), 1, 0) AS round_started,
+                            IIF(rs.start_date_time > GETDATE(), 1, 0) AS round_not_started_yet,
+                            rs.bidding_session_lid
+                            FROM [${slug}].round_settings rs
+                            INNER JOIN [dbo].elective_selection_rounds es ON es.id = rs.round_lid
+                            WHERE es.id = @roundFirstId
+                            AND rs.active = 1
+                            AND rs.bidding_session_lid = @biddingId
+                        END
+                `);            
+        });                 
     }
-    if(roundId == 1)  {
+
+    static isStudentPartOfRound(slug, biddingId, studentId, roundFirstId ,roundSecondId){
+    
         return poolConnection.then(pool => {
             return pool.request()
-                .input('round_lid', sql.Int, roundId)
-                .input('bidding_session_lid', sql.Int, biddingSessionId)
-                .output('output_json', sql.NVarChar(sql.MAX))
-                .execute(`[${slug}].[sp_demand_estimation_round_ends]`)
-        })
+                .input('biddingId', sql.Int, biddingId)
+                .input('studentId', sql.Int, studentId)
+                .input('roundFirstId', sql.Int, roundFirstId)
+                .input('roundSecondId', sql.Int, roundSecondId)
+                .query(`IF ((SELECT IIF(rs.end_date_time < GETDATE(), 1, 0) AS round_ended
+                            FROM [${slug}].round_settings rs
+                            INNER JOIN [dbo].elective_selection_rounds es ON es.id = rs.round_lid
+                            WHERE es.id = @roundFirstId
+                            AND rs.active = 1
+                            AND rs.bidding_session_lid = @biddingId) = 1)
+                            BEGIN    
+                                SELECT * FROM [${slug}].student_round_mapping 
+                                WHERE round_lid = @roundSecondId AND student_lid = @studentId AND active = 1 AND 
+                                bidding_session_lid = @biddingId
+                            END 
+                        ELSE
+                            BEGIN
+                                SELECT * FROM [${slug}].student_round_mapping 
+                                WHERE round_lid = @roundFirstId AND student_lid = @studentId AND active = 1 AND 
+                                bidding_session_lid = @biddingId
+                            END
+        
+                    `);
+        });
     }
-}
 }

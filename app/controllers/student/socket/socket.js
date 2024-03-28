@@ -313,7 +313,7 @@ module.exports.respond = async (socket, io) => {
     });
 
     socket.on('confirmationPageLoad', (data) => {
-        
+
         let slugName = data.slugName;
         let biddingId = data.biddingTime.bidding_session_lid;
         let startTime = data.biddingTime.startTime;
@@ -384,6 +384,52 @@ module.exports.respond = async (socket, io) => {
             });
         }       
     });
+
+    socket.on('confirmationLoadTime', (data) => {
+       
+       let slug = data.slugName;
+       let biddingId = data.activeBidding;
+       let roundFirstId = 3;
+       let roundSecondId = 5;
+       let studendId = data.studentId
+       let remainingTime = '';
+
+       const intervalFunction = async () => {
+
+           let currentDateTime = convertDateFormat();
+           
+           if (remainingTime === "Round Ended") {
+               clearInterval(interval);
+           }
+           
+           const detailsResult = await Promise.all([
+               bidding.currentRoundStatus(slug, biddingId, roundFirstId, roundSecondId),
+               bidding.isStudentPartOfRound(slug, biddingId, studendId, roundFirstId, roundSecondId),
+               roundSetting.listByOneDayBefore(slug, biddingId, roundFirstId, roundSecondId),
+               confirmation.winningCourseList(slug, biddingId, studendId, roundFirstId, roundSecondId),
+               confirmation.getConfirmationForBidding(slug, biddingId, studendId),
+           ]);
+           
+           if(detailsResult[2].recordset.length > 0){
+           
+               const startTime = new Date(detailsResult[2].recordset[0].startTime).getTime();
+               const endTime = new Date(detailsResult[2].recordset[0].endTime).getTime();
+               remainingTime = calculateRemainingTime(startTime, endTime);
+           }
+       
+           socket.emit('confirmationRemainingTime',  {
+               remainingTime: remainingTime,
+               currentRoundStatus: detailsResult[0].recordset,
+               currentDateTime: currentDateTime,
+               studentList: detailsResult[1].recordset.length == 0 ?0:1,
+               roundDetails : detailsResult[2].recordset,
+               winningCourses: detailsResult[3].recordset,
+               confirmCourses: detailsResult[4].recordset,
+           });
+       };
+   
+       const interval = setInterval(intervalFunction, 1000);
+    })
 
     socket.on('waitListPageLoaded', (data) => {
         
