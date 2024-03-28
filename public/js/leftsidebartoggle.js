@@ -329,12 +329,12 @@ function createToastError(message) {
 
     document.body.insertAdjacentHTML('beforeend', errorAlert);
 
-    // setTimeout(() => {
-    //     $('.toast-message').remove();
-    //     $('#add-bidding-session').modal('hide');
-    //     $('#sidebar').removeClass('d-none');
-    //     location.reload();
-    // },3000);
+    setTimeout(() => {
+        $('.toast-message').remove();
+        $('#add-bidding-session').modal('hide');
+        $('#sidebar').removeClass('d-none');
+        location.reload();
+    },3000);
     
     return {
         remove: function() {

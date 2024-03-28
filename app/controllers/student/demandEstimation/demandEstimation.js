@@ -59,7 +59,8 @@ module.exports = {
                 courseCount: result[1].recordset[0].count,
                 areaList: result[2].recordset
             });
-        }).catch(error => {
+        }).catch(error => { 
+            console.log('valuesof of err', error);
             res.status(500).json(error.originalError.info.message);
         });
     },
