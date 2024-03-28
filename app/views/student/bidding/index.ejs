@@ -54,7 +54,7 @@
                         </div>
                         <div class="col-md-4">
                             <h6>Credits Winning : &nbsp;
-                                <span id="credits-winning"></span>
+                                <span id="credits-winning">0</span>
                             </h6>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                         <% for (let acadSession of acadSessions) { %>
                             <div class="col-md-4">
                                 <h6> Selected  <%- acadSession.name %> Credits :&nbsp;
-                                    <span class="current-credit-points" data-id="<%- acadSession.id %>" id="credits-points-<%- acadSession.id %>">0</span>
+                                    <span class="credit-points credits-points-<%- acadSession.id %>" data-id="<%- acadSession.id %>" id="credits-points-<%- acadSession.id %>">0</span>
                                 </h6>
                             </div>
                         <% } %>
@@ -225,8 +225,8 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="d-flex justify-content-between align-items-center">
                         <% for(let acadSession of acadSessions) {%>
-                            <h6 class="p-1 px-3 credit-points">Selected <%- acadSession.name %>  Credits :&nbsp;
-                                <span class="credits-points-<%- acadSession.id %>">0</span>
+                            <h6 class="p-1 px-3">Selected <%- acadSession.name %>  Credits :&nbsp;
+                                <span class="credit-points credits-points-<%- acadSession.id %>">0</span>
                             </h6>
                         <% } %> 
                         <h5 class="text-danger time-remaining"></h5>
@@ -242,6 +242,8 @@
 <script>
     
 $(document).ready(function() {
+
+
 
     $('.select2').select2();
     let socket = io();
@@ -297,7 +299,7 @@ $(document).ready(function() {
         creditComparisonByTrimester[id] = { credits };
         currentCreditsPoints[id] = 0;
     });
-
+ 
     $('#bidding-acad-session').on('change', function(){
 
         let id = $(this).val();
@@ -430,8 +432,6 @@ $(document).ready(function() {
         concentrationSettingOfStudent.min_credits_in_primary_area -= +credits;
         concentrationSettingOfStudent.total_elective_credits -= +credits;
       
-       
-       
         biddingRow = `<tr 
                         data-id= "${id}" data-round-id ="${roundId}" data-area-name ="${areaName}" data-course-name ="${courseName}" 
                         data-acad-session ="${acadSession}" data-division-batch-lid ="${divisionBatchId}" data-faculty-id =${facultyId}
@@ -460,93 +460,8 @@ $(document).ready(function() {
                             </td>
                             </tr>`;
                         
-            let keys = Object.keys(creditComparisonByTrimester);
-            let currentKeys = Object.keys(currentCreditsPoints);
-                        
-            keys.forEach(key => {
-                let maxCreditPoints = creditComparisonByTrimester[key].max_credits;
-                let currentCreditPoints = currentCreditsPoints[`${key}`];
             
-                if (maxCreditPoints === currentCreditPoints) { 
-                    isTotalCreditsMet = true;
-                }else{
-                    isTotalCreditsMet = false;
-                }
-            });
-        
-            $('.current-credit-points').each((index, selectedCredit) => {
-            totalSelectedCredits += parseFloat($(selectedCredit).text()) || 0;
-            });
-        
-            const areaCountLength = Object.keys(areaDetails).length;
-        
-            if (concentrationName == 'General Management') {
-                if (
-                ((concentrationSettingData.min_credits_per_area <= areaDetails[areaName].totalCredits) &&
-                (areaDetails[areaName].totalCredits <= concentrationSettingData.max_credits_per_area)) &&
-                (areaCount <= areaCountLength)
-                ) {
-                    if (!minCreditsCompleteArea.includes(areaName)) {
-                        areaCount++;
-                        minCreditsCompleteArea.push(areaName);
-                    }
-                    if (minCreditsCompleteArea.includes(areaName)) {
-                        const existingArea = primaryAreaDetails.find(area => area.areaName === areaName);
-                        if (existingArea) {
-                            creditExistingArea =Number(existingArea.totalCredits)+Number(credits);
-                            existingArea.frequency++;
-                            existingArea.totalCredits = creditExistingArea;
-                        } else {
-                            primaryAreaDetails.push({ areaName: areaName, frequency: 1, totalCredits:credits });
-                        }
-                    }
-                }
-                if (isTotalCreditsMet) {
-                    if (areaCount >= concentrationSettingData.no_of_areas_to_cover && totalSelectedCredits === concentrationSettingData.total_elective_credits) {
-                    } else {
-                    const areaMessage = areaCount < concentrationSettingData.no_of_areas_to_cover ? 'No of area is mismatch' : '';
-                    }
-                }
-            }
-        
-            if (concentrationName != 'General Management') {
-            
-                if (
-                ((concentrationSettingData.min_credits_per_area <= areaDetails[areaName].totalCredits) &&
-                (areaDetails[areaName].totalCredits <= concentrationSettingData.max_credits_per_area)) &&
-                (areaCount <= areaCountLength)
-                ) {
-                    if(!minCreditsCompleteArea.includes(areaName)) {
-                    areaCount++;
-                    minCreditsCompleteArea.push(areaName);
-                    }
-                
-                    if (minCreditsCompleteArea.includes(areaName)) {
-                        const existingArea = primaryAreaDetails.find(area => area.areaName === areaName);
-                            if (existingArea) {
-                                creditExistingArea =Number(existingArea.totalCredits)+Number(credits);
-                                existingArea.frequency++;
-                                existingArea.totalCredits = creditExistingArea;
-                            } else {
-                                primaryAreaDetails.push({ areaName: areaName, frequency: 1, totalCredits:credits });
-                            }
-                        }
-                }
-                if (isTotalCreditsMet) {
-                    const area = primaryAreaDetails.find(element => {
-                        return element.totalCredits >= concentrationSettingData.min_credits_in_primary_area && 
-                        element.totalCredits <= concentrationSettingData.max_credits_per_area;
-                    });
-                
-                    if ((areaCount >= concentrationSettingData.no_of_areas_to_cover && totalSelectedCredits === concentrationSettingData.total_elective_credits) && area) {
-                    
-                    }else {
-                    const areaMessage = areaCount < concentrationSettingData.no_of_areas_to_cover ? 'No of area is mismatch' : '';
-                    
-                    }
-                }
-            } 
-            
+            updateCurrentPointTargets(currentCreditsPoints, false)
             socket.emit('createOrJoinRoom',{ 
                 slugName: "<%- slug %>",
                 studentLid: studentId,
@@ -586,6 +501,11 @@ $(document).ready(function() {
                     if (userId == biddingUserId) {
                         $('#bidding-table tbody').append(biddingRow);
                         arrangeTableId('bidding-trimester-select-table');
+                        let acadSessionId = $(`#bidding-trimester-select-table tr[data-division-batch-lid = ${divisionBatchLidReponse}]`).data('acad-session-id');
+                        let credits = $(`#bidding-trimester-select-table tr[data-division-batch-lid = ${divisionBatchLidReponse}]`).data('credits');
+                        currentCreditsPoints[acadSessionId] += credits;
+                        updateCurrentPointTargets(currentCreditsPoints, false);
+                        
                         $(`#bidding-trimester-select-table tr[data-division-batch-lid = ${divisionBatchLidReponse}]`).remove();
                         updateTableForCurrentUser(userSpecificWinningStatus);
                     }
@@ -619,7 +539,7 @@ $(document).ready(function() {
         currentCreditsPoints[`${acadSessionId}`] -= Number(credits);
 
         updateCreditsPointTargets(creditPointsPerTrimester);
-        updateCurrentPointTargets(currentCreditsPoints);
+        updateCurrentPointTargets(currentCreditsPoints, true);
 
         socket.emit('withdrawBidding', { 
             slugName: "<%- slug %>",
@@ -932,6 +852,23 @@ function availableCourse(courses) {
     }   
 }
 
+function updateCurrentPointTargets(currentObject, flag) {
+    $('.credit-points').each((index, element) => {
+        
+        Object.entries(currentObject).forEach(([key, value]) => {
+        let className = `.credits-points-${key}`;
+        let creditPointsElement = $(className);
+        if($(element).hasClass(`credits-points-${key}`)) {
+            $(element).text(currentObject[key]);
+        }
+        if (flag) {
+            creditPointsElement.html(value);
+        }
+    });
+    })
+    
+}
+
 function considerationSetCourses(courses) {
     
     if(courses.length > 0 ){
@@ -1031,6 +968,8 @@ function updateTableForCurrentUser(userSpecificWinningStatus) {
         }
     }
 }
+
+
 
 </script>
 

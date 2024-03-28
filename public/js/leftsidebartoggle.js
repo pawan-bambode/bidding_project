@@ -271,7 +271,7 @@ function updateCreditsPointTargets(trimesterWiseTargetCreditPoints) {
     });
 }
 
-function updateCurrentPointTargets(trimesterWiseTargetCreditPoints) {
+function updateCurrentPointTargets(trimesterWiseTargetCreditPoints,flag) {
     $('.current-credit-points').each((index, element) => {
         const elementId = $(element).data('id');
         const targetCredit = trimesterWiseTargetCreditPoints[`${elementId}`];
