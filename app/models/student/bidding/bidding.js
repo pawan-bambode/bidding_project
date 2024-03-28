@@ -209,7 +209,7 @@ module.exports = class Bidding {
                         INNER JOIN [${slug}].student_elective_bidding seb ON rtb.div_batch_lid = seb.div_batch_lid 
                         INNER JOIN [${slug}].student_data sd ON sd.id = seb.student_lid AND sd.active = 1
                         INNER JOIN [${slug}].users u ON sd.email = u.email AND u.active = 1
-                        WHERE seb.div_batch_lid = @div_batch_lid AND seb.bidding_session_lid = @biddingId AND seb.student_lid = @studentId`);
+                        WHERE seb.div_batch_lid = @div_batch_lid AND seb.bidding_session_lid = @biddingId AND seb.student_lid = @studentId AND seb.active = 1`);
         });
     }
 
