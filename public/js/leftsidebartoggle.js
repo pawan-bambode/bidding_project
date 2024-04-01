@@ -333,8 +333,8 @@ function createToastError(message) {
         $('.toast-message').remove();
         $('#add-bidding-session').modal('hide');
         $('#sidebar').removeClass('d-none');
-        location.reload();
-    },3000);
+        // location.reload();
+    },2500);
     
     return {
         remove: function() {
@@ -499,7 +499,7 @@ function calculateAreahighest(arr) {
 
 
 
-function cancelacadSessionCounttyper(arr, area) {
+function cancelacadSessionCount(arr, area) {
     let filteredArr = arr.filter(obj => obj.id !== area.id);
     let acadSessionFrequency = {};
     filteredArr.forEach((obj) => {
@@ -520,8 +520,8 @@ function cancelacadSessionCounttyper(arr, area) {
     return acadSessionFrequency;
 }
 
-function acadSessionCounttyper(arr) {
-   
+function acadSessionCountArr(arr) {
+   console.log(arr);
     let acadSessionFrequency = {};
     arr.forEach((obj) => {
         let acadSession = obj.acadSessionId;

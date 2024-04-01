@@ -41,7 +41,7 @@
                 <% const specializationName = studentDetails.length > 0 ? studentDetails[0].concentrationName.toLowerCase() : '' %>
                 <% for (let concentration of concentrationList) { %>
                     <% const concentrationNameLower = concentration.concentration_name.toLowerCase() %>
-                    <div class="col-md-3 d-flex">
+                    <div class="col-md-3 d-flex align-items-center">
                         <input type="radio" name="concentration-name" data-concentration-id="<%- concentration.id %>" id="concentration<%- concentration.id %>" data-concentration-name="<%-concentration.concentration_name %>" <% if (concentrationNameLower === specializationName) { %> checked <% } %>>
                         <label class="mb-0 ms-2" for="concentration<%- concentration.id %>"><%- concentration.concentration_name %></label>
                     </div>
