@@ -17,6 +17,7 @@
                 <% } else if (currentRoundStatus.round_status == 'Round Not Found') { %>
                     <p>Round Not Found!</p>
                 <% } %>
+                <p></p>
             </div>
         </div>
     </div>
@@ -329,8 +330,9 @@ $(document).ready(function() {
                     }   
             }
             else if(data.currentRoundStatus[0].round_started == '1'){
-                
+                console.log('valuesof data.currentRoundStatus[0].round_started', data.currentRoundStatus[0].round_started);
                 if(isEligibleForRound == 1){
+                    console.log('inside teh if block ', isEligibleForRound);
                     if(!biddingCourseFlag){
                         availableCourse( data.biddingCourses);
                     }
@@ -340,6 +342,7 @@ $(document).ready(function() {
                     $('.round-wise-details').removeClass('d-none');
                     $('.time-remaining').text(data.remainingTime);
                 }else{
+                    console.log('inside teh else block ', isEligibleForRound);
                     $('.round-message-container').removeClass('d-none');
                     $('.round-message-container .round-name').text(data.roundDetails[0].roundName);
                     $('.round-message-container p').text('You are not eligible for this round');
