@@ -245,7 +245,6 @@ $(document).ready(function() {
                             $('.round-basic-details').find('#start-time').text(data.roundDetails[0].startTime);
                             $('.round-basic-details').find('#end-time').text(data.roundDetails[0].endTime);
                         }else{
-                            console.log('inside the else block data.roundDetails[0].length', data.roundDetails[0].length);
                             $('.round-wise-details').addClass('d-none');
                             $('.round-message-container .round-name').text(data.roundDetails[0].roundName);
                             $('.round-message-container .round-name').attr('data-round-id', data.roundDetails[0].round_lid);

@@ -157,6 +157,7 @@ module.exports = class DemandEstimation {
     }
     
     static getSelectedCourses(slug, biddingId, studentId) {
+
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)

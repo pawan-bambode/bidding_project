@@ -263,7 +263,6 @@ module.exports = class RoundSettings {
 
     // Procedures code starts from here.
     static create(inputJSON, slug, userid, biddingId) {
-        console.log('inputJSON', inputJSON);
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), inputJSON)

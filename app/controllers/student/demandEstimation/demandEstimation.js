@@ -26,14 +26,14 @@ module.exports = {
             demandEstimation.isStudentPartOfRound(res.locals.slug, res.locals.biddingId, res.locals.studentId,roundId),
             roundSetting.currentRoundStatus(res.locals.slug, res.locals.biddingId, roundId)
         ]).then(result => {
-            
+            console.log('values of selectedCourse', result[6].recordset);
             res.render('student/demandEstimation/index', {
                 active: demandEstimationActive,
                 demandEstimationRounds: result[0].recordset,
                 courseList: result[1].recordset,
                 pageCount: result[2].recordset[0].count,
                 acadSessions: result[3].recordset,
-                creditList: result[4].recordset,
+                targetCreditList: result[4].recordset,
                 startAndEndTime: result[5].recordset[0] != undefined? result[5].recordset[0] : '',
                 selectCourse: result[6].recordset,
                 concentrationSet: (result[7].recordset && result[7].recordset.length !== 0) ? result[7].recordset[0] : 0,
@@ -60,7 +60,6 @@ module.exports = {
                 areaList: result[2].recordset
             });
         }).catch(error => { 
-            console.log('valuesof of err', error);
             res.status(500).json(error.originalError.info.message);
         });
     },

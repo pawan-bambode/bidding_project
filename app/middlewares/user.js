@@ -43,16 +43,14 @@ module.exports = {
         if (!req.sessionID) {
             return next();
         }
-        console.log('Login req.sessionID', req.sessionID)
+        
         store.get(req.sessionID, async (err, result) => {
-           console.log('req.sessionID result', result)
             if (!result) {
               // return res.redirect('/user/login')
                return next();
             }
 
             if (result.modules.length > 0) {
-                console.log('result.modules[0].name', result.modules)
                 res.redirect(`/${result.modules}/dashboard`);
             } else {
                 res.render('denied')
