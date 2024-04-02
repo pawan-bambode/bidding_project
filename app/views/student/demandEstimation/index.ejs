@@ -609,20 +609,23 @@ $(document).ready(function() {
 
         //push the course details in the studentCriteriaStatus
         studentCriteriaStatus.courseDetails.push({
-            courseId: courseId,
-            area: area,
-            course: course,
-            acadSession: acadSession,
-            credits: credits,
-            acadSessionId: acadSessionId
+            course_lid: courseId
         });
-
-
 
         //Validate the studentCriteriaStatus for the overall criteria eligibility
 
+        let concentrationDetails = studentCriteriaStatus.creditsPerArea.filter((creditsAreas) =>{
+           return creditsAreas.area === concentrationSet.name && creditsAreas.credits >= concentrationSet.minCreditsInPrimayArea
+        });
 
-
+        let areaStatus = studentCriteriaStatus.areaCovered >= concentrationSet.areasCover;
+        
+        if(concentrationDetails.length > 0  && areaStatus){
+            console.log('validate');
+            studentCriteriaStatus.isCriteriaMet = true;
+        }
+        console.log('valuesof studentCriteriaStatus', studentCriteriaStatus);
+        
         let ajaxTable = `
                 <tr data-course-id="${courseId}" data-area="${area}" data-course-name="${course}" data-acad-session="${acadSession}" data-credits="${credits}" data-acad-session-id="${acadSessionId}">
                     <td class="index-row-demand-estimation">${count++}</td>
@@ -809,6 +812,8 @@ $(document).ready(function() {
             selectedCourses.course_lid = courseLid;
             selectedCourseArray.push(selectedCourses);
         });
+
+        console.log('valuesof selectedCourseArray', selectedCourseArray);
 
         let studentLid = $('#student-data').data('student-id');
         let roundId = $('.round-name').data('round-id');
