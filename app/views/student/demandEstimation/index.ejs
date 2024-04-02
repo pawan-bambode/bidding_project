@@ -260,6 +260,7 @@
                         <% } %> 
                         <div class="criteria-status col-md-3">CRITERIA NOT MET</div>
                         <div class="area-status col-md-3">Area Covered: <span class="area-status-span"></span></div>
+                        <div class="area-status col-md-3">Credit Covered In Pri. Area: <span class="pri-area-span"></span></div>
                         <div class="time-status col-md-6"><h5 class="text-danger time-remaining"></h5></div>
 
                     </div>
@@ -505,7 +506,7 @@ $(document).ready(function() {
     $('#available-course-table').on('click', '.add-course', function () {
 
         let courseId = $(this).closest('tr').data('course-id');
-        let area = $(this).closest('tr').data('area');
+        let area = $(this).closest('tr').data('area').trim();
         let course = $(this).closest('tr').data('course-name');
         let acadSession = $(this).closest('tr').data('acad-session');
         let credits = $(this).closest('tr').data('credits');
@@ -513,8 +514,11 @@ $(document).ready(function() {
         let selectedCourseCredit = $('#selected-course-credits').text();
         let maxCreditPerArea = $('#max-credits-per-area').text();
         let rowId = $(this).closest('tr').find('td:first-child').text();
-        let selectedTableLenght = $('#selected-course-table tbody tr').length;
-        count = selectedTableLenght + 1;
+
+        let selectedCourseCount = $('#selected-course-table tbody tr').filter(function() {
+            return $(this).attr('colspan') !== "6";
+        }).length;
+
         let areaCountText = concentrationSet.areasCover;
 
         console.log('concentrationSet', concentrationSet);
@@ -531,9 +535,11 @@ $(document).ready(function() {
         //To check max credit per area
         let isMaxCreditUnderLimit = true;
         studentCriteriaStatus.creditsPerArea.filter(obj => {
-            if (obj.credits + credits > concentrationSet.maxCreditsPerArea && obj.area == concentrationSet.name) {
-                isMaxCreditUnderLimit = false
-                return;
+            if (obj.area == concentrationSet.name) {
+                if (obj.credits + credits > concentrationSet.maxCreditsPerArea) {
+                    isMaxCreditUnderLimit = false
+                    return;
+                }
             }
         });
 
@@ -561,23 +567,24 @@ $(document).ready(function() {
             alert(`You have reached the maximum credit limit for ${acadSession}`);
             return;
         }
-        let studentCriteriaStatusLength = studentCriteriaStatus.creditsPerArea.length;
+  
+        let subjectAlreadySelected = false;
+
         studentCriteriaStatus.creditsPerArea.forEach((ele, idx) => {
-            if (ele.area == area) {
+            if (ele.area === area) {
                 ele.credits += credits;
-            } else if(studentCriteriaStatusLength == idx + 1) {
-                studentCriteriaStatus.creditsPerArea.push({
-                    area: area,
-                    credits: credits
-                });
+                subjectAlreadySelected = true; 
+                return; 
             }
-        })
-        if(studentCriteriaStatusLength === 0){
+        });
+
+        if (!subjectAlreadySelected) {
             studentCriteriaStatus.creditsPerArea.push({
-                    area: area,
-                    credits: credits
-                });
+                area: area,
+                credits: credits
+            });
         }
+
         
         let studentCriteriaStatusSessionLength = studentCriteriaStatus.creditsPerSession.length;
         studentCriteriaStatus.creditsPerSession.forEach((ele, idx) => {
@@ -605,6 +612,10 @@ $(document).ready(function() {
         studentCriteriaStatus.areaCovered = minCreditAreaFilter.length;
         $('#selected-course-credits').text(Number(selectedCourseCredit) + Number(credits));
         $('.student-footer .area-status .area-status-span').text(studentCriteriaStatus.areaCovered);
+
+        console.log('studentCriteriaStatus.creditsPerArea.find(obj => obj.area == studentCriteriaStatus.primaryArea).credits', studentCriteriaStatus.creditsPerArea.find(obj => obj.area));
+
+        $('.student-footer .area-status .pri-area-span').text(studentCriteriaStatus.creditsPerArea.find(obj => obj.area == studentCriteriaStatus.primaryArea).credits);
         $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentCriteriaStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
 
         //push the course details in the studentCriteriaStatus
@@ -613,22 +624,28 @@ $(document).ready(function() {
         });
 
         //Validate the studentCriteriaStatus for the overall criteria eligibility
+        let isMinCreditsInPrimayArea = 1;
+        if(concentrationSet.primaryArea){
 
-        let concentrationDetails = studentCriteriaStatus.creditsPerArea.filter((creditsAreas) =>{
-           return creditsAreas.area === concentrationSet.name && creditsAreas.credits >= concentrationSet.minCreditsInPrimayArea
-        });
+            let array = studentCriteriaStatus.creditsPerArea.filter((creditsAreas) =>{
+               return creditsAreas.area === concentrationSet.primaryArea && creditsAreas.credits >= concentrationSet.minCreditsInPrimayArea
+            });
 
-        let areaStatus = studentCriteriaStatus.areaCovered >= concentrationSet.areasCover;
+            isMinCreditsInPrimayArea = array.length;
+        }
+
+        let isAreaCovered = studentCriteriaStatus.areaCovered >= concentrationSet.areasCover;
         
-        if(concentrationDetails.length > 0  && areaStatus){
-            console.log('validate');
+        if(isMinCreditsInPrimayArea > 0  && isAreaCovered && studentCriteriaStatus.totalCredit == totalCredits){
             studentCriteriaStatus.isCriteriaMet = true;
+        }else{
+            studentCriteriaStatus.isCriteriaMet = false;
         }
         console.log('valuesof studentCriteriaStatus', studentCriteriaStatus);
         
         let ajaxTable = `
                 <tr data-course-id="${courseId}" data-area="${area}" data-course-name="${course}" data-acad-session="${acadSession}" data-credits="${credits}" data-acad-session-id="${acadSessionId}">
-                    <td class="index-row-demand-estimation">${count++}</td>
+                    <td class="index-row-demand-estimation">${selectedCourseCount++}</td>
                     <td>${area}</td>
                     <td>${course}</td>
                     <td>${acadSession}</td>
@@ -640,7 +657,10 @@ $(document).ready(function() {
         $("#selected-course-table tbody tr").find('td[colspan ="6"]').remove()
         $("#selected-course-table tbody").append(ajaxTable);
         $(this).closest('tr').remove();
-
+        
+        if(studentCriteriaStatus.isCriteriaMet == true){
+            $('.save-select-course').removeAttr('disabled');
+        }
       
     });
 
@@ -649,13 +669,16 @@ $(document).ready(function() {
         let acadSessionId = $(this).closest('tr').data('acad-session-id');
         let credits = $(this).closest('tr').data('credits');
         let area = $(this).closest('tr').data('area');
-        let id = $(this).closest('tr').data('course-id');
+        let courseId = $(this).closest('tr').data('course-id');
         let acadSession = $(this).closest('tr').data('acad-session');
         let course = $(this).closest('tr').data('course-name');
         let rowId = $(this).closest('tr').find('td:first-child').text();
         let annualCredits = $('#yearly-credits').text();
         let minCreditPrimaryArea = $('#min-credits-in-primary-area').text();
         let selectedCourseCredit = $('#selected-course-credits').text();
+
+        //remove the course id from the studentCriteriaStatus
+        studentCriteriaStatus.courseDetails = studentCriteriaStatus.courseDetails.filter(obj => obj.course_lid != courseId);
 
         //update studentCriteriaStatus
         studentCriteriaStatus.totalCredit -= credits;
@@ -678,7 +701,6 @@ $(document).ready(function() {
             }
         });
         studentCriteriaStatus.areaCovered = studentCriteriaStatus.creditsPerArea.length;
-        console.log('studentCriteriaStatus', studentCriteriaStatus.creditsPerSession);
         //update in #selected-course-credits, .session-credit-points, .area-status-span, criteria-status 
         $('#selected-course-credits').text(studentCriteriaStatus.totalCredit);
         $('.student-footer .area-status .area-status-span').text(studentCriteriaStatus.areaCovered);
@@ -693,11 +715,31 @@ $(document).ready(function() {
             $('.session-credit-points[data-acad-session-id="'+acadSessionId+'"]').find('.credits-points').text(0);
         }
 
-       
+         //Validate the studentCriteriaStatus for the overall criteria eligibility
+         let isMinCreditsInPrimayArea = 1;
+        if(concentrationSet.primaryArea){
+
+            let array = studentCriteriaStatus.creditsPerArea.filter((creditsAreas) =>{
+               return creditsAreas.area === concentrationSet.primaryArea && creditsAreas.credits >= concentrationSet.minCreditsInPrimayArea
+            });
+
+            isMinCreditsInPrimayArea = array.length;
+        }
+
+        let isAreaCovered = studentCriteriaStatus.areaCovered >= concentrationSet.areasCover;
+        
+        if(isMinCreditsInPrimayArea > 0  && isAreaCovered && studentCriteriaStatus.totalCredit == totalCredits){
+            console.log('validate');
+            studentCriteriaStatus.isCriteriaMet = true;
+        }else{
+            studentCriteriaStatus.isCriteriaMet = false;
+        }
+
+       console.log('valuesof studentCriteriaStatus', studentCriteriaStatus);
         
         let count = 1;
         let ajaxTable = `
-                <tr data-course-id="${id}"
+                <tr data-course-id="${courseId}"
                     data-area="${area}"
                     data-course-name="${course}"
                     data-acad-session="${acadSession}"
@@ -803,30 +845,20 @@ $(document).ready(function() {
     // }
 
     $(document).on('click', '.save-select-course', function () {
-        let selectedCourseArray = [];
-        $('#selected-course-table tbody tr').each((index, selectedCourse) => {
-            let selectedCourses = {};
-            let courseLid = $(selectedCourse).data('course-id');
-            let studentLid = $('.student-id').text();
-
-            selectedCourses.course_lid = courseLid;
-            selectedCourseArray.push(selectedCourses);
-        });
-
-        console.log('valuesof selectedCourseArray', selectedCourseArray);
-
+  
         let studentLid = $('#student-data').data('student-id');
         let roundId = $('.round-name').data('round-id');
         if (roundId == 0) {
             createToastMessage('This round is not created yet!');
-        } else {
+        } else {   
+            if(studentCriteriaStatus.courseDetails){
+        
             let ApiObj = {
                 url: '/student/demand-estimation/save',
                 type: 'POST',
-                data: { inputJSON: JSON.stringify(selectedCourseArray), studentLid: studentLid, roundLid: roundId },
+                data: { inputJSON: JSON.stringify(studentCriteriaStatus.courseDetails), studentLid: studentLid, roundLid: roundId },
                 dataType: 'JSON'
             };
-
             ajaxApi(ApiObj)
                 .then(result => {
                     createToastMessage(result.description);
@@ -834,7 +866,7 @@ $(document).ready(function() {
                 .catch(error => {
                     createToastError(JSON.stringify(error.responseJSON.description));
                 });
-        }
+        } }
     });
 
 

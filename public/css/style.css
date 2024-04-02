@@ -650,9 +650,9 @@ option:hover,
       scrollbar-width: none;
   }
   
-  .left-sidebar::--webkit-scrollbar {
+  /* .left-sidebar::--webkit-scrollbar {
       display: none;
-  }
+  } */
   
   .left-sidebar.hide {
       width: 80px;
@@ -1020,7 +1020,7 @@ box-shadow: -30px -30px 0 var(--primary-white);
 .student-footer {
     position: relative;
 }
-.student-footer::before {
+/* .student-footer::before {
     content: '';
     position: absolute;
     width: 60px;
@@ -1029,11 +1029,11 @@ box-shadow: -30px -30px 0 var(--primary-white);
     left: 1px;
     border-radius: 31%;
     box-shadow: -21px 29px 0 var(--primary-white)
-} 
+}  */
 
 .student-footer{
     transition: all 0.5s ease-in-out; 
-    height: 76px;
+    height: auto;
     position: fixed;
     bottom: 0;
 }
