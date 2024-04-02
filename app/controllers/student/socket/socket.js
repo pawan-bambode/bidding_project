@@ -50,6 +50,7 @@ module.exports.respond = async (socket, io) => {
         let roundId = 1;
         let studendId = data.studentId
         let remainingTime = '';
+        let remainingMin = 0;
 
         const intervalFunction = async () => {
 
@@ -70,10 +71,12 @@ module.exports.respond = async (socket, io) => {
                 const startTime = new Date(detailsResult[2].recordset[0].startTime).getTime();
                 const endTime = new Date(detailsResult[2].recordset[0].endTime).getTime();
                 remainingTime = calculateRemainingTime(startTime, endTime);
+                remainingMin = (endTime - new Date().getTime()) / 60000;
             }
         
             socket.emit('remainingTimeForDemandEstimation',  {
                 remainingTime: remainingTime,
+                remainingMin: remainingMin,
                 currentRoundStatus: detailsResult[0].recordset,
                 currentDateTime: currentDateTime,
                 studentList: detailsResult[1].recordset.length == 0 ?0:1,
@@ -590,7 +593,7 @@ module.exports.respond = async (socket, io) => {
         const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
     
-        return `Round Ends In ${hours} h:${minutes}M:${seconds}S`;
+        return `Round Ends In ${hours} H:${minutes} M:${seconds} S`;
     };
     
     function convertDateFormat() {

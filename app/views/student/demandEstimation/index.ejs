@@ -259,9 +259,9 @@
                             </div>
                         <% } %> 
                         <div class="criteria-status col-md-3">CRITERIA NOT MET</div>
-                        <div class="area-status col-md-3">Area Covered: <span class="area-status-span"></span></div>
-                        <div class="area-status col-md-3">Credit Covered In Pri. Area: <span class="pri-area-span"></span></div>
-                        <div class="time-status col-md-6"><h5 class="text-danger time-remaining"></h5></div>
+                        <div class="area-status col-md-3">Area Covered: <span class="area-status-span">0</span></div>
+                        <div class="pri-area-status col-md-3">Credit Covered In Pri. Area: <span class="pri-area-span">0</span></div>
+                        <div class="time-status col-md-3"><h5 class="text-danger time-remaining"></h5></div>
 
                     </div>
                 </div>
@@ -315,8 +315,30 @@ $(document).ready(function() {
         studentId: studentId
     });
 
+    function convertToMinutes(duration) {
+        var parts = duration.split(':');
+        var hours = parseInt(parts[0], 10);
+        var minutes = parseInt(parts[1], 10);
+        var seconds = parseInt(parts[2], 10);
+        
+        return hours * 60 + minutes + seconds / 60;
+    }
+
     let biddingCourseFlag = false;
+    let isAlerted = false;
     socket.on('remainingTimeForDemandEstimation', data =>{
+        
+        //check if the remaining time is less than 5min
+        
+       if(data.remainingMin <= 5 && !isAlerted){
+        createToast({
+          title: "Alert!",
+          msg: 'Less than 5 minutes left to submit the course',
+          type: "negative"
+        });
+
+        isAlerted = true;
+       }
         
         isEligibleForRound = data.studentList;
         $('#current-date-time').text(data.currentDateTime);
@@ -612,10 +634,21 @@ $(document).ready(function() {
         studentCriteriaStatus.areaCovered = minCreditAreaFilter.length;
         $('#selected-course-credits').text(Number(selectedCourseCredit) + Number(credits));
         $('.student-footer .area-status .area-status-span').text(studentCriteriaStatus.areaCovered);
+        if(concentrationSet.primaryArea){
 
-        console.log('studentCriteriaStatus.creditsPerArea.find(obj => obj.area == studentCriteriaStatus.primaryArea).credits', studentCriteriaStatus.creditsPerArea.find(obj => obj.area));
+            //check if the primary area is selected
+            let isPrimaryAreaSelected = studentCriteriaStatus.creditsPerArea.some(function(ele) {
+                return ele.area === concentrationSet.primaryArea;
+            });
 
-        $('.student-footer .area-status .pri-area-span').text(studentCriteriaStatus.creditsPerArea.find(obj => obj.area == studentCriteriaStatus.primaryArea).credits);
+            if(isPrimaryAreaSelected){
+                $('.student-footer .area-status .pri-area-span').text(studentCriteriaStatus.creditsPerArea.find(obj => obj.area == studentCriteriaStatus.primaryArea).credits);
+            }
+
+            
+        }else{
+            $('.student-footer .pri-area-status').addClass('d-none');
+        }
         $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentCriteriaStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
 
         //push the course details in the studentCriteriaStatus
@@ -627,7 +660,6 @@ $(document).ready(function() {
         let isMinCreditsInPrimayArea = 1;
         if(concentrationSet.primaryArea){
 
-<<<<<<< HEAD
             let array = studentCriteriaStatus.creditsPerArea.filter((creditsAreas) =>{
                return creditsAreas.area === concentrationSet.primaryArea && creditsAreas.credits >= concentrationSet.minCreditsInPrimayArea
             });
@@ -641,17 +673,6 @@ $(document).ready(function() {
             studentCriteriaStatus.isCriteriaMet = true;
         }else{
             studentCriteriaStatus.isCriteriaMet = false;
-=======
-        let concentrationDetails = studentCriteriaStatus.creditsPerArea.filter((creditsAreas) =>{
-           return creditsAreas.area === concentrationSet.name && creditsAreas.credits >= concentrationSet.minCreditsInPrimayArea
-        });
-
-        let areaStatus = studentCriteriaStatus.areaCovered >= concentrationSet.areasCover;
-        
-        if(concentrationDetails.length > 0  && areaStatus){
-            console.log('validate');
-            studentCriteriaStatus.isCriteriaMet = true;
->>>>>>> cbb2ba2f9080a21dd24a032f7689029c6469725c
         }
         console.log('valuesof studentCriteriaStatus', studentCriteriaStatus);
         
@@ -857,22 +878,7 @@ $(document).ready(function() {
     // }
 
     $(document).on('click', '.save-select-course', function () {
-<<<<<<< HEAD
   
-=======
-        let selectedCourseArray = [];
-        $('#selected-course-table tbody tr').each((index, selectedCourse) => {
-            let selectedCourses = {};
-            let courseLid = $(selectedCourse).data('course-id');
-            let studentLid = $('.student-id').text();
-
-            selectedCourses.course_lid = courseLid;
-            selectedCourseArray.push(selectedCourses);
-        });
-
-        console.log('valuesof selectedCourseArray', selectedCourseArray);
-
->>>>>>> cbb2ba2f9080a21dd24a032f7689029c6469725c
         let studentLid = $('#student-data').data('student-id');
         let roundId = $('.round-name').data('round-id');
         if (roundId == 0) {
