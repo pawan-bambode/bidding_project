@@ -498,7 +498,8 @@ $(document).ready(function() {
         creditsPerSession: [],
         primaryArea:`${concentrationSet.name}`,
         totalCredit:0,
-        isCriteriaMet: false
+        isCriteriaMet: false,
+        courseDetails:[]
     }
 
     $('#available-course-table').on('click', '.add-course', function () {
@@ -516,43 +517,10 @@ $(document).ready(function() {
         count = selectedTableLenght + 1;
         let areaCountText = concentrationSet.areasCover;
 
-        let CourseCredits = {
-            area: area,
-            credit: credits,
-            id: courseId
-        };
-        let acadSesionsObject = {
-            acadSessionId: acadSessionId,
-            acadSession: acadSession,
-            credit: credits,
-            id: courseId
-        };
-        let areaObject = {
-            area: area,
-            credit: credits,
-            id: courseId
-        };
-        
-        // {
-        //     area: '',
-        //     credits: 0
-        // }
-
-        // {
-        //     acadSession: '',
-        //     credits: 0
-        // }
-
-       
         console.log('concentrationSet', concentrationSet);
         console.log('parsedCredits', parsedCredits);
-
         console.log('studentCriteriaStatus', studentCriteriaStatus);
         console.log('selectedCourse', selectedCourse);
-        console.log('selected course credit', selectedCourseCredit);
-        console.log('CourseCredits', CourseCredits);
-        console.log('acadSesionsObject', acadSesionsObject);
-        console.log('areaObject', areaObject);
 
         //Check for max credit as per concentration setting
         if (studentCriteriaStatus.totalCredit + Number(credits) > totalCredits) {
@@ -631,53 +599,29 @@ $(document).ready(function() {
 
         //update totalCredit and areaCovered in the obj
         studentCriteriaStatus.totalCredit += credits;
-        studentCriteriaStatus.areaCovered = studentCriteriaStatus.creditsPerArea.length;
+        var minCreditAreaFilter = studentCriteriaStatus.creditsPerArea.filter(function(item) {
+            return item.credits >= concentrationSet.minCreditsPerArea;
+        });
+        studentCriteriaStatus.areaCovered = minCreditAreaFilter.length;
         $('#selected-course-credits').text(Number(selectedCourseCredit) + Number(credits));
         $('.student-footer .area-status .area-status-span').text(studentCriteriaStatus.areaCovered);
         $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentCriteriaStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
 
-        
-        areaAdd.push(CourseCredits);
-        acadSessions.push(acadSesionsObject);
-        completedAreas.push(areaObject);
+        //push the course details in the studentCriteriaStatus
+        studentCriteriaStatus.courseDetails.push({
+            courseId: courseId,
+            area: area,
+            course: course,
+            acadSession: acadSession,
+            credits: credits,
+            acadSessionId: acadSessionId
+        });
 
 
-        let acadSessionCount1 = acadSessionCountArr(acadSessions);
-        const acadSessionTotalsArray = calculateAcadSessionTotals(acadSessionCount1);
-       
-        acadSessionTotalsArray.filter(obj =>{
-            currentSelCredits.filter(current =>{
-                if(current.acadSession == obj.acadSession){
-                    current.totalCredits = obj.totalCredits;
-                }
-            })
-        })
 
-        completedArea = calculateCompletedArea(areaAdd, minCreditsPerAreas);
+        //Validate the studentCriteriaStatus for the overall criteria eligibility
 
-        // if (completedArea.length > 0) {
-        //     completedArea.forEach((completedCourse) => {
-               
-        //             if (Number($('#areas-count').text()) > 0) {
-        //                 $('#areas-count').text(Number(areaCountText) - completedArea.length);
-        //                 areaCountTextVariance = $('#areas-count').val();
-        //             }
-               
 
-        //         if (completedCourse.totalCredits === Number(maxCreditPerArea)) {
-        //             if(completedCourse.name == concentrationSet.name){
-        //                 $(`#available-course-table tbody tr[data-area="${completedCourse.name}"]`).each((index, availableCourse) => {
-        //                     $(availableCourse).find('.add-course').addClass('disabled');
-        //                     $('#selected-course-table tbody').attr(`max-credits-one-area`, completedCourse.name);
-        //                 });
-        //             }
-        //             else{
-        //                 alert('You selected 27 credits from not primary area');
-        //             }
-                    
-        //         }
-        //     });
-        // }
 
         let ajaxTable = `
                 <tr data-course-id="${courseId}" data-area="${area}" data-course-name="${course}" data-acad-session="${acadSession}" data-credits="${credits}" data-acad-session-id="${acadSessionId}">
@@ -694,65 +638,7 @@ $(document).ready(function() {
         $("#selected-course-table tbody").append(ajaxTable);
         $(this).closest('tr').remove();
 
-        let concentrationName = $('#concentration-name').text();
-
-        let minCreditPrimaryArea = $('#min-credits-in-primary-area').text();
-        let selectedCredit = $('#selected-course-credits').text();
-        let annualCredits = $('#yearly-credits').text();
-        let areasCountCredit = $('#areas-count').text();
-
-        if (selectedCredit == annualCredits) {
-            $('.selected-credits').removeClass('btn-danger');
-            $('.selected-credits').addClass('btn-success');
-        } else {
-            $('.selected-credits').addClass('btn-danger');
-            $('.selected-credits').removeClass('btn-success');
-        }
-
-        if (Number($('#areas-count').text()) > 0) {
-            $('.areas-count').addClass('btn-danger');
-            $('.areas-count').removeClass('btn-success');
-        } else {
-            $('.areas-count').removeClass('btn-danger');
-            $('.areas-count').addClass('btn-success');
-        }
-
-        if (concentrationName.toLocaleLowerCase() !== 'general management') {
-            let primaryAreaCourse = calculateAreahighest(areaAdd);
-            let concentrationCriteria = primaryAreaCourse.totalCredits;
-     
-            if (concentrationCriteria < minCreditPrimaryArea) {
-                $('#min-credits-in-primary-area').closest('button').removeClass('btn-success');
-                $('#min-credits-in-primary-area').closest('button').addClass('btn-danger');
-            } else {
-                if(primaryAreaCourse.primaryAreaName.area.toLocaleLowerCase() == concentrationSet.name.toLocaleLowerCase()){
-                    $('#min-credits-in-primary-area').closest('button').removeClass('btn-danger');
-                    $('#min-credits-in-primary-area').closest('button').addClass('btn-success');
-                }
-                else{
-                    $('#min-credits-in-primary-area').closest('button').removeClass('btn-success');
-                    $('#min-credits-in-primary-area').closest('button').addClass('btn-danger');
-                    // alert('Your selected 21 credits is not primary area');
-                    // return ;
-                }
-            }
-
-            if ((selectedCredit == annualCredits) && (areasCountCredit == '0') && (concentrationCriteria >= minCreditPrimaryArea)  && (concentrationCriteria <= maxCreditsPerAreas) ) {
-                $('.student-footer .criteria-status').text('CRITERIA MET');
-                $('.student-footer .criteria-status').removeClass('btn-danger');
-                $('.student-footer .criteria-status').addClass('btn-success');
-                $('.save-select-course').removeAttr('disabled');
-            }
-        }
-
-        if (concentrationName.toLocaleLowerCase() == 'general management') {
-            if ((selectedCredit == annualCredits) && (areasCountCredit == '0')) {
-                $('.student-footer .criteria-status').text('CRITERIA MET');
-                $('.student-footer .criteria-status').removeClass('btn-danger');
-                $('.student-footer .criteria-status').addClass('btn-success');
-                $('.save-select-course').removeAttr('disabled');
-            }
-        }  
+      
     });
 
     $('#selected-course-table').on('click', '.cancel-course', function () {
