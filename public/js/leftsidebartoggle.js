@@ -23,6 +23,16 @@ $('.top-navbar').on('click', '.fa-angles-right', function() {
 
 $('.hamburger-smalldevices').on('click', function() {
     $('.left-sidebar').toggleClass('left-sidebar-open');
+    if($('.left-sidebar').hasClass('left-sidebar-open')){
+        $('.main').css('left', '260px');
+        $('.top-navbar').css('left', '260px');
+        $('.student-footer').css('left', '260px');
+    }
+    else{
+        $('.main').css('left', '0px');
+        $('.top-navbar').css('left', '0px');
+        $('.student-footer').css('left', '0px');
+    }
 })
 
 
