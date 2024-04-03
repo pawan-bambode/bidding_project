@@ -575,7 +575,13 @@ $(document).ready(function() {
         //update totalCredit and areaCovered in the obj
         studentCriteriaStatus.totalCredit += credits;
         let minCreditAreaFilter = studentCriteriaStatus.creditsPerArea.filter(function(item) {
-            return item.credits >= concentrationSet.minCreditsPerArea;
+            if(item.area === concentrationSet.name){
+                return  item.credits >= concentrationSet.minCreditsInPrimayArea
+            }
+            else{
+                return item.credits >= concentrationSet.minCreditsPerArea;
+            }
+            
         });
 
         studentCriteriaStatus.areaCovered = minCreditAreaFilter.length;
@@ -697,7 +703,12 @@ $(document).ready(function() {
             }
         });
         let areaCovered = studentCriteriaStatus.creditsPerArea.filter((creditArea) =>{
-            return creditArea.credits >= concentrationSet.minCreditsPerArea;
+            if(creditArea.area === concentrationSet.name){
+                return  creditArea.credits >= concentrationSet.minCreditsInPrimayArea
+            }
+            else{
+                return creditArea.credits >= concentrationSet.minCreditsPerArea;
+            }
         });
 
         studentCriteriaStatus.areaCovered = areaCovered.length;
