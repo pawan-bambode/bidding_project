@@ -108,14 +108,17 @@
                     Areas To Cover:
                     <%- concentrationSet.areasCover %>
                 </div>
+                <% if(concentrationSet.primaryArea) { %>
                 <div class="flex-grow-1 text-center">
                     Min. Credits in Primary Area:
                     <%-concentrationSet.minCreditsInPrimayArea %>
                 </div>
+                <% } %>
                 <div class="flex-grow-1 text-center">
                     Min. Credits Per Area:
                     <%- concentrationSet.minCreditsPerArea %>
                 </div>
+         
                 <div class="flex-grow-1 text-center">
                     Max. Credits Per Area:
                 <%- concentrationSet.maxCreditsPerArea %>
@@ -136,7 +139,7 @@
                         <% let selectedCourseIndex = 1 %>
                         <% if (selectedCourses.length > 0) { %>
                             <% for (let selectedCourse of selectedCourses) { %>
-                                <tr data-course-id="<%- selectedCourse.courseId %>"
+                                <tr data-course-id="<%- selectedCourse.id %>"
                                     data-area="<%-selectedCourse.areaName %>"
                                     data-course-name="<%- selectedCourse.courseName %>"
                                     data-acad-session="<%-selectedCourse.acadSession %>"
@@ -302,8 +305,10 @@ $(document).ready(function() {
         $('.update-select-course').removeClass('d-none');
 
         selectedCourses.filter((course) => {
-              studentCriteriaStatus.courseDetails.push(course.id);
-              totalSelectedCredits += course.credits;
+            studentCriteriaStatus.courseDetails.push({
+                course_lid: course.id
+            });
+            totalSelectedCredits += course.credits;
         });   
 
         selectedCourses.forEach((selectedCourse) => {
@@ -396,6 +401,9 @@ $(document).ready(function() {
                 if(isEligibleForRound == 1){
                     if(!biddingCourseFlag){
                         availableCourse( data.biddingCourses);
+                        if (selectedCourses.length > 0) {
+                            $('.hide-col-submitted-course').addClass('d-none');
+                        }
                     }
                     biddingCourseFlag = true;
                     $('.round-message-container').addClass('d-none');
@@ -483,7 +491,7 @@ $(document).ready(function() {
         
         let selectedCourseCount = $('#selected-course-table tbody tr').filter(function() {
             return $(this).attr('colspan') !== "6";
-        }).length;
+        }).length +1;
 
         let areaCountText = concentrationSet.areasCover;
         let subjectAlreadySelected = false;
@@ -497,7 +505,7 @@ $(document).ready(function() {
         //To check max credit per area
         let isMaxCreditUnderLimit = true;
         studentCriteriaStatus.creditsPerArea.filter(obj => {
-            if (obj.area == concentrationSet.name) {
+            if (area == concentrationSet.name) {
                 if (obj.credits + credits > concentrationSet.maxCreditsPerArea) {
                     isMaxCreditUnderLimit = false
                     return;
@@ -668,7 +676,6 @@ $(document).ready(function() {
 
         //remove the course id from the studentCriteriaStatus
         studentCriteriaStatus.courseDetails = studentCriteriaStatus.courseDetails.filter(obj => obj.course_lid != courseId);
-
         //update studentCriteriaStatus
         studentCriteriaStatus.totalCredit -= credits;
         //in creditsPerArea array find the area and update the credits and if credits is 0 remove the object
@@ -745,11 +752,12 @@ $(document).ready(function() {
 
         $("#available-course-table tbody").append(availableCourse);
 
-        $('.student-footer .criteria-status').removeClass('btn-success');
-        $('.student-footer .criteria-status').addClass('btn-danger');
+        $('.student-footer .criteria-status').removeClass('bg-success');
+        $('.student-footer .criteria-status').addClass('bg-danger');
         $('.student-footer .criteria-status').html('CRITERIA NOT MET');
         $('.save-select-course').attr('disabled', 'disabled');
         $(this).closest('tr').remove();  
+        rearrangeIdAfterDeletion(rowId);
     });
 
     $('#acad-session-change').on('change', function () {
@@ -860,10 +868,6 @@ $(document).ready(function() {
             }
         }
         $("#available-course-table tbody").html(availableCourse);
-
-        if (selectedCourses.length > 0) {
-            $('.hide-col-submitted-course').addClass('d-none');
-        }
     }
 
     function courseAfterSubmitted(studentCriteriaStatus){
@@ -876,6 +880,8 @@ $(document).ready(function() {
         studentCriteriaStatus.creditsPerArea.filter((selectedArea) =>{
             if(selectedArea.area === concentrationSet.primaryArea){
                 $('.student-footer .pri-area-status .pri-area-span').text(selectedArea.credits);
+            }else{
+                $('.student-footer .pri-area-status').addClass('d-none');
             }
         });
 

@@ -22,7 +22,7 @@ $('.top-navbar').on('click', '.fa-angles-right', function() {
 
 
 $('.hamburger-smalldevices').on('click', function() {
-    $('.left-sidebar').toggleClass('left-sidebar-open')
+    $('.left-sidebar').toggleClass('left-sidebar-open');
 })
 
 
