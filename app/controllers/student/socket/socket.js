@@ -73,7 +73,7 @@ module.exports.respond = async (socket, io) => {
                 remainingTime = calculateRemainingTime(startTime, endTime);
                 remainingMin = (endTime - new Date().getTime()) / 60000;
             }
-        
+
             socket.emit('remainingTimeForDemandEstimation',  {
                 remainingTime: remainingTime,
                 remainingMin: remainingMin,

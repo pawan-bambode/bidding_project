@@ -357,9 +357,9 @@ $(document).ready(function() {
          
         isEligibleForRound = data.studentList;
         $('#current-date-time').text(data.currentDateTime);
-
+      
         //check if the remaining time is less than 5min 
-       if(data.remainingMin <= 5 && !isAlerted){
+       if(data.remainingMin <= 5 && !isAlerted && data.remainingMin > 0){
             createToast({
               title: "Alert!",
               msg: 'Less than 5 minutes left to submit the course',
