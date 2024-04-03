@@ -47,7 +47,7 @@
                 </thead>
                 <tbody>
                     <% let count = 1 %>
-                    <% for (let concentrationSetting of concentrationSettings) {%>
+                    <% for (let concentrationSetting of concentrationSettings) { %>
                         <tr data-id="<%- concentrationSetting.id %>"
                             data-total-ele-credits="<%- concentrationSetting.totalCredits %>"
                             data-max-cre-per-area="<%- concentrationSetting.maxCreditsPerArea %>"
@@ -55,6 +55,7 @@
                             data-min-credits-per-area="<%- concentrationSetting.minCreditsPerArea %>"
                             data-name = "<%- concentrationSetting.name %>"
                             data-area-id = "<%- concentrationSetting.area_Id %>"
+                            data-primary-area-name = "<%- concentrationSetting.primaryArea %>"
                             data-min-credits-in-primary-area="<%- concentrationSetting.minCreditsInPriArea %>">
 
                             <td><%- count++ %></td>
@@ -270,6 +271,7 @@ $(document).ready(function () {
     })
 
     $('#concentration-settings-table').on('click', '.edit-concentration-settings', function () {
+
         let editConcentration = $(this).closest('tr').data('name');
         let totalEleCredits = $(this).closest('tr').data('total-ele-credits');
         let maxCreditsPerArea = $(this).closest('tr').data('max-cre-per-area');
@@ -277,7 +279,8 @@ $(document).ready(function () {
         let minCreditsPerArea = $(this).closest('tr').data('min-credits-per-area');
         let minCreditsInPrimaryArea = $(this).closest('tr').data('min-credits-in-primary-area');
         let id = $(this).closest('tr').data('id');
-        let areaId = $(this).closest('tr').data('area-id');
+        let primaryArea = $(this).closest('tr').data('primary-area-name');
+        let areaId = $(this).closest('tr').data('area-id') ;
         
         if (editConcentration.toLowerCase() == 'general management') {
             $('#primary-area-minimum').addClass('d-none');
@@ -294,10 +297,12 @@ $(document).ready(function () {
         $('#edit-concentration-setting-modal #min-credits-per-area').val(minCreditsPerArea);
         $('#edit-concentration-setting-modal #min-credits-in-primary-area').val(minCreditsInPrimaryArea);
       
-       if(areaId){
-           $("#primary-area").val(areaId).trigger('change');
-       }
-    
+        if(primaryArea === 'NA'){
+             $("#primary-area").val('-1').trigger('change');
+        }else{
+             $("#primary-area").val(areaId).trigger('change');
+        }
+        
         $('#edit-concentration-setting-modal #concentration-name').attr('data-id', id);
     })
 
