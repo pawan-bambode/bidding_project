@@ -2,7 +2,7 @@ const { urlencoded } = require('express');
 const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class DemandEstimation {
-    static getDemandEstimationRoundList(slug, biddingId) {
+    static getRoundDetails(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -198,7 +198,7 @@ module.exports = class DemandEstimation {
                         WHERE sem.student_lid = @studentId AND sem.bidding_session_lid = @biddingId AND is_favourite = 1`);
         });
     }
-    static getAvailableCourseList(slug, biddingId) {
+    static getAvailableCourses(slug, biddingId) {
        
         return poolConnection.then(pool => {
             return pool.request()

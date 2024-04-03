@@ -21,7 +21,7 @@ module.exports.respond = async (socket, io) =>{
                 try {
                     const[roundSettingTimeResult, courseList] = await Promise.all([
                         roundSetting.startAndEndTime(slugName, biddingId, roundId),
-                        demandEstimation.getAvailableCourseList(slugName, biddingId),
+                        demandEstimation.getAvailableCourses(slugName, biddingId),
                     ]);
 
                     io.emit('demandEsmationVisibleToStudent', {

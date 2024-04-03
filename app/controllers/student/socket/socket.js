@@ -28,7 +28,7 @@ module.exports.respond = async (socket, io) => {
                 try {
                     const[roundSettingTimeResult, courseList] = await Promise.all([
                         roundSetting.startAndEndTime(slugName, biddingId, roundId),
-                        demandEstimation.getAvailableCourseList(slugName, biddingId),
+                        demandEstimation.getAvailableCourses(slugName, biddingId),
                     ]);
 
                     io.emit('demandEsmationVisibleToStudent', {
@@ -64,7 +64,7 @@ module.exports.respond = async (socket, io) => {
                 roundSetting.currentRoundStatus(slug, biddingId, roundId),
                 demandEstimation.isStudentPartOfRound(slug, biddingId, studendId, roundId),
                 roundSetting.demandEstimOneDayBefore(slug, biddingId, roundId),
-                demandEstimation.getAvailableCourseList(slug, biddingId)
+                demandEstimation.getAvailableCourses(slug, biddingId)
             ]);
 
             if(detailsResult[2].recordset.length > 0){

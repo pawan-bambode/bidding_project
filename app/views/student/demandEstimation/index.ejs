@@ -904,6 +904,18 @@ $(document).ready(function() {
             $('.student-footer .criteria-status').text('Criteria Met');
             $('.student-footer .criteria-status').addClass('bg-success');
         }
+
+        let primaryAreaSelected = studentCriteriaStatus.creditsPerArea.filter((ele) => {
+            return ele.area === concentrationSet.primaryArea;
+        });
+               
+        if(primaryAreaSelected.length > 0){
+            $('.student-footer .pri-area-status').removeClass('d-none');
+            $('.student-footer .pri-area-status .pri-area-span').text(primaryAreaSelected.credits);
+        }
+        else{
+            $('.student-footer .pri-area-status').addClass('d-none');
+        }
     }
 
     function rearrangeIdAfterDeletion(deleteColumnId) {

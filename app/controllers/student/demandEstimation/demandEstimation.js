@@ -12,8 +12,8 @@ module.exports = {
         let roundId = 1;
         let demandEstimationActive = demandEstimationUrl[demandEstimationUrl.length - 1];
         Promise.all([
-            demandEstimation.getDemandEstimationRoundList(res.locals.slug, res.locals.biddingId),
-            demandEstimation.getAvailableCourseList(res.locals.slug, res.locals.biddingId),
+            demandEstimation.getRoundDetails(res.locals.slug, res.locals.biddingId),
+            demandEstimation.getAvailableCourses(res.locals.slug, res.locals.biddingId),
             demandEstimation.getAvailableCourseCount(res.locals.slug, res.locals.biddingId),
             course.acadSessionList(res.locals.slug, res.locals.biddingId),
             programSession.getCredits(res.locals.slug, res.locals.biddingId),
