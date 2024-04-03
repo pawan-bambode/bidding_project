@@ -109,10 +109,10 @@
                     <%- concentrationSet.areasCover %>
                 </div>
                 <% if(concentrationSet.primaryArea) { %>
-                <div class="flex-grow-1 text-center">
-                    Min. Credits in Primary Area:
-                    <%-concentrationSet.minCreditsInPrimayArea %>
-                </div>
+                    <div class="flex-grow-1 text-center">
+                        Min. Credits in Primary Area:
+                        <%-concentrationSet.minCreditsInPrimayArea %>
+                    </div>
                 <% } %>
                 <div class="flex-grow-1 text-center">
                     Min. Credits Per Area:
@@ -491,7 +491,7 @@ $(document).ready(function() {
         
         let selectedCourseCount = $('#selected-course-table tbody tr').filter(function() {
             return $(this).attr('colspan') !== "6";
-        }).length +1;
+        }).length;
 
         let areaCountText = concentrationSet.areasCover;
         let subjectAlreadySelected = false;
@@ -505,7 +505,7 @@ $(document).ready(function() {
         //To check max credit per area
         let isMaxCreditUnderLimit = true;
         studentCriteriaStatus.creditsPerArea.filter(obj => {
-            if (area == concentrationSet.name) {
+            if (area == obj.area) {
                 if (obj.credits + credits > concentrationSet.maxCreditsPerArea) {
                     isMaxCreditUnderLimit = false
                     return;
@@ -574,7 +574,7 @@ $(document).ready(function() {
 
         //update totalCredit and areaCovered in the obj
         studentCriteriaStatus.totalCredit += credits;
-        var minCreditAreaFilter = studentCriteriaStatus.creditsPerArea.filter(function(item) {
+        let minCreditAreaFilter = studentCriteriaStatus.creditsPerArea.filter(function(item) {
             return item.credits >= concentrationSet.minCreditsPerArea;
         });
 
@@ -696,7 +696,11 @@ $(document).ready(function() {
                 }
             }
         });
-        studentCriteriaStatus.areaCovered = studentCriteriaStatus.creditsPerArea.length;
+        let areaCovered = studentCriteriaStatus.creditsPerArea.filter((creditArea) =>{
+            return creditArea.credits >= concentrationSet.minCreditsPerArea;
+        });
+
+        studentCriteriaStatus.areaCovered = areaCovered.length;
         //update in #selected-course-credits, .session-credit-points, .area-status-span, criteria-status 
         $('#selected-course-credits').text(studentCriteriaStatus.totalCredit);
         $('.student-footer .area-status .area-status-span').text(studentCriteriaStatus.areaCovered);
