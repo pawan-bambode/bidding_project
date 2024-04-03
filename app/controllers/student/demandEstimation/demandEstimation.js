@@ -26,16 +26,16 @@ module.exports = {
             demandEstimation.isStudentPartOfRound(res.locals.slug, res.locals.biddingId, res.locals.studentId,roundId),
             roundSetting.currentRoundStatus(res.locals.slug, res.locals.biddingId, roundId)
         ]).then(result => {
-            console.log('values of selectedCourse', result[6].recordset);
+            
             res.render('student/demandEstimation/index', {
                 active: demandEstimationActive,
                 demandEstimationRounds: result[0].recordset,
-                courseList: result[1].recordset,
+                availableCourses: result[1].recordset,
                 pageCount: result[2].recordset[0].count,
                 acadSessions: result[3].recordset,
                 targetCreditList: result[4].recordset,
                 startAndEndTime: result[5].recordset[0] != undefined? result[5].recordset[0] : '',
-                selectCourse: result[6].recordset,
+                selectedCourses: result[6].recordset,
                 concentrationSet: (result[7].recordset && result[7].recordset.length !== 0) ? result[7].recordset[0] : 0,
                 totalCreditsCounts: result[8].recordset[0] != undefined ? result[8].recordset[0].totalCount :0,
                 roundDetails: result[9].recordset[0] !== undefined ? result[9].recordset[0] : '',
@@ -55,7 +55,7 @@ module.exports = {
             res.json({
                 status: "200",
                 message: "Sucessfull",
-                courseList: result[0].recordset,
+                availableCourses: result[0].recordset,
                 courseCount: result[1].recordset[0].count,
                 areaList: result[2].recordset
             });
@@ -72,7 +72,7 @@ module.exports = {
             res.json({
                 status: "200",
                 message: "Sucessfull",
-                courseList: result[0].recordset,
+                availableCourses: result[0].recordset,
                 courseCount: result[1].recordset[0].count,
             });
         }).catch(error => {

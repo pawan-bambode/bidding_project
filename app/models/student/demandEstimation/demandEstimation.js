@@ -9,16 +9,20 @@ module.exports = class DemandEstimation {
                 .input('demand', sql.NChar, 'DEMAND_ESTIMATION_ROUND')
                 .query(`SELECT id, SUBSTRING(round_name, CHARINDEX('-', round_name) + 1, 
                         LEN(round_name)) AS DemandEstimation
-                        FROM [${slug}].round_settings WHERE active = 1 AND bidding_session_lid = @biddingId AND round_name LIKE '%' + @demand + '%'`);
+                        FROM [${slug}].round_settings 
+                        WHERE active = 1 AND bidding_session_lid = @biddingId AND round_name LIKE '%' + @demand + '%'`);
         });
     }
 
     static getCourseListByAcadSession(slug, biddingId, acadSessionId) {
+ 
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('acadSessionId', sql.Int, acadSessionId)
-                .query(`SELECT c.*, p.program_name 
+                .query(`SELECT c.area_name AS areaName, c.course_name AS courseName, c.acad_session AS acadSession,
+                        c.id AS courseId, c.sap_acad_session_id AS acadSessionId, p.program_name AS programName,
+                        c.credits
                         FROM [${slug}].courses c 
                         INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
                         WHERE c.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId AND c.active = 1 ORDER BY c.id`);
@@ -43,7 +47,7 @@ module.exports = class DemandEstimation {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('acadSessionId', sql.Int, acadSessionId)    
-                .query(`SELECT DISTINCT area_name 
+                .query(`SELECT DISTINCT area_name AS areaName
                         FROM [${slug}].courses 
                         WHERE bidding_session_lid = @biddingId AND sap_acad_session_id = @acadSessionId  AND active = 1`);
         });
@@ -70,7 +74,9 @@ module.exports = class DemandEstimation {
                 .input('biddingId', sql.Int, biddingId)
                 .input('acadSessionId', sql.Int, acadSessionId)
                 .input('areaName', sql.NVarChar, `%${areaName}%`)
-                .query(`SELECT c.*, p.program_name 
+                .query(`SELECT c.area_name AS areaName, c.course_name AS courseName, c.acad_session AS acadSession,
+                        c.id AS courseId, c.sap_acad_session_id AS acadSessionId, p.program_name AS programName,
+                        c.credits 
                         FROM [${slug}].courses c 
                         INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
                         WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId AND c.area_name LIKE @areaName ORDER BY c.id`);
@@ -162,10 +168,11 @@ module.exports = class DemandEstimation {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('studentId', sql.Int, studentId)
-                .query(`SELECT c.id, c.area_name, c.course_name, c.acad_session, c.credits,
-                        c.sap_acad_session_id 
+                .query(`SELECT c.id, c.area_name AS areaName, c.course_name AS courseName, c.acad_session AS acadSession,
+                        c.credits, c.sap_acad_session_id AS acadSessionId 
                         FROM [${slug}].demand_estimation de 
-                        INNER JOIN [${slug}].courses c ON c.id = de.course_lid WHERE de.student_lid = @studentId AND de.active = 1 AND c.active = 1`);
+                        INNER JOIN [${slug}].courses c ON c.id = de.course_lid 
+                        WHERE de.student_lid = @studentId AND de.active = 1 AND c.active = 1`);
         });
     }
 
@@ -196,9 +203,9 @@ module.exports = class DemandEstimation {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .query(`SELECT c.id, course_name, credits, program_id, 
-                        ad.acad_session, area_name, min_demand_criteria, year_of_introduction, 
-                        c.sap_acad_session_id
+                .query(`SELECT course_name AS courseName, credits, program_id AS programId, 
+                        ad.acad_session AS acadSession, area_name AS areaName, min_demand_criteria, year_of_introduction AS year, 
+                        c.sap_acad_session_id AS acadSessionId, c.id AS courseId
                         FROM [${slug}].course_round_mapping crm 
                         INNER JOIN [${slug}].courses c ON crm.course_lid = c.id
                         INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
@@ -221,6 +228,7 @@ module.exports = class DemandEstimation {
     }
 
     static save(slug, biddingId, userid, student_lid, round_lid, selectedCourseJson) {
+    
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(selectedCourseJson))
