@@ -671,7 +671,11 @@ $(document).ready(function() {
 
             ajaxApi(ApiObj)
                 .then(result => {
-                    createToast({ title: "Success", msg: result.description, type: "positive" });
+                    createToast({ title: "Success", msg: result.description, type: "positive" })
+                    setTimeout(function(){
+                        $('#add-round-settings-modal').modal('hide');
+                        window.location.replace("/admin/dashboard/round-setting");
+                    },2500);
                 })
                 .catch(error => {
                     let errorMessage = JSON.stringify(error.responseJSON.description);
