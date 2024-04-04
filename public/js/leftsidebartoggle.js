@@ -24,9 +24,9 @@ $('.top-navbar').on('click', '.fa-angles-right', function() {
 $('.hamburger-smalldevices').on('click', function() {
     $('.left-sidebar').toggleClass('left-sidebar-open');
     if($('.left-sidebar').hasClass('left-sidebar-open')){
-        $('.main').css('left', '260px');
-        $('.top-navbar').css('left', '260px');
-        $('.student-footer').css('left', '260px');
+        $('.main').css('left', $('.left-sidebar').css('width'));
+        $('.top-navbar').css('left', $('.left-sidebar').css('width'));
+        $('.student-footer').css('left', $('.left-sidebar').css('width'));
     }
     else{
         $('.main').css('left', '0px');
@@ -34,7 +34,6 @@ $('.hamburger-smalldevices').on('click', function() {
         $('.student-footer').css('left', '0px');
     }
 })
-
 
 function delay(callback, ms) {
     var timer = 0;
