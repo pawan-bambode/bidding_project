@@ -276,8 +276,10 @@
                     <label class="mb-2" for="start-date-time">Start date time :</label>
                     <input type="hidden" id="round-id">
                     <input class="form-control" type="datetime-local" id="start-date-time">
+                    <span class="text-danger d-none invalid-date-time">Please select a date and time that are not in the past</span><br>
                     <label class="mb-2" for="end-date-time">End date time :</label>
-                    <input class="form-control" type="datetime-local" id="end-date-time"> 
+                    <input class="form-control" type="datetime-local" id="end-date-time">
+                    <span class="text-danger d-none invalid-date-time">Please select a date and time that are not in the past</span><br> 
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-success disabled" data-bs-dismiss="modal" id="save-date-time">Save</button>
@@ -425,6 +427,32 @@ $(document).ready(function() {
     $('#page-no').html(pageCount);
 
 
+    $('#add-round-settings-modal').on('click', '.btn-close', function(){
+   
+        $('#import-round-table tbody tr').each(function() {
+
+            let roundName = $(this).data('round-name');
+            let roundId = $(this).data('round-id');
+            let students = $(this).data('total-student-counts');
+            let courses = $(this).data('total-courses-counts');
+
+            let roundsDiv = $('<div>').addClass('border p-3 mb-3 rounded rounds-div');
+            roundsDiv.html(roundName);
+            roundsDiv.attr('data-bidding-name', roundName);
+            roundsDiv.attr('data-bidding-id', roundId);
+
+            $(this).remove();
+
+            $('#course-mapping-modal input[type="checkbox"]').prop('checked', false);
+            $('#total-selected-students').text(0);
+            $('#total-selected-courses').text(0);
+
+            roundsDiv.insertAfter('#add-round-settings-modal .search-in-filter');
+            roundsDiv.addClass('d-block');
+        }); 
+
+    })
+
     // Triggered when selecting a pre-defined round name with the bidding name in the "select round settings" event
     $(document).on('click', '.rounds-div', function(event) {
         studentList = [];
@@ -471,7 +499,7 @@ $(document).ready(function() {
                     </button>
              </td>` :
             `<td class="total-course-count disabled">NA</td>`}
-            <td class="start-date-time">NA</td>
+            <td class="start-date-time">NA </td>
             <td colspan="2" class="date-time-cell d-none">
                 <button data-bs-target="#add-date-time-modal" data-bs-toggle="modal" class="btn btn-primary" id="add-date-time">
                     Add Date Time
@@ -587,13 +615,20 @@ $(document).ready(function() {
    
 
     // Triggered when importing the round settings by clicking the "Import Rounds" button
+    let isImportRoundValid = true;
     $(document).on('click', '#import-rounds', function() {
 
         let biddingSessionId = $('#biddingSessionDropdown').data('session-id');
         let importRounds = [];
 
         $('.import-round-table tbody tr').each((index, element) => {
-        
+            
+            let startDateTimeTempTable = new Date($(element).attr('start-date-time').replace(' ', 'T')).getTime();
+            let currentDateTime = new Date().getTime();
+            if(startDateTimeTempTable < currentDateTime){
+                alert('Passed Date time is selected!');
+                isImportRoundValid = false ;
+            }
             let importRound = {};
             let biddingRoundsName = $(element).data('round-name');
             let totalStudentCount = $(element).data('total-student-counts');
@@ -616,30 +651,33 @@ $(document).ready(function() {
             importRound.is_bid_limit = isBidLimit;
             importRounds.push(importRound);
         });
+        
+        if(isImportRoundValid){
 
-        let roundId = $('#import-round-table tbody tr:last').data('round-id');
-        let importRoundsDetails = {
-            round_setting: importRounds,
-        };
+            let roundId = $('#import-round-table tbody tr:last').data('round-id');
+            let importRoundsDetails = {
+                round_setting: importRounds,
+            };
 
-        let ApiObj = {
-            type: 'POST',
-            url: '/admin/round-setting/create',
-            data: {
-                inputJSON: JSON.stringify(importRoundsDetails),
-                biddingSessionId: biddingSessionId
-            },
-            dataType: 'JSON'
-        };
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/round-setting/create',
+                data: {
+                    inputJSON: JSON.stringify(importRoundsDetails),
+                    biddingSessionId: biddingSessionId
+                },
+                dataType: 'JSON'
+            };
 
-        ajaxApi(ApiObj)
-            .then(result => {
-                createToastMessage(result.description);
-            })
-            .catch(error => {
-                createToastError(error.responseJSON.description);
-            });
-    });
+            ajaxApi(ApiObj)
+                .then(result => {
+                    createToastMessage(result.description);
+                })
+                .catch(error => {
+                    createToastError(error.responseJSON.description);
+                });
+        }        
+    }); 
 
     
         $('#add-date-time-modal').on('show.bs.modal', function (e) {
@@ -943,8 +981,66 @@ $(document).ready(function() {
 
         $(this).closest('tr').remove();
 
+        $('#course-mapping-modal input[type="checkbox"]').prop('checked', false);
+        $('#total-selected-students').text(0);
+        $('#total-selected-courses').text(0);
+
         roundsDiv.insertAfter('#add-round-settings-modal .search-in-filter');
         roundsDiv.addClass('d-block');
+    });
+
+
+    $('#add-date-time-modal').on('mousedown', '#start-date-time', function(){
+
+        let currentDate = new Date(); 
+        let currentDateStart = new Date();
+        currentDateStart.setHours(0, 0, 0, 0); 
+        let differenceInMillis = (currentDate.getTime())- (currentDateStart.getTime());
+        let differenInSecond = Math.floor(differenceInMillis/(1000));
+        let currentHourInSecond = currentDate.getHours()*3600;
+        let differenceMinutes = Math.ceil((differenInSecond - currentHourInSecond)/60);
+        let currentYear = currentDate.getFullYear();
+        let currentMonth = (currentDate.getMonth() + 1 < 10) ? `0${currentDate.getMonth() + 1}` : currentDate.getMonth() + 1;
+        let currentDateForMaxAttribute = (currentDate.getDate() < 10) ? `0${currentDate.getDate()}` : currentDate.getDate();
+        let currentHourForMaxAttribute = (currentDate.getHours() < 10) ? `0${currentDate.getHours()}` : currentDate.getHours();
+        let maxDateTimeAttribute = `${currentYear}-${currentMonth}-${currentDateForMaxAttribute}T${currentHourForMaxAttribute}:${differenceMinutes}`;
+
+        $(this).attr('min', maxDateTimeAttribute);
+    });
+
+    $('#add-date-time-modal').on('input', '#start-date-time', function(){
+
+        let startDateTime = $(this).val().split('T')[1];
+        let [startHour, startTime] = startDateTime.split(':');
+        let currentDate = new Date();
+        let currentHour = currentDate.getHours();
+        let currentMinute = currentDate.getMinutes();
+
+        if (Number(startHour) < Number(currentHour) || 
+            (Number(startHour) === Number(currentHour) && Number(startTime) < Number(currentMinute))) {
+            $(this).next().removeClass('d-none');
+        }
+        else{
+            $(this).next().addClass('d-none');
+        }
+
+    });
+
+    $('#add-date-time-modal').on('input', '#end-date-time', function(){
+
+        let startDateTime = $(this).val().split('T')[1];
+        let [startHour, startTime] = startDateTime.split(':');
+        let currentDate = new Date();
+        let currentHour = currentDate.getHours();
+        let currentMinute = currentDate.getMinutes();
+
+        if (Number(startHour) < Number(currentHour) || 
+            (Number(startHour) === Number(currentHour) && Number(startTime) < Number(currentMinute))) {
+            $(this).next().removeClass('d-none');
+        } else{
+            $(this).next().addClass('d-none');
+        }
+
     });
     
   // Executed when the delete button on the home page is clicked in the bidding-rounds-table

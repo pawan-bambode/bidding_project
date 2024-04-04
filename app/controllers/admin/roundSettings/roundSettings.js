@@ -5,6 +5,7 @@ module.exports = {
 
     getPage: (req, res) => {
         let sidebarActive = req.sidebarActive.split('/');
+   
         Promise.all([
             roundSettings.getList(res.locals.slug, res.locals.biddingId),
             roundSettings.preDefineRounds(res.locals.slug, res.locals.biddingId),
