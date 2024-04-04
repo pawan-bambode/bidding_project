@@ -598,8 +598,6 @@ $(document).ready(function() {
             let isPrimaryAreaSelected = studentCriteriaStatus.creditsPerArea.some(function(ele) {
                 return ele.area === concentrationSet.primaryArea;
             });
-
-            console.log('valuesof isPrimaryAreaSelected--->', isPrimaryAreaSelected);
                
             if(isPrimaryAreaSelected && concentrationSet.primaryArea){
                 $('.student-footer .pri-area-status .pri-area-span').text(studentCriteriaStatus.creditsPerArea.find(obj => obj.area == studentCriteriaStatus.primaryArea).credits);
