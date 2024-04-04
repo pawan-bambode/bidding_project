@@ -123,7 +123,8 @@
         .then(result => {
         })
         .catch(error => {
-          createToastError(JSON.stringify(error.responseJSON.description));
+          let errorMessage = JSON.stringify(error.responseJSON.description);
+          createToast({ title: "Fail", msg: errorMessage, type: "negative" });
         });
     });
 
@@ -171,7 +172,8 @@
       ajaxApi(ApiObj).then(result => {
         availableCourses(result.availableCourseList);
       }).catch(error => {
-        createToastError(JSON.stringify(error.responseJSON.description));
+        let errorMessage = JSON.stringify(error.responseJSON.description);
+        createToast({ title: "Fail", msg: errorMessage, type: "negative" });
       });
     });
 
@@ -202,7 +204,8 @@
         $("#course-filter").html(courseName);
         availableCourses(result.availableCourseList);
       }).catch(error => {
-        createToastError(JSON.stringify(error.responseJSON.description));
+            let errorMessage = JSON.stringify(error.responseJSON.description);
+            createToast({ title: "Fail", msg: errorMessage, type: "negative" });
       });
     });
 

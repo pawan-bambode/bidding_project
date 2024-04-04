@@ -91,7 +91,7 @@ $('#update-status').on('click', function () {
     };
 
     ajaxApi(apiObj).then(result => {
-        createToastMessage(result.description);
+        createToast({ title: "Success", msg: result.description, type: "positive" });
     }).catch(error => {});
 });
 
@@ -291,90 +291,11 @@ function updateCurrentPointTargets(trimesterWiseTargetCreditPoints,flag) {
     });
 }
 
-function createToastMessage(message) {
-    const successAlert = `
-        <div class="toast-message alert alert-success bottom-0 end-3">
-            <div class="header d-flex justify-content-between align-item-center">
-                <h4 class="d-flex align-item-center"><i class="fa-solid fa-circle-exclamation me-3"></i> <p class="title">${message}</p></h4>
-            </i>
-            </div>
-            <div class="body">
-                <ul>
-                   
-                </ul>
-            </div>
-        </div>`;
-
-    document.body.insertAdjacentHTML('beforeend', successAlert);
-
-    setTimeout(() => {
-        $('.toast-message').remove();
-        $('#add-bidding-session').modal('hide');
-        $('#sidebar').removeClass('d-none');
-        location.reload();
-    }, 1000);
-    
-    return {
-        remove: function() {
-            $('.toast-message').remove();
-        }
-    };
-}
-function createToastError(message) {
-   
-    let errorMessage = message.replace(/^"(.*)"$/, '$1');
-    const errorAlert = `
-        <div class="toast-message alert alert-danger bottom-0 end-3">
-            <div class="header d-flex justify-content-between align-item-center">
-                <h4 class="d-flex align-item-center"><i class="fa-solid fa-circle-exclamation me-3"></i> <p class="title">${errorMessage}</p></h4>
-            </i>
-            </div>
-            <div class="body">
-                <ul>
-                   
-                </ul>
-            </div>
-        </div>`;
-
-    document.body.insertAdjacentHTML('beforeend', errorAlert);
-
-    setTimeout(() => {
-        $('.toast-message').remove();
-        $('#add-bidding-session').modal('hide');
-        $('#sidebar').removeClass('d-none');
-        // location.reload();
-    },2500);
-    
-    return {
-        remove: function() {
-            $('.toast-message').remove();
-        }
-    };
-}
-
 function filterTable(tableId, id) {
     
     $('#' + tableId + ' tbody tr:visible').each(function () {
         $(this).children(':first-child').text((id++));
     });
-}
-
-function createToast(message, className, contentColorClassName) {
-    const toastDiv = document.createElement('div');
-    toastDiv.className = `position-fixed top-80 right-0 toast-alert ${className}`;
-
-    toastDiv.innerHTML = `
-        <div>
-            <div class="d-flex p-2">
-                <div class="${contentColorClassName}">${message}</div>
-                <button type="button" class="btn-close toast-close-button"></button>
-            </div>
-        </div>`;
-    document.body.appendChild(toastDiv);
-
-    setTimeout(() => {
-        toastDiv.classList.add('d-none'); 
-    }, 1000);
 }
 
 function applyOddRowStyles(element, rowIndex) {
@@ -383,8 +304,6 @@ function applyOddRowStyles(element, rowIndex) {
         element.closest('tbody').prev('thead').find('th').addClass('odd-row');
     }
 }
-
-
 
 function formatDate(todayDateVal, flag, noOfMonthBeforeActivity) {
     const padZero = (num) => (num < 10 ? '0' + num : num);

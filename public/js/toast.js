@@ -2,15 +2,16 @@ const { Toast } = bootstrap;
 
 function createToast(custom) {
   let {title, msg, type} = {...custom};
+  msg = msg.replaceAll('"','');
 
   const titleClass = type === 'positive' ? 'text-success' : type === 'negative' ? 'text-danger' : '';
-  // const bgColor  = 
-         // <i class="fas fa-check fa-lg me-2"></i>  // class="toast position-absolute end-0 top-0 m-3" position-absolute top-50 start-50 translate-middle
+  const backgroundColor = type === 'positive' ? 'background-success' : type === 'negative' ? 'background-danger' : '';
+
   const htmlMarkup =
-    `<div aria-atomic="true" aria-live="assertive" class="toast m-3 bg-white" 
+    `<div aria-atomic="true" aria-live="assertive" class="toast m-3 ${backgroundColor}" 
       role="alert" id="myAlert"  style="z-index:9999999; position:fixed; top:65px; right:0;">
-        <div class="toast-header">
-          <strong class="me-auto fw-bold fs-5 ${titleClass}">${title}</strong>
+        <div class="toast-header ${backgroundColor}">
+          <strong class="me-auto fw-bold fs-5 ${titleClass}">${title} !</strong>
           <button aria-label="Close" class="btn-close text-dark me-1" data-bs-dismiss="toast" type="button"></button>
         </div>
         <div class="toast-body text-dark fw-bold">

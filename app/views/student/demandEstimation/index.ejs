@@ -841,7 +841,7 @@ $(document).ready(function() {
         let studentLid = $('#student-data').data('student-id');
         let roundId = $('.round-name').data('round-id');
         if (roundId == 0) {
-            createToastMessage('This round is not created yet!');
+            createToast({ title: "Fail", msg: 'This round is not created yet!', type: "negative" });
         } else {   
             if(studentCriteriaStatus.courseDetails){
         
@@ -854,10 +854,11 @@ $(document).ready(function() {
             };
             ajaxApi(ApiObj)
                 .then(result => {
-                    createToastMessage(result.description);
+                    createToast({ title: "Success", msg: result.description, type: "positive" });
                 })
                 .catch(error => {
-                    createToastError(JSON.stringify(error.responseJSON.description));
+                    let errorMessage = JSON.stringify(error.responseJSON.description);
+                    createToast({ title: "Fail", msg: errorMessage, type: "negative" });
                 });
         } }
     });

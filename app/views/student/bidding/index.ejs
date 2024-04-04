@@ -374,7 +374,7 @@ $(document).ready(function() {
             let areaName = `<option selected  value="-1">--Select Area--</option>`;
             if (result.areaList.length > 0) {
                 result.areaList.forEach(area => {
-                    areaName += `<option value="${area.area_name}">${area.area_name}</option>`;
+                    areaName += `<option value="${area.areaName}">${area.areaName}</option>`;
                 });
             } else {
                 areaName += `<option value="">No Area Found!</option>`;
@@ -404,6 +404,7 @@ $(document).ready(function() {
         let courseTime = $(this).closest('tr').children('.course-timing').html();
         let courseId = $(this).closest('tr').data('course-id');
         let courseLid = $(this).closest('tr').data('course-lid');
+        let courseNameWithDivision = $(this).closest('tr').data('course-division-name');
         let isTotalCreditsMet = false;
         let totalSelectedCredits = 0;
         let biddingTable = $('#bidding-table tbody');
@@ -438,7 +439,7 @@ $(document).ready(function() {
                         >
                             <td class="id-column">${++tableId}</td>
                             <td>${areaName}</td>
-                            <td>${courseName}</td>
+                            <td>${courseNameWithDivision}</td>
                             <td>${acadSession}</td>
                             <td>${facultName}</td>
                             <td>${credits}</td>
@@ -484,7 +485,7 @@ $(document).ready(function() {
         let isErrorResponse = biddingReponseResult.message.status === 0;
         let biddingResponseToUser = biddingReponseResult.message.description;
         if(isErrorResponse){
-            createToast(biddingResponseToUser, 'alert-danger', 'error-message');
+            createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative" });
         }
         else{
             let biddingAddedByUserId = biddingReponseResult.userId;
@@ -508,11 +509,11 @@ $(document).ready(function() {
                         updateTableForCurrentUser(userSpecificWinningStatus);
                     }
                     if(isCurrentUser){
-                    createToast(biddingResponseToUser, 'alert-success', 'message-content');
+                        createToast({ title: "Success", msg: biddingResponseToUser, type: "positive" });
                     }
                 } else {
                     if (isCurrentUser) {
-                        createToast(biddingResponseToUser, 'alert-danger', 'error-message');
+                        createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative" });
                     }
                 }
             });

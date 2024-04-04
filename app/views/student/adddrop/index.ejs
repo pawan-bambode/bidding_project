@@ -385,13 +385,15 @@
           ajaxApi(ApiObj).then(result=>{
            let resultValue = JSON.parse(result.swap);
            if(resultValue.status == 0){
-            createToastError(resultValue.description);
+            let errorMessage = JSON.stringify(resultValue.description);
+            createToast({ title: "Fail", msg: errorMessage, type: "negative" });
             } 
             else if(resultValue.status == 1){
-              createToastMessage(resultValue.description);
+              createToast({ title: "Success", msg: resultValue.description, type: "positive" });
             }
           }).catch(error =>{
-              createToastError(JSON.stringify(error.responseJSON.description));;
+                let errorMessage = JSON.stringify(error.responseJSON.description);
+                createToast({ title: "Fail", msg: errorMessage, type: "negative" });
           })    
         })
     
@@ -416,13 +418,14 @@
             ajaxApi(ApiObj).then(result => {
                     if (result.status == 200) {
                         let response = JSON.parse(result.addWaitListResponse);
-                        createToastMessage(response.description);
+                        createToast({ title: "Success", msg: response.description, type: "positive" });
                     } else {
-                        let response = JSON.parse(result.error);
-                        createToastError(JSON.stringify(response.description));
+                        let errorMessage = JSON.stringify(response.description);
+                        createToast({ title: "Fail", msg: errorMessage, type: "negative" });
                     }
             }).catch(error => {
-                    createToastError(JSON.stringify(error.responseJSON.description));
+                let errorMessage = JSON.stringify(error.responseJSON.description);
+                createToast({ title: "Fail", msg: errorMessage, type: "negative" });
             });
         });
 

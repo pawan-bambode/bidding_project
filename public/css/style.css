@@ -1272,4 +1272,11 @@ hr{
     margin: 0;
 }
 
+.background-success {
+    background-color: #d1e7dd;
+}
+.background-danger{
+    background-color: #f8d7da;
+}
+
 

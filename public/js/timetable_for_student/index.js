@@ -10,7 +10,7 @@
             dataType: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
-                createToastMessage(result.description);
+                createToast({ title: "Success", msg: result.description, type: "positive" });
         }).catch(error => {
             createConfirmation();
         })
@@ -27,7 +27,7 @@
             dataType: 'JSON'
             }
             ajaxApi(ApiObj).then(result => {
-                createToastMessage(result.description);
+                createToast({ title: "Success", msg: result.description, type: "positive" });
            }).catch(error => {
             createConfirmation(result);
            })

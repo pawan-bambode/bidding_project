@@ -467,7 +467,7 @@ $(document).ready(function() {
             let startDateTime = $(ele).children('td.start-date-time').text();
             let endDateTime = $(ele).children('td.end-date-time').text();
             if ((totalStudents === 0) || (totalCourses === 0) || startDateTime === 'NA' || endDateTime === 'NA') {
-                createToastError('Please Enter Previous Row Entry First')
+                createToast({ title: "Fail", msg: 'Please Enter Previous Row Entry First', type: "negative" });
                 canProceed = false;
                 return false; 
            }
@@ -671,10 +671,11 @@ $(document).ready(function() {
 
             ajaxApi(ApiObj)
                 .then(result => {
-                    createToastMessage(result.description);
+                    createToast({ title: "Success", msg: result.description, type: "positive" });
                 })
                 .catch(error => {
-                    createToastError(error.responseJSON.description);
+                    let errorMessage = JSON.stringify(error.responseJSON.description);
+                    createToast({ title: "Fail", msg: errorMessage, type: "negative" });
                 });
         }        
     }); 
@@ -1059,10 +1060,11 @@ $(document).ready(function() {
         ajaxApi(ApiObj)
             .then(result => {
                 $(this).closest('tr').remove();
-                createToastMessage(result.description);
+                createToast({ title: "Success", msg: result.description, type: "positive" });
             })
             .catch(error => {
-                createToastError(JSON.stringify(error.responseJSON.description));
+                let errorMessage = JSON.stringify(error.responseJSON.description);
+                createToast({ title: "Fail", msg: errorMessage, type: "negative" });
             });
     });
 
@@ -1114,10 +1116,11 @@ $(document).ready(function() {
 
         ajaxApi(ApiObj)
             .then(result => {
-                createToastMessage(result.description);
+                createToast({ title: "Success", msg: result.description, type: "positive" });
             })
             .catch(error => {
-                createToastError(JSON.stringify(error.responseJSON.description));
+                let errorMessage = JSON.stringify(error.responseJSON.description);
+                createToast({ title: "Fail", msg: errorMessage, type: "negative" });
             });
     }); 
 
