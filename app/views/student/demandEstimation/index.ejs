@@ -253,7 +253,11 @@
                         <% } %> 
                         <div class="criteria-status col-md-3">CRITERIA NOT MET</div>
                         <div class="area-status col-md-3">Area Covered: <span class="area-status-span">0</span></div>
+                        <% if(concentrationSet.primaryArea) { %>
                         <div class="pri-area-status col-md-3">Credit Covered In Pri. Area: <span class="pri-area-span">0</span></div>
+                        <% }  else { %>
+                            <div class="pri-area-status col-md-3 d-none">Credit Covered In Pri. Area: <span class="pri-area-span">0</span></div>
+                        <% } %>
                         <div class="time-status col-md-3"><h5 class="text-danger time-remaining"></h5></div>
                     </div>
                 </div>
@@ -594,13 +598,12 @@ $(document).ready(function() {
             let isPrimaryAreaSelected = studentCriteriaStatus.creditsPerArea.some(function(ele) {
                 return ele.area === concentrationSet.primaryArea;
             });
+
+            console.log('valuesof isPrimaryAreaSelected--->', isPrimaryAreaSelected);
                
-            if(isPrimaryAreaSelected){
+            if(isPrimaryAreaSelected && concentrationSet.primaryArea){
                 $('.student-footer .pri-area-status .pri-area-span').text(studentCriteriaStatus.creditsPerArea.find(obj => obj.area == studentCriteriaStatus.primaryArea).credits);
             }
-
-        }else{
-            $('.student-footer .pri-area-status').addClass('d-none');
         }
 
         $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentCriteriaStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
@@ -802,6 +805,9 @@ $(document).ready(function() {
 
             $("#area-change").html(areaName);
             availableCourse(result.availableCourses);
+            if($('.save-select-course').hasClass('d-none') && selectedCourses.length > 0){
+                $('.hide-col-submitted-course').addClass('d-none');
+            }
             rearrangeIdAfterDeletion();
             $('#page-no').html(result.courseCount);
         });
@@ -824,6 +830,9 @@ $(document).ready(function() {
         ajaxApi(ApiObj).then(result => {
            
             availableCourse(result.availableCourses);
+            if($('.save-select-course').hasClass('d-none') && selectedCourses.length > 0){
+                $('.hide-col-submitted-course').addClass('d-none');
+            }
             rearrangeIdAfterDeletion();
             $('#page-no').html(result.courseCount);
         })
@@ -895,8 +904,6 @@ $(document).ready(function() {
         studentCriteriaStatus.creditsPerArea.filter((selectedArea) =>{
             if(selectedArea.area === concentrationSet.primaryArea){
                 $('.student-footer .pri-area-status .pri-area-span').text(selectedArea.credits);
-            }else{
-                $('.student-footer .pri-area-status').addClass('d-none');
             }
         });
 
@@ -910,11 +917,7 @@ $(document).ready(function() {
         });
                
         if(primaryAreaSelected.length > 0){
-            $('.student-footer .pri-area-status').removeClass('d-none');
             $('.student-footer .pri-area-status .pri-area-span').text(primaryAreaSelected.credits);
-        }
-        else{
-            $('.student-footer .pri-area-status').addClass('d-none');
         }
     }
 
