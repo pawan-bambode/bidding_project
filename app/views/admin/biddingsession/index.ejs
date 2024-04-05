@@ -579,7 +579,9 @@
         });     
 
         $('#update-modal').on('click', '.modal-close', function() {
-           $(this).closest('.modal-content').find(`span[class^='error']`).addClass('d-none');
+           if(!$('.is-in-valid').hasClass('d-none')){
+                $(this).closest('.modal-content').find('.modal-body .is-in-valid').addClass('d-none');
+           }
         });
 
         $('#update-modal').on('show.bs.modal', function() {
