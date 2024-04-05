@@ -271,9 +271,19 @@
 
         // edit bidding session click on selected acad session cancle(X symbol in red color)
         $('#update-modal').on('click', '.cancel-acad-session i', function () {
+            
             let acadSessionId = $(this).closest('span').data('acad-session-id');
             let optionToRemove = $('#update-acad-session').find(`option[value="${acadSessionId}"]`);
             let firstChildValue = $("#update-acad-session option:first-child").val();
+
+            let acadSession = $(this).closest('span').html();
+            let acadSessionRow = `<option value="${acadSessionId}">${acadSession}</option>`;
+            $('#update-acad-session').append(acadSessionRow);
+
+            
+            $('#update-modal').find('.acad-session-drop-down').removeClass('d-none');
+            $('#update-modal').find('.add-acad-session').removeClass('d-none');
+            
 
             optionToRemove.removeClass('d-none');
             $(this).closest('span').remove();
@@ -420,7 +430,7 @@
             let selAcadSession = $('#update-acad-session option:selected');
             let selBiddingAcad = $('#update-modal .add-bidding-session-val').find('span');
            
-            if(selAcadSession.val() != '-1'){
+            if(selAcadSession.val() != '-1' && selAcadSession.val() != undefined){
 
                 let firstChildValue = $("#update-acad-session option:first-child").val();
                 
@@ -442,21 +452,25 @@
                     $('#update-modal .add-bidding-session-val').append(selectedSpan);
                 }
    
-            $('#update-acad-session option:selected').remove();
-            if ($('#update-acad-session option').length === 1) {
+                $('#update-acad-session option:selected').remove();
+                if ($('#update-acad-session option').length === 0) {
 
-                $('#update-modal').find('.acad-session-drop-down').addClass('d-none');
-                $('#update-modal').find('.add-acad-session').addClass('d-none');
-            } else {          
-                $('#update-modal').find('.acad-session-drop-down').removeClass('d-none');
-                $('#update-modal').find('.add-acad-session').removeClass('d-none');
-            }
+                    $('#update-modal').find('.acad-session-drop-down').addClass('d-none');
+                    $('#update-modal').find('.add-acad-session').addClass('d-none');
+                } else {          
+                    $('#update-modal').find('.acad-session-drop-down').removeClass('d-none');
+                    $('#update-modal').find('.add-acad-session').removeClass('d-none');
+                }
 
-            
             }else{
-                $('#update-modal .acad-session-select').removeClass('d-none');
+               
+                if(editBiddingSessionAcadSessions.length == JSON.parse(`<%- JSON.stringify(acadSessions) %>`).length){
+                    $('#update-modal .acad-session-select').text('There is not acad Session');
+                    $('#update-modal .acad-session-select').removeClass('d-none');
+                }else{
+                    $('#update-modal .acad-session-select').removeClass('d-none');
+                }
             }
-        
         });
 
         $('#add-bidding-session').on('click', '#add-bidding-sessions', function() {
@@ -588,7 +602,7 @@
 
             $('#update-modal #update-acad-session').empty();
                 
-            let acadSessionDropDown = `<option selected disabled value="-1" >Select Acad Session</option>`;
+            let acadSessionDropDown = ``;
             let acadSessions = JSON.parse(`<%- JSON.stringify(acadSessions) %>`);
             let acadSessionDropDownList = acadSessions.filter(obj1 => !editBiddingSessionAcadSessions.some(obj2 => obj1.id == obj2.acadSessionId));
                 
