@@ -543,7 +543,9 @@ option:hover,
     background-color: whitesmoke !important;
     border-radius: 50% !important;   
 }
-
+#update-modal .add-bidding-session-val span.cancel-acad-session{
+    min-height: 39px ;
+}
 .custm-padd{
     padding: 1em;
 }

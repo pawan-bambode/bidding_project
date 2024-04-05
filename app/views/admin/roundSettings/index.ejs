@@ -671,15 +671,15 @@ $(document).ready(function() {
 
             ajaxApi(ApiObj)
                 .then(result => {
-                    createToast({ title: "Success", msg: result.description, type: "positive" })
+                    createToast({ title: "Success", msg: result.description, type: "positive", showingTime:'1000' });
                     setTimeout(function(){
                         $('#add-round-settings-modal').modal('hide');
                         window.location.replace("/admin/dashboard/round-setting");
-                    },2500);
+                    },1000);
                 })
                 .catch(error => {
                     let errorMessage = JSON.stringify(error.responseJSON.description);
-                    createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                    createToast({ title: "Fail", msg: errorMessage, type: "negative" ,showingTime:'1000'});
                 });
         }        
     }); 
@@ -1064,7 +1064,10 @@ $(document).ready(function() {
         ajaxApi(ApiObj)
             .then(result => {
                 $(this).closest('tr').remove();
-                createToast({ title: "Success", msg: result.description, type: "positive" });
+                createToast({ title: "Success", msg: result.description, type: "positive", showingTime: "1000"});
+                setTimeout(function(){
+                        window.location.replace("/admin/dashboard/round-setting");
+                    },1000);
             })
             .catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);
@@ -1120,7 +1123,11 @@ $(document).ready(function() {
 
         ajaxApi(ApiObj)
             .then(result => {
-                createToast({ title: "Success", msg: result.description, type: "positive" });
+                createToast({ title: "Success", msg: result.description, type: "positive",showingTime:'1000' });
+                    setTimeout(function(){
+                        $('#update-round-settings').modal('hide');
+                        window.location.replace("/admin/dashboard/round-setting");
+                    },1000);
             })
             .catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);

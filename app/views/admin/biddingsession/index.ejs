@@ -174,10 +174,6 @@
                         <div class="col-md-8">
                             <label class="form-label">Acad Session </label>
                             <select class="form-select select2" id="update-acad-session">
-                                <option selected disabled value="-1">Select Acad Session</option>
-                                <% for(let acadSession of acadSessions) {  %>
-                                    <option value="<%- acadSession.id %>"><%- acadSession.acad_session %></option>
-                                <%} %>
                             </select>
                         </div>
                         <div class="d-flex justify-content-end align-items-end col-md-4">
@@ -198,6 +194,7 @@
 <script>
     $(document).ready(function() {
         $('.select2').select2();
+        let editBiddingSessionAcadSessions = [];
         
         $('#update-acad-session').select2({
              dropdownParent: $('#update-modal')
@@ -381,6 +378,8 @@
         });
 
         $('#bidding-sesssion-table').on('click', '.edit-bidding-session', function() {
+
+            editBiddingSessionAcadSessions = [];
             let biddingRow = $(event.target).closest('tr');
             $('#update-modal .add-bidding-session-val').children().remove();
             let biddingName = biddingRow.data('bidding-name');
@@ -392,11 +391,17 @@
 
             acadSessions.forEach(function(acadSession, index) {
                 let acadSessionId = acadSession.split(':');
-
+                
+                let editBiddingAcadSession = {
+                    acadSession: acadSessionId[0],
+                    acadSessionId: acadSessionId[1]
+                }
                 separateAcadSession += `<span class="d-flex justify-content-center align-items-center badge bg-secondary ms-2 cancel-acad-session" data-acad-session-id="${acadSessionId[1]}">${acadSessionId[0]}<i class="fa-solid fa-xmark ms-auto ps-2 text-danger"></i>
                 </span>`;
-            });
 
+                editBiddingSessionAcadSessions.push(editBiddingAcadSession);
+            });
+            
             $('#update-modal .add-bidding-session-val').append(separateAcadSession);        
             $('#update-modal #update-bidding-name').val(biddingName);
             $('#update-modal #start-date').val(startDate);
@@ -414,11 +419,11 @@
             let flagToAdd = true;
             let selAcadSession = $('#update-acad-session option:selected');
             let selBiddingAcad = $('#update-modal .add-bidding-session-val').find('span');
-
+           
             if(selAcadSession.val() != '-1'){
-                
+
                 let firstChildValue = $("#update-acad-session option:first-child").val();
-                $("#update-acad-session").val(firstChildValue).trigger('change');
+                
                 $('#update-modal .acad-session-select').addClass('d-none');
                 selBiddingAcad.each(function(index, prevSessionAcad) {
                     if ($(prevSessionAcad).data('acad-session-id') == selAcadSession.val()) {
@@ -436,9 +441,22 @@
                         </span>`;
                     $('#update-modal .add-bidding-session-val').append(selectedSpan);
                 }
+   
+            $('#update-acad-session option:selected').remove();
+            if ($('#update-acad-session option').length === 1) {
+
+                $('#update-modal').find('.acad-session-drop-down').addClass('d-none');
+                $('#update-modal').find('.add-acad-session').addClass('d-none');
+            } else {          
+                $('#update-modal').find('.acad-session-drop-down').removeClass('d-none');
+                $('#update-modal').find('.add-acad-session').removeClass('d-none');
+            }
+
+            
             }else{
                 $('#update-modal .acad-session-select').removeClass('d-none');
             }
+        
         });
 
         $('#add-bidding-session').on('click', '#add-bidding-sessions', function() {
@@ -469,10 +487,15 @@
                 dataType: 'JSON'
             };
             ajaxApi(ApiObj).then(result => {
-                createToast({ title: "Success", msg: result.description, type: "positive" });
+                createToast({ title: "Success", msg: result.description, type: "positive",showingTime:"1000" });
+                    setTimeout(function(){
+                        $('#update-round-settings').modal('hide');
+                        window.location.replace("/admin/dashboard/bidding-sessions");
+                    },1000);
+                
             }).catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);
-                createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000" });
             });
         }
         else{
@@ -492,10 +515,11 @@
                 dataType: 'JSON'
             };
             ajaxApi(ApiObj).then(result => {
-                createToast({ title: "Success", msg: result.description, type: "positive" });
+                createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000" });
+                
             }).catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);
-                createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000" });
             });
         });
 
@@ -540,7 +564,11 @@
                 
                     ajaxApi(ApiObj)
                         .then(result => {
-                            createToast({ title: "Success", msg: result.description, type: "positive" });
+                            createToast({ title: "Success", msg: result.description, type: "positive", showingTime:'1000' });
+                            setTimeout(function(){
+                                $('#update-modal').modal('hide');
+                                window.location.replace("/admin/dashboard/bidding-sessions");
+                            },1000);
                         })
                         .catch(error => {
                             let errorMessage = JSON.stringify(error.responseJSON.description);
@@ -553,6 +581,27 @@
         $('#update-modal').on('click', '.modal-close', function() {
            $(this).closest('.modal-content').find(`span[class^='error']`).addClass('d-none');
         });
+
+        $('#update-modal').on('show.bs.modal', function() {
+
+            $('#update-modal #update-acad-session').empty();
+                
+            let acadSessionDropDown = `<option selected disabled value="-1" >Select Acad Session</option>`;
+            let acadSessions = JSON.parse(`<%- JSON.stringify(acadSessions) %>`);
+            let acadSessionDropDownList = acadSessions.filter(obj1 => !editBiddingSessionAcadSessions.some(obj2 => obj1.id == obj2.acadSessionId));
+                
+            if (acadSessions.length === editBiddingSessionAcadSessions.length) {
+                $(this).find('.add-acad-session').addClass('d-none');
+            } else {
+                    acadSessionDropDownList.forEach(acadSession => {    
+                        acadSessionDropDown += `<option value="${acadSession.id}">${acadSession.acad_session}</option>`;
+                    });
+            
+                $('#update-modal #update-acad-session').append(acadSessionDropDown);
+                $(this).find('.add-acad-session').removeClass('d-none');
+            }
+        });     
+
     });
 </script>
 
