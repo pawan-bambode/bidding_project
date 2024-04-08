@@ -3,7 +3,7 @@ const { sql, poolConnection } = require('../../config/db');
 module.exports = class User {
     static getUserDetails(requestBody, slug, biddingId) {
         let username = requestBody.username;
-     
+
         return poolConnection.then(pool => {
             return pool.request()
                 .input('username', sql.VarChar, username)

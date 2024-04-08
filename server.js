@@ -97,6 +97,7 @@ if (process.env.APP_ENV === 'PRODUCTION' || process.env.APP_ENV === 'DEV') {
 } else {
     const server = http.createServer(app).listen(process.env.APP_PORT);
     const io = socketIO(server);
+    global.io = io;
 
     io.on('connection', (socket) => {
         socketResponse.respond(socket, io);

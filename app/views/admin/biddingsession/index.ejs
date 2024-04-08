@@ -164,11 +164,6 @@
                         <span class="text-danger d-none acad-session-label">Acad Session Already Added!</span>
                         <span class="text-danger d-none acad-session-select">Select Acad Session!</span>
                         <div class="d-flex col-md-9 add-bidding-session-val"></div>
-                        <div class="d-flex justify-content-end align-items-end add-acad-session col-md-3">
-                            <span class="d-flex justify-content-center align-items-center badge bg-primary mt-1 col-md-6" style="height:35px;">
-                                <i class="fa-solid fa-circle-plus" style="font-size: large;"></i>
-                            </span>
-                        </div>
                     </div>
                     <div class="acad-session-drop-down d-none d-flex">
                         <div class="col-md-8">
@@ -252,12 +247,6 @@
                 $('.left-sidebar').removeClass('d-none');
         });
 
-        //in Edit Bidding Session click on plus button then drop down of acad-session is open 
-        $('#update-modal').on('click', '.add-acad-session', function() {
-            $('#update-modal .acad-session-drop-down').removeClass('d-none');
-        });
-
-
         // When clicking on the red color academic session button in the table cell in the Add Bidding Session 
         $('#add-bidding-session').on('click', '#add-acad-session-in-bidding', function (event) {
             $('#add-bidding-session #add-acad-session').removeClass('d-none');
@@ -269,6 +258,10 @@
             $('#selected-acad-session').focus();
         });
 
+        $('#update-acad-session').on('change', function(){
+            console.log('update acad Session chnage');
+        })
+
         // edit bidding session click on selected acad session cancle(X symbol in red color)
         $('#update-modal').on('click', '.cancel-acad-session i', function () {
             
@@ -278,13 +271,9 @@
 
             let acadSession = $(this).closest('span').html();
             let acadSessionRow = `<option value="${acadSessionId}">${acadSession}</option>`;
-            $('#update-acad-session').append(acadSessionRow);
-
-            
+            $('#update-acad-session').append(acadSessionRow);            
             $('#update-modal').find('.acad-session-drop-down').removeClass('d-none');
-            $('#update-modal').find('.add-acad-session').removeClass('d-none');
-            
-
+           
             optionToRemove.removeClass('d-none');
             $(this).closest('span').remove();
             $("#update-acad-session").val(firstChildValue).trigger('change');
@@ -454,12 +443,9 @@
    
                 $('#update-acad-session option:selected').remove();
                 if ($('#update-acad-session option').length === 0) {
-
                     $('#update-modal').find('.acad-session-drop-down').addClass('d-none');
-                    $('#update-modal').find('.add-acad-session').addClass('d-none');
                 } else {          
                     $('#update-modal').find('.acad-session-drop-down').removeClass('d-none');
-                    $('#update-modal').find('.add-acad-session').removeClass('d-none');
                 }
 
             }else{
@@ -504,7 +490,8 @@
                 createToast({ title: "Success", msg: result.description, type: "positive",showingTime:"1000" });
                     setTimeout(function(){
                         $('#update-round-settings').modal('hide');
-                        window.location.replace("/admin/dashboard/bidding-sessions");
+                        //window.location.replace("/admin/dashboard/bidding-sessions");
+                        location.reload();
                     },1000);
                 
             }).catch(error => {
@@ -530,6 +517,7 @@
             };
             ajaxApi(ApiObj).then(result => {
                 createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000" });
+                setTimeout(function(){location.reload();},1000);         
                 
             }).catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);
@@ -601,21 +589,21 @@
         $('#update-modal').on('show.bs.modal', function() {
 
             $('#update-modal #update-acad-session').empty();
-                
-            let acadSessionDropDown = ``;
+            let acadSessionDropDown = `<option value="-1" disabled selected>Select Session</option>`;
             let acadSessions = JSON.parse(`<%- JSON.stringify(acadSessions) %>`);
             let acadSessionDropDownList = acadSessions.filter(obj1 => !editBiddingSessionAcadSessions.some(obj2 => obj1.id == obj2.acadSessionId));
                 
             if (acadSessions.length === editBiddingSessionAcadSessions.length) {
-                $(this).find('.add-acad-session').addClass('d-none');
+              $('#update-modal').find('.acad-session-drop-down').addClass('d-none');
             } else {
                     acadSessionDropDownList.forEach(acadSession => {    
                         acadSessionDropDown += `<option value="${acadSession.id}">${acadSession.acad_session}</option>`;
                     });
             
                 $('#update-modal #update-acad-session').append(acadSessionDropDown);
-                $(this).find('.add-acad-session').removeClass('d-none');
+                $('#update-modal').find('.acad-session-drop-down').removeClass('d-none');
             }
+            $('#update-modal #update-acad-session').trigger('change');
         });     
 
     });

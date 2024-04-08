@@ -564,7 +564,12 @@ module.exports.respond = async (socket, io) => {
                     });
             });
         }
-    });   
+    });
+    
+    io.on('displayToast', (data) => {
+       console.log('valuesof displayToast', data );
+       console.log(data);
+    })
 
     const calculateRemainingTime = (startTime, endTime) => {
 
