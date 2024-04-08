@@ -162,12 +162,12 @@
                   <div class="row empty">
                   <div class="col-md-6">
                   <label class="mb-2 form-label" for="course-name">Course Name :</label>
-                  <input class="form-control is-empty" type="text" id="course-name">
+                  <input class="form-control is-empty" type="text" id="course-name" autocomplete="off">
                   <span class="text-danger d-none is-in-valid" ></span>
                   </div>
                     <div class="col-md-6">
                         <label class="mb-2 form-label" for="course-credits">Credits :</label>
-                        <input class="form-control is-empty is-number" type="text" id="course-credits">
+                        <input class="form-control is-empty is-number" type="text" id="course-credits" autocomplete="off">
                         <span  class="text-danger d-none is-in-valid"></span>
                     </div>
                     </div>
@@ -187,7 +187,7 @@
                   
                     <div class="col-md-6">
                       <label class="form-label mb-2" for="min-demand-criteria">Minimum Demand Criteria :</label>
-                      <input class="form-control is-empty is-number" type="text"  id="min-demand-criteria">
+                      <input class="form-control is-empty is-number" type="text" id="min-demand-criteria" autocomplete="off">
                       <span  class="text-danger d-none is-in-valid"></span>
                     </div>
                     </div>
@@ -248,7 +248,8 @@ $(document).ready(function(){
                         dataType:'JSON'
                     }
                     ajaxApi(ApiObj).then(result =>{
-                        createToast({ title: "Success", msg: result.description, type: "positive" });
+                        createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000" });
+                        setTimeout(function(){location.reload();},1000);        
                     }).catch(error =>{
                         let errorMessage = JSON.stringify(error.responseJSON.description);
                         createToast({ title: "Fail", msg: errorMessage, type: "negative" });
@@ -462,7 +463,8 @@ $(document).ready(function(){
             processData: false,
             contentType: false,
             success: function(response) {
-                createToast({ title: "Success", msg: response.description, type: "positive" });
+                createToast({ title: "Success", msg: response.description, type: "positive", showingTime:"1000" });
+                setTimeout(function(){location.reload();},1000); 
             },
             error: function(xhr, status, error) {
                 showError(JSON.stringify(xhr.responseJSON));
@@ -482,7 +484,8 @@ $(document).ready(function(){
             datatype:'JSON'
         }
         ajaxApi(ApiObj).then(result=>{
-            createToast({ title: "Success", msg: result.description, type: "positive" });
+            createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000" });
+            setTimeout(function(){location.reload();},1000);
         }).catch(error =>{
             let errorMessage = JSON.stringify(error.responseJSON.description);
             createToast({ title: "Fail", msg: errorMessage, type: "negative" });
@@ -518,7 +521,8 @@ $(document).ready(function(){
                 dataType: 'JSON' 
             }
             ajaxApi(ApiObj).then(result => {
-                createToast({ title: "Success", msg: result.description, type: "positive" });
+                createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000" });
+                setTimeout(function(){location.reload();},1000);
             }).catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);
                 createToast({ title: "Fail", msg: errorMessage, type: "negative" });
