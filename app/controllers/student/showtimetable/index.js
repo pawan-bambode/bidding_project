@@ -84,10 +84,11 @@ module.exports = {
   },
 
   save: (req, res) => {
+
     student.saveSpecialization(res.locals.slug, req.body.inputJSON, res.locals.biddingId, res.locals.userId).then(result => {
-      res.status(200).json(JSON.parse(result.output.output_json));
+        res.status(200).json(JSON.parse(result.output.output_json));
     }).catch(error => {
-      res.status(500).json(JSON.parse(error.originalError.info.message));
+        res.status(500).json(JSON.parse(error.originalError.info.message));
     });
   }
 };

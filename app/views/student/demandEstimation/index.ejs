@@ -854,17 +854,19 @@ $(document).ready(function() {
             };
             ajaxApi(ApiObj)
                 .then(result => {
-                    createToast({ title: "Success", msg: result.description, type: "positive" });
+                    createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000"});
+                    setTimeout(function(){location.reload();},1000);
                 })
                 .catch(error => {
                     let errorMessage = JSON.stringify(error.responseJSON.description);
-                    createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                    createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000"});
                 });
         } }
     });
 
     function availableCourse(courseList) {
-    
+     
+        courseList =  courseList.filter(obj1 => !studentCriteriaStatus.courseDetails.some(obj2 => obj1.courseId == obj2.course_lid));
         $("#available-course-table tbody").empty();
 
         let availableCourse = ``;

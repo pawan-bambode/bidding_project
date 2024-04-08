@@ -22,7 +22,7 @@ module.exports = class Students {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .query(`SELECT id, concentration_name 
-                        FROM [${slug}].concentration WHERE bidding_session_lid = @biddingId`);
+                        FROM [${slug}].concentration WHERE bidding_session_lid = @biddingId AND active = 1`);
         });
     }
 

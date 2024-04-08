@@ -49,7 +49,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Bonus Bid Points</h3>
+                    <h5 class="modal-title">Bonus Bid Points</h5>
                     <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -126,11 +126,12 @@ $(document).ready(function () {
             };
             ajaxApi(ApiObj)
                 .then(result => {
-                    createToast({ title: "Success", msg: result.description, type: "positive" });
+                    createToast({ title: "Success", msg: response.description, type: "positive", showingTime:"1000"});
+                    setTimeout(function(){location.reload();},1000);
                 })
                 .catch(error => {
                     let errorMessage = JSON.stringify(error.responseJSON.description);
-                    createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                    createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000"});
                 });
         }
     });
@@ -148,11 +149,12 @@ $(document).ready(function () {
         };
         ajaxApi(ApiObj)
             .then(result => {
-                createToast({ title: "Success", msg: result.description, type: "positive" });
+                createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000"});
+                setTimeout(function(){location.reload();},1000);
             })
             .catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);
-                createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000"});
             });
     });
 
@@ -187,11 +189,12 @@ $(document).ready(function () {
             };
             ajaxApi(ApiObj)
                 .then(result => {
-                    createToast({ title: "Success", msg: result.description, type: "positive" });
+                    createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000"});
+                    setTimeout(function(){location.reload();},1000);
                 })
                 .catch(error => {
                     let errorMessage = JSON.stringify(error.responseJSON.description);
-                    createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                    createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000"});
                 });
         }
     });

@@ -3,7 +3,6 @@ const { Toast } = bootstrap;
 function createToast(custom) {
   
   let {title, msg, type, showingTime} = {...custom};
-  console.log('valuesof cutom', custom);
 
   msg = msg.replaceAll('"','');
 

@@ -54,7 +54,7 @@ module.exports = class DemandEstimation {
     }
 
     static isStudentPartOfRound (slug, biddingId, studentId, roundId) {
-  
+ 
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -228,7 +228,7 @@ module.exports = class DemandEstimation {
     }
 
     static save(slug, biddingId, userid, student_lid, round_lid, selectedCourseJson) {
-
+        
         return poolConnection.then(pool => {
             return pool.request()
                 .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(selectedCourseJson))

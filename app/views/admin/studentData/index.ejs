@@ -116,31 +116,31 @@
                         <div class="col-md-6">
                             <input type="hidden" id="student-id">
                             <label class="mb-2" for="student-name">Student Name :</label>
-                            <input class="form-control is-empty" type="text" id="student-name">
+                            <input class="form-control is-empty" type="text" id="student-name" autocomplete="off">
                             <span class="text-danger d-none is-in-valid"></span>
                         </div>
                         <div class="col-md-6">
                             <label class="mb-2" for="student-email">Email :</label>
-                            <input class="form-control is-empty" type="text" id="student-email">
+                            <input class="form-control is-empty" type="text" id="student-email" autocomplete="off">
                             <span class="text-danger d-none is-in-valid"></span>
                         </div>
                     </div>
                     <div class="row empty">
                         <div class="col-md-6">
                             <label class="mb-2" for="bidding-points">Bid Points :</label>
-                            <input class="form-control is-empty is-number" type="text" id="bidding-points">
+                            <input class="form-control is-empty is-number" type="text" id="bidding-points" autocomplete="off">
                             <span class="text-danger d-none is-in-valid"></span>
                         </div>
                         <div class="col-md-6">
                             <label class="mb-2" for="year-of-joining">Year of Joining :</label>
-                            <input class="form-control is-empty is-number" type="text" id="year-of-joining">
+                            <input class="form-control is-empty is-number" type="text" id="year-of-joining" autocomplete="off"> 
                             <span class="text-danger d-none is-in-valid"></span>
                         </div>
                     </div>
                     <div class="row empty">
                         <div class="col-md-6">
                             <label class="mb-2" for="previous-elective-credits">Previous Elective Credits :</label>
-                            <input class="form-control is-empty is-number" type="text" id="previous-elective-credits">
+                            <input class="form-control is-empty is-number" type="text" id="previous-elective-credits" autocomplete="off">
                             <span class="text-danger d-none is-in-valid"></span>  
                         </div>
                     </div>
@@ -382,7 +382,8 @@ $(document).ready(function() {
             contentType: false,
 
             success: function(response) {
-                createToast({ title: "Success", msg: response.description, type: "positive" });
+                createToast({ title: "Success", msg: response.description, type: "positive", showingTime:"1000"});
+                setTimeout(function(){location.reload();},1000);
             },
 
             error: function(xhr, status, error) {
@@ -411,10 +412,11 @@ $(document).ready(function() {
                         dataType:'JSON'
                     }
                     ajaxApi(ApiObj).then(result =>{
-                        createToast({ title: "Success", msg: result.description, type: "positive" });
+                        createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000" });
+                        setTimeout(function(){location.reload();},1000);   
                     }).catch(error =>{
                         let errorMessage = JSON.stringify(error.responseJSON.description);
-                        createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                        createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000" });
                     })
                 }
             });
@@ -449,10 +451,11 @@ $(document).ready(function() {
                 dataType: 'JSON' 
             }
             ajaxApi(ApiObj).then(result => {
-                createToast({ title: "Success", msg: result.description, type: "positive" });
+                createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000" });
+                setTimeout(function(){location.reload();},1000);   
             }).catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);
-                createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000"});
             })
         }
     })
@@ -469,10 +472,11 @@ $(document).ready(function() {
             dataType:'JSON'
         }
         ajaxApi(ApiObj).then(result =>{
-            createToast({ title: "Success", msg: result.description, type: "positive" });
+            createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000" });
+            setTimeout(function(){location.reload();},1000);   
         }).catch(error =>{
             let errorMessage = JSON.stringify(error.responseJSON.description);
-            createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+            createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000"});
         })
 
     })

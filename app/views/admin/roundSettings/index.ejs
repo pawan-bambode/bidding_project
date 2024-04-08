@@ -303,10 +303,10 @@
                         <input type="search" class="form-control p3 mb-3 search-in-filter" placeholder="Search Round Settings" id="select-round">
                         <% for(let preDefineRound of predefineRounds ) { %>
                             <div class="border p-3 mb-3 rounded rounds-div" 
-                            data-bidding-name="<%- locals.biddingName %>&nbsp;-&nbsp;<%-preDefineRound.round_name %>" 
+                            data-bidding-name="<%-preDefineRound.round_name %>" 
                             data-bidding-id ="<%- preDefineRound.id %>">
                                 <% if(locals.biddingName) { %>
-                                    <%- locals.biddingName %>&nbsp; - &nbsp;<%-preDefineRound.round_name %>
+                                    <%-preDefineRound.round_name %>
                                 <% } %>
                             </div>
                         <% } %>

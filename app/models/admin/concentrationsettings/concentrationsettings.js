@@ -131,6 +131,7 @@ module.exports = class ConcentrationSettings {
     }
 
     static studentList(slug, biddingId, studentEmail) {
+  
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -142,7 +143,7 @@ module.exports = class ConcentrationSettings {
                         FROM [${slug}].student_data sd 
                         INNER JOIN [${slug}].concentration c ON sd.concentration_lid = c.id
                         INNER JOIN [${slug}].users u ON u.email = sd.email
-                        INNER JOIN [${slug}].concentration_settings cs ON cs.concentration_lid = sd.concentration_lid WHERE sd.email = @studentEmail AND sd.active = 1 AND u.active = 1`);
+                        INNER JOIN [${slug}].concentration_settings cs ON cs.concentration_lid = sd.concentration_lid WHERE sd.email = @studentEmail AND sd.active = 1`);
         });
     }
 

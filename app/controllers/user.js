@@ -33,7 +33,7 @@ module.exports = {
     
    
     authenticate: async (req, res, next) => {
-     
+       
         try {
             const sess = req.session;
 
@@ -42,8 +42,7 @@ module.exports = {
             }
         
             let userData = await User.getUserDetails(req.body, res.locals.slug, res.locals.biddingId);
-           
-
+            
             if (userData.recordset.length === 0) {
                 return res.render('login', {
                     message: "Authentication Failed"

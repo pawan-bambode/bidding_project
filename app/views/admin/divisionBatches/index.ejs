@@ -230,10 +230,12 @@ $(document).ready(function(){
             processData: false,
             contentType: false,
             success: function(response) {
-                createToast({ title: "Success", msg: response.description, type: "positive" });
+                createToast({ title: "Success", msg: response.description, type: "positive", showingTime:"1000"});
+                setTimeout(function(){location.reload();},1000);
             },
             error: function(xhr, status, error) {
-                showError(JSON.stringify(xhr.responseJSON));
+                let errorMessage = JSON.stringify(xhr.responseJSON.description);
+                createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000"});
             }
         });
     })
@@ -261,10 +263,11 @@ $(document).ready(function(){
                     dataType: 'JSON' 
                 }
                 ajaxApi(ApiObj).then(result => {
-                    createToast({ title: "Success", msg: result.description, type: "positive" });
+                    createToast({ title: "Success", msg: response.description, type: "positive", showingTime:"1000"});
+                    setTimeout(function(){location.reload();},1000);
                 }).catch(error => {
                     let errorMessage = JSON.stringify(error.responseJSON.description);
-                    createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                    createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000"});
                 })  
             } 
         }   
@@ -319,10 +322,11 @@ $(document).ready(function(){
             datatype:'JSON'
         }
         ajaxApi(ApiObj).then(result=>{
-            createToast({ title: "Success", msg: result.description, type: "positive" });
+            createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000"});
+            setTimeout(function(){location.reload();},1000);
         }).catch(error =>{
             let errorMessage = JSON.stringify(error.responseJSON.description);
-            createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+            createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000"});
         })
     })
 

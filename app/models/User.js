@@ -2,6 +2,7 @@ const { sql, poolConnection } = require('../../config/db');
 
 module.exports = class User {
     static getUserDetails(requestBody, slug, biddingId) {
+      
         let username = requestBody.username;
 
         return poolConnection.then(pool => {
@@ -10,6 +11,7 @@ module.exports = class User {
                 .query(`SELECT role_lid FROM [${slug}].users WHERE username = @username`);
         }).then(result => {
             let role_lid = result.recordset[0].role_lid;
+           
             return poolConnection.then(pool => {
 
                 if (role_lid) {
@@ -22,7 +24,7 @@ module.exports = class User {
             }).then(adminRoleResult => {
 
                 let roleName = adminRoleResult.recordset[0].role_name;
-             
+               
                 if (roleName == 'student') {
                     return poolConnection.then(pool => {
                         return pool.request()
