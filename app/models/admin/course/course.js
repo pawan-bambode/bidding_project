@@ -381,7 +381,7 @@ module.exports = class course {
         });
     }
     
-    static acadSessionList(slug, biddingId) {
+    static acadSessions(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)

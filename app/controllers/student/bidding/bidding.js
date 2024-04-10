@@ -17,49 +17,44 @@ module.exports = {
         let round1Id = 2, round2Id = 4;
                 
                 return Promise.all([
-                    course.acadSessionList(res.locals.slug, res.locals.biddingId),
-                    programSession.getCredits(res.locals.slug, res.locals.biddingId),
+                    roundSetting.listByOneDayBefore(res.locals.slug, res.locals.biddingId, round1Id, round2Id),
+                    concentrationSetting.list(res.locals.slug, res.locals.biddingId),
+                    programSession.acadSessionsWiseCredits(res.locals.slug, res.locals.biddingId),
                     roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, round1Id),
+                    roundSetting.roundSettingTime(res.locals.slug, res.locals.biddingId, round1Id, round2Id),  
                     divisionBatch.biddingCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId, round1Id, round2Id),
                     divisionBatch.courseList(res.locals.slug, res.locals.biddingId),
-                    concentrationSetting.getList(res.locals.slug, res.locals.biddingId),
                     divisionBatch.areaList(res.locals.slug, res.locals.biddingId),
-                    roundSetting.roundId(res.locals.slug, res.locals.biddingId),
                     biddingClass.considerationSet(res.locals.slug, res.locals.biddingId, res.locals.studentId, round1Id, round2Id),
                     biddingClass.studentBidPoints(res.locals.slug, res.locals.biddingId, res.locals.studentId),
                     biddingClass.updateBidPoints(res.locals.slug, res.locals.biddingId, res.locals.studentId),
-                    roundSetting.listByOneDayBefore(res.locals.slug, res.locals.biddingId, round1Id, round2Id),
-                    roundSetting.roundSettingTime(res.locals.slug, res.locals.biddingId, round1Id, round2Id),
                     confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),
-                    confirmation.getConfirmationForBidding(res.locals.slug, res.locals.biddingId, res.locals.studentId),
                     biddingClass.currentRoundStatus(res.locals.slug, res.locals.biddingId),
                     biddingClass.isStudentPartOfRound(res.locals.slug, res.locals.biddingId, res.locals.studentId, round1Id, round2Id)
                     
                 ])
             .then(result => {
-               
+                
                 res.render('student/bidding/index', {
                     active: bidding,
-                    acadSessions: result[0].recordset,
-                    creditList: result[1].recordset,
-                    startAndEndTime: result[2].recordset[0] !== undefined ? result[2].recordset[0] : '',
-                    biddingCourseList:  result[3].recordset != undefined ? result[3].recordset : '',
-                    courseList: result[4].recordset,
-                    concentrationSetting: result[5].recordset[0],
-                    areaList: result[6].recordset,
-                    roundId: result[7].recordset[0] !== undefined ? result[7].recordset[0].round_lid : 0,
+                    slug: slug,
+                    roundDetails: result[0].recordset[0] !== undefined ? result[0].recordset[0] : '',
+                    concentrationSet: result[1].recordset[0],
+                    acadSessionsWiseCredits: result[2].recordset,
+                    startAndEndTime: result[3].recordset[0] !== undefined ? result[3].recordset[0] : '',
+                    roundSettingTime : result[4].recordset[0] != undefined ? result[4].recordset[0] :0,
+                    biddingCourseList:  result[5].recordset != undefined ? result[5].recordset : '',
+                    courseList: result[6].recordset,
+                    areaList: result[7].recordset,
                     considerationSetList: result[8].recordset !== undefined ? result[8].recordset:'',
                     studentBidsPoints: result[9].recordset[0] !== null && result[9].recordset[0] !== undefined ? result[9].recordset[0] : 0,
                     remaingBidPoints: result[10].recordset[0] !== null && result[10].recordset[0] !== undefined ?
-                        result[10].recordset[0] : result[9].recordset[0] !== null && result[9].recordset[0] !== undefined ? result[9].recordset[0] : 0,
-                    roundDetails: result[11].recordset[0] !== undefined ? result[11].recordset[0] : '',
-                    roundSettingTime : result[12].recordset[0] != undefined ? result[12].recordset[0] :0,
-                    confirmationCourse: result[13].recordset[0] != undefined ? result[13].recordset: '',
-                    confirmationCourse12: result[14].recordset[0] != undefined ? result[14].recordset: '',
-                    slug: slug,
-                    currentRoundStatus: result[15].recordset.length == 0 ? JSON.parse(JSON.stringify({'round_status':'Round Not Found'})) : JSON.parse(JSON.stringify(result[15].recordset[0])),
+                    result[10].recordset[0] : result[9].recordset[0] !== null && result[9].recordset[0] !== undefined ? result[9].recordset[0] : 0,
+                    roundSettingTime : result[11].recordset[0] != undefined ? result[11].recordset[0] :0,
+                    confirmationCourse: result[12].recordset[0] != undefined ? result[12].recordset: '',
+                    currentRoundStatus: result[13].recordset.length == 0 ? JSON.parse(JSON.stringify({'round_status':'Round Not Found'})) : JSON.parse(JSON.stringify(result[13].recordset[0])),
+                    isStudentPartOfRound: result[14] != undefined ? result[14].recordset.length >= 1 ? 1: 0:0
 
-                    isStudentPartOfRound: result[16].recordset.length >= 1? 1: 0
                 });
             })
             .catch(error => {

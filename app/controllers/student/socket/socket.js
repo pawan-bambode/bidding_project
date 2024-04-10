@@ -125,7 +125,6 @@ module.exports.respond = async (socket, io) => {
                     ]);
                     
                     io.emit('activeBiddingRound', {
-
                         roundSetting: roundSettingTimeResult.recordset,
                         roundDetails: listByOneDayBeforeResult.recordset,
                         biddingCourses: biddingCourses.recordset
@@ -210,36 +209,31 @@ module.exports.respond = async (socket, io) => {
     });
 
     socket.on('createOrJoinRoom', async (biddingDetails) => {
-
-        const { divisionBatchLid } = biddingDetails;
-        const roomId = divisionBatchLid;
+        const { slugName, studentLid, round_lid, courseLid, concentration_lid, biddingSessionId, userId } = biddingDetails;
+        const roomId = biddingDetails.divisionBatchLid;
     
         socket.join(roomId);
     
         try {
-            const { slugName, studentLid, round_lid, courseLid, divisionBatchLid, concentration_lid, biddingSessionId, userId } = biddingDetails;
-    
-            const result = await bidding.addBidding(slugName, studentLid, round_lid, courseLid, concentration_lid, divisionBatchLid, userId, biddingSessionId);
+            const result = await bidding.addBidding(slugName, studentLid, round_lid, courseLid, concentration_lid, roomId, userId, biddingSessionId);
             const parsedMessage = JSON.parse(result.output.output_json);
-            
-            const emitData = {
-                message: parsedMessage,
-                userId: userId
-            };
+            const emitData = { message: parsedMessage, userId };
     
             if (parsedMessage.status === 1) {
-                const detailsResult = await bidding.getAddBiddingDetails(slugName, biddingSessionId, divisionBatchLid, studentLid);
-                emitData.biddingDetails = detailsResult.recordset;
+                const detailsResult = await bidding.getAddBiddingDetails(slugName, biddingSessionId, roomId, studentLid);
+                const { total_bidders, mrb, div_batch_lid } = detailsResult.recordset[0];
+                emitData.biddingDetails = detailsResult.recordset[0];
+                socket.to(roomId).emit("totalBiddersUpdate", { totalBidders: total_bidders, mrb: mrb, divisionBatchLid: div_batch_lid });
             }
     
-            io.in(roomId).emit("addBiddingResponse", emitData);
+            socket.emit("addBiddingResponse", emitData);
         } catch (error) {
-            io.in(roomId).emit("addBiddingResponse", {
-                message: JSON.parse(error.originalError.info.message),
-                userId: biddingDetails.userId
-            });
+            const errorMessage = JSON.parse(error.originalError.info.message);
+            io.to(roomId).emit("addBiddingResponse", { message: errorMessage, userId });
         }
     });
+    
+    
 
     socket.on('withdrawBidding', async biddingDetails => {
         

@@ -59,19 +59,19 @@
                         </div>
                     </div>
                     <div class="row ps-5 pe-5">
-                        <% for (let credit of creditList) { %>
+                        <% for (let acadSessionCredit of acadSessionsWiseCredits) { %>
                             <div class="col-md-4">
-                                <h6><%- credit.acad_session %> 
-                                    <%- credit.name %>
+                                <h6><%- acadSessionCredit.name %> 
+                                    <%- acadSessionCredit.name %>
                                     Credits :&nbsp;
-                                    <span class="credits-point-target" id="credits-points-target-<%- credit.id %>" data-id="<%-credit.id %>"><%-
-                                            credit.credits %></span>
+                                    <span class="credits-point-target" id="credits-points-target-<%- acadSessionCredit.id %>" data-id="<%-acadSessionCredit.id %>"><%-
+                                        acadSessionCredit.credits %></span>
                                 </h6>
                             </div>
                         <% } %>
                     </div>
                     <div class="row ps-5 pe-5">
-                        <% for (let acadSession of acadSessions) { %>
+                        <% for (let acadSession of acadSessionsWiseCredits) { %>
                             <div class="col-md-4">
                                 <h6> Selected  <%- acadSession.name %> Credits :&nbsp;
                                     <span class="credit-points credits-points-<%- acadSession.id %>" data-id="<%- acadSession.id %>" id="credits-points-<%- acadSession.id %>">0</span>
@@ -171,7 +171,7 @@
                         <div class="col-md-3 mt-4 ms-2">
                             <select class="form-select form-control select2" id="acad-session-change">
                                 <option selected disabled value="-1">--Select Acad Session-- </option>
-                                    <%for(let acadSession of acadSessions) { %>
+                                    <%for(let acadSession of acadSessionsWiseCredits) { %>
                                         <option value="<%- acadSession.id %>"><%- acadSession.name %></option>
                                     <% } %>
                             </select>
@@ -224,7 +224,7 @@
             <div class="d-flex justify-content-center align-items-center round-wise-details d-none">
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="d-flex justify-content-between align-items-center">
-                        <% for(let acadSession of acadSessions) {%>
+                        <% for(let acadSession of acadSessionsWiseCredits) {%>
                             <h6 class="p-1 px-3">Selected <%- acadSession.name %>  Credits :&nbsp;
                                 <span class="credit-points credits-points-<%- acadSession.id %>">0</span>
                             </h6>
@@ -247,14 +247,16 @@ $(document).ready(function() {
     let socket = io();
 
     let roundDetails = JSON.parse(`<%- JSON.stringify(roundDetails) %>`);
+
     let isStudentPartOfRound = `<%- isStudentPartOfRound %>`;
+    
     let currentRoundStatus = JSON.parse(`<%- JSON.stringify(currentRoundStatus) %>`);
-    let concentrationSettingData = JSON.parse(`<%- JSON.stringify(concentrationSetting) %>`);
-    let biddingCourseList = JSON.parse(`<%- JSON.stringify(biddingCourseList) %>`);
-    let creditsList = JSON.parse(`<%- JSON.stringify(creditList) %>`)
-    let roundId = JSON.parse(`<%- JSON.stringify(roundId) %>`)
+
+    let concentrationSet = JSON.parse(`<%- JSON.stringify(concentrationSet) %>`);
+    
+    let creditsList = JSON.parse(`<%- JSON.stringify(acadSessionsWiseCredits) %>`)
+
     let considerationSet = JSON.parse(`<%- JSON.stringify(considerationSetList) %>`);
-    let confirmatCourse =  JSON.parse(`<%- JSON.stringify(confirmationCourse12) %>`);
     let totalStudentBidPoints = `<%- studentBidsPoints.student_bid_points %>`
     
     $('#student-data').attr('data-isEligibleForRound', '<%= isStudentPartOfRound %>');
@@ -264,10 +266,9 @@ $(document).ready(function() {
     let activeBidding = $('#student-data').data('active-bidding');
     let studentId = $('#student-data').data('student-id');
     
-    let concentrationId = concentrationSettingData.concentraionId;
-    let biddingSessionId = concentrationSettingData.biddingId;
-    let concentrationName = concentrationSettingData.concentration_name;
-    let concentrationSettingOfStudent = concentrationSettingData;
+    let concentrationId = concentrationSet.concentraionId;
+    let biddingSessionId = concentrationSet.biddingId;
+    let concentrationName = concentrationSet.concentration_name;
 
     let biddingDetails = [];
     let minCreditsCompleteArea = [];
@@ -282,7 +283,47 @@ $(document).ready(function() {
     let currentCreditsPoints = {};
     let biddingRow = ``;
     let divisionBatchId ;
+    let subjectAlreadySelected = false;
 
+    let studentBiddingStatus = {
+        creditsPerArea: [],
+        creditsPerSession: [],
+        primaryArea: `${concentrationSet.name}`,
+        totalCredit: 0,
+        coursesId: [],
+        divisionBatchId: [],
+        winningCredits: 0,
+        totalBidPoints: 0,
+        winningBidPoints: 0
+    };
+
+    if (considerationSet.length) {
+        considerationSet.forEach(concenSet => {
+            studentBiddingStatus.divisionBatchId.push(concenSet.division_batch_lid);
+            studentBiddingStatus.coursesId.push(concenSet.course_id);
+
+            let areaIndex = studentBiddingStatus.creditsPerArea.findIndex(ele => ele.area === concenSet.area_name);
+            if (areaIndex !== -1) {
+                studentBiddingStatus.creditsPerArea[areaIndex].credits += concenSet.credits;
+            } else {
+                studentBiddingStatus.creditsPerArea.push({
+                    area: concenSet.area_name,
+                    credits: concenSet.credits
+                });
+            }
+
+            let sessionIndex = studentBiddingStatus.creditsPerSession.findIndex(ele => ele.acadSessionId === concenSet.sap_acad_session_id);
+            if (sessionIndex !== -1) {
+                studentBiddingStatus.creditsPerSession[sessionIndex].credits += concenSet.credits;
+            } else {
+                studentBiddingStatus.creditsPerSession.push({
+                    acadSessionId: concenSet.sap_acad_session_id,
+                    credits: concenSet.credits
+                });
+            }
+        });
+    }
+ 
     considerationSetCourses(considerationSet);
     
     $('#bidding-table tbody td.winning').each(function() {
@@ -387,6 +428,7 @@ $(document).ready(function() {
             availableCourse(result.courseList, false);     
         });
     });
+    
 
     $('#bidding-trimester-select-table').on('click','.add-bidding',function() {
         
@@ -405,37 +447,26 @@ $(document).ready(function() {
         let courseId = $(this).closest('tr').data('course-id');
         let courseLid = $(this).closest('tr').data('course-lid');
         let courseNameWithDivision = $(this).closest('tr').data('course-division-name');
-        let isTotalCreditsMet = false;
-        let totalSelectedCredits = 0;
-        let biddingTable = $('#bidding-table tbody');
         let tableId = $('#bidding-table tbody tr').length;
         let studentId = $('#student-data').data('student-id');
         let id = $(this).closest('tr').data('id');
-        let roundLid = $(this).closest('tr').data('round-id');
 
-        let areaSwap = '';
-        let roundId = $('.round-wises .round-name').data('round-id');
-      
-        let areaNameAndCredits = {
-            area:areaName,
-            credit:credits,
-            id:courseId
-        }
-
-        biddingDetails.push(areaNameAndCredits);
-        areaDetails = calculateAreaFrequency(biddingDetails);
-
-        areadetails = areaDetails[areaName].totalCredits;
-
-        concentrationSettingOfStudent.max_credits_per_area -= +credits;
-        concentrationSettingOfStudent.min_credits_in_primary_area -= +credits;
-        concentrationSettingOfStudent.total_elective_credits -= +credits;
-      
+        let roundId = `<%- roundDetails.round_lid %>`;
+    
         biddingRow = `<tr 
-                        data-id= "${id}" data-round-id ="${roundId}" data-area-name ="${areaName}" data-course-name ="${courseName}" 
-                        data-acad-session ="${acadSession}" data-division-batch-lid ="${divisionBatchId}" data-faculty-id =${facultyId}
-                        data-credits = "${credits}" data-max-seats ="${available}" data-course-time ="${courseTime}" 
-                        data-acad-session-id = "${acadSessionId}" data-course-id ="${courseId}" data-course-lid="${courseLid}"
+                        data-id= "${id}" 
+                        data-round-id ="${roundId}" 
+                        data-area-name ="${areaName}" 
+                        data-course-name ="${courseName}" 
+                        data-acad-session ="${acadSession}" 
+                        data-division-batch-lid ="${divisionBatchId}" 
+                        data-faculty-id =${facultyId}
+                        data-credits = "${credits}" 
+                        data-max-seats ="${available}"
+                        data-course-time ="${courseTime}" 
+                        data-acad-session-id = "${acadSessionId}" 
+                        data-course-id ="${courseId}" 
+                        data-course-lid="${courseLid}"
                         >
                             <td class="id-column">${++tableId}</td>
                             <td>${areaName}</td>
@@ -448,19 +479,19 @@ $(document).ready(function() {
                             <td class="mrb-points"></td>
                             <td class="winning-status winning">Yes</td>
                             <td class="student-previous-bid-point">0</td>
-                            <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
-                            <button class="btn border border-dark ms-2 add-bidding-points">
-                            <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
-                            </button> </td>
+                            <td class="d-flex">
+                                <input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
+                                    <button class="btn border border-dark ms-2 add-bidding-points">
+                                        <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
+                                    </button> 
+                            </td>
                             <td>
-                                <button class="btn border border-danger withdraw-bidding mt-1" data-area="${areaName}">
+                                <button class="btn border border-danger withdraw-bidding mt-1">
                                     <img src='/image/student/body-part-image/bidding-round-image/withdraw.png'>
                                 </button>
                             </td>
-                            </tr>`;
+                        </tr>`;
                         
-            
-            updateCurrentPointTargets(currentCreditsPoints, false)
             socket.emit('createOrJoinRoom',{ 
                 slugName: "<%- slug %>",
                 studentLid: studentId,
@@ -471,54 +502,77 @@ $(document).ready(function() {
                 userId: userId,
                 biddingSessionId: biddingSessionId
             }); 
-        
-            let winningCredits = 0;
-            $('#bidding-table tbody td.winning').each(function() {
-               winningCredits += $(this).closest('tr').data('credits');
-            });
-        
-            $('#credits-winning').html(winningCredits)
     })
 
-    socket.on('addBiddingResponse', function(biddingReponseResult) {
+    socket.on('totalBiddersUpdate', function(totalBiddersUpdate){
+        let divisionBatchId = totalBiddersUpdate.divisionBatchLid;
+        let divisionBatchWiseRow = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`);
+        divisionBatchWiseRow.find('.total-bidder-counts').text(totalBiddersUpdate.totalBidders);
+        divisionBatchWiseRow.find('.mrb-points').text(totalBiddersUpdate.mrb);
+    });
 
-        let isErrorResponse = biddingReponseResult.message.status === 0;
-        let biddingResponseToUser = biddingReponseResult.message.description;
-        if(isErrorResponse){
-            createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative" });
-        }
-        else{
-            let biddingAddedByUserId = biddingReponseResult.userId;
-            biddingReponseResult.biddingDetails.forEach(userSpecificWinningStatus => {
+    socket.on('addBiddingResponse', function(biddingResponseResult) {
+        const message = biddingResponseResult.message;
+        const biddingDetails = biddingResponseResult.biddingDetails;
 
-                let divisionBatchLidReponse = userSpecificWinningStatus.div_batch_lid;
-                let biddingUserId = userSpecificWinningStatus.userId;
-                const isCurrentUser = userId === biddingAddedByUserId;
-                const isSuccessResponse = biddingReponseResult.message.status === 1;
+        const isErrorResponse = message.status === 0;
+        const biddingResponseToUser = message.description;
 
-                if (isSuccessResponse) {
-                    if (userId == biddingUserId) {
-                        $('#bidding-table tbody').append(biddingRow);
-                        arrangeTableId('bidding-trimester-select-table');
-                        let acadSessionId = $(`#bidding-trimester-select-table tr[data-division-batch-lid = ${divisionBatchLidReponse}]`).data('acad-session-id');
-                        let credits = $(`#bidding-trimester-select-table tr[data-division-batch-lid = ${divisionBatchLidReponse}]`).data('credits');
-                        currentCreditsPoints[acadSessionId] += credits;
-                        updateCurrentPointTargets(currentCreditsPoints, false);
-                        
-                        $(`#bidding-trimester-select-table tr[data-division-batch-lid = ${divisionBatchLidReponse}]`).remove();
-                        updateTableForCurrentUser(userSpecificWinningStatus);
+        if (isErrorResponse) {
+            createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative", showingTime: "1000" });
+        } else {
+            const divisionBatchId = biddingDetails.div_batch_lid;
+            const isSuccessResponse = message.status === 1;
+
+            if (isSuccessResponse) {
+                $('#bidding-table tbody').append(biddingRow);
+                const biddingRowAdded = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`); 
+
+                const courseId = biddingRowAdded.data('course-id');
+                const acadSessionId = biddingRowAdded.data('acad-session-id');
+                const credits = biddingRowAdded.data('credits');
+                const areaName = biddingRowAdded.data('area-name');
+
+                currentCreditsPoints[acadSessionId] += credits;
+                studentBiddingStatus.coursesId.push(courseId);
+                studentBiddingStatus.divisionBatchId.push(biddingDetails.div_batch_lid);
+
+                let subjectAlreadySelected = false;
+
+                studentBiddingStatus.creditsPerArea.forEach((ele) => {
+                    if (ele.area === areaName) {
+                        ele.credits += credits;
+                        subjectAlreadySelected = true;
+                        return;
                     }
-                    if(isCurrentUser){
-                        createToast({ title: "Success", msg: biddingResponseToUser, type: "positive" });
-                    }
-                } else {
-                    if (isCurrentUser) {
-                        createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative" });
-                    }
+                });
+
+                if (!subjectAlreadySelected) {
+                    studentBiddingStatus.creditsPerArea.push({ area: areaName, credits: credits });
                 }
-            });
-        }   
-    });     
+
+                let biddingSessionLength = studentBiddingStatus.creditsPerSession.length;
+
+                const matchingSessionIndex = studentBiddingStatus.creditsPerSession.findIndex((ele) => ele.acadSessionId == acadSessionId);
+                if (matchingSessionIndex !== -1) {
+                    studentBiddingStatus.creditsPerSession[matchingSessionIndex].credits += credits;
+                } else {
+                    studentBiddingStatus.creditsPerSession.push({ acadSessionId: acadSessionId, credits: credits });
+                }
+
+                if (biddingSessionLength === 0) {
+                    studentBiddingStatus.creditsPerSession.push({ acadSessionId: acadSessionId, credits: credits });
+                }
+
+                $(`#bidding-trimester-select-table tr[data-division-batch-lid="${divisionBatchId}"]`).remove();
+                updateTableForCurrentUser(biddingDetails);
+                createToast({ title: "Success", msg: biddingResponseToUser, type: "positive", showingTime: "1000" });
+            } else {
+                createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative", showingTime: "1000" });
+            }
+        }
+    });
+    
 
     
     $('#bidding-table').on('click', '.withdraw-bidding', function() {
@@ -536,9 +590,6 @@ $(document).ready(function() {
 
         creditPointsPerTrimester[`${acadSessionId}`].credits += Number(credits);
         currentCreditsPoints[`${acadSessionId}`] -= Number(credits);
-
-        updateCreditsPointTargets(creditPointsPerTrimester);
-        updateCurrentPointTargets(currentCreditsPoints, true);
 
         socket.emit('withdrawBidding', { 
             slugName: "<%- slug %>",
@@ -851,23 +902,6 @@ function availableCourse(courses) {
     }   
 }
 
-function updateCurrentPointTargets(currentObject, flag) {
-    $('.credit-points').each((index, element) => {
-        
-        Object.entries(currentObject).forEach(([key, value]) => {
-        let className = `.credits-points-${key}`;
-        let creditPointsElement = $(className);
-        if($(element).hasClass(`credits-points-${key}`)) {
-            $(element).text(currentObject[key]);
-        }
-        if (flag) {
-            creditPointsElement.html(value);
-        }
-    });
-    })
-    
-}
-
 function considerationSetCourses(courses) {
     
     if(courses.length > 0 ){
@@ -935,13 +969,14 @@ function considerationSetCourses(courses) {
 }
 
 function updateTableForCurrentUser(userSpecificWinningStatus) {
-
-    let divisionBatchLidReponse = userSpecificWinningStatus.div_batch_lid;
+    
+    let divisionBatchId = userSpecificWinningStatus.div_batch_lid;
     let actualAvailableSeats = userSpecificWinningStatus.available_seats;
     let minimumRequireBits = userSpecificWinningStatus.mrb;
     let totalBidders = userSpecificWinningStatus.total_bidders;
-    let isWinning = userSpecificWinningStatus.is_winning;     
-    let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchLidReponse}"]`);
+    let isWinning = userSpecificWinningStatus.is_winning;    
+    
+    let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
 
     if (targetRow.length > 0) {
 
@@ -963,7 +998,7 @@ function updateTableForCurrentUser(userSpecificWinningStatus) {
         } else {
             winningStatusElement.html('No');
             winningStatusElement.removeClass('winning').addClass('losing');
-            $('#bidding-table tbody tr[data-division-batch-lid="' + divisionBatchLidReponse + '"]').find('.withdraw-bidding').removeClass('disabled');
+            $('#bidding-table tbody tr[data-division-batch-lid="' + divisionBatchId + '"]').find('.withdraw-bidding').removeClass('disabled');
         }
     }
 }
