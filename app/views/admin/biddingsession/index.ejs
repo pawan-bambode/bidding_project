@@ -265,7 +265,7 @@
             let acadSessionId = $(this).closest('span').data('acad-session-id');
             let optionToRemove = $('#update-acad-session').find(`option[value="${acadSessionId}"]`);
             let firstChildValue = $("#update-acad-session option:first-child").val();
-
+    
             let acadSession = $(this).closest('span').html();
             let acadSessionRow = `<option value="${acadSessionId}">${acadSession}</option>`;
             $('#update-acad-session').append(acadSessionRow);            

@@ -15,7 +15,6 @@ module.exports = {
             favouriteCourse.getFavCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             favouriteCourse.getFavouriteCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId)
         ]).then(result => {
-            console.log('vlauesof available courses', result[2].recordset);
             res.render('student/availablecourse/index', {
                 active: availableCourse,
                 dropdownAcadSessionList: result[0].recordset,

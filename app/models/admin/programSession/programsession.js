@@ -16,7 +16,7 @@ module.exports = class ProgramSession {
         });
     }
 
-    static getCredits(slug, biddingId) {
+    static acadSessionsWiseCredits(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
