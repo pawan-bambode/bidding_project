@@ -46,10 +46,12 @@ module.exports = class DemandEstimation {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .input('acadSessionId', sql.Int, acadSessionId)    
-                .query(`SELECT DISTINCT area_name AS areaName
-                        FROM [${slug}].courses 
-                        WHERE bidding_session_lid = @biddingId AND sap_acad_session_id = @acadSessionId  AND active = 1`);
+                .input('acadSessionId', sql.Int, acadSessionId)
+                .query(`SELECT DISTINCT a.id, a.area_name AS areaName
+                        FROM [${slug}].courses c
+                        INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
+                        WHERE c.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId
+                        AND c.active = 1 AND a.active = 1 AND a.bidding_session_lid = @biddingId`);
         });
     }
 
@@ -67,19 +69,20 @@ module.exports = class DemandEstimation {
     }
     
 
-    static coursesByArea(slug, biddingId, acadSessionId, areaName) {
+    static coursesByArea(slug, biddingId, acadSessionId, areaId) {
 
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('acadSessionId', sql.Int, acadSessionId)
-                .input('areaName', sql.NVarChar, `%${areaName}%`)
-                .query(`SELECT c.area_name AS areaName, c.course_name AS courseName, c.acad_session AS acadSession,
-                        c.id AS courseId, c.sap_acad_session_id AS acadSessionId, p.program_name AS programName,
-                        c.credits 
+                .input('areaId', sql.Int, areaId)
+                .query(`SELECT DISTINCT c.course_id, c.area_name AS areaName, c.course_name AS courseName,
+                        c.acad_session AS acadSession, c.id AS courseId, c.sap_acad_session_id AS acadSessionId,
+                        p.program_name AS programName, c.credits 
                         FROM [${slug}].courses c 
                         INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
-                        WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId AND c.area_name LIKE @areaName ORDER BY c.id`);
+                        INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
+                        WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId AND a.id = @areaId ORDER BY c.id`);
         });
     }
 
