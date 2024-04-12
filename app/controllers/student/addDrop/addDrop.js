@@ -15,7 +15,7 @@ module.exports = {
               confirmation.getConfirmCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),
               roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId),
               addDrop.getWaitListCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
-              course.acadSessionList(res.locals.slug, res.locals.biddingId),
+              course.acadSessions(res.locals.slug, res.locals.biddingId),
               divisionBatch.areaList(res.locals.slug, res.locals.biddingId),
               divisionBatch.addDropCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
               waitList.getStudentDetails(res.locals.slug, res.locals.biddingId, res.locals.studentId),
