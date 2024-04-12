@@ -615,6 +615,7 @@ $(document).ready(function() {
                 createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative", showingTime: "1000" });
             }
         }
+        console.log(studentBiddingStatus.divisionBatchId)
     });
     
     $('#bidding-table').on('click', '.withdraw-bidding', function() {
@@ -641,12 +642,25 @@ $(document).ready(function() {
     });
 
     socket.on('withdrawBiddingResponse', function (withdrawResponse) {
+
+        console.log('withdrawResponse----->', withdrawResponse);
+        console.log('studentBiddingStatus-->', studentBiddingStatus);
     
         const divisionBatchId = withdrawResponse.divisionId;
         const isErrorResponse = withdrawResponse.message.status === 0;
         const withdrawResponseToUser = withdrawResponse.message.description;
 
         const isSuccessResponse = withdrawResponse.message.status === 1;
+        const acadSessionId = withdrawResponse.courseList[0].sap_acad_session_id;
+        
+        studentBiddingStatus.divisionBatchId =  studentBiddingStatus.divisionBatchId.filter(studentBiddingDivBatch => studentBiddingDivBatch.divisionBatchId != divisionBatchId )
+
+        // studentBiddingStatus.creditsPerArea =  studentBiddingStatus.creditsPerArea.map((studentCreditsPerSession) => {
+
+        //     if (studentCreditsPerSession.acadSessionId == acadSessionId) {
+        //         ele.credits -= credits;
+        //     }
+        // });
 
         if (isErrorResponse) {
             createToast({ title: "Fail", msg: withdrawResponseToUser, type: "negative", showingTime: "1000" });
