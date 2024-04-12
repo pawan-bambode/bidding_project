@@ -531,7 +531,6 @@ $(document).ready(function() {
     })
 
     socket.on('totalBiddersUpdate', function(totalBiddersUpdate){
-        console.log(totalBiddersUpdate);
         let divisionBatchId = totalBiddersUpdate.divisionBatchLid;
         let divisionBatchWiseRow = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`);
         divisionBatchWiseRow.find('.total-bidder-counts').text(totalBiddersUpdate.totalBidders);
@@ -642,8 +641,7 @@ $(document).ready(function() {
     });
 
     socket.on('withdrawBiddingResponse', function (withdrawResponse) {
-        console.log(withdrawResponse);
-
+    
         const divisionBatchId = withdrawResponse.divisionId;
         const isErrorResponse = withdrawResponse.message.status === 0;
         const withdrawResponseToUser = withdrawResponse.message.description;
@@ -692,6 +690,7 @@ $(document).ready(function() {
         let id = $(this).closest('tr').data('id');
         let totalBidPoints = Number($('#total-bid-points').html());
         let remainingBidPoints = Number($('#remaining-bid-points').html());
+        let totalBidPointsByStudent = 0;
 
         let bidJson = {
             id: id,
@@ -712,10 +711,24 @@ $(document).ready(function() {
             biddingSessionId: biddingSessionId,
             inputJson: JSON.stringify(bidJson)
         });
+
+        if (totalBidPointBidByStudent.some(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId)) {
+                let bidPointBidByStudent = totalBidPointBidByStudent.find(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId);
+                bidPointBidByStudent.bidPoints = bidPoints;
+            } else {
+                totalBidPointBidByStudent.push(bidPointsStudentBid);
+            }
+        
+        $.each(totalBidPointBidByStudent, function(index, bidPointBidByStudent) {
+            totalBidPointsByStudent += Number(bidPointBidByStudent.bidPoints);
+        });
+  
+        $('#remaining-bid-points').html(Number(totalStudentBidPoints) - Number(totalBidPointsByStudent));
     });
 
 
     socket.on('biddingLooserStatus', function(biddingLooser) { 
+        console.log('biddingLooser----->', biddingLooser);
 
         let divisionBatchId = biddingLooser.divisionBatchLid;
         let looserId = biddingLooser.looserId;
@@ -734,8 +747,7 @@ $(document).ready(function() {
     })
 
     socket.on('studentBiddingResponse', function(biddingReponseResult) {
-        
-        console.log(biddingReponseResult);
+  
         let biddingResponseToUser = biddingReponseResult.studentBiddingResponse.description;
         const isCurrentUser = userId === biddingReponseResult.userId;
         const isSuccessResponse = biddingReponseResult.studentBiddingResponse.status === 1;
