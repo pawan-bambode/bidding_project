@@ -531,7 +531,6 @@ $(document).ready(function() {
     })
 
     socket.on('totalBiddersUpdate', function(totalBiddersUpdate){
-        console.log(totalBiddersUpdate);
         let divisionBatchId = totalBiddersUpdate.divisionBatchLid;
         let divisionBatchWiseRow = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`);
         divisionBatchWiseRow.find('.total-bidder-counts').text(totalBiddersUpdate.totalBidders);
@@ -642,8 +641,7 @@ $(document).ready(function() {
     });
 
     socket.on('withdrawBiddingResponse', function (withdrawResponse) {
-        console.log(withdrawResponse);
-
+    
         const divisionBatchId = withdrawResponse.divisionId;
         const isErrorResponse = withdrawResponse.message.status === 0;
         const withdrawResponseToUser = withdrawResponse.message.description;
@@ -681,8 +679,6 @@ $(document).ready(function() {
             totalBidPointBidByStudent.push(bidPointsStudentBid);
         }
     });
-
-    console.log('totalBidPointBidByStudent', totalBidPointBidByStudent);
 
     $('#bidding-table').on('click', '.add-bidding-points', function () {
 
@@ -732,6 +728,7 @@ $(document).ready(function() {
 
 
     socket.on('biddingLooserStatus', function(biddingLooser) { 
+        console.log('biddingLooser----->', biddingLooser);
 
         let divisionBatchId = biddingLooser.divisionBatchLid;
         let looserId = biddingLooser.looserId;

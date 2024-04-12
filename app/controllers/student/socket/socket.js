@@ -241,6 +241,7 @@ module.exports.respond = async (socket, io) => {
             const { slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson } = biddingDetails;
             const result = await bidding.studentBidByPoints(slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson);
             const parsedMessage = JSON.parse(result.output.output_json);
+            let roomId = divBatchId;
     
             if (parsedMessage.status === 1) {
                 const detailsResult = await Promise.all([
@@ -257,7 +258,7 @@ module.exports.respond = async (socket, io) => {
     
                 let looserId = parsedMessage.data.loosing_user_id;
                 let mrb = detailsResult[1].recordset[0].Mrb;
-                socket.to(divBatchId).emit("biddingLooserStatus", { looserId: looserId, mrb: mrb, divisionBatchLid: divBatchId });
+                socket.to(roomId).emit("biddingLooserStatus", { looserId: looserId, mrb: mrb, divisionBatchLid: divBatchId });
             } else {
                 socket.emit("studentBiddingResponse", {
                     studentBiddingResponse: parsedMessage,
