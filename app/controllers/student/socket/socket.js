@@ -208,6 +208,8 @@ module.exports.respond = async (socket, io) => {
         const interval = setInterval(intervalFunction, 1000);
     });
 
+  
+
     socket.on('createOrJoinRoom', async (biddingDetails) => {
         const { slugName, studentLid, round_lid, courseLid, concentration_lid, biddingSessionId, userId } = biddingDetails;
         const roomId = biddingDetails.divisionBatchLid;
@@ -232,77 +234,77 @@ module.exports.respond = async (socket, io) => {
             io.to(roomId).emit("addBiddingResponse", { message: errorMessage, userId });
         }
     });
-    
-    
+
 
     socket.on('withdrawBidding', async biddingDetails => {
-        
         try {
-
             const { slugName, id, studentLid, round_lid, divisionBatchLid, biddingSessionId, userId } = biddingDetails;
             const result = await bidding.withdrawBidding(slugName, id, studentLid, round_lid, divisionBatchLid, userId, biddingSessionId);
             const parsedMessage = JSON.parse(result.output.output_json);
+            const roomId = divisionBatchLid;
     
             if (parsedMessage.status === 1) {
-
-                    const detailsResult = await Promise.all([
-                        bidding.getWithdrawBiddingDetails(slugName, biddingSessionId, divisionBatchLid),
-                        bidding.getWithdrawBiddingCourse(slugName, biddingSessionId, divisionBatchLid, studentLid)
-                    ]);
+                const detailsResult = await Promise.all([
+                    bidding.getWithdrawBiddingDetails(slugName, biddingSessionId, divisionBatchLid),
+                    bidding.getWithdrawBiddingCourse(slugName, biddingSessionId, divisionBatchLid, studentLid)
+                ]);
     
-                    socket.emit("withdrawBiddingResponse", {
-                        message: parsedMessage,
-                        withdrawBiddingCourse: detailsResult[0].recordset,
-                        courseList: detailsResult[1].recordset,
-                        userId: userId,
-                        divisionId: divisionBatchLid
-                    });
-    
-                    socket.leave(divisionBatchLid);
-                } else {
-                        socket.emit("withdrawBiddingResponse", {
-                            message: parsedMessage,
-                            userId: userId
-                        });
+                if(detailsResult[0].recordset[0]){
+                    let totalBidders = detailsResult[0].recordset[0].total_bidders;
+                    let mrb = detailsResult[0].recordset[0].mrb
+                    socket.to(roomId).emit("totalBiddersUpdate", { totalBidders: totalBidders, mrb: mrb, divisionBatchLid: divisionBatchLid });
                 }
-        } catch (error) { 
-
+                socket.emit("withdrawBiddingResponse", {
+                    message: parsedMessage,
+                    withdrawBiddingCourse: detailsResult[0].recordset,
+                    courseList: detailsResult[1].recordset,
+                    userId: userId,
+                    divisionId: divisionBatchLid
+                });
+                socket.leave(divisionBatchLid);
+            } else {
+                socket.emit("withdrawBiddingResponse", {
+                    message: parsedMessage
+                });
+            }
+        } catch (error) {
             socket.emit("withdrawBiddingResponse", {
-                message: JSON.parse(error.originalError.info.message),
-                userId: biddingDetails.userId
+                message: JSON.parse(error.originalError.info.message)
             });
         }
     });
     
-    socket.on('studentBidding', async biddingDetails => {
+
+    socket.on('studentBidByPoint', async biddingDetails => {
 
         try {
 
             const { slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson } = biddingDetails;
             const result = await bidding.studentBidByPoints(slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson);
             const parsedMessage = JSON.parse(result.output.output_json);
-        
+            const roomId = roundId;
             if (parsedMessage.status === 1) {
                 const detailsResult = await Promise.all([
                     bidding.getBiddingWinningResponse(slugName, biddingSessionId, divBatchId),
                     bidding.getMRBPointsResponse(slugName, biddingSessionId, divBatchId)
                 ]);
 
-                io.emit("studentBiddingResponse", {
+                socket.emit("studentBiddingResponse", {
                     studentBiddingResponse: parsedMessage,
                     minimumRequireBits: detailsResult[1].recordset[0],
                     divisionId: divBatchId,
                     userId: userId
                 });
+                socket.to(roomId).emit("sameRoomMemberEffectAfterBidding", { mrb: detailsResult[1].recordset[0], divisionBatchLid: divBatchId });
             } else {
-                io.emit("studentBiddingResponse", {
+                socket.emit("studentBiddingResponse", {
                     studentBiddingResponse: parsedMessage,
                     userId: userId
                 });
             }
         } catch (error) {
-    
-            io.emit("studentBiddingResponse", {
+            console.log(error);
+            socket.emit("studentBiddingResponse", {
                 studentBiddingResponse: JSON.parse(error.originalError.info.message),
                 userId: biddingDetails.userId
             });
