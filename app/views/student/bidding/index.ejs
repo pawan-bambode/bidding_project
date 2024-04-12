@@ -640,8 +640,9 @@ $(document).ready(function() {
         });
         
     });
+
     socket.on('withdrawBiddingResponse', function (withdrawResponse) {
-        console.log(withdrawResponse.message);
+
         const divisionBatchId = withdrawResponse.divisionId;
         const isErrorResponse = withdrawResponse.message.status === 0;
         const withdrawResponseToUser = withdrawResponse.message.description;
@@ -657,7 +658,7 @@ $(document).ready(function() {
 
                 let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
                 targetRow.remove();
-                availableCourse(withdrawResponse.courseList, true);
+                availableCourse(withdrawResponse.courseList);
                 withdrawResponse.withdrawBiddingCourse.forEach(userSpecificWithdrawStatus => {
                     updateTableForCurrentUser(userSpecificWithdrawStatus);
                 });
@@ -861,6 +862,7 @@ function availableCourse(courses) {
     if(courses.length > 0) {
 
         courses.forEach(function(course, index) {
+            console.log(course);
         
             let divisionBatchId = course.division_batch_lid;
             let facultyId = course.faculty_id;
