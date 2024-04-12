@@ -756,6 +756,7 @@ $(document).ready(function() {
                 winningStatusElement.removeClass('losing').addClass('winning');
                 if(Number(mrbPoint)> Number(bidPoints)){
                     $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`).find('.student-previous-bid-point').html(bidPoints);
+                    $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`).find('student-current-bid-point').html('');
                 }
                 let studentBidPoints = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`).find('.student-previous-bid-point').html();
 
