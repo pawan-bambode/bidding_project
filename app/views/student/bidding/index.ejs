@@ -659,7 +659,7 @@ $(document).ready(function() {
 
                 let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
                 targetRow.remove();
-                availableCourse(withdrawResponse.courseList);
+                availableCourse(withdrawResponse.courseList, withdrawResponse.courseList.is_favourite);                
                 withdrawResponse.withdrawBiddingCourse.forEach(userSpecificWithdrawStatus => {
                     updateTableForCurrentUser(userSpecificWithdrawStatus);
                 });
@@ -756,6 +756,7 @@ $(document).ready(function() {
                 winningStatusElement.removeClass('losing').addClass('winning');
                 if(Number(mrbPoint)> Number(bidPoints)){
                     $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`).find('.student-previous-bid-point').html(bidPoints);
+                    $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`).find('student-current-bid-point').html('');
                 }
                 let studentBidPoints = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`).find('.student-previous-bid-point').html();
 
@@ -810,7 +811,7 @@ $(document).ready(function() {
                 
                 if(isEligibleForRound == 1){
                     if(!biddingCourseFlag){
-                        availableCourse( data.biddingCourses);
+                        availableCourse( data.biddingCourses , false);
                     }
                     biddingCourseFlag = true;
                     $('.round-message-container').addClass('d-none');
@@ -849,9 +850,8 @@ $(document).ready(function() {
     }); 
 });
 
-function availableCourse(courses, prePend) {
-    console.log(prePend);
-
+function availableCourse(courses , prepend) {
+   
     if(courses.length > 0) {
 
         courses.forEach(function(course, index) {
@@ -897,14 +897,19 @@ function availableCourse(courses, prePend) {
                                 </button>
                             </td>
                         </tr>`;
-                    $('#bidding-trimester-select-table tbody').append(newRow);
+                        if(prepend){
+                            $('#bidding-trimester-select-table tbody').prepend(newRow);
+                        }
+                        else{
+                            $('#bidding-trimester-select-table tbody').append(newRow);
+                        }
             }else if(existingFaculty.length > 0){
                     return ;
             }
             else {
                 let courseTiming = `<div>${course.day_name}(${course.StartTime} to ${course.EndTime})`;
                 let contentToAppend = otherFacultyExists.length ? `${courseTiming} - ${course.faculty_name})` : `${courseTiming}`;
-                existingElement.children('.course-timing').append(contentToAppend);
+                    existingElement.children('.course-timing').append(contentToAppend);            
             }
         });
     }   
