@@ -584,6 +584,7 @@ $(document).ready(function() {
                 }
 
                 studentBiddingStatus.creditsPerArea.forEach((ele) => {
+                    console.log(ele);
                     if (ele.area === areaName) {
                         ele.credits += credits;
                         subjectAlreadySelected = true;
@@ -598,15 +599,19 @@ $(document).ready(function() {
                 let biddingSessionLength = studentBiddingStatus.creditsPerSession.length;
 
                 const matchingSessionIndex = studentBiddingStatus.creditsPerSession.findIndex((ele) => ele.acadSessionId == acadSessionId);
+                console.log('valuesof matchingSessionIndex', matchingSessionIndex);
+                
+                console.log('acadSessionId', acadSessionId);
                 if (matchingSessionIndex !== -1) {
+                    console.log('inside the if block', matchingSessionIndex);
                     studentBiddingStatus.creditsPerSession[matchingSessionIndex].credits += credits;
-                } else {
-                    studentBiddingStatus.creditsPerSession.push({ acadSessionId: acadSessionId, credits: credits });
-                }
+                } 
 
                 if (biddingSessionLength === 0) {
                     studentBiddingStatus.creditsPerSession.push({ acadSessionId: acadSessionId, credits: credits });
                 }
+
+                console.log(studentBiddingStatus.creditsPerSession);
 
                 $(`#bidding-trimester-select-table tr[data-division-batch-lid="${divisionBatchId}"]`).remove();
                 updateTableForCurrentUser(biddingDetails);
@@ -651,7 +656,6 @@ $(document).ready(function() {
         const withdrawResponseToUser = withdrawResponse.message.description;
 
         const isSuccessResponse = withdrawResponse.message.status === 1;
-        const acadSessionId = withdrawResponse.courseList[0].sap_acad_session_id;
         
         studentBiddingStatus.divisionBatchId =  studentBiddingStatus.divisionBatchId.filter(studentBiddingDivBatch => studentBiddingDivBatch.divisionBatchId != divisionBatchId )
 
@@ -742,8 +746,7 @@ $(document).ready(function() {
 
 
     socket.on('biddingLooserStatus', function(biddingLooser) { 
-        console.log('biddingLooser----->', biddingLooser);
-
+    
         let divisionBatchId = biddingLooser.divisionBatchLid;
         let looserId = biddingLooser.looserId;
         let mrbPoint = biddingLooser.mrb;
