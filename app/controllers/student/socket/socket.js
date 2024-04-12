@@ -232,7 +232,7 @@ module.exports.respond = async (socket, io) => {
             socket.emit("addBiddingResponse", emitData);
         } catch (error) {
             const errorMessage = JSON.parse(error.originalError.info.message);
-            io.to(roomId).emit("addBiddingResponse", { message: errorMessage, userId });
+            socket.emit("addBiddingResponse", { message: errorMessage, userId });
         }
     });
 
