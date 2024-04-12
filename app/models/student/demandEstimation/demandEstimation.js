@@ -86,16 +86,17 @@ module.exports = class DemandEstimation {
         });
     }
 
-    static coursesByAreaCount(slug, biddingId, acadSessionId, areaName) {
+    static coursesByAreaCount(slug, biddingId, acadSessionId, areaId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
                 .input('acadSessionId', sql.Int, acadSessionId)
-                .input('areaName', sql.NVarChar, `%${areaName}%`)
+                .input('areaId', sql.Int, areaId)
                 .query(`SELECT COUNT(*) AS count 
                         FROM [${slug}].courses c 
                         INNER JOIN [${slug}].programs p ON c.program_id = p.program_id 
-                        WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId AND c.area_name LIKE @areaName`);
+                        INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
+                        WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId AND a.id = @areaId`);
         });
     }
 

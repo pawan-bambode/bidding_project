@@ -794,7 +794,7 @@ $(document).ready(function() {
             let areaName = `<option selected disabled value="-1">--Select Area--</option>`;
             if (result.areaList.length > 0) {
                 result.areaList.forEach(area => {
-                    areaName += `<option value="${area.areaName}">${area.areaName}</option>`;
+                    areaName += `<option value="${area.id}">${area.areaName}</option>`;
                 });
 
             } else {
@@ -814,14 +814,14 @@ $(document).ready(function() {
 
     $('#area-change').on('change', function () {
         let acadSessionId = $('#acad-session-change').val();
-        let areaName = $(this).val();
+        let areaId = $(this).val();
 
         let ApiObj = {
             url: '/student/demand-estimation/courses-by-area',
             type: 'POST',
             data: {
                 acadSessionId: acadSessionId,
-                areaName: areaName
+                areaId: areaId
             },
             dataType: 'JSON'
         }

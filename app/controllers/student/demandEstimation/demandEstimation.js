@@ -66,9 +66,10 @@ module.exports = {
 
     courseByArea : (req, res) => {
         Promise.all([
-            demandEstimation.coursesByArea(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaName),
-            demandEstimation.coursesByAreaCount(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaName)
+            demandEstimation.coursesByArea(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaId),
+            demandEstimation.coursesByAreaCount(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaId)
         ]).then(result => {
+            result[0].recordset
             res.json({
                 status: "200",
                 message: "Sucessfull",
@@ -76,6 +77,7 @@ module.exports = {
                 courseCount: result[1].recordset[0].count,
             });
         }).catch(error => {
+            console.log('eorror$',error);
             res.status(500).json(error.originalError.info.message);
         });
     },
