@@ -784,12 +784,13 @@ $(document).ready(function() {
     
         let winningStatusElement = targetRow.find('.winning-status');
         let mrbPointsElement = targetRow.find('.mrb-points');
+        mrbPointsElement.html(mrbPoint);
         if(userId == looserId) {
-            winningStatusElement.html('No');
-            mrbPointsElement.html(mrbPoint);
+            winningStatusElement.html('No');  
             winningStatusElement.removeClass('winning').addClass('losing');
             $('#bidding-table tbody tr[data-division-batch-lid="' + divisionBatchId + '"]').find('.withdraw-bidding').removeClass('disabled');
         }
+
     })
 
     socket.on('studentBiddingResponse', function(biddingReponseResult) {
