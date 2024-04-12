@@ -222,12 +222,13 @@ module.exports = class Bidding {
                 .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, 
                         c.acad_session, c.sap_acad_session_id, c.credits, db.max_seats, RTRIM(LTRIM(db.division)) AS division, t.faculty_id, t.faculty_name,  d.day_name, c.id AS course_lid,
                         CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, 
-                        CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime
+                        CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, sem.is_favourite
                         FROM [${slug}].timetable t 
                         INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
                         INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
                         INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
                         INNER JOIN [${slug}].courses c ON c.id = db.course_lid
+                        INNER JOIN [${slug}].student_elective_mapping sem ON sem.div_batch_lid = db.id
                         INNER JOIN [dbo].days d ON d.id = t.day_lid
                         WHERE t.division_batch_lid = @divisionBatchId AND t.bidding_session_lid = @biddingId`);
         });
