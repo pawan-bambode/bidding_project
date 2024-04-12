@@ -4,6 +4,7 @@ const roundSetting = require('../../../models/admin/roundSettings/roundSettings'
 const confirmation = require('../../../models/student/confirmation/confirmation');
 const divisionBatch = require('../../../models/admin/divisionBatches/divisionBatches');
 const demandEstimation = require('../../../models/student/demandEstimation/demandEstimation');
+const e = require('express');
 
 module.exports.respond = async (socket, io) => {
 
@@ -235,7 +236,42 @@ module.exports.respond = async (socket, io) => {
         }
     });
 
-
+    socket.on('studentBidding', async biddingDetails => {
+        try {
+            const { slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson } = biddingDetails;
+            const result = await bidding.studentBidByPoints(slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson);
+            const parsedMessage = JSON.parse(result.output.output_json);
+    
+            if (parsedMessage.status === 1) {
+                const detailsResult = await Promise.all([
+                    bidding.getBiddingWinningResponse(slugName, biddingSessionId, divBatchId),
+                    bidding.getMRBPointsResponse(slugName, biddingSessionId, divBatchId)
+                ]);
+    
+                socket.emit("studentBiddingResponse", {
+                    studentBiddingResponse: parsedMessage,
+                    minimumRequireBits: detailsResult[1].recordset[0],
+                    divisionId: divBatchId,
+                    userId: userId
+                });
+    
+                let looserId = parsedMessage.data.loosing_user_id;
+                let mrb = detailsResult[1].recordset[0].Mrb;
+                socket.to(divBatchId).emit("biddingLooserStatus", { looserId: looserId, mrb: mrb, divisionBatchLid: divBatchId });
+            } else {
+                socket.emit("studentBiddingResponse", {
+                    studentBiddingResponse: parsedMessage,
+                    userId: userId
+                });
+            }
+        } catch (error) {
+            socket.emit("studentBiddingResponse", {
+                studentBiddingResponse: JSON.parse(error.originalError.info.message),
+                userId: biddingDetails.userId
+            });
+        }
+    });
+    
     socket.on('withdrawBidding', async biddingDetails => {
         try {
             const { slugName, id, studentLid, round_lid, divisionBatchLid, biddingSessionId, userId } = biddingDetails;
@@ -270,41 +306,6 @@ module.exports.respond = async (socket, io) => {
         } catch (error) {
             socket.emit("withdrawBiddingResponse", {
                 message: JSON.parse(error.originalError.info.message)
-            });
-        }
-    });
-    
-
-    socket.on('studentBidding', async biddingDetails => {
-
-        try {
-            const { slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson } = biddingDetails;
-            const result = await bidding.studentBidByPoints(slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson);
-            const parsedMessage = JSON.parse(result.output.output_json);
-        
-            if (parsedMessage.status === 1) {
-                const detailsResult = await Promise.all([
-                    bidding.getBiddingWinningResponse(slugName, biddingSessionId, divBatchId),
-                    bidding.getMRBPointsResponse(slugName, biddingSessionId, divBatchId)
-                ]);
-
-                io.emit("studentBiddingResponse", {
-                    studentBiddingResponse: parsedMessage,
-                    minimumRequireBits: detailsResult[1].recordset[0],
-                    divisionId: divBatchId,
-                    userId: userId
-                });
-            } else {
-                io.emit("studentBiddingResponse", {
-                    studentBiddingResponse: parsedMessage,
-                    userId: userId
-                });
-            }
-        } catch (error) {
-    
-            io.emit("studentBiddingResponse", {
-                studentBiddingResponse: JSON.parse(error.originalError.info.message),
-                userId: biddingDetails.userId
             });
         }
     });
