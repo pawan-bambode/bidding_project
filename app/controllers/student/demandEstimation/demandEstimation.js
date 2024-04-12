@@ -77,7 +77,6 @@ module.exports = {
                 courseCount: result[1].recordset[0].count,
             });
         }).catch(error => {
-            console.log('eorror$',error);
             res.status(500).json(error.originalError.info.message);
         });
     },

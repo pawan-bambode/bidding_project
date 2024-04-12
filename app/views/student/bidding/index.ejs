@@ -538,7 +538,6 @@ $(document).ready(function() {
     });
 
     socket.on('sameRoomMemberEffectAfterBidding', function(data){
-        console.log(data);
         let divisionBatchId = totalBiddersUpdate.divisionBatchLid;
         let divisionBatchWiseRow = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`);
         divisionBatchWiseRow.find('.total-bidder-counts').text(totalBiddersUpdate.totalBidders);
@@ -642,6 +641,7 @@ $(document).ready(function() {
     });
 
     socket.on('withdrawBiddingResponse', function (withdrawResponse) {
+        console.log(withdrawResponse);
 
         const divisionBatchId = withdrawResponse.divisionId;
         const isErrorResponse = withdrawResponse.message.status === 0;
@@ -682,6 +682,64 @@ $(document).ready(function() {
     });
 
 
+//     $('#bidding-table').on('click', '.add-bidding-points', function () {
+
+//         let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
+//         let bidPoints = $(this).closest('tr').find('.student-current-bid-point').val();
+//         let studentId = $('#student-data').data('student-id');
+//         let roundId = $('.round-basic-details h4.round-name').data('round-id');
+//         let previousBid = $(this).closest('tr').find('.student-previous-bid-point').html();
+//         let id = $(this).closest('tr').data('id');
+//         let totalBidPoints = Number($('#total-bid-points').html());
+//         let remainingBidPoints = Number($('#remaining-bid-points').html());
+
+//         $(this).closest('tr').find('.student-current-bid-point').val('');
+//         let totalBidPointsByStudent = 0;
+//         if (Number(totalStudentBidPoints) - Number(totalBidPointsByStudent) < bidPoints) {
+//             alert('Your Remaining bid point is less than your bid point entered');
+//         } else {
+
+           
+//             let bidJson = {
+//                 id: id,
+//                 previous_bid : previousBid,
+//                 bid_points: bidPoints
+//             }
+//             let bidPointsStudentBid = {
+//                 divisionBatchId: divisionBatchId,
+//                 bidPoints: bidPoints     
+//             }
+
+//             if (totalBidPointBidByStudent.some(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId)) {
+//                 let bidPointBidByStudent = totalBidPointBidByStudent.find(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId);
+//                 bidPointBidByStudent.bidPoints = bidPoints;
+//             } else {
+//                 totalBidPointBidByStudent.push(bidPointsStudentBid);
+//             }
+
+//         $.each(totalBidPointBidByStudent, function(index, bidPointBidByStudent) {
+//             totalBidPointsByStudent += Number(bidPointBidByStudent.bidPoints);
+//         });
+
+//         $('#remaining-bid-points').html(Number(totalStudentBidPoints) - Number(totalBidPointsByStudent));
+//             if (Number(totalStudentBidPoints) - Number(totalBidPointsByStudent) <= 0) {
+//         $('#bidding-table tbody tr').each(function(index, element) {
+//             $(element).find('.add-bidding-points').addClass('disabled');
+//         });
+//     }
+
+//         socket.emit('studentBidding', {
+//             slugName: "<%- slug %>",
+//             studentId: studentId,
+//             roundId: roundId,
+//             divBatchId: divisionBatchId,
+//             userId: userId,
+//             biddingSessionId: biddingSessionId,
+//             inputJson: JSON.stringify(bidJson)
+//         });
+// }
+// });
+
     $('#bidding-table').on('click', '.add-bidding-points', function () {
 
         let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
@@ -694,40 +752,17 @@ $(document).ready(function() {
         let remainingBidPoints = Number($('#remaining-bid-points').html());
 
         $(this).closest('tr').find('.student-current-bid-point').val('');
-        let totalBidPointsByStudent = 0;
-        if (Number(totalStudentBidPoints) - Number(totalBidPointsByStudent) < bidPoints) {
-            alert('Your Remaining bid point is less than your bid point entered');
-        } else {
 
-            $(this).closest('tr').find('.student-previous-bid-point').html(bidPoints);
-            let bidJson = {
-                id: id,
-                previous_bid : previousBid,
-                bid_points: bidPoints
-            }
-            let bidPointsStudentBid = {
-                divisionBatchId: divisionBatchId,
-                bidPoints: bidPoints     
-            }
-
-            if (totalBidPointBidByStudent.some(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId)) {
-                let bidPointBidByStudent = totalBidPointBidByStudent.find(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId);
-                bidPointBidByStudent.bidPoints = bidPoints;
-            } else {
-                totalBidPointBidByStudent.push(bidPointsStudentBid);
-            }
-
-        $.each(totalBidPointBidByStudent, function(index, bidPointBidByStudent) {
-            totalBidPointsByStudent += Number(bidPointBidByStudent.bidPoints);
-        });
-
-        $('#remaining-bid-points').html(Number(totalStudentBidPoints) - Number(totalBidPointsByStudent));
-            if (Number(totalStudentBidPoints) - Number(totalBidPointsByStudent) <= 0) {
-        $('#bidding-table tbody tr').each(function(index, element) {
-            $(element).find('.add-bidding-points').addClass('disabled');
-        });
-    }
-
+        let bidJson = {
+            id: id,
+            previous_bid : previousBid,
+            bid_points: bidPoints
+        }
+        let bidPointsStudentBid = {
+            divisionBatchId: divisionBatchId,
+            bidPoints: bidPoints     
+        }
+        
         socket.emit('studentBidding', {
             slugName: "<%- slug %>",
             studentId: studentId,
@@ -737,106 +772,62 @@ $(document).ready(function() {
             biddingSessionId: biddingSessionId,
             inputJson: JSON.stringify(bidJson)
         });
-}
-});
+    });
 
-    // $('#bidding-table').on('click', '.add-bidding-points', function () {
 
-    //     let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
-    //     let bidPoints = $(this).closest('tr').find('.student-current-bid-point').val();
-    //     let studentId = $('#student-data').data('student-id');
-    //     let roundId = $('.round-basic-details h4.round-name').data('round-id');
-    //     let previousBid = $(this).closest('tr').find('.student-previous-bid-point').html();
-    //     let id = $(this).closest('tr').data('id');
-    //     let totalBidPoints = Number($('#total-bid-points').html());
-    //     let remainingBidPoints = Number($('#remaining-bid-points').html());
+    socket.on('biddingLooserStatus', function(biddingLooser) { 
 
-    //     $(this).closest('tr').find('.student-current-bid-point').val('');
-
-    //     let bidJson = {
-    //         id: id,
-    //         previous_bid : previousBid,
-    //         bid_points: bidPoints
-    //     }
-    //     let bidPointsStudentBid = {
-    //         divisionBatchId: divisionBatchId,
-    //         bidPoints: bidPoints     
-    //     }
-        
-    //     socket.emit('studentBidByPoint', {
-    //         slugName: "<%- slug %>",
-    //         studentId: studentId,
-    //         roundId: roundId,
-    //         divBatchId: divisionBatchId,
-    //         userId: userId,
-    //         biddingSessionId: biddingSessionId,
-    //         inputJson: JSON.stringify(bidJson)
-    //     });
-    // });
-
+        let divisionBatchId = biddingLooser.divisionBatchLid;
+        let looserId = biddingLooser.looserId;
+        let mrbPoint = biddingLooser.mrb;
+        let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
+    
+        let winningStatusElement = targetRow.find('.winning-status');
+        let mrbPointsElement = targetRow.find('.mrb-points');
+        if(userId == looserId) {
+            winningStatusElement.html('No');
+            mrbPointsElement.html(mrbPoint);
+            winningStatusElement.removeClass('winning').addClass('losing');
+            $('#bidding-table tbody tr[data-division-batch-lid="' + divisionBatchId + '"]').find('.withdraw-bidding').removeClass('disabled');
+        }
+    })
 
     socket.on('studentBiddingResponse', function(biddingReponseResult) {
-        console.log(biddingReponseResult);
 
         let biddingResponseToUser = biddingReponseResult.studentBiddingResponse.description;
         const isCurrentUser = userId === biddingReponseResult.userId;
-        let bidPoints = biddingReponseResult.bid_points;
         const isSuccessResponse = biddingReponseResult.studentBiddingResponse.status === 1;
 
         if (isSuccessResponse) {
-        
-            let biddingUserId = biddingReponseResult.userId;
             let divisionBatchId = biddingReponseResult.divisionId;
-            let winningStudent = biddingReponseResult.studentBiddingResponse.data.winning_user_id;
-            let loosingStudent = biddingReponseResult.studentBiddingResponse.data.loosing_user_id;
             let mrbPoint = biddingReponseResult.minimumRequireBits.Mrb;
-            let bidPoints = biddingReponseResult.minimumRequireBits.MaxBidPoints
-        
+            let bidPoints = biddingReponseResult.minimumRequireBits.MaxBidPoints;
+
             let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
             if (targetRow.length > 0) {
-            
                 let winningStatusElement = targetRow.find('.winning-status');
                 let mrbPointsElement = targetRow.find('.mrb-points');
                 let curentStudentBitPoints = targetRow.find('.student-current-bid-point').val();
-            
+
                 curentStudentBitPoints = curentStudentBitPoints !== '' ? curentStudentBitPoints : '';
                 mrbPointsElement.html(mrbPoint);
-            
-                if (winningStudent == userId) {
-                    winningStatusElement.html('Yes');
-                    winningStatusElement.removeClass('losing').addClass('winning');
-                    $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`).find('.student-previous-bid-point').html(bidPoints);
-                    let studentBidPoints = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`).find('.student-previous-bid-point').html();
-                
-                    if(studentBidPoints > 0){
-                        $('#bidding-table tbody tr[data-division-batch-lid="' + divisionBatchId + '"]').find('.withdraw-bidding').addClass('disabled');  
-                    }
-                }
-                if(loosingStudent == userId){
-                    winningStatusElement.html('No');
-                    winningStatusElement.removeClass('winning').addClass('losing');
-                    $('#bidding-table tbody tr[data-division-batch-lid="' + divisionBatchId + '"]').find('.withdraw-bidding').removeClass('disabled');
-                
+
+                winningStatusElement.html('Yes');
+                winningStatusElement.removeClass('losing').addClass('winning');
+                $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`).find('.student-previous-bid-point').html(bidPoints);
+                let studentBidPoints = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`).find('.student-previous-bid-point').html();
+
+                if(studentBidPoints > 0){
+                    $('#bidding-table tbody tr[data-division-batch-lid="' + divisionBatchId + '"]').find('.withdraw-bidding').addClass('disabled');  
                 }
             }
-        
-            if(isCurrentUser){
-                createToast(biddingResponseToUser, 'alert-success', 'message-content');
-            }
-        }   
-        else {
-            if(isCurrentUser){
-                createToast(biddingResponseToUser, 'alert-danger', 'error-message');
-            }
+
+            createToast({ title: "Success", msg: biddingResponseToUser, type: "positive", showingTime: "1000"});
+        } else {
+            createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative", showingTime: "1000"});
         } 
-        let winningCredits = 0;
+    }); 
 
-        $('#bidding-table tbody td.winning').each(function() {
-            winningCredits += $(this).closest('tr').data('credits');
-        });
-
-        $('#credits-winning').html(winningCredits)
-    });
 
     socket.emit('biddingPageLoadTime', { 
         slugName: "<%- slug %>",
