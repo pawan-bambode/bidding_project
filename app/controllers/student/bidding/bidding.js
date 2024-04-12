@@ -170,14 +170,29 @@ module.exports = {
 
     coursesByArea : (req, res) => {
         Promise.all([
-            biddingClass.coursesByArea(res.locals.slug, res.locals.biddingId, req.body.acadSessionId,req.body.roundId ,req.body.studentId ,req.body.areaName),
-            demandEstimation.coursesByArea(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaName)
+            biddingClass.coursesByArea(res.locals.slug, res.locals.biddingId, req.body.acadSessionId,req.body.roundId ,req.body.studentId ,req.body.areaId),
+            demandEstimation.coursesByArea(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaId)
         ]).then(result => {
             res.json({
                 status: "200",
                 message: "Sucessfull",
                 courseList: result[0].recordset,
                 courseListDrop: result[1].recordset,
+            });
+        }).catch(error => {
+            res.status(500).json(error.originalError.info.message);
+        });
+    },
+
+
+    courseByCourseId : (req, res) => {
+        Promise.all([
+            biddingClass.courseByCourseId(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.roundId, req.body.studentId, req.body.courseId, req.body.areaId)            
+        ]).then(result => {
+            res.json({
+                status: "200",
+                message: "Sucessfull",
+                courseList: result[0].recordset
             });
         }).catch(error => {
             res.status(500).json(error.originalError.info.message);
