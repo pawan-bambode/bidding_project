@@ -275,41 +275,40 @@ module.exports.respond = async (socket, io) => {
     });
     
 
-    socket.on('studentBidByPoint', async biddingDetails => {
+    socket.on('studentBidding', async biddingDetails => {
 
         try {
-
             const { slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson } = biddingDetails;
             const result = await bidding.studentBidByPoints(slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson);
             const parsedMessage = JSON.parse(result.output.output_json);
-            const roomId = roundId;
+        
             if (parsedMessage.status === 1) {
                 const detailsResult = await Promise.all([
                     bidding.getBiddingWinningResponse(slugName, biddingSessionId, divBatchId),
                     bidding.getMRBPointsResponse(slugName, biddingSessionId, divBatchId)
                 ]);
 
-                socket.emit("studentBiddingResponse", {
+                io.emit("studentBiddingResponse", {
                     studentBiddingResponse: parsedMessage,
                     minimumRequireBits: detailsResult[1].recordset[0],
                     divisionId: divBatchId,
                     userId: userId
                 });
-                socket.to(roomId).emit("sameRoomMemberEffectAfterBidding", { mrb: detailsResult[1].recordset[0], divisionBatchLid: divBatchId });
             } else {
-                socket.emit("studentBiddingResponse", {
+                io.emit("studentBiddingResponse", {
                     studentBiddingResponse: parsedMessage,
                     userId: userId
                 });
             }
         } catch (error) {
-            console.log(error);
-            socket.emit("studentBiddingResponse", {
+    
+            io.emit("studentBiddingResponse", {
                 studentBiddingResponse: JSON.parse(error.originalError.info.message),
                 userId: biddingDetails.userId
             });
         }
     });
+
 
     socket.on('confirmationPageLoad', (data) => {
 
