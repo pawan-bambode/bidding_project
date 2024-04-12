@@ -682,6 +682,8 @@ $(document).ready(function() {
         }
     });
 
+    console.log('totalBidPointBidByStudent', totalBidPointBidByStudent);
+
     $('#bidding-table').on('click', '.add-bidding-points', function () {
 
         let divisionBatchId = $(this).closest('tr').data('division-batch-lid');
@@ -692,6 +694,7 @@ $(document).ready(function() {
         let id = $(this).closest('tr').data('id');
         let totalBidPoints = Number($('#total-bid-points').html());
         let remainingBidPoints = Number($('#remaining-bid-points').html());
+        let totalBidPointsByStudent = 0;
 
         let bidJson = {
             id: id,
@@ -712,6 +715,19 @@ $(document).ready(function() {
             biddingSessionId: biddingSessionId,
             inputJson: JSON.stringify(bidJson)
         });
+
+        if (totalBidPointBidByStudent.some(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId)) {
+                let bidPointBidByStudent = totalBidPointBidByStudent.find(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId);
+                bidPointBidByStudent.bidPoints = bidPoints;
+            } else {
+                totalBidPointBidByStudent.push(bidPointsStudentBid);
+            }
+        
+        $.each(totalBidPointBidByStudent, function(index, bidPointBidByStudent) {
+            totalBidPointsByStudent += Number(bidPointBidByStudent.bidPoints);
+        });
+  
+        $('#remaining-bid-points').html(Number(totalStudentBidPoints) - Number(totalBidPointsByStudent));
     });
 
 
@@ -734,8 +750,7 @@ $(document).ready(function() {
     })
 
     socket.on('studentBiddingResponse', function(biddingReponseResult) {
-        
-        console.log(biddingReponseResult);
+  
         let biddingResponseToUser = biddingReponseResult.studentBiddingResponse.description;
         const isCurrentUser = userId === biddingReponseResult.userId;
         const isSuccessResponse = biddingReponseResult.studentBiddingResponse.status === 1;
