@@ -584,7 +584,6 @@ $(document).ready(function() {
                 }
 
                 studentBiddingStatus.creditsPerArea.forEach((ele) => {
-                    console.log(ele);
                     if (ele.area === areaName) {
                         ele.credits += credits;
                         subjectAlreadySelected = true;
@@ -599,19 +598,14 @@ $(document).ready(function() {
                 let biddingSessionLength = studentBiddingStatus.creditsPerSession.length;
 
                 const matchingSessionIndex = studentBiddingStatus.creditsPerSession.findIndex((ele) => ele.acadSessionId == acadSessionId);
-                console.log('valuesof matchingSessionIndex', matchingSessionIndex);
                 
-                console.log('acadSessionId', acadSessionId);
                 if (matchingSessionIndex !== -1) {
-                    console.log('inside the if block', matchingSessionIndex);
                     studentBiddingStatus.creditsPerSession[matchingSessionIndex].credits += credits;
                 } 
 
                 if (biddingSessionLength === 0) {
                     studentBiddingStatus.creditsPerSession.push({ acadSessionId: acadSessionId, credits: credits });
                 }
-
-                console.log(studentBiddingStatus.creditsPerSession);
 
                 $(`#bidding-trimester-select-table tr[data-division-batch-lid="${divisionBatchId}"]`).remove();
                 updateTableForCurrentUser(biddingDetails);
@@ -620,7 +614,6 @@ $(document).ready(function() {
                 createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative", showingTime: "1000" });
             }
         }
-        console.log(studentBiddingStatus.divisionBatchId)
     });
     
     $('#bidding-table').on('click', '.withdraw-bidding', function() {
@@ -647,10 +640,7 @@ $(document).ready(function() {
     });
 
     socket.on('withdrawBiddingResponse', function (withdrawResponse) {
-
-        console.log('withdrawResponse----->', withdrawResponse);
-        console.log('studentBiddingStatus-->', studentBiddingStatus);
-    
+   
         const divisionBatchId = withdrawResponse.divisionId;
         const isErrorResponse = withdrawResponse.message.status === 0;
         const withdrawResponseToUser = withdrawResponse.message.description;

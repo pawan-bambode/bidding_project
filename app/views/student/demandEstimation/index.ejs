@@ -492,10 +492,8 @@ $(document).ready(function() {
         let selectedCourseCredit = $('#selected-course-credits').text();
         let maxCreditPerArea = $('#max-credits-per-area').text();
         let rowId = $(this).closest('tr').find('td:first-child').text();
-        
-        let selectedCourseCount = $('#selected-course-table tbody tr').filter(function() {
-            return $(this).attr('colspan') !== "6";
-        }).length;
+        let totalRowNo  = Number($('#page-no').text());
+        $('#page-no').text(--totalRowNo);
 
         let areaCountText = concentrationSet.areasCover;
         let subjectAlreadySelected = false;
@@ -579,7 +577,7 @@ $(document).ready(function() {
         //update totalCredit and areaCovered in the obj
         studentCriteriaStatus.totalCredit += credits;
         let minCreditAreaFilter = studentCriteriaStatus.creditsPerArea.filter(function(item) {
-            if(item.area === concentrationSet.name){
+            if(item.area === concentrationSet.primaryArea){
                 return  item.credits >= concentrationSet.minCreditsInPrimayArea
             }
             else{
@@ -598,10 +596,24 @@ $(document).ready(function() {
             let isPrimaryAreaSelected = studentCriteriaStatus.creditsPerArea.some(function(ele) {
                 return ele.area === concentrationSet.primaryArea;
             });
+
+            let primaryAreaCredits = 0;
+            let primaryAreaMatch =  studentCriteriaStatus.creditsPerArea.find(obj => {
+                 if (obj.area == concentrationSet.primaryArea) {
+                     primaryAreaCredits = obj.credits;
+                     return true; 
+                 } else {
+                     return false; 
+                 }
+             });
+
+            if(primaryAreaMatch){
+                 $('.student-footer .pri-area-status .pri-area-span').text(primaryAreaCredits)
+            } 
                
-            if(isPrimaryAreaSelected && concentrationSet.primaryArea){
-                $('.student-footer .pri-area-status .pri-area-span').text(studentCriteriaStatus.creditsPerArea.find(obj => obj.area == studentCriteriaStatus.primaryArea).credits);
-            }
+            // if(isPrimaryAreaSelected && concentrationSet.primaryArea){
+            //     $('.student-footer .pri-area-status .pri-area-span').text(studentCriteriaStatus.creditsPerArea.find(obj => obj.area == studentCriteriaStatus.primaryArea).credits);
+            // }
         }
 
         $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentCriteriaStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
@@ -630,6 +642,7 @@ $(document).ready(function() {
             studentCriteriaStatus.isCriteriaMet = false;
         }
         
+        let selectedCourseCount = Number(studentCriteriaStatus.courseDetails.length);
         let ajaxTable = `
                 <tr data-course-id="${courseId}" 
                     data-area="${area}" 
@@ -637,7 +650,7 @@ $(document).ready(function() {
                     data-acad-session="${acadSession}" 
                     data-credits="${credits}" 
                     data-acad-session-id="${acadSessionId}">
-                    <td class="index-row-demand-estimation">${selectedCourseCount++}</td>
+                    <td class="index-row-demand-estimation">${selectedCourseCount}</td>
                     <td>${area}</td>
                     <td>${course}</td>
                     <td>${acadSession}</td>
@@ -663,6 +676,9 @@ $(document).ready(function() {
             $('.student-footer .criteria-status').addClass('bg-danger');
             $('.student-footer .criteria-status').removeClass('bg-success');
         } 
+        $('#available-course-table tbody tr').each(function(index,element) {
+            $(this).children(':first-child').text(index+1);
+        });
     });
 
     $('#selected-course-table').on('click', '.cancel-course', function () {
@@ -677,10 +693,12 @@ $(document).ready(function() {
         let annualCredits = $('#yearly-credits').text();
         let minCreditPrimaryArea = $('#min-credits-in-primary-area').text();
         let selectedCourseCredit = $('#selected-course-credits').text();
+        let totalRowNo  = Number($('#page-no').text());
+        $('#page-no').text(++totalRowNo);
+        
 
         let isMinCreditsInPrimayArea = 1;
-        let count = 1;
-
+    
         //remove the course id from the studentCriteriaStatus
         studentCriteriaStatus.courseDetails = studentCriteriaStatus.courseDetails.filter(obj => obj.course_lid != courseId);
         //update studentCriteriaStatus
@@ -704,7 +722,7 @@ $(document).ready(function() {
             }
         });
         let areaCovered = studentCriteriaStatus.creditsPerArea.filter((creditArea) =>{
-            if(creditArea.area === concentrationSet.name){
+            if(creditArea.area === concentrationSet.primaryArea){
                 return  creditArea.credits >= concentrationSet.minCreditsInPrimayArea
             }
             else{
@@ -750,7 +768,8 @@ $(document).ready(function() {
         }else{
             studentCriteriaStatus.isCriteriaMet = false;
         }
- 
+        
+        let selectedCourseCount = Number(studentCriteriaStatus.courseDetails.length);
         let availableCourse = `
                 <tr data-course-id="${courseId}"
                     data-area="${area}"
@@ -758,7 +777,7 @@ $(document).ready(function() {
                     data-acad-session="${acadSession}"
                     data-credits="${credits}"
                     data-acad-session-id="${acadSessionId}">
-                    <td>${count++}</td>
+                    <td>${selectedCourseCount}</td>
                     <td>${area}</td>
                     <td>${course}</td>
                     <td>${acadSession}</td>
@@ -774,6 +793,9 @@ $(document).ready(function() {
         $('.save-select-course').attr('disabled', 'disabled');
         $(this).closest('tr').remove();  
         rearrangeIdAfterDeletion(rowId);
+        $('#available-course-table tbody tr').each(function(index,element) {
+            $(this).children(':first-child').text(index+1);
+        });
     });
 
     $('#acad-session-change').on('change', function () {
@@ -807,7 +829,6 @@ $(document).ready(function() {
                 $('.hide-col-submitted-course').addClass('d-none');
             }
             rearrangeIdAfterDeletion();
-            $('#page-no').html(result.courseCount);
         });
 
     });
@@ -832,7 +853,6 @@ $(document).ready(function() {
                 $('.hide-col-submitted-course').addClass('d-none');
             }
             rearrangeIdAfterDeletion();
-            $('#page-no').html(result.courseCount);
         })
     })
 
@@ -868,7 +888,7 @@ $(document).ready(function() {
      
         courseList =  courseList.filter(obj1 => !studentCriteriaStatus.courseDetails.some(obj2 => obj1.courseId == obj2.course_lid));
         $("#available-course-table tbody").empty();
-
+        $('#page-no').html(courseList.length);
         let availableCourse = ``;
         if (courseList.length > 0) {
             let count = 1;
@@ -913,13 +933,13 @@ $(document).ready(function() {
             $('.student-footer .criteria-status').addClass('bg-success');
         }
 
-        let primaryAreaSelected = studentCriteriaStatus.creditsPerArea.filter((ele) => {
-            return ele.area === concentrationSet.primaryArea;
-        });
+        // let primaryAreaSelected = studentCriteriaStatus.creditsPerArea.filter((ele) => {
+        //     return ele.area === concentrationSet.primaryArea;
+        // });
                
-        if(primaryAreaSelected.length > 0){
-            $('.student-footer .pri-area-status .pri-area-span').text(primaryAreaSelected.credits);
-        }
+        // if(primaryAreaSelected.length > 0){
+        //     $('.student-footer .pri-area-status .pri-area-span').text(primaryAreaSelected.credits);
+        // }
     }
 
     function rearrangeIdAfterDeletion(deleteColumnId) {
