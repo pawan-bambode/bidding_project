@@ -189,9 +189,9 @@
                             <select class="form-select form-control select2 d-none" id="course-filter">
                                 <option value="" selected>Select Course</option>
                                 <option value="All">Select All Courses</option>
-                                    <% for (let biddingCourse of courseList) { %>
+                                    <!-- <% for (let biddingCourse of courseList) { %>
                                         <option value="<%-biddingCourse.course_id %>"><%-biddingCourse.course_name %></option>
-                                    <% } %>
+                                    <% } %> -->
                             </select>
                         </div>
                     </div>
@@ -380,7 +380,7 @@ $(document).ready(function() {
             dataType: 'JSON'
         }
         ajaxApi(ApiObj).then(result => {
-            
+    
             let courseName = `<option selected value="-1">--Select Area--</option>`;
             if (result.courseListDrop.length > 0) {
                 result.courseListDrop.forEach(area => {

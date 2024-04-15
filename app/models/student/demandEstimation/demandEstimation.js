@@ -76,10 +76,11 @@ module.exports = class DemandEstimation {
                 .input('biddingId', sql.Int, biddingId)
                 .input('acadSessionId', sql.Int, acadSessionId)
                 .input('areaId', sql.Int, areaId)
-                .query(`SELECT DISTINCT c.course_id, c.area_name AS areaName, c.course_name AS courseName,
-                        c.acad_session AS acadSession, c.id AS courseId, c.sap_acad_session_id AS acadSessionId,
+                .query(`SELECT DISTINCT c.course_id, c.area_name AS areaName,
+                        c.course_name AS courseName,c.acad_session AS acadSession, c.id AS courseId, c.sap_acad_session_id AS acadSessionId,
                         p.program_name AS programName, c.credits 
                         FROM [${slug}].courses c 
+                        INNER JOIN [${slug}].division_batches db ON db.course_lid = c.id
                         INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
                         INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
                         WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId AND a.id = @areaId ORDER BY c.id`);

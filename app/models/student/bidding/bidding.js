@@ -363,8 +363,8 @@ module.exports = class Bidding {
                 .input('roundId', sql.Int, roundId)
                 .input('studentId', sql.Int, studentId)
                 .input('areaId', sql.Int, areaId)
-                .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, 
-                        c.sap_acad_session_id, c.credits, db.max_seats ,db.available_seats, RTRIM(LTRIM(db.division)) AS division,
+                .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id,
+                        c.acad_session, c.sap_acad_session_id, c.credits, db.max_seats ,db.available_seats, RTRIM(LTRIM(db.division)) AS division,
                         t.faculty_id, t.faculty_name, d.day_name, c.id AS course_lid,
                         CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, 
                         CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, 
@@ -435,6 +435,7 @@ module.exports = class Bidding {
     }
 
         static courseByCourseId(slug, biddingId, acadSessionId, roundId, studentId, courseId, areaId){
+         
             return poolConnection.then(pool => {
                 return pool.request()
                     .input('biddingId', sql.Int, biddingId)

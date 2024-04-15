@@ -243,8 +243,6 @@ module.exports.respond = async (socket, io) => {
             const parsedMessage = JSON.parse(result.output.output_json);
             let roomId = divBatchId;
 
-            console.log(roomId);
-    
             if (parsedMessage.status === 1) {
                 const detailsResult = await Promise.all([
                     bidding.getBiddingWinningResponse(slugName, biddingSessionId, divBatchId),
