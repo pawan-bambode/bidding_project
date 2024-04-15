@@ -12,7 +12,7 @@ module.exports = {
         Promise.all([
             confirmation.getConfirmationForBidding(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, roundId),
-            course.acadSessionList(res.locals.slug, res.locals.biddingId),
+            course.acadSessions(res.locals.slug, res.locals.biddingId),
             divisionBatch.areaList(res.locals.slug, res.locals.biddingId),
             divisionBatch.waitlistAvailableCourse(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             waitList.getStudentDetails(res.locals.slug, res.locals.biddingId, res.locals.studentId),

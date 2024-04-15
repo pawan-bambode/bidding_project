@@ -10,7 +10,7 @@ module.exports = {
         let availableCourse = availableCourseUrl[availableCourseUrl.length - 1];
   
         Promise.all([
-            course.acadSessionList(res.locals.slug, res.locals.biddingId),
+            course.acadSessions(res.locals.slug, res.locals.biddingId),
             divisionBatch.courseList(res.locals.slug, res.locals.biddingId),
             favouriteCourse.getFavCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             favouriteCourse.getFavouriteCourseList(res.locals.slug, res.locals.biddingId, res.locals.studentId)

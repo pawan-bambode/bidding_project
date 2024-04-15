@@ -40,7 +40,7 @@ module.exports = {
       student.getSlotForShowTimetable(),
       student.coursesCount(res.locals.slug, res.locals.biddingId),
       student.couresListSelectedByStudent(res.locals.userId),
-      course.acadSessionList(res.locals.slug, res.locals.biddingId)
+      course.acadSessions(res.locals.slug, res.locals.biddingId)
     ]).then(result => {
       res.render('admin/students/showTimetableStudent.ejs', {
         minMaxSlotId: JSON.stringify(result[0].recordset),

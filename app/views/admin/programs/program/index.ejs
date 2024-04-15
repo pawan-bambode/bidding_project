@@ -373,7 +373,7 @@ $(document).ready(function() {
                 setTimeout(function(){location.reload();},1000); 
             }).catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);
-                createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000"});
             })
         }
     });
@@ -396,7 +396,7 @@ $(document).ready(function() {
             setTimeout(function(){location.reload();},1000); 
         }).catch(error =>{
            let errorMessage = JSON.stringify(error.responseJSON.description);
-           createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+           createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000"});
         })
     })
 
