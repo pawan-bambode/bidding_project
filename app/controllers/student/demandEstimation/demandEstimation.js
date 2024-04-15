@@ -66,7 +66,7 @@ module.exports = {
 
     courseByArea : (req, res) => {
         Promise.all([
-            demandEstimation.coursesByArea(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaId),
+            demandEstimation.coursesByAreaForDemandEst(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaId),
             demandEstimation.coursesByAreaCount(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaId)
         ]).then(result => {
             result[0].recordset
