@@ -13,7 +13,7 @@ module.exports = {
         let demandEstimationActive = demandEstimationUrl[demandEstimationUrl.length - 1];
         Promise.all([
             demandEstimation.getRoundDetails(res.locals.slug, res.locals.biddingId),
-            demandEstimation.getAvailableCourses(res.locals.slug, res.locals.biddingId),
+            demandEstimation.getAvailableCourses(res.locals.slug, res.locals.biddingId, res.locals.studentId),
             demandEstimation.getAvailableCourseCount(res.locals.slug, res.locals.biddingId),
             course.acadSessions(res.locals.slug, res.locals.biddingId),
             programSession.acadSessionsWiseCredits(res.locals.slug, res.locals.biddingId),

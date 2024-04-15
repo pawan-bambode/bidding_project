@@ -219,10 +219,11 @@ module.exports = class DemandEstimation {
                         WHERE sem.student_lid = @studentId AND sem.bidding_session_lid = @biddingId AND is_favourite = 1`);
         });
     }
-    static getAvailableCourses(slug, biddingId) {
+    static getAvailableCourses(slug, biddingId, studentId) {
        
         return poolConnection.then(pool => {
             return pool.request()
+                .input('studentId', sql.Int, studentId)
                 .input('biddingId', sql.Int, biddingId)
                 .query(`SELECT course_name AS courseName, credits, program_id AS programId, 
                         ad.acad_session AS acadSession, area_name AS areaName, min_demand_criteria, year_of_introduction AS year, 
@@ -232,7 +233,7 @@ module.exports = class DemandEstimation {
                         INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
                         LEFT JOIN [${slug}].demand_estimation de ON c.id = de.course_lid AND c.active = 1
                         AND c.bidding_session_lid = @biddingId AND de.bidding_session_lid = @biddingId
-                        AND de.active = 1 WHERE de.course_lid IS NULL ORDER BY c.id`);
+                        AND de.active = 1 AND de.student_lid = @studentId WHERE de.course_lid IS NULL ORDER BY c.id`);
        
         });
     }
