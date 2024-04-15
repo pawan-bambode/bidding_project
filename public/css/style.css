@@ -1281,4 +1281,6 @@ hr{
     background-color: #f8d7da;
 }
 
-
+.custom-disabled{
+    opacity: 0.6;
+}
