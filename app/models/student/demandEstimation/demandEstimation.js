@@ -212,7 +212,7 @@ module.exports = class DemandEstimation {
                         ad.acad_session AS acadSession, area_name AS areaName, min_demand_criteria, year_of_introduction AS year, 
                         c.sap_acad_session_id AS acadSessionId, c.id AS courseId
                         FROM [${slug}].course_round_mapping crm 
-                        INNER JOIN [${slug}].courses c ON crm.course_lid = c.id
+                        INNER JOIN [${slug}].courses c ON crm.course_lid = c.id AND crm.active = 1
                         INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
                         LEFT JOIN [${slug}].demand_estimation de ON c.id = de.course_lid AND c.active = 1
                         AND c.bidding_session_lid = @biddingId AND de.bidding_session_lid = @biddingId

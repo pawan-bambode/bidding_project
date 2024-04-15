@@ -886,7 +886,7 @@ $(document).ready(function() {
 
     function availableCourse(courseList) {
      
-        courseList =  courseList.filter(obj1 => !studentCriteriaStatus.courseDetails.some(obj2 => obj1.courseId == obj2.course_lid));
+        courseList =  courseList.filter(obj1 => !studentCriteriaStatus.courseDetails.some(obj2 => obj1.courseId == obj2.course_lid));    
         $("#available-course-table tbody").empty();
         $('#page-no').html(courseList.length);
         let availableCourse = ``;
