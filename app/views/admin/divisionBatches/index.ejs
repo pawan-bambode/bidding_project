@@ -263,7 +263,7 @@ $(document).ready(function(){
                     dataType: 'JSON' 
                 }
                 ajaxApi(ApiObj).then(result => {
-                    createToast({ title: "Success", msg: response.description, type: "positive", showingTime:"1000"});
+                    createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000"});
                     setTimeout(function(){location.reload();},1000);
                 }).catch(error => {
                     let errorMessage = JSON.stringify(error.responseJSON.description);
