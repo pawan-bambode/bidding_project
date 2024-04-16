@@ -364,7 +364,6 @@ $(document).ready(function() {
                 });
             }
 
-            console.log(concenSet);
             let isAreaExist  = studentBiddingStatus.creditsPerArea.findIndex(function(selectedArea) {
                 return selectedArea.area === concenSet.area_name;
             });
@@ -393,8 +392,6 @@ $(document).ready(function() {
             find('.credits-points').text(creditsPerBidding.credits);
         })
 
-        console.log(studentBiddingStatus)
-        console.log(studentBiddingStatus.areaCovered)
         studentBiddingStatus.areaCovered = totalSelectedAreaCovered;
         $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
     }
@@ -834,7 +831,6 @@ $(document).ready(function() {
                 let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
                 targetRow.remove();
                 let rowId = targetRow.find('td:first-child').text()
-                console.log(rowId);
                 if(withDrawBiddingRowIsFav == 1){
                     $('#available-course-table tbody').prepend(withDrawBiddingRow);
                 }
