@@ -298,7 +298,8 @@ $(document).ready(function() {
         divisionBatchId: [],
         winningCredits: 0,
         totalBidPoints: 0,
-        winningBidPoints: 0
+        winningBidPoints: 0,
+        studentDisabledDivBatchId:[]
     };
 
     let isButtonDisabled = true;
@@ -860,6 +861,7 @@ $(document).ready(function() {
                 if(studentBidPoints > 0){
                     targetRow.find('.withdraw-bidding').addClass('custom-disabled');
                     targetRow.find('.withdraw-bidding').attr('title', reasonForDisable);
+                    studentBiddingStatus.studentDisabledDivBatchId.push(divisionBatchId);
                 }
             }
 
@@ -949,7 +951,6 @@ $(document).ready(function() {
 });
 
 function availableCourse(courses) {    
-    console.log(courses);
     let pageCount = 0;
     if(courses.length > 0) {
 
@@ -1015,15 +1016,16 @@ function availableCourse(courses) {
 function considerationSetCourses(courses) {
     
     if(courses.length > 0 ){
-
         courses.forEach(function(course, index) {
-        
             let divisionBatchId = course.division_batch_lid;
             let facultyId = course.faculty_id;
             let existingElement = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
             let existingFaculty = existingElement.filter(`[data-faculty-id="${facultyId}"]`);
             let otherFacultyExists = existingElement.not(existingFaculty);
             let lengthOfTable = $('#bidding-table tbody tr').length;
+            let disableWithdrawRow = studentBiddingStatus.studentBiddingDivBatch.filter(studentDiv  == divisionBatchId)
+
+            console.log(disableWithdrawRow);
 
             if (existingElement.length === 0) {
 
@@ -1111,6 +1113,7 @@ function updateTableForCurrentUser(userSpecificWinningStatus) {
             winningStatusElement.removeClass('winning').addClass('losing');
             targetRow.find('.widthdraw-bidding').removeClass('custom-disabled');
             targetRow.find('.withdraw-bidding').removeAttr('title'); 
+            studentBiddingStatus.studentDisabledDivBatchId = studentBiddingStatus.studentDisabledDivBatchId.filter(studentDisabledDivBatch => studentDisabledDivBatch != divisionBatchId);
         }
     }
 }

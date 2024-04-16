@@ -83,8 +83,7 @@ module.exports = class DemandEstimation
                     INNER JOIN [${slug}].programs p  ON c.program_id = p.program_id WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId AND c.area_name LIKE @areaName`)     
         })
     }
-    static getFavCourseList(slug, biddingId, studentId){
-     
+    static getFavCourseList(slug, biddingId, studentId){     
        return poolConnection.then(pool =>{
         return pool.request()
         .input('biddingId', sql.Int, biddingId)
@@ -102,7 +101,9 @@ module.exports = class DemandEstimation
                 INNER JOIN [sbm-mum].courses c ON c.id = db.course_lid
                 INNER JOIN [dbo].days d ON d.id = t.day_lid 
                 LEFT JOIN [${slug}].student_elective_mapping sem ON sem.div_batch_lid = db.id AND sem.student_lid = @studentLid 
-                LEFT JOIN [${slug}].student_elective_bidding seb ON t.division_batch_lid = seb.div_batch_lid AND seb.student_lid = @studentLid AND seb.bidding_session_lid = @biddingId AND seb.active = 1 ORDER BY sem.is_favourite DESC`)
+                LEFT JOIN [${slug}].student_elective_bidding seb ON t.division_batch_lid = seb.div_batch_lid AND seb.student_lid = @studentLid 
+                AND seb.bidding_session_lid = @biddingId AND seb.active = 1 
+                WHERE t.active = 1 ORDER BY sem.is_favourite DESC`)
        }) 
     }
     static searchByLetter(slug, biddingId, letterSearch, pageNo, showEntry, acadSessionId, area) {

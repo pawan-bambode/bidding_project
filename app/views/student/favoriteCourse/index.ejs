@@ -211,6 +211,7 @@
 
     function availableCourses(biddingCourseList) {
       
+      console.log(biddingCourseList);
       $('#available-course-table tbody').empty();
       let lengthOfTable = $('#bidding-trimester-select-table tbody tr').length;
       biddingCourseList.forEach(function(biddingCourse, index) {
@@ -260,9 +261,11 @@
           }
 
         } else {
+          
           let courseTiming = `<div>${biddingCourse.day_name}(${biddingCourse.StartTime} to ${biddingCourse.EndTime})`;
           let contentToAppend = otherFacultyExists.length ? `${courseTiming} - ${biddingCourse.faculty_name})` : `${courseTiming}`;
           existingElement.children('.course-timing').append(contentToAppend);
+        
         }
       });
     }
