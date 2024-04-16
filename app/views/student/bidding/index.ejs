@@ -299,9 +299,8 @@ $(document).ready(function() {
         winningCredits: 0,
         totalBidPoints: 0,
         winningBidPoints: 0,
-        studentDisabledDivBatchId:[]
     };
-
+    
     let isButtonDisabled = true;
     let reasonForDisable = "Withdraw is restricted";
 
@@ -486,7 +485,7 @@ $(document).ready(function() {
         let studentId = $('#student-data').data('student-id');
         let id = $(this).closest('tr').data('id');
 
-        let roundId = `<%- roundDetails.round_lid %>`;
+        let roundId = $('.round-basic-details h4.round-name').data('round-id');
     
         biddingRow = `<tr 
                         data-id= "${id}" 
@@ -539,7 +538,9 @@ $(document).ready(function() {
                 divisionBatchLid: divisionBatchId,
                 userId: userId,
                 biddingSessionId: biddingSessionId
-            });    
+            });   
+            
+            console.table([studentId,roundId, courseLid, concentrationId, divisionBatchId, userId, biddingSessionId]);
     })
 
     socket.on('totalBiddersUpdate', function(totalBiddersUpdate){
@@ -861,7 +862,6 @@ $(document).ready(function() {
                 if(studentBidPoints > 0){
                     targetRow.find('.withdraw-bidding').addClass('custom-disabled');
                     targetRow.find('.withdraw-bidding').attr('title', reasonForDisable);
-                    studentBiddingStatus.studentDisabledDivBatchId.push(divisionBatchId);
                 }
             }
 
@@ -948,175 +948,178 @@ $(document).ready(function() {
         roundId: 2,
         studentId: studentId
     }); 
-});
 
-function availableCourse(courses) {    
-    let pageCount = 0;
-    if(courses.length > 0) {
+    function availableCourse(courses) {    
+        let pageCount = 0;
+        if(courses.length > 0) {
 
-        courses.forEach(function(course, index) {
-            
-            let divisionBatchId = course.division_batch_lid;
-            let facultyId = course.faculty_id;
-            let existingElement = $(`#available-course-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
-            let existingFaculty = existingElement.filter(`[data-faculty-id="${facultyId}"]`);
-            let otherFacultyExists = existingElement.not(existingFaculty);
-            let lengthOfTable = $('#available-course-table tbody tr').length;
-            
-            if (existingElement.length === 0) {
-                pageCount++;
-                    let newRow = `<tr 
-                                data-area-name = "${course.area_name}" 
-                                data-course-name = "${course.course_name}"
-                                data-division = "${course.division}" 
-                                data-acad-session = "${course.acad_session}" 
-                                data-division-batch-lid = "${course.division_batch_lid}"
-                                data-faculty-id = "${course.faculty_id}"
-                                data-credits = "${course.credits}"
-                                data-max-seats = "${course.max_seats}"
-                                data-acad-session-id = "${course.sap_acad_session_id}"
-                                data-course-id = "${course.course_id}"
-                                data-course-lid = "${course.course_lid}"
-                                data-faculty-name = "${course.faculty_name}"
-                                data-is-favourite = "${course.is_favourite}"
-                            >
+            courses.forEach(function(course, index) {
 
-                            <td class="id-column">${++lengthOfTable}</td>
-                            <td>${course.area_name}</td>
-                            <td>${course.course_name}-${course.division}
-                            ${course.is_favourite == 1 ?
-                            '<img class="added-star fav-course" src="/image/student/body-part-image/available-course/added-star.png" alt="added">' : ''}
-                            </td>
-                            <td>${course.acad_session}</td>
-                            <td class='course-timing'>${course.day_name}(${course.StartTime} to ${course.EndTime}) ${course.faculty_name}</td>
-                            <td>${course.credits}</td>
-                            <td>${course.max_seats}</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>
-                                <button class="btn border border-dark add-bidding">
-                                    <i class="fa-solid fa-circle-plus" style="color:#5ca4ea"></i>
-                                </button>
-                            </td>
-                        </tr>`;
-                        $('#available-course-table tbody').append(newRow);
-            }else if(existingFaculty.length > 0){
-                    return ;
-            }
-            else {
-                let courseTiming = `<div>${course.day_name}(${course.StartTime} to ${course.EndTime})`;
-                let contentToAppend = otherFacultyExists.length ? `${courseTiming} - ${course.faculty_name})` : `${courseTiming}`;
-                    existingElement.children('.course-timing').append(contentToAppend);            
-            }
-            $('#page-no').html(pageCount);
-        });
-    }   
-}
+                let divisionBatchId = course.division_batch_lid;
+                let facultyId = course.faculty_id;
+                let existingElement = $(`#available-course-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
+                let existingFaculty = existingElement.filter(`[data-faculty-id="${facultyId}"]`);
+                let otherFacultyExists = existingElement.not(existingFaculty);
+                let lengthOfTable = $('#available-course-table tbody tr').length;
 
-function considerationSetCourses(courses) {
-    
-    if(courses.length > 0 ){
-        courses.forEach(function(course, index) {
-            let divisionBatchId = course.division_batch_lid;
-            let facultyId = course.faculty_id;
-            let existingElement = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
-            let existingFaculty = existingElement.filter(`[data-faculty-id="${facultyId}"]`);
-            let otherFacultyExists = existingElement.not(existingFaculty);
-            let lengthOfTable = $('#bidding-table tbody tr').length;
-            let disableWithdrawRow = studentBiddingStatus.studentBiddingDivBatch.filter(studentDiv  == divisionBatchId)
+                if (existingElement.length === 0) {
+                    pageCount++;
+                        let newRow = `<tr 
+                                    data-area-name = "${course.area_name}" 
+                                    data-course-name = "${course.course_name}"
+                                    data-division = "${course.division}" 
+                                    data-acad-session = "${course.acad_session}" 
+                                    data-division-batch-lid = "${course.division_batch_lid}"
+                                    data-faculty-id = "${course.faculty_id}"
+                                    data-credits = "${course.credits}"
+                                    data-max-seats = "${course.max_seats}"
+                                    data-acad-session-id = "${course.sap_acad_session_id}"
+                                    data-course-id = "${course.course_id}"
+                                    data-course-lid = "${course.course_lid}"
+                                    data-faculty-name = "${course.faculty_name}"
+                                    data-is-favourite = "${course.is_favourite}"
+                                >
 
-            console.log(disableWithdrawRow);
-
-            if (existingElement.length === 0) {
-
-                let newRow = `<tr 
-                                data-area-name="${course.area_name}" 
-                                data-course-name="${course.course_name}"
-                                data-division="${course.course_name}-${course.division}" 
-                                data-acad-session="${course.acad_session}" 
-                                data-division-batch-lid="${course.division_batch_lid}"
-                                data-faculty-id="${course.faculty_id}"
-                                data-credits="${course.credits}"
-                                data-max-seats="${course.max_seats}"
-                                data-acad-session-id="${course.sap_acad_session_id}"
-                                data-course-id="${course.course_id}"
-                                data-course-lid="${course.course_lid}"
-                                data-faculty-name="${course.faculty_name}"
-                                data-id="${course.id}"
-                                data-round-id="${course.round_lid}"
-                            >               
                                 <td class="id-column">${++lengthOfTable}</td>
                                 <td>${course.area_name}</td>
                                 <td>${course.course_name}-${course.division}
-                                    ${course.is_favourite == 1 ?
-                                    '<img class="added-star fav-course" src="/image/student/body-part-image/available-course/added-star.png" alt="added">' : ''}
+                                ${course.is_favourite == 1 ?
+                                '<img class="added-star fav-course" src="/image/student/body-part-image/available-course/added-star.png" alt="added">' : ''}
                                 </td>
                                 <td>${course.acad_session}</td>
-                                <td class='course-timing'>${course.faculty_date_time}</td>
+                                <td class='course-timing'>${course.day_name}(${course.StartTime} to ${course.EndTime}) ${course.faculty_name}</td>
                                 <td>${course.credits}</td>
                                 <td>${course.max_seats}</td>
-                                <td>${course.total_bidders}</td>
-                                <td class="mrb-points">${course.min_req_bid}</td>
-                                <td class="winning-status ${course.is_winning ? 'winning' : 'losing'}">${course.is_winning ? 'Yes' : 'No'}</td>
-                                <td class="student-previous-bid-point">${course.bid_points}</td>
-                                <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
-                                    <button class="btn border border-dark ms-2 add-bidding-points">
-                                        <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>
+                                    <button class="btn border border-dark add-bidding">
+                                        <i class="fa-solid fa-circle-plus" style="color:#5ca4ea"></i>
                                     </button>
                                 </td>
-                                <td>
-                                    <button class="btn border border-danger withdraw-bidding">
-                                        <img src='/image/student/body-part-image/bidding-round-image/withdraw.png'></button>
-                                </td>
                             </tr>`;
-
-                        $('#bidding-table tbody').append(newRow);
-
-            } else {
-                    let courseTiming = `<div>${course.faculty_date_time}`;
-                    let contentToAppend = otherFacultyExists.length ? `${courseTiming} - ${course.faculty_name})` : `${courseTiming}`;
-                    existingElement.children('.course-timing').append(contentToAppend);
+                            $('#available-course-table tbody').append(newRow);
+                }else if(existingFaculty.length > 0){
+                        return ;
                 }
-        });
-    }       
-}
+                else {
+                    let courseTiming = `<div>${course.day_name}(${course.StartTime} to ${course.EndTime})`;
+                    let contentToAppend = otherFacultyExists.length ? `${courseTiming} - ${course.faculty_name})` : `${courseTiming}`;
+                        existingElement.children('.course-timing').append(contentToAppend);            
+                }
+                $('#page-no').html(pageCount);
+            });
+        }   
+    }
 
-function updateTableForCurrentUser(userSpecificWinningStatus) {
-    
-    let divisionBatchId = userSpecificWinningStatus.div_batch_lid;
-    let actualAvailableSeats = userSpecificWinningStatus.available_seats;
-    let minimumRequireBits = userSpecificWinningStatus.mrb;
-    let totalBidders = userSpecificWinningStatus.total_bidders;
-    let isWinning = userSpecificWinningStatus.is_winning;    
-    
-    let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
+    function considerationSetCourses(courses) {
 
-    if (targetRow.length > 0) {
-
-        let availableCountElement = targetRow.find('.available-count');
-        let mrbPointsElement = targetRow.find('.mrb-points');
-        let winningStatusElement = targetRow.find('.winning-status');
-        let totalBidder = targetRow.find('.total-bidder-counts');
-
-        targetRow.attr('data-id', userSpecificWinningStatus.studentBiddingId);
-        targetRow.attr('data-round-lid', userSpecificWinningStatus.round_lid);
-        availableCountElement.html(actualAvailableSeats);
-        totalBidder.html(totalBidders);
-        mrbPointsElement.html(minimumRequireBits);
-
-        if (isWinning) {  
-            winningStatusElement.html('Yes');
-            winningStatusElement.removeClass('losing').addClass('winning');
+        if(courses.length > 0 ){
+            courses.forEach(function(course, index) {
+                console.log(course);
         
-        } else {
-            winningStatusElement.html('No');
-            winningStatusElement.removeClass('winning').addClass('losing');
-            targetRow.find('.widthdraw-bidding').removeClass('custom-disabled');
-            targetRow.find('.withdraw-bidding').removeAttr('title'); 
-            studentBiddingStatus.studentDisabledDivBatchId = studentBiddingStatus.studentDisabledDivBatchId.filter(studentDisabledDivBatch => studentDisabledDivBatch != divisionBatchId);
+                let divisionBatchId = course.division_batch_lid;
+                let facultyId = course.faculty_id;
+                let existingElement = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
+                let existingFaculty = existingElement.filter(`[data-faculty-id="${facultyId}"]`);
+                let otherFacultyExists = existingElement.not(existingFaculty);
+                let lengthOfTable = $('#bidding-table tbody tr').length;
+
+                if (existingElement.length === 0) {
+
+                    let newRow = `<tr 
+                                    data-area-name="${course.area_name}" 
+                                    data-course-name="${course.course_name}"
+                                    data-division="${course.course_name}-${course.division}" 
+                                    data-acad-session="${course.acad_session}" 
+                                    data-division-batch-lid="${course.division_batch_lid}"
+                                    data-faculty-id="${course.faculty_id}"
+                                    data-credits="${course.credits}"
+                                    data-max-seats="${course.max_seats}"
+                                    data-acad-session-id="${course.sap_acad_session_id}"
+                                    data-course-id="${course.course_id}"
+                                    data-course-lid="${course.course_lid}"
+                                    data-faculty-name="${course.faculty_name}"
+                                    data-id="${course.id}"
+                                    data-round-id="${course.round_lid}"
+                                >               
+                                    <td class="id-column">${++lengthOfTable}</td>
+                                    <td>${course.area_name}</td>
+                                    <td>${course.course_name}-${course.division}
+                                        ${course.is_favourite == 1 ?
+                                        '<img class="added-star fav-course" src="/image/student/body-part-image/available-course/added-star.png" alt="added">' : ''}
+                                    </td>
+                                    <td>${course.acad_session}</td>
+                                    <td class='course-timing'>${course.faculty_date_time}</td>
+                                    <td>${course.credits}</td>
+                                    <td>${course.max_seats}</td>
+                                    <td>${course.total_bidders}</td>
+                                    <td class="mrb-points">${course.min_req_bid}</td>
+                                    <td class="winning-status ${course.is_winning ? 'winning' : 'losing'}">${course.is_winning ? 'Yes' : 'No'}</td>
+                                    <td class="student-previous-bid-point">${course.bid_points}</td>
+                                    <td class="d-flex"><input type="text" placeholder="Bids" class="p-2 student-current-bid-point" size='15' autocomplete="off">
+                                        <button class="btn border border-dark ms-2 add-bidding-points">
+                                            <img src='/image/student/body-part-image/bidding-round-image/check-mark.png' alt='checkmark'>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn border border-danger withdraw-bidding">
+                                            <img src='/image/student/body-part-image/bidding-round-image/withdraw.png'>
+                                        </button>
+                                    </td>
+                                </tr>`;
+
+                            $('#bidding-table tbody').append(newRow);
+                            
+                            if (course.bid_points > 0 && course.is_winning == true) {
+                                    let withdrawButton = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`).find('.withdraw-bidding');
+                                    withdrawButton.addClass('custom-disabled');
+                                }
+                } else {
+                        let courseTiming = `<div>${course.faculty_date_time}`;
+                        let contentToAppend = otherFacultyExists.length ? `${courseTiming} - ${course.faculty_name})` : `${courseTiming}`;
+                        existingElement.children('.course-timing').append(contentToAppend);
+                    }
+            });
+        }       
+    }
+
+    function updateTableForCurrentUser(userSpecificWinningStatus) {
+        
+        let divisionBatchId = userSpecificWinningStatus.div_batch_lid;
+        let actualAvailableSeats = userSpecificWinningStatus.available_seats;
+        let minimumRequireBits = userSpecificWinningStatus.mrb;
+        let totalBidders = userSpecificWinningStatus.total_bidders;
+        let isWinning = userSpecificWinningStatus.is_winning;    
+        
+        let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
+    
+        if (targetRow.length > 0) {
+        
+            let availableCountElement = targetRow.find('.available-count');
+            let mrbPointsElement = targetRow.find('.mrb-points');
+            let winningStatusElement = targetRow.find('.winning-status');
+            let totalBidder = targetRow.find('.total-bidder-counts');
+        
+            targetRow.attr('data-id', userSpecificWinningStatus.studentBiddingId);
+            targetRow.attr('data-round-lid', userSpecificWinningStatus.round_lid);
+            availableCountElement.html(actualAvailableSeats);
+            totalBidder.html(totalBidders);
+            mrbPointsElement.html(minimumRequireBits);
+        
+            if (isWinning) {  
+                winningStatusElement.html('Yes');
+                winningStatusElement.removeClass('losing').addClass('winning');
+            
+            } else {
+                winningStatusElement.html('No');
+                winningStatusElement.removeClass('winning').addClass('losing');
+                targetRow.find('.widthdraw-bidding').removeClass('custom-disabled');
+                targetRow.find('.withdraw-bidding').removeAttr('title'); 
+            }
         }
     }
-}
+});    
 
 
 
