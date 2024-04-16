@@ -348,20 +348,11 @@ $(document).ready(function() {
     let reasonForDisable = "Withdraw is restricted";
 
     if (considerationSet.length) {
+        
         considerationSet.forEach(concenSet => {
             
             studentBiddingStatus.divisionBatchId.push(concenSet.division_batch_lid);
             studentBiddingStatus.coursesId.push(concenSet.course_id);
-
-            let areaIndex = studentBiddingStatus.creditsPerArea.findIndex(ele => ele.area === concenSet.area_name);
-            if (areaIndex !== -1) {
-                studentBiddingStatus.creditsPerArea[areaIndex].credits += concenSet.credits;
-            } else {
-                studentBiddingStatus.creditsPerArea.push({
-                    area: concenSet.area_name,
-                    credits: concenSet.credits
-                });
-            }
 
             let sessionIndex = studentBiddingStatus.creditsPerSession.findIndex(ele => ele.acadSessionId === concenSet.sap_acad_session_id);
             if (sessionIndex !== -1) {
@@ -369,6 +360,19 @@ $(document).ready(function() {
             } else {
                 studentBiddingStatus.creditsPerSession.push({
                     acadSessionId: concenSet.sap_acad_session_id,
+                    credits: concenSet.credits
+                });
+            }
+
+            let isAreaExist  = studentBiddingStatus.creditsPerArea.findIndex(function(selectedArea) {
+                return selectedArea.area === concenSet.area_name;
+            });
+
+            if (isAreaExist !== -1) {
+                studentBiddingStatus.creditsPerArea[isAreaExist].credits += concenSet.credits;
+            } else {
+                studentBiddingStatus.creditsPerArea.push({
+                    area: concenSet.area_name,
                     credits: concenSet.credits
                 });
             }
@@ -387,6 +391,7 @@ $(document).ready(function() {
             $(`.session-credit-points[data-acad-session-id="${creditsPerBidding.acadSessionId}"]`).
             find('.credits-points').text(creditsPerBidding.credits);
         })
+
         studentBiddingStatus.areaCovered = totalSelectedAreaCovered;
         $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
     }
@@ -410,24 +415,39 @@ $(document).ready(function() {
 
         let id = $(this).val();
         $("#bidding-table tbody tr").hide();
-        
-        $("#bidding-table tbody tr").filter(function () {
-            let rowAcadSessionId = $(this).data('acad-session-id');
-            return rowAcadSessionId == id;
-        }).each(function(index) {
 
-            $(this).find('.id-column').text(index + 1);
+        if(id == 1){
+            $("#bidding-table tbody tr").each(function(index) {
+                $(this).find('.id-column').text(index + 1);
+            
+                if ((index) % 2 == 0) {
+                    $(this).addClass('odd-row');
+                    $(this).removeClass('even-row');
+                }
+                else if((index)% 2 == 1){
+                    $(this).removeClass('odd-row');
+                    $(this).addClass('even-row');
+                }
+            }).show();
+        } else {
+            $("#bidding-table tbody tr").filter(function () {
+                let rowAcadSessionId = $(this).data('acad-session-id');
+                return rowAcadSessionId == id;
+            }).each(function(index) {
+                $(this).find('.id-column').text(index + 1);
+            
+                if ((index) % 2 == 0) {
+                    $(this).addClass('odd-row');
+                    $(this).removeClass('even-row');
+                }
+                else if((index)% 2 == 1){
+                    $(this).removeClass('odd-row');
+                    $(this).addClass('even-row');
+                }
+            }).show();
+        }
+    }); 
 
-            if ((index) % 2 == 0) {
-                $(this).addClass('odd-row');
-                $(this).removeClass('even-row');
-            }
-            else if((index)% 2 == 1){
-                $(this).removeClass('odd-row');
-                $(this).addClass('even-row');
-            }
-        }).show();
-    });
 
     $('#area-change').on('change', function () {
         let acadSessionId = $('#acad-session-change').val();
@@ -696,7 +716,8 @@ $(document).ready(function() {
                 updateTableForCurrentUser(biddingDetails);
 
                 $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentBiddingStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
-
+                let totalRowNo  = Number($('#page-no').text());
+                $('#page-no').text(--totalRowNo);
                 createToast({ title: "Success", msg: biddingResponseToUser, type: "positive", showingTime: "1000" });
             } else {
                 createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative", showingTime: "1000" });
@@ -708,10 +729,6 @@ $(document).ready(function() {
         $('#available-course-table tbody tr').each(function(index,element) {
             $(this).children(':first-child').text(index+1);
         });
-
-        let totalRowNo  = Number($('#page-no').text());
-        $('#page-no').text(--totalRowNo);
-
     });
     
     $('#bidding-table').on('click', '.withdraw-bidding', function() {
@@ -813,6 +830,7 @@ $(document).ready(function() {
 
                 let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
                 targetRow.remove();
+                let rowId = targetRow.find('td:first-child').text()
                 if(withDrawBiddingRowIsFav == 1){
                     $('#available-course-table tbody').prepend(withDrawBiddingRow);
                 }
@@ -829,6 +847,7 @@ $(document).ready(function() {
                 });
                 let totalRowNo  = Number($('#page-no').text());
                 $('#page-no').text(++totalRowNo);
+                rearrangeIdAfterDeletion(rowId);
             }
         }
     });
@@ -1098,6 +1117,16 @@ $(document).ready(function() {
                 $('#page-no').html(pageCount);
             });
         }   
+    }
+
+    function rearrangeIdAfterDeletion(deleteColumnId) {
+        $('#bidding-table tbody tr').each(function () {
+            let columnId = Number($(this).children(':first-child').text());
+
+            if (columnId > deleteColumnId) {
+                $(this).children(':first-child').text(columnId - 1);
+            }
+        })
     }
 
     function considerationSetCourses(courses) {
