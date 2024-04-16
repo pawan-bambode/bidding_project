@@ -335,7 +335,12 @@ $(document).ready(function() {
                 studentBiddingStatus.winningCredits +=  concenSet.credits;
             }       
         });
+
         $('#credits-winning').text(studentBiddingStatus.winningCredits);
+        studentBiddingStatus.creditsPerSession.filter(creditsPerBidding =>{
+            $(`.session-credit-points[data-acad-session-id="${creditsPerBidding.acadSessionId}"]`).
+            find('.credits-points').text(creditsPerBidding.credits);
+        })
     }
 
     considerationSetCourses(considerationSet);
@@ -630,7 +635,9 @@ $(document).ready(function() {
 
                 $(`#available-course-table tr[data-division-batch-lid="${divisionBatchId}"]`).remove();
                 updateTableForCurrentUser(biddingDetails);
+
                 $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentBiddingStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
+
                 createToast({ title: "Success", msg: biddingResponseToUser, type: "positive", showingTime: "1000" });
             } else {
                 createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative", showingTime: "1000" });
@@ -638,12 +645,14 @@ $(document).ready(function() {
         }
         
         $('#credits-winning').text(studentBiddingStatus.winningCredits);
-        
+
         $('#available-course-table tbody tr').each(function(index,element) {
             $(this).children(':first-child').text(index+1);
         });
+
         let totalRowNo  = Number($('#page-no').text());
         $('#page-no').text(--totalRowNo);
+
     });
     
     $('#bidding-table').on('click', '.withdraw-bidding', function() {
