@@ -116,11 +116,12 @@
                     </table>
                 </div>
             </div>
-        
+       
             <div class="card card-custom-border-curv mt-5">
                 <div class="card-header-custom d-flex justify-content-between p-1">
                     <h3 class="ms-2">Bidding Course</h3>
                 </div>
+            <div class="shadow-sm">    
                 <div class="credit-status d-flex justify-content-around align-items-center flex-md-row flex-column mx-3 mt-2">
                
                     <div class="flex-grow-1 text-center">
@@ -143,7 +144,7 @@
                     <%- concentrationSet.maxCreditsPerArea %>
                     </div>
                 </div>
-                <div class="col-md-3 mt-4 ms-5">
+                <div class="col-md-3 mt-4 mb-2 ms-5">
                     <select class="form-select form-control bidding-acad-session" id="bidding-acad-session">
                         <option value="1">Select All</option>
                         <option value="34">Trimester IV</option>
@@ -151,15 +152,14 @@
                         <option value="36">Trimester VI</option>
                     </select>
                 </div>
-                
-                <div class="card-body table-responsive">
+            </div> 
+                <div class="card-body table-responsive selected-course-container">
                     <table class="table table-bordered mt-4" id="bidding-table">
                         <thead>
                             <th>#</th>
                             <th>Area</th>
                             <th>Course</th>
                             <th>Acad Session</th>
-                            <th>Faculty</th>
                             <th>Credits</th>
                             <th>Available Seats</th>
                             <th>Total Bidders</th>
@@ -266,6 +266,10 @@
                         <% if(concentrationSet.primaryArea  != 'NA') { %>
                             <div class="primary-area-name col-md-3">
                                 <span>Primary Area Name : <%- concentrationSet.primaryArea %></span>
+                            </div>
+                        <% } else { %>
+                            <div class="primary-area-name col-md-3">
+                                <span> Speciliazation Name : <%- concentrationSet.name %></span>
                             </div>
                         <% } %>    
                         <div class="time-status col-md-3"><h5 class="text-danger time-remaining"></h5></div>
@@ -565,7 +569,6 @@ $(document).ready(function() {
                             <td>${areaName}</td>
                             <td>${courseName}-${division}</td>
                             <td>${acadSession}</td>
-                            <td>${facultName}</td>
                             <td>${credits}</td>
                             <td class="available-count">0</td>
                             <td class="total-bidder-counts">0</td>
@@ -1134,7 +1137,6 @@ $(document).ready(function() {
                                         '<img class="added-star fav-course" src="/image/student/body-part-image/available-course/added-star.png" alt="added">' : ''}
                                     </td>
                                     <td>${course.acad_session}</td>
-                                    <td class='course-timing'>${course.faculty_date_time}</td>
                                     <td>${course.credits}</td>
                                     <td>${course.max_seats}</td>
                                     <td>${course.total_bidders}</td>
