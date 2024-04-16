@@ -5,7 +5,6 @@ const s = require('connect-redis');
 module.exports = class Bidding {
 
     static considerationSet(slug, biddingId, studentLid, round1Id, round2Id) {
-    
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)

@@ -260,9 +260,11 @@
           }
 
         } else {
+          
           let courseTiming = `<div>${biddingCourse.day_name}(${biddingCourse.StartTime} to ${biddingCourse.EndTime})`;
           let contentToAppend = otherFacultyExists.length ? `${courseTiming} - ${biddingCourse.faculty_name})` : `${courseTiming}`;
           existingElement.children('.course-timing').append(contentToAppend);
+        
         }
       });
     }

@@ -525,7 +525,7 @@ module.exports = class DivisionBatches {
                         LEFT JOIN [sbm-mum].student_elective_mapping sem ON sem.div_batch_lid = db.id AND sem.student_lid = @studentLid 
                         LEFT JOIN [sbm-mum].student_elective_bidding seb ON seb.div_batch_lid = db.id
                         WHERE c.sap_acad_session_id = @acadSessionId AND t.bidding_session_lid = @biddingId
-                        ORDER BY sem.is_favourite DESC`);
+                        AND t.active = 1 ORDER BY sem.is_favourite DESC`);
         });
     }
     
@@ -551,7 +551,7 @@ module.exports = class DivisionBatches {
                             INNER JOIN [dbo].days d ON d.id = t.day_lid
                             LEFT JOIN [${slug}].student_elective_mapping sem ON sem.div_batch_lid = db.id AND sem.student_lid = @studentLid 
                             LEFT JOIN [${slug}].student_elective_bidding seb ON seb.div_batch_lid = db.id
-                            WHERE c.sap_acad_session_id = @acadSessionId AND c.course_id = @courseId AND t.bidding_session_lid = @biddingId ORDER BY sem.is_favourite DESC`);
+                            WHERE c.sap_acad_session_id = @acadSessionId AND c.course_id = @courseId AND t.bidding_session_lid = @biddingId AND t.active = 1 ORDER BY sem.is_favourite DESC`);
             });
         } else {
             return poolConnection.then(pool => {
@@ -569,7 +569,7 @@ module.exports = class DivisionBatches {
                             INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
                             INNER JOIN [${slug}].courses c ON c.id = db.course_lid
                             INNER JOIN [dbo].days d ON d.id = t.day_lid 
-                            WHERE c.course_id = @courseId AND t.bidding_session_lid = @biddingId`);
+                            WHERE c.course_id = @courseId AND t.bidding_session_lid = @biddingId AND t.active = 1`);
             });
         }
     }
@@ -598,7 +598,7 @@ module.exports = class DivisionBatches {
                             LEFT JOIN [${slug}].student_elective_mapping sem ON sem.div_batch_lid = db.id AND sem.student_lid = @studentLid 
                             LEFT JOIN [${slug}].student_elective_bidding seb ON seb.div_batch_lid = db.id 
                             WHERE c.area_name LIKE @areaName AND c.sap_acad_session_id = @acadSessionId AND 
-                            t.bidding_session_lid = @biddingId ORDER BY sem.is_favourite DESC`);
+                            t.bidding_session_lid = @biddingId AND t.active = 1 ORDER BY sem.is_favourite DESC`);
             });
         } else {
             return poolConnection.then(pool => {
@@ -618,7 +618,8 @@ module.exports = class DivisionBatches {
                             INNER JOIN [${slug}].courses c ON c.id = db.course_lid
                             INNER JOIN [dbo].days d ON d.id = t.day_lid 
                             LEFT JOIN [${slug}].student_elective_mapping sem ON sem.div_batch_lid = db.id AND sem.student_lid = @studentLid AND sem.div_batch_lid IS NOT NULL
-                            WHERE c.area_name LIKE @areaName AND t.bidding_session_lid = @biddingId ORDER BY sem.is_favourite DESC`);
+                            WHERE c.area_name LIKE @areaName AND t.bidding_session_lid = @biddingId 
+                            AND t.active = 1 ORDER BY sem.is_favourite DESC`);
             });
         }
     }
