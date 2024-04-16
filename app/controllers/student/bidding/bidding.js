@@ -34,7 +34,6 @@ module.exports = {
                     
                 ])
             .then(result => {
-                
                 res.render('student/bidding/index', {
                     active: bidding,
                     slug: slug,

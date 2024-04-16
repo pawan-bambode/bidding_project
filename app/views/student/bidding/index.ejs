@@ -41,8 +41,13 @@
                 </div>
                 <div class="card-body table-responsive">
                     <div class="row ps-5 pe-5">
+                        <div class="col-md-4">
+                            <h6>Minimum / Maximum Yearly Credits :&nbsp;
+                                <span id="yearly-credits"><%- concentrationSet.totalCredits %></span>
+                            </h6>
+                        </div>
                         <div class="col-md-4 round-not-started-one-days">
-                            <h6>Bidding Name :&nbsp;
+                            <h6>Total Bid Points:&nbsp;
                                 <span id="total-bid-points"> <%- studentBidsPoints.student_bid_points %></span>
                             </h6>
                         </div>
@@ -52,33 +57,20 @@
                                 <span id="remaining-bid-points"><%- remaingBidPoints.student_bid_points %>
                             </h6>
                         </div>
-                        <div class="col-md-4">
-                            <h6>Credits Winning : &nbsp;
-                                <span id="credits-winning">0</span>
-                            </h6>
-                        </div>
+                    
                     </div>
                     <div class="row ps-5 pe-5">
                         <% for (let acadSessionCredit of acadSessionsWiseCredits) { %>
                             <div class="col-md-4">
                                 <h6><%- acadSessionCredit.name %> 
-                                    <%- acadSessionCredit.name %>
-                                    Credits :&nbsp;
+                                    Credits :
                                     <span class="credits-point-target" id="credits-points-target-<%- acadSessionCredit.id %>" data-id="<%-acadSessionCredit.id %>"><%-
                                         acadSessionCredit.credits %></span>
                                 </h6>
                             </div>
                         <% } %>
                     </div>
-                    <div class="row ps-5 pe-5">
-                        <% for (let acadSession of acadSessionsWiseCredits) { %>
-                            <div class="col-md-4">
-                                <h6> Selected  <%- acadSession.name %> Credits :&nbsp;
-                                    <span class="credit-points credits-points-<%- acadSession.id %>" data-id="<%- acadSession.id %>" id="credits-points-<%- acadSession.id %>">0</span>
-                                </h6>
-                            </div>
-                        <% } %>
-                    </div>
+                  
                     <div class="row ps-5 pe-5">
                         <div class="col-md-4">
                             <h6>Start Time :&nbsp;
@@ -225,14 +217,30 @@
         <div class="student-footer-div">
             <div class="d-flex justify-content-center align-items-center round-wise-details d-none">
                 <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="row">
+                        <div class="col-md-3">
+                            Credits Winning : 
+                            <span id="credits-winning">0</span>
+                        </div>
                         <% for(let acadSession of acadSessionsWiseCredits) {%>
                             <div class="session-credit-points col-md-3" data-acad-session-id="<%- acadSession.id %>">
                                 Selected <%- acadSession.name %>  Credits :&nbsp;
                                 <span class="credits-points">0</span>
                             </div>
                         <% } %> 
-                        <h5 class="text-danger time-remaining"></h5>
+                        <div class="criteria-status col-md-3">
+                            Total Bid Points :
+                            <span id="total-bid-points"> <%- studentBidsPoints.student_bid_points %></span>
+                        </div>
+                        <div class="area-status col-md-3">Remaining Bid points: 
+                            <span class="area-status-span"><%- remaingBidPoints.student_bid_points %></span>
+                        </div>
+                        <% if(concentrationSet.primaryArea) { %>
+                        <div class="pri-area-status col-md-3">Credit Covered In Pri. Area: <span class="pri-area-span">0</span></div>
+                        <% }  else { %>
+                            <div class="pri-area-status col-md-3 d-none">Credit Covered In Pri. Area: <span class="pri-area-span">0</span></div>
+                        <% } %>
+                        <div class="time-status col-md-3"><h5 class="text-danger time-remaining"></h5></div>
                     </div>
                 </div>
             </div>
