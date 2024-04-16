@@ -940,12 +940,12 @@ $(document).ready(function() {
         const isCurrentUser = userId === biddingReponseResult.userId;
         const isSuccessResponse = biddingReponseResult.studentBiddingResponse.status === 1;
 
+        let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
         if (isSuccessResponse) {
             let divisionBatchId = biddingReponseResult.divisionId;
             let mrbPoint = biddingReponseResult.minimumRequireBits.Mrb;
             let bidPoints = biddingReponseResult.minimumRequireBits.MaxBidPoints;
 
-            let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
             let credits = targetRow.data('credits');
         
             if (targetRow.length > 0) {
@@ -973,6 +973,7 @@ $(document).ready(function() {
 
             createToast({ title: "Success", msg: biddingResponseToUser, type: "positive", showingTime: "1000"});
         } else {
+            targetRow.find('.student-current-bid-point').val('');
             createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative", showingTime: "1000"});
         } 
         $('#credits-winning').text(studentBiddingStatus.winningCredits);

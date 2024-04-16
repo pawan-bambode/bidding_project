@@ -170,7 +170,7 @@ module.exports = {
     coursesByArea : (req, res) => {
         Promise.all([
             biddingClass.coursesByArea(res.locals.slug, res.locals.biddingId, req.body.acadSessionId,req.body.roundId ,req.body.studentId ,req.body.areaId),
-            demandEstimation.coursesByArea(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaId)
+            demandEstimation.coursesByAreaForBidding(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaId)
         ]).then(result => {
             res.json({
                 status: "200",
