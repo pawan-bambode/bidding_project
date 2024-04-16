@@ -121,6 +121,28 @@
                 <div class="card-header-custom d-flex justify-content-between p-1">
                     <h3 class="ms-2">Bidding Course</h3>
                 </div>
+                <div class="credit-status d-flex justify-content-around align-items-center flex-md-row flex-column mx-3 mt-2">
+               
+                    <div class="flex-grow-1 text-center">
+                        Areas To Cover:
+                        <%- concentrationSet.noofAreasToCover %>
+                    </div>
+                    <% if(concentrationSet.primaryArea != 'NA') { %>
+                        <div class="flex-grow-1 text-center">
+                            Min. Credits in Primary Area:
+                            <%-concentrationSet.minCreditsInPriArea %>
+                        </div>
+                    <% } %>
+                    <div class="flex-grow-1 text-center">
+                        Min. Credits Per Area:
+                        <%- concentrationSet.minCreditsPerArea %>
+                    </div>
+             
+                    <div class="flex-grow-1 text-center">
+                        Max. Credits Per Area:
+                    <%- concentrationSet.maxCreditsPerArea %>
+                    </div>
+                </div>
                 <div class="col-md-3 mt-4 ms-5">
                     <select class="form-select form-control bidding-acad-session" id="bidding-acad-session">
                         <option value="1">Select All</option>
@@ -232,14 +254,20 @@
                             Total Bid Points :
                             <span id="total-bid-points"> <%- studentBidsPoints.student_bid_points %></span>
                         </div>
-                        <div class="area-status col-md-3">Remaining Bid points: 
-                            <span class="area-status-span"><%- remaingBidPoints.student_bid_points %></span>
+                        <div class="col-md-3">Remaining Bid points: 
+                            <span><%- remaingBidPoints.student_bid_points %></span>
                         </div>
-                        <% if(concentrationSet.primaryArea) { %>
+                        <div class="area-status col-md-3">Area Covered: <span class="area-status-span">0</span></div>
+                        <% if(concentrationSet.primaryArea != 'NA') { %>
                         <div class="pri-area-status col-md-3">Credit Covered In Pri. Area: <span class="pri-area-span">0</span></div>
                         <% }  else { %>
                             <div class="pri-area-status col-md-3 d-none">Credit Covered In Pri. Area: <span class="pri-area-span">0</span></div>
                         <% } %>
+                        <% if(concentrationSet.primaryArea  != 'NA') { %>
+                            <div class="primary-area-name col-md-3">
+                                <span>Primary Area Name : <%- concentrationSet.primaryArea %></span>
+                            </div>
+                        <% } %>    
                         <div class="time-status col-md-3"><h5 class="text-danger time-remaining"></h5></div>
                     </div>
                 </div>
@@ -297,8 +325,10 @@ $(document).ready(function() {
     let withDrawBiddingRowIsFav = ``;
     let divisionBatchId ;
     let subjectAlreadySelected = false;
+    let totalSelectedAreaCovered = 0;
 
     let studentBiddingStatus = {
+        areaCovered:0,
         creditsPerArea: [],
         creditsPerSession: [],
         primaryArea: `${concentrationSet.name}`,
@@ -341,14 +371,20 @@ $(document).ready(function() {
             
             if(concenSet.is_winning){
                 studentBiddingStatus.winningCredits +=  concenSet.credits;
-            }       
+            } 
+            studentBiddingStatus.creditsPerArea.filter((areaWiseCredits) =>{
+                totalSelectedAreaCovered += areaWiseCredits.credits >= concentrationSet.minCreditsPerArea;
+            })      
         });
 
         $('#credits-winning').text(studentBiddingStatus.winningCredits);
+
         studentBiddingStatus.creditsPerSession.filter(creditsPerBidding =>{
             $(`.session-credit-points[data-acad-session-id="${creditsPerBidding.acadSessionId}"]`).
             find('.credits-points').text(creditsPerBidding.credits);
         })
+        studentBiddingStatus.areaCovered = totalSelectedAreaCovered;
+        $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
     }
 
     considerationSetCourses(considerationSet);
@@ -641,6 +677,18 @@ $(document).ready(function() {
                     });
                 }
 
+                let minCreditAreaFilter = studentBiddingStatus.creditsPerArea.filter(function(item) {
+                    if(item.area === concentrationSet.primaryArea){
+                        return  item.credits >= concentrationSet.minCreditsInPrimayArea
+                    }
+                    else{
+                        return item.credits >= concentrationSet.minCreditsPerArea;
+                    }
+            
+                });
+
+                studentBiddingStatus.areaCovered = minCreditAreaFilter.length;
+                $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
                 $(`#available-course-table tr[data-division-batch-lid="${divisionBatchId}"]`).remove();
                 updateTableForCurrentUser(biddingDetails);
 
