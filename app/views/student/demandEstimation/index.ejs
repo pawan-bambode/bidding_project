@@ -835,9 +835,6 @@ $(document).ready(function() {
         let acadSessionId = $('#acad-session-change').val();
         let areaId = $(this).val();
 
-        console.log(areaId);
-        console.log('valuesof aca', acadSessionId);
-
         let ApiObj = {
             url: '/student/demand-estimation/courses-by-area',
             type: 'POST',
@@ -848,7 +845,6 @@ $(document).ready(function() {
             dataType: 'JSON'
         }
         ajaxApi(ApiObj).then(result => {
-           console.log(result);
             availableCourse(result.availableCourses);
             if($('.save-select-course').hasClass('d-none') && selectedCourses.length > 0){
                 $('.hide-col-submitted-course').addClass('d-none');

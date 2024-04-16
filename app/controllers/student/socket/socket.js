@@ -232,7 +232,7 @@ module.exports.respond = async (socket, io) => {
             socket.emit("addBiddingResponse", emitData);
         } catch (error) {
             const errorMessage = JSON.parse(error.originalError.info.message);
-            socket.emit("addBiddingResponse", { message: errorMessage, userId });
+            socket.emit("addBiddingResponse", { message: errorMessage, userId});
         }
     });
 
@@ -262,13 +262,15 @@ module.exports.respond = async (socket, io) => {
             } else {
                 socket.emit("studentBiddingResponse", {
                     studentBiddingResponse: parsedMessage,
-                    userId: userId
+                    userId: userId,
+                    divisionId: divBatchId
                 });
             }
         } catch (error) {
             socket.emit("studentBiddingResponse", {
                 studentBiddingResponse: JSON.parse(error.originalError.info.message),
-                userId: biddingDetails.userId
+                userId: biddingDetails.userId,
+                divisionId: biddingDetails.divBatchId
             });
         }
     });
