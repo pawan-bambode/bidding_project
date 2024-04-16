@@ -345,7 +345,7 @@ $(document).ready(function() {
     };
 
     let isButtonDisabled = true;
-    let reasonForDisable = "Withdraw is restricted";
+    let reasonForDisable = "You cannot withdraw winning course.";
 
     if (considerationSet.length) {
         
@@ -935,23 +935,20 @@ $(document).ready(function() {
     })
 
     socket.on('studentBiddingResponse', function(biddingReponseResult) {
-        console.log(biddingReponseResult);
-  
+        
         let biddingResponseToUser = biddingReponseResult.studentBiddingResponse.description;
         const isCurrentUser = userId === biddingReponseResult.userId;
         const isSuccessResponse = biddingReponseResult.studentBiddingResponse.status === 1;
         let divisionBatchId = biddingReponseResult.divisionId;
         let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
         if (isSuccessResponse) {
-            console.log('inside if block', isSuccessResponse);
-            
+        
             let mrbPoint = biddingReponseResult.minimumRequireBits.Mrb;
             let bidPoints = biddingReponseResult.minimumRequireBits.MaxBidPoints;
 
             let credits = targetRow.data('credits');
         
             if (targetRow.length > 0) {
-                console.log(targetRow.length);
                 let winningStatusElement = targetRow.find('.winning-status');
                 let mrbPointsElement = targetRow.find('.mrb-points');
              
