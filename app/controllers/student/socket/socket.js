@@ -261,7 +261,8 @@ module.exports.respond = async (socket, io) => {
                 
                     let looserId = parsedMessage.data.loosing_user_id;
                     let mrb = detailsResult[1].recordset[0].Mrb;
-                    socket.to(roomId).emit("biddingLooserStatus", { looserId: looserId, mrb: mrb, divisionBatchLid: divBatchId });
+                    io.to(roomId).emit("totalBiddersUpdate", { looserId: looserId, mrb: mrb, divisionBatchLid: divBatchId });
+                  //  socket.to(roomId).emit("biddingLooserStatus", { looserId: looserId, mrb: mrb, divisionBatchLid: divBatchId });
                 } else {
                 
                     socket.emit("studentBiddingResponse", {
