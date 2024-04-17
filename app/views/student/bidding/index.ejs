@@ -620,18 +620,25 @@ $(document).ready(function() {
             });   
     })
 
-    socket.on('totalBiddersUpdate', function(totalBiddersUpdate){
-        let divisionBatchId = totalBiddersUpdate.divisionBatchLid;
-        let divisionBatchWiseRow = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`);
-        divisionBatchWiseRow.find('.total-bidder-counts').text(totalBiddersUpdate.totalBidders);
-        divisionBatchWiseRow.find('.mrb-points').text(totalBiddersUpdate.mrb);
-    });
+    socket.on('roomWiseMessage', function(roomWiseDetails){
+        
+        let looserId = roomWiseDetails.looserId;
+        let divisionBatchId = roomWiseDetails.divisionBatchLid;
+        let targetRow = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`);
+        let winningStatusElement = targetRow.find('.winning-status');
+        let credits = targetRow.data('credits');
 
-    socket.on('sameRoomMemberEffectAfterBidding', function(data){
-        let divisionBatchId = totalBiddersUpdate.divisionBatchLid;
-        let divisionBatchWiseRow = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`);
-        divisionBatchWiseRow.find('.total-bidder-counts').text(totalBiddersUpdate.totalBidders);
-        divisionBatchWiseRow.find('.mrb-points').text(totalBiddersUpdate.mrb);
+        targetRow.find('.total-bidder-counts').text(roomWiseDetails.totalBidders);
+        targetRow.find('.mrb-points').text(roomWiseDetails.mrb);
+
+        if(userId == looserId) {
+            winningStatusElement.html('No');  
+            winningStatusElement.removeClass('winning').addClass('losing');
+            targetRow.find('.withdraw-bidding').removeClass('custom-disabled');
+            targetRow.find('.withdraw-bidding').removeAttr('title');
+            studentBiddingStatus.winningCredits -= credits;
+            $('#credits-winning').text(studentBiddingStatus.winningCredits);
+        }
     });
 
     socket.on('addBiddingResponse', function(biddingResponseResult) {
@@ -651,6 +658,7 @@ $(document).ready(function() {
             const isSuccessResponse = message.status === 1;
 
             if (isSuccessResponse) {
+
                 $('#bidding-table tbody').append(biddingRow);
                 const biddingRowAdded = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`); 
                 const courseId = biddingRowAdded.data('course-id');
@@ -663,19 +671,7 @@ $(document).ready(function() {
                     studentBiddingStatus.winningCredits += credits;
                 }
                 studentBiddingStatus.coursesId.push(courseId);
-            
-                studentBiddingStatus.divisionBatchId.forEach((ele) => {
-                    if (ele.area === areaName) {
-                        divBatchAlreadySelected = true;
-                        return;
-                    }
-                });
-
-                if (!divBatchAlreadySelected) {
-                    studentBiddingStatus.divisionBatchId.push({ divisionBatchId: divisionBatchId, studentBid: 0 });
-                }
-                
-                console.log(studentBiddingStatus.creditsPerArea);
+         
                 if(studentBiddingStatus.creditsPerArea.length > 0) {
                     studentBiddingStatus.creditsPerArea.forEach((ele) => {
                         if (ele.area === areaName) {
@@ -733,8 +729,10 @@ $(document).ready(function() {
         $('#available-course-table tbody tr').each(function(index,element) {
             $(this).children(':first-child').text(index+1);
         });
+        console.log(studentBiddingStatus);
     });
     
+
     $('#bidding-table').on('click', '.withdraw-bidding', function() {
         withDrawBiddingRow = ``;
         withDrawBiddingRowIsFav = ``;
@@ -818,8 +816,6 @@ $(document).ready(function() {
         
         studentBiddingStatus.divisionBatchId =  studentBiddingStatus.divisionBatchId.filter(studentBiddingDivBatch => studentBiddingDivBatch.divisionBatchId != divisionBatchId )
 
-      
-
         if (isErrorResponse) {
             createToast({ title: "Fail", msg: withdrawResponseToUser, type: "negative", showingTime: "1000" });
         } else {
@@ -866,7 +862,7 @@ $(document).ready(function() {
                 let credits =  withdrawRow.data('credits');
 
                 studentBiddingStatus.creditsPerArea =  studentBiddingStatus.creditsPerSession.filter((studentCreditsPerSession) => {
-                    console.log(studentCreditsPerSession);
+                    
                     if (studentCreditsPerSession.acadSessionId == acadSessionId) {
                         studentCreditsPerSession.credits -= credits;
                     }
@@ -935,62 +931,33 @@ $(document).ready(function() {
         $.each(totalBidPointBidByStudent, function(index, bidPointBidByStudent) {
             totalBidPointsByStudent += Number(bidPointBidByStudent.bidPoints);
         });
+
+        console.log(totalBidPointBidByStudent);
   
         $('#remaining-bid-points').html(Number(totalStudentBidPoints) - Number(totalBidPointsByStudent));
     });
 
-
-    socket.on('biddingLooserStatus', function(biddingLooser) { 
-    
-        let divisionBatchId = biddingLooser.divisionBatchLid;
-        let looserId = biddingLooser.looserId;
-        let mrbPoint = biddingLooser.mrb;
-        let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
-        let credits = targetRow.data('credits');
-        let winningStatusElement = targetRow.find('.winning-status');
-        let mrbPointsElement = targetRow.find('.mrb-points');
-        mrbPointsElement.html(mrbPoint);
-
-        if(userId == looserId) {
-            winningStatusElement.html('No');  
-            winningStatusElement.removeClass('winning').addClass('losing');
-            $('#bidding-table tbody tr[data-division-batch-lid="' + divisionBatchId + '"]').find('.withdraw-bidding').removeClass('disabled');
-            studentBiddingStatus.winningCredits -= credits;
-            $('#credits-winning').text(studentBiddingStatus.winningCredits);
-        }
-
-    })
-
     socket.on('studentBiddingResponse', function(biddingReponseResult) {
+        
         let biddingResponseToUser = biddingReponseResult.studentBiddingResponse.description;
-        const isCurrentUser = userId === biddingReponseResult.userId;
         const isSuccessResponse = biddingReponseResult.studentBiddingResponse.status === 1;
         let divisionBatchId = biddingReponseResult.divisionId;
+        let studentBidPoints = biddingReponseResult.studentBidPoint;
         let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
         if (isSuccessResponse) {
         
-            let mrbPoint = biddingReponseResult.minimumRequireBits.Mrb;
-            let bidPoints = biddingReponseResult.minimumRequireBits.MaxBidPoints;
-
             let credits = targetRow.data('credits');
         
             if (targetRow.length > 0) {
+
                 let winningStatusElement = targetRow.find('.winning-status');
-                let mrbPointsElement = targetRow.find('.mrb-points');
-             
-                mrbPointsElement.html(mrbPoint);
                 
                 winningStatusElement.html('Yes');
                 winningStatusElement.removeClass('losing').addClass('winning');
                 studentBiddingStatus.winningCredits += credits;
-              
+                targetRow.find('.student-previous-bid-point').html(studentBidPoints);
                 targetRow.find('.student-current-bid-point').val('');
-                if(Number(mrbPoint)> Number(bidPoints)){
-                   targetRow.find('.student-previous-bid-point').html(bidPoints);
-                    
-                }
-                let studentBidPoints = targetRow.find('.student-previous-bid-point').html();
-
+               
                 if(studentBidPoints > 0){
                     targetRow.find('.withdraw-bidding').addClass('custom-disabled');
                     targetRow.find('.withdraw-bidding').attr('title', reasonForDisable);
