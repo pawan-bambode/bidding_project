@@ -674,14 +674,17 @@ $(document).ready(function() {
                 if (!divBatchAlreadySelected) {
                     studentBiddingStatus.divisionBatchId.push({ divisionBatchId: divisionBatchId, studentBid: 0 });
                 }
-
-                studentBiddingStatus.creditsPerArea.forEach((ele) => {
-                    if (ele.area === areaName) {
-                        ele.credits += credits;
-                        subjectAlreadySelected = true;
-                        return;
-                    }
-                });
+                
+                console.log(studentBiddingStatus.creditsPerArea);
+                if(studentBiddingStatus.creditsPerArea.length > 0) {
+                    studentBiddingStatus.creditsPerArea.forEach((ele) => {
+                        if (ele.area === areaName) {
+                            ele.credits += credits;
+                            subjectAlreadySelected = true;
+                            return;
+                        }
+                    });
+                }
 
                 if (!subjectAlreadySelected) {
                     studentBiddingStatus.creditsPerArea.push({ area: areaName, credits: credits });
@@ -700,18 +703,19 @@ $(document).ready(function() {
                     });
                 }
 
-                let minCreditAreaFilter = studentBiddingStatus.creditsPerArea.filter(function(item) {
-                    if(item.area === concentrationSet.primaryArea){
-                        return  item.credits >= concentrationSet.minCreditsInPrimayArea
-                    }
-                    else{
-                        return item.credits >= concentrationSet.minCreditsPerArea;
-                    }
+                // let minCreditAreaFilter = studentBiddingStatus.creditsPerArea.filter(function(item) {
+                //     console.log(item);
+                //     if(item.area === concentrationSet.primaryArea){
+                //         return  item.credits >= concentrationSet.minCreditsInPrimayArea
+                //     }
+                //     else{
+                //         return item.credits >= concentrationSet.minCreditsPerArea;
+                //     }
             
-                });
+                // });
 
-                studentBiddingStatus.areaCovered = minCreditAreaFilter.length;
-                $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
+                // studentBiddingStatus.areaCovered = minCreditAreaFilter.length;
+                // $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
                 $(`#available-course-table tr[data-division-batch-lid="${divisionBatchId}"]`).remove();
                 updateTableForCurrentUser(biddingDetails);
 
@@ -805,7 +809,7 @@ $(document).ready(function() {
     });
 
     socket.on('withdrawBiddingResponse', function (withdrawResponse) {
-   
+
         const divisionBatchId = withdrawResponse.divisionId;
         const isErrorResponse = withdrawResponse.message.status === 0;
         const withdrawResponseToUser = withdrawResponse.message.description;
@@ -814,12 +818,7 @@ $(document).ready(function() {
         
         studentBiddingStatus.divisionBatchId =  studentBiddingStatus.divisionBatchId.filter(studentBiddingDivBatch => studentBiddingDivBatch.divisionBatchId != divisionBatchId )
 
-        // studentBiddingStatus.creditsPerArea =  studentBiddingStatus.creditsPerArea.map((studentCreditsPerSession) => {
-
-        //     if (studentCreditsPerSession.acadSessionId == acadSessionId) {
-        //         ele.credits -= credits;
-        //     }
-        // });
+      
 
         if (isErrorResponse) {
             createToast({ title: "Fail", msg: withdrawResponseToUser, type: "negative", showingTime: "1000" });
@@ -849,6 +848,34 @@ $(document).ready(function() {
                 $('#page-no').text(++totalRowNo);
                 rearrangeIdAfterDeletion(rowId);
             }
+
+                // let minCreditAreaFilter = studentBiddingStatus.creditsPerArea.filter(function(item) {
+                //     if(item.area === concentrationSet.primaryArea){
+                //         return  item.credits >= concentrationSet.minCreditsInPrimayArea
+                //     }
+                //     else{
+                //         return item.credits >= concentrationSet.minCreditsPerArea;
+                //     }
+            
+                // });
+
+                // studentBiddingStatus.areaCovered = minCreditAreaFilter.length;
+                $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
+                let withdrawRow = $(`#available-course-table tbody tr[data-division-batch-lid="${divisionBatchId}"`);
+                let acadSessionId = withdrawRow.data('acad-session-id');
+                let credits =  withdrawRow.data('credits');
+
+                studentBiddingStatus.creditsPerArea =  studentBiddingStatus.creditsPerSession.filter((studentCreditsPerSession) => {
+                    console.log(studentCreditsPerSession);
+                    if (studentCreditsPerSession.acadSessionId == acadSessionId) {
+                        studentCreditsPerSession.credits -= credits;
+                    }
+                    if(studentCreditsPerSession.credits == 0){
+
+                    }
+                });
+
+                 $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentBiddingStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
         }
     });
 

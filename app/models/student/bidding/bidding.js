@@ -181,6 +181,7 @@ module.exports = class Bidding {
     }
 
     static getWithdrawBiddingDetails(slug, biddingId, divisionId) {
+      
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -213,6 +214,7 @@ module.exports = class Bidding {
     }
 
     static getWithdrawBiddingCourse(slug, biddingId, divisionBatchId, studentId) {
+        
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
