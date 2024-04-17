@@ -699,19 +699,19 @@ $(document).ready(function() {
                     });
                 }
 
-                // let minCreditAreaFilter = studentBiddingStatus.creditsPerArea.filter(function(item) {
-                //     console.log(item);
-                //     if(item.area === concentrationSet.primaryArea){
-                //         return  item.credits >= concentrationSet.minCreditsInPrimayArea
-                //     }
-                //     else{
-                //         return item.credits >= concentrationSet.minCreditsPerArea;
-                //     }
+                let minCreditAreaFilter = studentBiddingStatus.creditsPerArea.filter(function(item) {
+                    console.log(item);
+                    if(item.area === concentrationSet.primaryArea){
+                        return  item.credits >= concentrationSet.minCreditsInPrimayArea
+                    }
+                    else{
+                        return item.credits >= concentrationSet.minCreditsPerArea;
+                    }
             
-                // });
+                });
 
-                // studentBiddingStatus.areaCovered = minCreditAreaFilter.length;
-                // $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
+                studentBiddingStatus.areaCovered = minCreditAreaFilter.length;
+                $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
                 $(`#available-course-table tr[data-division-batch-lid="${divisionBatchId}"]`).remove();
                 updateTableForCurrentUser(biddingDetails);
 
