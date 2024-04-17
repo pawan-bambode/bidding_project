@@ -632,8 +632,19 @@ $(document).ready(function() {
             });   
     })
 
-    socket.on('roomWiseMessage', function(roomWiseDetails){
+    socket.on('roomWiseMessageBoardCast', function(roomWiseDetails){
         
+        let divisionBatchId = roomWiseDetails.divisionBatchLid;
+        let targetRow = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`);
+        let winningStatusElement = targetRow.find('.winning-status');
+        let credits = targetRow.data('credits');
+
+        targetRow.find('.total-bidder-counts').text(roomWiseDetails.totalBidders);
+        targetRow.find('.mrb-points').text(roomWiseDetails.mrb);
+    });
+
+    socket.on('roomWiseMessage', function(roomWiseDetails){
+    
         let looserId = roomWiseDetails.looserId;
         let divisionBatchId = roomWiseDetails.divisionBatchLid;
         let targetRow = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`);
@@ -654,7 +665,6 @@ $(document).ready(function() {
     });
 
     socket.on('withdrawBiddingStatus', function(withdrawBiddingDetails){
-        console.log(withdrawBiddingDetails);
         
         let winnerId = withdrawBiddingDetails.winnerId;
         let divisionBatchId = withdrawBiddingDetails.divisionBatchLid;

@@ -226,12 +226,11 @@ module.exports.respond = async (socket, io) => {
                 const result = await bidding.addBidding(slugName, studentLid, round_lid, courseLid, concentration_lid, roomId, userId, biddingSessionId);
                 const parsedMessage = JSON.parse(result.output.output_json);
                 const emitData = { message: parsedMessage, userId };
-            
                 if (parsedMessage.status === 1) {
                     const detailsResult = await bidding.getAddBiddingDetails(slugName, biddingSessionId, roomId, studentLid);
                     const { total_bidders, mrb, div_batch_lid } = detailsResult.recordset[0];
                     emitData.biddingDetails = detailsResult.recordset[0];
-                    io.to(roomId).emit("roomWiseMessage", { totalBidders: total_bidders, mrb: mrb, divisionBatchLid: div_batch_lid });
+                    io.to(roomId).emit("roomWiseMessageBoardCast", { totalBidders: total_bidders, mrb: mrb, divisionBatchLid: div_batch_lid });
                 }
             
                 socket.emit("addBiddingResponse", emitData);
