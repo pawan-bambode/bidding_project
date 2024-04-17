@@ -906,11 +906,7 @@ $(document).ready(function() {
             previous_bid : previousBid,
             bid_points: bidPoints
         }
-        let bidPointsStudentBid = {
-            divisionBatchId: divisionBatchId,
-            bidPoints: bidPoints     
-        }
-        
+     
         socket.emit('studentBidding', {
             slugName: "<%- slug %>",
             studentId: studentId,
@@ -920,21 +916,8 @@ $(document).ready(function() {
             biddingSessionId: biddingSessionId,
             inputJson: JSON.stringify(bidJson)
         });
-
-        if (totalBidPointBidByStudent.some(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId)) {
-                let bidPointBidByStudent = totalBidPointBidByStudent.find(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId);
-                bidPointBidByStudent.bidPoints = bidPoints;
-            } else {
-                totalBidPointBidByStudent.push(bidPointsStudentBid);
-            }
-        
-        $.each(totalBidPointBidByStudent, function(index, bidPointBidByStudent) {
-            totalBidPointsByStudent += Number(bidPointBidByStudent.bidPoints);
-        });
-
-        console.log(totalBidPointBidByStudent);
   
-        $('#remaining-bid-points').html(Number(totalStudentBidPoints) - Number(totalBidPointsByStudent));
+        
     });
 
     socket.on('studentBiddingResponse', function(biddingReponseResult) {
@@ -944,6 +927,12 @@ $(document).ready(function() {
         let divisionBatchId = biddingReponseResult.divisionId;
         let studentBidPoints = biddingReponseResult.studentBidPoint;
         let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
+        let totalBidPointsByStudent = 0;
+
+        let bidPointsStudentBid = {
+            divisionBatchId: divisionBatchId,
+            bidPoints: studentBidPoints     
+        }
         if (isSuccessResponse) {
         
             let credits = targetRow.data('credits');
@@ -962,6 +951,19 @@ $(document).ready(function() {
                     targetRow.find('.withdraw-bidding').addClass('custom-disabled');
                     targetRow.find('.withdraw-bidding').attr('title', reasonForDisable);
                 }
+
+                if (totalBidPointBidByStudent.some(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId)) {
+                let bidPointBidByStudent = totalBidPointBidByStudent.find(bidPointBidByStudent => bidPointBidByStudent.divisionBatchId === divisionBatchId);
+                bidPointBidByStudent.bidPoints = bidPoints;
+            } else {
+                totalBidPointBidByStudent.push(bidPointsStudentBid);
+            }
+        
+        $.each(totalBidPointBidByStudent, function(index, bidPointBidByStudent) {
+            totalBidPointsByStudent += Number(bidPointBidByStudent.bidPoints);
+        });
+
+        console.log(totalBidPointBidByStudent);
             }
 
             createToast({ title: "Success", msg: biddingResponseToUser, type: "positive", showingTime: "1000"});
@@ -970,6 +972,7 @@ $(document).ready(function() {
             createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative", showingTime: "1000"});
         } 
         $('#credits-winning').text(studentBiddingStatus.winningCredits);
+        $('#remaining-bid-points').html(Number(totalStudentBidPoints) - Number(totalBidPointsByStudent));
     }); 
 
 

@@ -2,23 +2,23 @@ const { sql, poolConnection } = require('../../../../config/db');
 
 module.exports = class ConcentrationSettings {
   
-    // static list(slug, biddingId) {
-    //     return poolConnection.then(pool => {
-    //         return pool.request()
-    //             .input('biddingId', sql.Int, biddingId)
-    //             .query(`SELECT cs.id, a.id AS area_Id, concentration_name AS name,
-    //                     concentration_lid AS concentraionId, 
-    //                     cs.bidding_session_lid AS biddingId,
-    //                     IIF(total_elective_credits IS NULL, 0, total_elective_credits) AS totalCredits,
-    //                     IIF(max_credits_per_area IS NULL, 0, max_credits_per_area) AS maxCreditsPerArea,
-    //                     IIF(no_of_areas_to_cover IS NULL, 0, no_of_areas_to_cover) AS noofAreasToCover,
-    //                     IIF(min_credits_per_area IS NULL, 0, min_credits_per_area) AS minCreditsPerArea,  
-    //                     IIF(primary_area IS NULL, 'NA', primary_area) AS primaryArea,
-    //                     IIF(min_credits_in_primary_area IS NULL, 0, min_credits_in_primary_area) AS minCreditsInPriArea 
-    //                     FROM [${slug}].concentration_settings cs
-    //                     LEFT JOIN [${slug}].areas a ON a.area_name = cs.primary_area AND cs.active = 1 AND cs.bidding_session_lid = @biddingId AND a.active = 1 AND a.bidding_session_lid = @biddingId WHERE cs.active = 1 AND cs.bidding_session_lid = @biddingId`);
-    //     });
-    // }
+    static getList(slug, biddingId) {
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .query(`SELECT cs.id, a.id AS area_Id, concentration_name AS name,
+                        concentration_lid AS concentraionId, 
+                        cs.bidding_session_lid AS biddingId,
+                        IIF(total_elective_credits IS NULL, 0, total_elective_credits) AS totalCredits,
+                        IIF(max_credits_per_area IS NULL, 0, max_credits_per_area) AS maxCreditsPerArea,
+                        IIF(no_of_areas_to_cover IS NULL, 0, no_of_areas_to_cover) AS noofAreasToCover,
+                        IIF(min_credits_per_area IS NULL, 0, min_credits_per_area) AS minCreditsPerArea,  
+                        IIF(primary_area IS NULL, 'NA', primary_area) AS primaryArea,
+                        IIF(min_credits_in_primary_area IS NULL, 0, min_credits_in_primary_area) AS minCreditsInPriArea 
+                        FROM [${slug}].concentration_settings cs
+                        LEFT JOIN [${slug}].areas a ON a.area_name = cs.primary_area AND cs.active = 1 AND cs.bidding_session_lid = @biddingId AND a.active = 1 AND a.bidding_session_lid = @biddingId WHERE cs.active = 1 AND cs.bidding_session_lid = @biddingId`);
+        });
+    }
 
     static list(slug, biddingId, studentId) {
         return poolConnection.then(pool => {
