@@ -653,6 +653,28 @@ $(document).ready(function() {
         }
     });
 
+    socket.on('withdrawBiddingStatus', function(withdrawBiddingDetails){
+        console.log(withdrawBiddingDetails);
+        
+        let winnerId = withdrawBiddingDetails.winnerId;
+        let divisionBatchId = withdrawBiddingDetails.divisionBatchLid;
+        let targetRow = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`);
+        let winningStatusElement = targetRow.find('.winning-status');
+        let credits = targetRow.data('credits');
+
+        targetRow.find('.total-bidder-counts').text(withdrawBiddingDetails.totalBidders);
+        targetRow.find('.mrb-points').text(withdrawBiddingDetails.mrb);
+
+        if(userId == winnerId) {
+            winningStatusElement.html('Yes');  
+            winningStatusElement.addClass('winning').removeClass('losing');
+            targetRow.find('.withdraw-bidding').addClass('custom-disabled');
+            targetRow.find('.withdraw-bidding').attr('title');
+            studentBiddingStatus.winningCredits -= credits;
+            $('#credits-winning').text(studentBiddingStatus.winningCredits);
+        }
+    });
+    
     socket.on('addBiddingResponse', function(biddingResponseResult) {
 
         const message = biddingResponseResult.message;
@@ -740,6 +762,7 @@ $(document).ready(function() {
                 updateTableForCurrentUser(biddingDetails);
 
                 $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentBiddingStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
+
                 let totalRowNo  = Number($('#page-no').text());
                 $('#page-no').text(--totalRowNo);
                 createToast({ title: "Success", msg: biddingResponseToUser, type: "positive", showingTime: "1000" });

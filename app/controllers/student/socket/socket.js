@@ -294,8 +294,9 @@ module.exports.respond = async (socket, io) => {
                 
                     if(detailsResult[0].recordset[0]){
                         let totalBidders = detailsResult[0].recordset[0].total_bidders;
-                        let mrb = detailsResult[0].recordset[0].mrb
-                        io.to(roomId).emit("roomWiseMessage", { totalBidders: totalBidders, mrb: mrb, divisionBatchLid: divisionBatchLid });
+                        let mrb = detailsResult[0].recordset[0].mrb;
+                        let winnerId = parsedMessage.data.winning_user_id;
+                        io.to(roomId).emit("withdrawBiddingStatus", { totalBidders: totalBidders, mrb: mrb, divisionBatchLid: divisionBatchLid, winnerId:winnerId });
                     }
                     socket.emit("withdrawBiddingResponse", {
                         message: parsedMessage,
