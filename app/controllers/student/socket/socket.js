@@ -210,12 +210,19 @@ module.exports.respond = async (socket, io) => {
         const interval = setInterval(intervalFunction, 1000);
     });
 
-
         socket.on('createOrJoinRoom', async (biddingDetails) => {
             const { slugName, studentLid, round_lid, courseLid, concentration_lid, biddingSessionId, userId } = biddingDetails;
             const roomId = biddingDetails.divisionBatchLid;
-        
-            socket.join(roomId);
+            
+            if(io.sockets.adapter.rooms.has(roomId)){       
+                console.log('inside the if block', io.sockets.adapter.rooms.has(roomId));         
+                socket.join(roomId);
+                console.log(io.sockets.adapter.rooms);
+            }
+            else{
+                console.log('inside the else block');
+                socket.join(roomId);
+            }
         
             try {
                 const result = await bidding.addBidding(slugName, studentLid, round_lid, courseLid, concentration_lid, roomId, userId, biddingSessionId);
@@ -227,8 +234,6 @@ module.exports.respond = async (socket, io) => {
                     const { total_bidders, mrb, div_batch_lid } = detailsResult.recordset[0];
                     emitData.biddingDetails = detailsResult.recordset[0];
                     io.to(roomId).emit("roomWiseMessage", { totalBidders: total_bidders, mrb: mrb, divisionBatchLid: div_batch_lid });
-
-                   // socket.to(roomId).emit("roomWiseMessage", { totalBidders: total_bidders, mrb: mrb, divisionBatchLid: div_batch_lid });
                 }
             
                 socket.emit("addBiddingResponse", emitData);
@@ -236,6 +241,7 @@ module.exports.respond = async (socket, io) => {
                 const errorMessage = JSON.parse(error.originalError.info.message);
                 socket.emit("addBiddingResponse", { message: errorMessage, userId});
             }
+           
         });
     
         socket.on('studentBidding', async biddingDetails => {
