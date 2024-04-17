@@ -296,7 +296,8 @@ module.exports.respond = async (socket, io) => {
                     if(detailsResult[0].recordset[0]){
                         let totalBidders = detailsResult[0].recordset[0].total_bidders;
                         let mrb = detailsResult[0].recordset[0].mrb
-                        socket.to(roomId).emit("totalBiddersUpdate", { totalBidders: totalBidders, mrb: mrb, divisionBatchLid: divisionBatchLid });
+                        io.to(roomId).emit("totalBiddersUpdate", { totalBidders: totalBidders, mrb: mrb, divisionBatchLid: divisionBatchLid });
+                       // socket.to(roomId).emit("totalBiddersUpdate", { totalBidders: totalBidders, mrb: mrb, divisionBatchLid: divisionBatchLid });
                     }
                     socket.emit("withdrawBiddingResponse", {
                         message: parsedMessage,
@@ -312,6 +313,7 @@ module.exports.respond = async (socket, io) => {
                     });
                 }
             } catch (error) {
+                console.log(error);
                 socket.emit("withdrawBiddingResponse", {
                     message: JSON.parse(error.originalError.info.message)
                 });
