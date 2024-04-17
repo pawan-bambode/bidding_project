@@ -296,7 +296,7 @@ $(document).ready(function() {
     let currentRoundStatus = JSON.parse(`<%- JSON.stringify(currentRoundStatus) %>`);
 
     let concentrationSet = JSON.parse(`<%- JSON.stringify(concentrationSet) %>`);
-    
+
     let creditsList = JSON.parse(`<%- JSON.stringify(acadSessionsWiseCredits) %>`)
 
     let considerationSet = JSON.parse(`<%- JSON.stringify(considerationSetList) %>`);
@@ -330,7 +330,7 @@ $(document).ready(function() {
     let divisionBatchId ;
     let subjectAlreadySelected = false;
     let totalSelectedAreaCovered = 0;
-
+    
     let studentBiddingStatus = {
         areaCovered:0,
         creditsPerArea: [],
@@ -346,10 +346,12 @@ $(document).ready(function() {
 
     let isButtonDisabled = true;
     let reasonForDisable = "You cannot withdraw winning course.";
-
+     
+    console.log(totalSelectedAreaCovered);
     if (considerationSet.length) {
-        
+        totalSelectedAreaCovered = 0;
         considerationSet.forEach(concenSet => {
+            
             
             studentBiddingStatus.divisionBatchId.push(concenSet.division_batch_lid);
             studentBiddingStatus.coursesId.push(concenSet.course_id);
@@ -376,13 +378,20 @@ $(document).ready(function() {
                     credits: concenSet.credits
                 });
             }
+
+            let primaryAreaCredits = studentBiddingStatus.creditsPerArea
+                .filter(creditsAreaWise => {
+                    return creditsAreaWise.area.toLowerCase() == concentrationSet.name.toLowerCase();
+                })
+                .map(creditsAreaWise => {
+                    return creditsAreaWise.credits;
+                });
+                $('.student-footer .pri-area-status .pri-area-span').text(primaryAreaCredits)
             
             if(concenSet.is_winning){
                 studentBiddingStatus.winningCredits +=  concenSet.credits;
             } 
-            studentBiddingStatus.creditsPerArea.filter((areaWiseCredits) =>{
-                totalSelectedAreaCovered += areaWiseCredits.credits >= concentrationSet.minCreditsPerArea;
-            })      
+             
         });
 
         $('#credits-winning').text(studentBiddingStatus.winningCredits);
@@ -391,8 +400,8 @@ $(document).ready(function() {
             $(`.session-credit-points[data-acad-session-id="${creditsPerBidding.acadSessionId}"]`).
             find('.credits-points').text(creditsPerBidding.credits);
         })
-
-        studentBiddingStatus.areaCovered = totalSelectedAreaCovered;
+        
+        studentBiddingStatus.areaCovered = studentBiddingStatus.creditsPerArea.length;
         $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
     }
 
@@ -658,7 +667,7 @@ $(document).ready(function() {
             const isSuccessResponse = message.status === 1;
 
             if (isSuccessResponse) {
-
+            
                 $('#bidding-table tbody').append(biddingRow);
                 const biddingRowAdded = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`); 
                 const courseId = biddingRowAdded.data('course-id');
@@ -708,6 +717,19 @@ $(document).ready(function() {
                     }
             
                 });
+                let primaryAreaCredits = 0;
+                let primaryAreaMatch =  studentBiddingStatus.creditsPerArea.find(obj => {
+                     if (obj.area == concentrationSet.primaryArea) {
+                         primaryAreaCredits = obj.credits;
+                         return true; 
+                     } else {
+                         return false; 
+                     }
+                 });
+
+                if(primaryAreaMatch){
+                     $('.student-footer .pri-area-status .pri-area-span').text(primaryAreaCredits)
+                } 
 
                 studentBiddingStatus.areaCovered = minCreditAreaFilter.length;
                 $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);

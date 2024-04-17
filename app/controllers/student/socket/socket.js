@@ -209,18 +209,16 @@ module.exports.respond = async (socket, io) => {
     
         const interval = setInterval(intervalFunction, 1000);
     });
-
+        
+        const rooms = new Set();
         socket.on('createOrJoinRoom', async (biddingDetails) => {
             const { slugName, studentLid, round_lid, courseLid, concentration_lid, biddingSessionId, userId } = biddingDetails;
             const roomId = biddingDetails.divisionBatchLid;
-            
-            if(io.sockets.adapter.rooms.has(roomId)){       
-                console.log('inside the if block', io.sockets.adapter.rooms.has(roomId));         
+            if(rooms.has(roomId)){                
                 socket.join(roomId);
-                console.log(io.sockets.adapter.rooms);
             }
             else{
-                console.log('inside the else block');
+                rooms.add(roomId);
                 socket.join(roomId);
             }
         
