@@ -181,7 +181,6 @@ module.exports = class Bidding {
     }
 
     static getWithdrawBiddingDetails(slug, biddingId, divisionId) {
-      console.table([slug, biddingId, divisionId]);
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)

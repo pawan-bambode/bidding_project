@@ -346,8 +346,7 @@ $(document).ready(function() {
 
     let isButtonDisabled = true;
     let reasonForDisable = "You cannot withdraw winning course.";
-     
-    console.log(totalSelectedAreaCovered);
+    
     if (considerationSet.length) {
         totalSelectedAreaCovered = 0;
         considerationSet.forEach(concenSet => {
@@ -401,7 +400,11 @@ $(document).ready(function() {
             find('.credits-points').text(creditsPerBidding.credits);
         })
         
-        studentBiddingStatus.areaCovered = studentBiddingStatus.creditsPerArea.length;
+        totalSelectedAreaCovered = studentBiddingStatus.creditsPerArea.filter(studentCreditsArea => {
+            return studentCreditsArea.credits >= concentrationSet.minCreditsPerArea;
+        })
+
+        studentBiddingStatus.areaCovered = totalSelectedAreaCovered.length;
         $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
     }
 
@@ -827,7 +830,8 @@ $(document).ready(function() {
     });
 
     socket.on('withdrawBiddingResponse', function (withdrawResponse) {
-
+        
+        console.log('withdrawResponse',withdrawResponse);
         const divisionBatchId = withdrawResponse.divisionId;
         const isErrorResponse = withdrawResponse.message.status === 0;
         const withdrawResponseToUser = withdrawResponse.message.description;

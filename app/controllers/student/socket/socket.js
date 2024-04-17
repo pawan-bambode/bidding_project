@@ -284,6 +284,7 @@ module.exports.respond = async (socket, io) => {
                 const { slugName, id, studentLid, round_lid, divisionBatchLid, biddingSessionId, userId } = biddingDetails;
                 const result = await bidding.withdrawBidding(slugName, id, studentLid, round_lid, divisionBatchLid, userId, biddingSessionId);
                 const parsedMessage = JSON.parse(result.output.output_json);
+                console.log(parsedMessage);
                 const roomId = divisionBatchLid;
             
                 if (parsedMessage.status === 1) {
