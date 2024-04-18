@@ -42,18 +42,18 @@
                 <div class="card-body table-responsive">
                     <div class="row ps-5 pe-5">
                         <div class="col-md-4">
-                            <h6>Minimum / Maximum Yearly Credits :&nbsp;
+                            <h6>Minimum / Maximum Yearly Credits : 
                                 <span id="yearly-credits"><%- concentrationSet.totalCredits %></span>
                             </h6>
                         </div>
                         <div class="col-md-4 round-not-started-one-days">
-                            <h6>Total Bid Points:&nbsp;
+                            <h6>Total Bid Points : 
                                 <span id="total-bid-points"> <%- studentBidsPoints.student_bid_points %></span>
                             </h6>
                         </div>
                         
                         <div class="col-md-4">
-                            <h6>Remaining Bid Points :&nbsp;
+                            <h6>Remaining Bid Points : 
                                 <span class="remaining-bid-points"><%- remaingBidPoints.student_bid_points %>
                             </h6>
                         </div>
@@ -644,7 +644,9 @@ $(document).ready(function() {
     });
 
     socket.on('roomWiseMessage', function(roomWiseDetails){
-    
+        
+        console.log('roomWiseDetails---------->', roomWiseDetails);
+
         let looserId = roomWiseDetails.looserId;
         let divisionBatchId = roomWiseDetails.divisionBatchLid;
         let targetRow = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`);
@@ -915,16 +917,29 @@ $(document).ready(function() {
                 let withdrawRow = $(`#available-course-table tbody tr[data-division-batch-lid="${divisionBatchId}"`);
                 let acadSessionId = withdrawRow.data('acad-session-id');
                 let credits =  withdrawRow.data('credits');
-
-                studentBiddingStatus.creditsPerArea =  studentBiddingStatus.creditsPerSession.filter((studentCreditsPerSession) => {
-                    
-                    if (studentCreditsPerSession.acadSessionId == acadSessionId) {
-                        studentCreditsPerSession.credits -= credits;
-                    }
-                    if(studentCreditsPerSession.credits == 0){
-
+                let courseId = withdrawRow.data('course-id');
+            
+                studentBiddingStatus.divisionBatchId = studentBiddingStatus.divisionBatchId.filter(withdrawDivisionBatchId => withdrawCourseId != divisionBatchId)
+                studentBiddingStatus.coursesId = studentBiddingStatus.coursesId.filter(withdrawCourseId => withdrawCourseId != courseId)
+                
+                studentCriteriaStatus.creditsPerArea.forEach((ele, idx) => {
+                    if (ele.area == area) {
+                        ele.credits -= credits;
+                        if (ele.credits == 0) {
+                            studentCriteriaStatus.creditsPerArea.splice(idx, 1);
+                        }
                     }
                 });
+
+                studentBiddingStatus.creditsPerSession.forEach((ele, idx) => {
+                    if (ele.acadSessionId == acadSessionId) {
+                        ele.credits -= credits;
+                        if (ele.credits == 0) {
+                            studentBiddingStatus.creditsPerSession.splice(idx, 1);
+                        }
+                    }
+                });
+                console.log(studentBiddingStatus);
 
                  $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentBiddingStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
         }
@@ -981,6 +996,7 @@ $(document).ready(function() {
 
     socket.on('studentBiddingResponse', function(biddingReponseResult) {
         
+        console.log('biddingReponseResult--------->', biddingReponseResult);
         let biddingResponseToUser = biddingReponseResult.studentBiddingResponse.description;
         const isSuccessResponse = biddingReponseResult.studentBiddingResponse.status === 1;
         let divisionBatchId = biddingReponseResult.divisionId;

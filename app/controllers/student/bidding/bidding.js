@@ -18,7 +18,7 @@ module.exports = {
                 
                 return Promise.all([
                     roundSetting.listByOneDayBefore(res.locals.slug, res.locals.biddingId, round1Id, round2Id),
-                    concentrationSetting.list(res.locals.slug, res.locals.biddingId, res.locals.studentId),
+                    concentrationSetting.getList(res.locals.slug, res.locals.biddingId, res.locals.studentId),
                     programSession.acadSessionsWiseCredits(res.locals.slug, res.locals.biddingId),
                     roundSetting.startAndEndTime(res.locals.slug, res.locals.biddingId, round1Id),
                     roundSetting.roundSettingTime(res.locals.slug, res.locals.biddingId, round1Id, round2Id),  
@@ -34,6 +34,7 @@ module.exports = {
                     
                 ])
             .then(result => {
+                
                 res.render('student/bidding/index', {
                     active: bidding,
                     slug: slug,

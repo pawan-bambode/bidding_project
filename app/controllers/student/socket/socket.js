@@ -250,6 +250,7 @@ module.exports.respond = async (socket, io) => {
                 let studentBidPoint = 0;
                 
                 if (parsedMessage.status === 1) {
+                    console.log('inside the if block parsedMessage.status', parsedMessage.status);
                     const detailsResult = await Promise.all([
                         bidding.getBiddingWinningResponse(slugName, biddingSessionId, divBatchId),
                         bidding.getMRBPointsResponse(slugName, biddingSessionId, divBatchId)
