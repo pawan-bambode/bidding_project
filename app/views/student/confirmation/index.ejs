@@ -338,7 +338,7 @@ $(document).ready(function() {
             })
             .catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);
-                createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                createToast({ title: "Alert", msg: errorMessage, type: "negative" });
             });
         confirmUnConfirmRow($(this), 'confirm-courses-table', 'btn btn-danger unconfirm-courses', 'fa-close', 'Unconfirm');
     });
@@ -385,7 +385,7 @@ $(document).ready(function() {
             })
             .catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);
-                createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                createToast({ title: "Alert", msg: errorMessage, type: "negative" });
             });
         confirmUnConfirmRow($(this), 'winning-course-table', 'btn btn-success confirm-courses', 'fa-check', 'Confirm')
     })

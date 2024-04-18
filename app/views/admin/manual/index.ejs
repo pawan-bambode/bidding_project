@@ -122,7 +122,7 @@ $(document).ready(function(){
                 $("#course-filter").html(courseName);
         }).catch(error =>{
           let errorMessage = JSON.stringify(error.responseJSON.description);
-          createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+          createToast({ title: "Alert", msg: errorMessage, type: "negative" });
         })    
     })
 
@@ -154,14 +154,14 @@ $(document).ready(function(){
         ajaxApi(ApiObj).then(result=>{
          let resultValue = JSON.parse(result.addWaitListResponse);
          if(resultValue.status == 0){
-            createToast({ title: "Fail", msg: result.description, type: "negative" });
+            createToast({ title: "Alert", msg: result.description, type: "negative" });
           } 
           else if(resultValue.status == 1){
             createToast({ title: "Success", msg: resultValue.description, type: "positive" });
           }
         }).catch(error =>{
           let errorMessage = JSON.stringify(error.responseJSON.description);
-          createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+          createToast({ title: "Alert", msg: errorMessage, type: "negative" });
         })    
     })
 });

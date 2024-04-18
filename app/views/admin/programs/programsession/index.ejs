@@ -131,7 +131,7 @@ $(document).ready(function() {
             setTimeout(function(){location.reload();},1000);     
         }).catch(error =>{
             let errorMessage = JSON.stringify(error.responseJSON.description);
-            createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000"});
+            createToast({ title: "Alert", msg: errorMessage, type: "negative", showingTime:"1000"});
         })
     })
 
@@ -158,7 +158,7 @@ $(document).ready(function() {
                 setTimeout(function(){location.reload();},1000);     
             }).catch(error =>{
                 let errorMessage = JSON.stringify(error.responseJSON.description);
-                createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000" });
+                createToast({ title: "Alert", msg: errorMessage, type: "negative", showingTime:"1000" });
             })
         }
     })   
@@ -238,7 +238,7 @@ $(document).ready(function() {
             $('#searchkeyword').val('');
         }).catch(error =>{
             let errorMessage = JSON.stringify(error.responseJSON.description);
-            createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+            createToast({ title: "Alert", msg: errorMessage, type: "negative" });
         })    
     })     
 });

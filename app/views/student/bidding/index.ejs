@@ -4,7 +4,7 @@
 
 <main>
     <div class="main-content">
-        <div class="card card-custom-border-curv round-message-container">
+        <div class="card card-custom-border-curv round-message-container mt-3">
             <div class="round-message">
                 <div class="card-header-custom d-flex justify-content-between">
                     <h4 class="ms-2 round-name">
@@ -93,33 +93,13 @@
         </div> 
     
         <div class="round-wise-details<%= (currentRoundStatus.round_started == 1) ? '' : ' d-none' %>">
-            <div class="card card-custom-border-curv mt-5">
-                <div class="card-header-custom d-flex justify-content-between p-1">
-                    <h3 class="ms-2">Confirmation Courses</h3>
-                </div>
-                <div class="card-body table-responsive">
-                    <table class="table table-bordered mt-4" id="confirm-course-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Area</th>
-                                <th>Course</th>
-                                <th>Acad Session</th>
-                                <th>Faculty</th>
-                                <th>Credits</th>
-                                <th>Your Bid</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-       
-            <div class="card card-custom-border-curv mt-5">
+        
+            <div class="card card-custom-border-curv mt-3">
                 <div class="card-header-custom d-flex justify-content-between p-1">
                     <h3 class="ms-2">Bidding Course</h3>
+                    <div class="border border-light rounded me-3">
+                       <button class="btn text-light" data-bs-toggle="modal" href="#view-confirmed-course-modal" role="button">View Confirmed Courses</button>          
+                    </div>
                 </div>
             <div class="shadow-sm">    
                 <div class="credit-status d-flex justify-content-around align-items-center flex-md-row flex-column mx-3 mt-2">
@@ -175,7 +155,7 @@
                     </table>
                 </div>
             </div>
-            <div class="card card-custom-border-curv mt-5" id="bidding-modal">
+            <div class="card card-custom-border-curv mt-3" id="bidding-modal">
                 <div class="card-header-custom d-flex justify-content-between p-1">
                     <h3 class="ms-2">Available Courses</h3>
                 </div>
@@ -193,7 +173,6 @@
                         <div class="col-md-3 mt-4 ms-2">
                             <select class="form-select form-control select2 d-none" id="area-change">
                                 <option value="" selected>Select Area</option>
-                                <option value="All">Select All Areas</option>
                                     <% for (let area of areaList) { %>
                                         <option value="<%-area.area_name %>"><%-area.area_name %></option>
                                     <% } %>
@@ -202,7 +181,6 @@
                         <div class="col-md-3 mt-4 ms-2">
                             <select class="form-select form-control select2 d-none" id="course-filter">
                                 <option value="" selected>Select Course</option>
-                                <option value="All">Select All Courses</option>
                             </select>
                         </div>
                     </div>
@@ -279,6 +257,112 @@
         </div>    
     </div>
 </footer>
+
+<div class="modal fade" data-bs-backdrop="static" id="view-confirmed-course-modal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-right">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title" id="exampleModalToggleLabel">Confirmed Courses</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size: 13px;"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card-body table-responsive confirm-coures-table">
+                    <table class="table table-bordered" id="confirm-course-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Area</th>
+                                <th>Course</th>
+                                <th>Acad Session</th>
+                                <th>Credits</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Finance</td>
+                                <td>Infrastructure Consulting and Management</td>
+                                <td>Trimester IV</td>
+                                <td>3</td>
+                            </tr>
+                              
+                            <tr>
+                                <td>1</td>
+                                <td>Finance</td>
+                                <td>Infrastructure Consulting and Management</td>
+                                <td>Trimester IV</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Finance</td>
+                                <td>Infrastructure Consulting and Management</td>
+                                <td>Trimester IV</td>
+                                <td>3</td>
+                            </tr>
+                              
+                            <tr>
+                                <td>1</td>
+                                <td>Finance</td>
+                                <td>Infrastructure Consulting and Management</td>
+                                <td>Trimester IV</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Finance</td>
+                                <td>Infrastructure Consulting and Management</td>
+                                <td>Trimester IV</td>
+                                <td>3</td>
+                            </tr>
+                              
+                            <tr>
+                                <td>1</td>
+                                <td>Finance</td>
+                                <td>Infrastructure Consulting and Management</td>
+                                <td>Trimester IV</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Finance</td>
+                                <td>Infrastructure Consulting and Management</td>
+                                <td>Trimester IV</td>
+                                <td>3</td>
+                            </tr>
+                              
+                            <tr>
+                                <td>1</td>
+                                <td>Finance</td>
+                                <td>Infrastructure Consulting and Management</td>
+                                <td>Trimester IV</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Finance</td>
+                                <td>Infrastructure Consulting and Management</td>
+                                <td>Trimester IV</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>Finance</td>
+                                <td>Infrastructure Consulting and Management</td>
+                                <td>Trimester IV</td>
+                                <td>3</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <%- include('../partials/footer.ejs') %>
 <script src="/socket.io/socket.io.js"></script>
@@ -427,6 +511,7 @@ $(document).ready(function() {
 
         let id = $(this).val();
         $("#bidding-table tbody tr").hide();
+       
 
         if(id == 1){
             $("#bidding-table tbody tr").each(function(index) {
@@ -466,7 +551,9 @@ $(document).ready(function() {
         let areaId = $(this).val();
         let roundId = $('.round-basic-details .round-name').data('round-id');
         let studentId = $('#student-data').data('student-id');
- 
+        let firstChildCourse = $("#course-filter :first-child").val();
+        $("#course-filter").val(firstChildCourse).trigger('change');
+    
         let ApiObj = {
             url: '/student/bidding/courses-by-area',
             type: 'POST',
@@ -498,6 +585,10 @@ $(document).ready(function() {
         let acadSessionId = $(this).val();
         let roundId = $('.round-basic-details .round-name').data('round-id');
         let studentId = $('#student-data').data('student-id');
+        let firstChildCourse = $("#course-filter :first-child").val();
+        let firstChildArea = $('#area-change :first-child').val();
+        $("#course-filter").val(firstChildCourse).trigger('change');
+        $('#area-change').val(firstChildArea).trigger('change');
 
         let ApiObj = {
             url: '/student/bidding/courses-by-acad',
@@ -698,7 +789,7 @@ $(document).ready(function() {
         const biddingResponseToUser = message.description;
 
         if (isErrorResponse) {
-            createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative", showingTime: "1000" });
+            createToast({ title: "Alert", msg: biddingResponseToUser, type: "negative", showingTime: "1000" });
         } else {
             const divisionBatchId = biddingDetails.div_batch_lid;
             const isSuccessResponse = message.status === 1;
@@ -779,7 +870,7 @@ $(document).ready(function() {
                 $('#page-no').text(--totalRowNo);
                 createToast({ title: "Success", msg: biddingResponseToUser, type: "positive", showingTime: "1000" });
             } else {
-                createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative", showingTime: "1000" });
+                createToast({ title: "Alert", msg: biddingResponseToUser, type: "negative", showingTime: "1000" });
             }
         }
         
@@ -874,7 +965,7 @@ $(document).ready(function() {
         studentBiddingStatus.divisionBatchId =  studentBiddingStatus.divisionBatchId.filter(studentBiddingDivBatch => studentBiddingDivBatch.divisionBatchId != divisionBatchId )
 
         if (isErrorResponse) {
-            createToast({ title: "Fail", msg: withdrawResponseToUser, type: "negative", showingTime: "1000" });
+            createToast({ title: "Alert", msg: withdrawResponseToUser, type: "negative", showingTime: "1000" });
         } else {
             const isSuccessResponse = withdrawResponse.message.status === 1;
 
@@ -1031,7 +1122,7 @@ $(document).ready(function() {
             createToast({ title: "Success", msg: biddingResponseToUser, type: "positive", showingTime: "1000"});
         } else {
             targetRow.find('.student-current-bid-point').val('');
-            createToast({ title: "Fail", msg: biddingResponseToUser, type: "negative", showingTime: "1000"});
+            createToast({ title: "Alert", msg: biddingResponseToUser, type: "negative", showingTime: "1000"});
         } 
         $('#credits-winning').text(studentBiddingStatus.winningCredits);
        

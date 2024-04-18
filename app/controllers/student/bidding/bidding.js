@@ -195,6 +195,7 @@ module.exports = {
                 courseList: result[0].recordset
             });
         }).catch(error => {
+            console.log(error);
             res.status(500).json(error.originalError.info.message);
         });
     },

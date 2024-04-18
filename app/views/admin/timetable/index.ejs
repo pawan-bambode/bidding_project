@@ -212,7 +212,7 @@
                 })
                 .catch(error => {
                     let errorMessage = JSON.stringify(error.responseJSON.description);
-                    createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                    createToast({ title: "Alert", msg: errorMessage, type: "negative" });
                 });
                 
             }else{
@@ -244,7 +244,7 @@
                 setTimeout(function(){location.reload();},1000);
             }).catch(error =>{
                 let errorMessage = JSON.stringify(error.responseJSON.description);
-                createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000"});
+                createToast({ title: "Alert", msg: errorMessage, type: "negative", showingTime:"1000"});
             })
         })
     $('#upload-elective-timetable-form').on('submit',function(event){
@@ -263,7 +263,7 @@
             },
             error:function(xhr,status,error){
                 let errorMessage = JSON.stringify(xhr.responseJSON.description);
-                createToast({ title: "Fail", msg: errorMessage, type: "negative", showingTime:"1000"});
+                createToast({ title: "Alert", msg: errorMessage, type: "negative", showingTime:"1000"});
             }
         })
     })

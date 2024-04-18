@@ -155,7 +155,7 @@ body {
 
 /* TOPNAVBAR ENDS */
 .main-content {
-    padding: 100px 35px;
+    padding: 70px 35px;
     width: 100%;
     min-height: 100vh;
     background: var(--primary-bg);
@@ -1284,3 +1284,35 @@ hr{
 .custom-disabled{
     opacity: 0.6;
 }
+
+
+#view-confirmed-course-modal .modal-dialog-right {
+    margin-right: 10px;
+    margin-left: auto;
+    margin-top: 70px;
+}
+#view-confirmed-course-modal .confirm-coures-table{
+    max-height: 300px;
+    overflow-y: auto;
+}
+#view-confirmed-course-modal table tbody {
+    font-size: 10px;
+}
+#view-confirmed-course-modal table thead {
+    font-size: 12px;
+}
+
+#view-confirmed-course-modal .modal-body {
+    padding: 0;
+}
+
+
+
+@media (min-width: 576px) {
+    .modal-dialog.modal-dialog-right {
+        max-width: 430px; 
+        margin: 1.75rem auto; 
+        overflow-x: auto;
+    }
+}
+

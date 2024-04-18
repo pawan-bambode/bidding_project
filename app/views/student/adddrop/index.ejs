@@ -386,14 +386,14 @@
            let resultValue = JSON.parse(result.swap);
            if(resultValue.status == 0){
             let errorMessage = JSON.stringify(resultValue.description);
-            createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+            createToast({ title: "Alert", msg: errorMessage, type: "negative" });
             } 
             else if(resultValue.status == 1){
               createToast({ title: "Success", msg: resultValue.description, type: "positive" });
             }
           }).catch(error =>{
                 let errorMessage = JSON.stringify(error.responseJSON.description);
-                createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                createToast({ title: "Alert", msg: errorMessage, type: "negative" });
           })    
         })
     
@@ -421,11 +421,11 @@
                         createToast({ title: "Success", msg: response.description, type: "positive" });
                     } else {
                         let errorMessage = JSON.stringify(response.description);
-                        createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                        createToast({ title: "Alert", msg: errorMessage, type: "negative" });
                     }
             }).catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);
-                createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                createToast({ title: "Alert", msg: errorMessage, type: "negative" });
             });
         });
 

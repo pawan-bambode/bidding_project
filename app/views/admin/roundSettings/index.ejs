@@ -467,7 +467,7 @@ $(document).ready(function() {
             let startDateTime = $(ele).children('td.start-date-time').text();
             let endDateTime = $(ele).children('td.end-date-time').text();
             if ((totalStudents === 0) || (totalCourses === 0) || startDateTime === 'NA' || endDateTime === 'NA') {
-                createToast({ title: "Fail", msg: 'Please Enter Previous Row Entry First', type: "negative" });
+                createToast({ title: "Alert", msg: 'Please Enter Previous Row Entry First', type: "negative" });
                 canProceed = false;
                 return false; 
            }
@@ -678,7 +678,7 @@ $(document).ready(function() {
                 })
                 .catch(error => {
                     let errorMessage = JSON.stringify(error.responseJSON.description);
-                    createToast({ title: "Fail", msg: errorMessage, type: "negative" ,showingTime:'1000'});
+                    createToast({ title: "Alert", msg: errorMessage, type: "negative" ,showingTime:'1000'});
                 });
         }        
     }); 
@@ -1070,7 +1070,7 @@ $(document).ready(function() {
             })
             .catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);
-                createToast({ title: "Fail", msg: errorMessage, type: "negative" , showingTime: "1000"});
+                createToast({ title: "Alert", msg: errorMessage, type: "negative" , showingTime: "1000"});
             });
     });
 
@@ -1130,7 +1130,7 @@ $(document).ready(function() {
             })
             .catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);
-                createToast({ title: "Fail", msg: errorMessage, type: "negative" });
+                createToast({ title: "Alert", msg: errorMessage, type: "negative" });
             });
     }); 
 
