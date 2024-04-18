@@ -607,8 +607,8 @@ $(document).ready(function() {
         let isFavourite = $(this).closest('tr').data('is-favourite');
         let tableId = $('#bidding-table tbody tr').length;
         let studentId = $('#student-data').data('student-id');
+        let facultyDateTime = $(this).closest('tr').data('faculty-date-time');
         let id = $(this).closest('tr').data('id');
-
         let roundId = $('.round-basic-details h4.round-name').data('round-id');
     
         biddingRow = `<tr 
@@ -628,6 +628,7 @@ $(document).ready(function() {
                         data-division = "${division}"
                         data-faculty-name = "${facultName}"
                         data-is-favourite ="${isFavourite}"
+                        data-faculty-date-time = "${facultyDateTime}"
                         >
                             <td class="id-column">${++tableId}</td>
                             <td>${areaName}</td>
@@ -676,9 +677,7 @@ $(document).ready(function() {
     });
 
     socket.on('roomWiseMessage', function(roomWiseDetails){
-        
-        console.log('roomWiseDetails---------->', roomWiseDetails);
-
+    
         let looserId = roomWiseDetails.looserId;
         let divisionBatchId = roomWiseDetails.divisionBatchLid;
         let targetRow = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`);
@@ -845,7 +844,8 @@ $(document).ready(function() {
         let studentId = $('#student-data').data('student-id');
         let roundId = $('.round-basic-details h4.round-name').data('round-id');
         let courseId = $(this).closest('tr').data('course-id');
-
+        let facultyTime = $(this).closest('tr').data('faculty-date-time');
+    
         let selectedCourseCount = Number(studentBiddingStatus.divisionBatchId.length);
         withDrawBiddingRow = `<tr 
                                 data-area-name = "${areaName}" 
@@ -870,7 +870,7 @@ $(document).ready(function() {
                             '<img class="added-star fav-course" src="/image/student/body-part-image/available-course/added-star.png" alt="added">' : ''}
                             </td>
                             <td>${acadSession}</td>
-                            <td class='course-timing'>${facultyName}</td>
+                            <td class='course-timing'>${facultyTime}</td>
                             <td>${credits}</td>
                             <td>${maxSeats}</td>
                             <td>0</td>
@@ -1034,7 +1034,6 @@ $(document).ready(function() {
 
     socket.on('studentBiddingResponse', function(biddingReponseResult) {
         
-        console.log('biddingReponseResult--------->', biddingReponseResult);
         let biddingResponseToUser = biddingReponseResult.studentBiddingResponse.description;
         const isSuccessResponse = biddingReponseResult.studentBiddingResponse.status === 1;
         let divisionBatchId = biddingReponseResult.divisionId;
@@ -1158,7 +1157,7 @@ $(document).ready(function() {
         if(courses.length > 0) {
 
             courses.forEach(function(course, index) {
-
+                
                 let divisionBatchId = course.division_batch_lid;
                 let facultyId = course.faculty_id;
                 let existingElement = $(`#available-course-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
@@ -1182,6 +1181,7 @@ $(document).ready(function() {
                                     data-course-lid = "${course.course_lid}"
                                     data-faculty-name = "${course.faculty_name}"
                                     data-is-favourite = "${course.is_favourite}"
+                                    data-faculty-date-time="${course.day_name} (${course.StartTime} to ${course.EndTime}) ${course.faculty_name}"
                                 >
 
                                 <td class="id-column">${++lengthOfTable}</td>
