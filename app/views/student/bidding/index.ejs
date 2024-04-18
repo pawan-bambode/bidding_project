@@ -713,9 +713,8 @@ $(document).ready(function() {
         if(userId == winnerId) {
             winningStatusElement.html('Yes');  
             winningStatusElement.addClass('winning').removeClass('losing');
-            targetRow.find('.withdraw-bidding').addClass('custom-disabled');
             targetRow.find('.withdraw-bidding').attr('title');
-            studentBiddingStatus.winningCredits -= credits;
+            studentBiddingStatus.winningCredits += credits;
             $('#credits-winning').text(studentBiddingStatus.winningCredits);
         }
     });
@@ -906,9 +905,7 @@ $(document).ready(function() {
         const withdrawResponseToUser = withdrawResponse.message.description;
         
         const isSuccessResponse = withdrawResponse.message.status === 1;
-        
-        studentBiddingStatus.divisionBatchId =  studentBiddingStatus.divisionBatchId.filter(studentBiddingDivBatch => studentBiddingDivBatch.divisionBatchId != divisionBatchId )
-
+    
         if (isErrorResponse) {
             createToast({ title: "Alert", msg: withdrawResponseToUser, type: "negative", showingTime: "1000" });
         } else {
@@ -929,12 +926,14 @@ $(document).ready(function() {
                 });
 
                 createToast({ title: "Success", msg: withdrawResponseToUser, type: "positive", showingTime: "1000" });
-                
+
                 $('#available-course-table tbody tr').each(function(index,element) {
                     $(this).children(':first-child').text(index+1);
                 });
+
                 let totalRowNo  = Number($('#page-no').text());
                 $('#page-no').text(++totalRowNo);
+
                 rearrangeIdAfterDeletion(rowId);
             }
 
@@ -966,8 +965,7 @@ $(document).ready(function() {
 
                 studentBiddingStatus.divisionBatchId = 
                 studentBiddingStatus.divisionBatchId.filter(studentDivisionBatchId => studentDivisionBatchId != divisionBatchId);
-                studentBiddingStatus.winningCredits -= credits; 
-          
+                
                 let minCreditAreaFilter = studentBiddingStatus.creditsPerArea.filter(function(item) {
                     if(item.area === concentrationSet.primaryArea){
                         return  item.credits >= concentrationSet.minCreditsInPrimayArea
@@ -975,9 +973,12 @@ $(document).ready(function() {
                     else{
                         return item.credits >= concentrationSet.minCreditsPerArea;
                     }
-            
+                    
                 });
+                
+                studentBiddingStatus.winningCredits -= credits; 
 				studentBiddingStatus.areaCovered = minCreditAreaFilter.length;
+
                 $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
                 $('#credits-winning').text(studentBiddingStatus.winningCredits);
 
