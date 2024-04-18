@@ -96,10 +96,12 @@
         
             <div class="card card-custom-border-curv mt-3">
                 <div class="card-header-custom d-flex justify-content-between p-1">
-                    <h3 class="ms-2">Bidding Course</h3>
-                    <div class="border border-light rounded me-3">
-                       <button class="btn text-light" data-bs-toggle="modal" href="#view-confirmed-course-modal" role="button">View Confirmed Courses</button>          
-                    </div>
+                    <h4 class="ms-2">Bidding Course</h4>
+                    <% if (confirmationCourses.length > 0) { %>
+                        <div class="border border-light rounded me-3">
+                           <button class="btn text-light" data-bs-toggle="modal" data-bs-target="#view-confirmed-course-modal" role="button">View Confirmed Courses</button>          
+                        </div>
+                    <% } %>    
                 </div>
             <div class="shadow-sm">    
                 <div class="credit-status d-flex justify-content-around align-items-center flex-md-row flex-column mx-3 mt-2">
@@ -157,7 +159,7 @@
             </div>
             <div class="card card-custom-border-curv mt-3" id="bidding-modal">
                 <div class="card-header-custom d-flex justify-content-between p-1">
-                    <h3 class="ms-2">Available Courses</h3>
+                    <h4 class="ms-2">Available Courses</h4>
                 </div>
                 <div class="card-body table-responsive">
                 
@@ -272,87 +274,27 @@
                             <tr>
                                 <th>#</th>
                                 <th>Area</th>
-                                <th>Course</th>
+                                <th>Course Name</th>
                                 <th>Acad Session</th>
                                 <th>Credits</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Finance</td>
-                                <td>Infrastructure Consulting and Management</td>
-                                <td>Trimester IV</td>
-                                <td>3</td>
-                            </tr>
-                              
-                            <tr>
-                                <td>1</td>
-                                <td>Finance</td>
-                                <td>Infrastructure Consulting and Management</td>
-                                <td>Trimester IV</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>Finance</td>
-                                <td>Infrastructure Consulting and Management</td>
-                                <td>Trimester IV</td>
-                                <td>3</td>
-                            </tr>
-                              
-                            <tr>
-                                <td>1</td>
-                                <td>Finance</td>
-                                <td>Infrastructure Consulting and Management</td>
-                                <td>Trimester IV</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>Finance</td>
-                                <td>Infrastructure Consulting and Management</td>
-                                <td>Trimester IV</td>
-                                <td>3</td>
-                            </tr>
-                              
-                            <tr>
-                                <td>1</td>
-                                <td>Finance</td>
-                                <td>Infrastructure Consulting and Management</td>
-                                <td>Trimester IV</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>Finance</td>
-                                <td>Infrastructure Consulting and Management</td>
-                                <td>Trimester IV</td>
-                                <td>3</td>
-                            </tr>
-                              
-                            <tr>
-                                <td>1</td>
-                                <td>Finance</td>
-                                <td>Infrastructure Consulting and Management</td>
-                                <td>Trimester IV</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>Finance</td>
-                                <td>Infrastructure Consulting and Management</td>
-                                <td>Trimester IV</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>Finance</td>
-                                <td>Infrastructure Consulting and Management</td>
-                                <td>Trimester IV</td>
-                                <td>3</td>
-                            </tr>
-
+                            <%
+                                let count = 1;
+                                if (confirmationCourses.length > 0) {
+                                    for (let confirmCourse of confirmationCourses) { %>
+                                        <tr>
+                                            <td><%- count++ %></td>
+                                            <td><%- confirmCourse.area_name %></td> 
+                                            <td><%- confirmCourse.course_name %></td> 
+                                            <td><%- confirmCourse.acad_session %></td> 
+                                            <td><%- confirmCourse.credits %></td> 
+                                        </tr>
+                                    <% }
+                                }
+                            %>
+                            
                         </tbody>
                     </table>
                 </div>
@@ -845,6 +787,8 @@ $(document).ready(function() {
                     }
             
                 });
+
+                studentBiddingStatus.divisionBatchId.push(divisionBatchId);
                 let primaryAreaCredits = 0;
                 let primaryAreaMatch =  studentBiddingStatus.creditsPerArea.find(obj => {
                      if (obj.area == concentrationSet.primaryArea) {
@@ -860,7 +804,7 @@ $(document).ready(function() {
                 } 
 
                 studentBiddingStatus.areaCovered = minCreditAreaFilter.length;
-                $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
+                
                 $(`#available-course-table tr[data-division-batch-lid="${divisionBatchId}"]`).remove();
                 updateTableForCurrentUser(biddingDetails);
 
@@ -875,7 +819,7 @@ $(document).ready(function() {
         }
         
         $('#credits-winning').text(studentBiddingStatus.winningCredits);
-
+        $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
         $('#available-course-table tbody tr').each(function(index,element) {
             $(this).children(':first-child').text(index+1);
         });
@@ -956,10 +900,11 @@ $(document).ready(function() {
     });
 
     socket.on('withdrawBiddingResponse', function (withdrawResponse) {
+
         const divisionBatchId = withdrawResponse.divisionId;
         const isErrorResponse = withdrawResponse.message.status === 0;
         const withdrawResponseToUser = withdrawResponse.message.description;
-
+        
         const isSuccessResponse = withdrawResponse.message.status === 1;
         
         studentBiddingStatus.divisionBatchId =  studentBiddingStatus.divisionBatchId.filter(studentBiddingDivBatch => studentBiddingDivBatch.divisionBatchId != divisionBatchId )
@@ -972,19 +917,19 @@ $(document).ready(function() {
             if (isSuccessResponse) {
 
                 let targetRow = $(`#bidding-table tbody tr[data-division-batch-lid="${divisionBatchId}"]`);
-                targetRow.remove();
                 let rowId = targetRow.find('td:first-child').text()
-                if(withDrawBiddingRowIsFav == 1){
-                    $('#available-course-table tbody').prepend(withDrawBiddingRow);
-                }
-                else{
-                    $('#available-course-table tbody').append(withDrawBiddingRow)
-                }
-                              
+                let availableCourseTable = $('#available-course-table tbody');
+
+                targetRow.remove();
+
+                withDrawBiddingRowIsFav == 1 ? availableCourseTable.prepend(withDrawBiddingRow):availableCourseTable.append(withDrawBiddingRow)
+                             
                 withdrawResponse.withdrawBiddingCourse.forEach(userSpecificWithdrawStatus => {
                     updateTableForCurrentUser(userSpecificWithdrawStatus);
                 });
+
                 createToast({ title: "Success", msg: withdrawResponseToUser, type: "positive", showingTime: "1000" });
+                
                 $('#available-course-table tbody tr').each(function(index,element) {
                     $(this).children(':first-child').text(index+1);
                 });
@@ -993,31 +938,19 @@ $(document).ready(function() {
                 rearrangeIdAfterDeletion(rowId);
             }
 
-                // let minCreditAreaFilter = studentBiddingStatus.creditsPerArea.filter(function(item) {
-                //     if(item.area === concentrationSet.primaryArea){
-                //         return  item.credits >= concentrationSet.minCreditsInPrimayArea
-                //     }
-                //     else{
-                //         return item.credits >= concentrationSet.minCreditsPerArea;
-                //     }
-            
-                // });
-
-                // studentBiddingStatus.areaCovered = minCreditAreaFilter.length;
-                $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
                 let withdrawRow = $(`#available-course-table tbody tr[data-division-batch-lid="${divisionBatchId}"`);
                 let acadSessionId = withdrawRow.data('acad-session-id');
                 let credits =  withdrawRow.data('credits');
                 let courseId = withdrawRow.data('course-id');
+                let area = withdrawRow.data('area-name');
             
-                studentBiddingStatus.divisionBatchId = studentBiddingStatus.divisionBatchId.filter(withdrawDivisionBatchId => withdrawCourseId != divisionBatchId)
                 studentBiddingStatus.coursesId = studentBiddingStatus.coursesId.filter(withdrawCourseId => withdrawCourseId != courseId)
                 
-                studentCriteriaStatus.creditsPerArea.forEach((ele, idx) => {
+                studentBiddingStatus.creditsPerArea.forEach((ele, idx) => {
                     if (ele.area == area) {
                         ele.credits -= credits;
                         if (ele.credits == 0) {
-                            studentCriteriaStatus.creditsPerArea.splice(idx, 1);
+                            studentBiddingStatus.creditsPerArea.splice(idx, 1);
                         }
                     }
                 });
@@ -1030,7 +963,23 @@ $(document).ready(function() {
                         }
                     }
                 });
-                console.log(studentBiddingStatus);
+
+                studentBiddingStatus.divisionBatchId = 
+                studentBiddingStatus.divisionBatchId.filter(studentDivisionBatchId => studentDivisionBatchId != divisionBatchId);
+                studentBiddingStatus.winningCredits -= credits; 
+          
+                let minCreditAreaFilter = studentBiddingStatus.creditsPerArea.filter(function(item) {
+                    if(item.area === concentrationSet.primaryArea){
+                        return  item.credits >= concentrationSet.minCreditsInPrimayArea
+                    }
+                    else{
+                        return item.credits >= concentrationSet.minCreditsPerArea;
+                    }
+            
+                });
+				studentBiddingStatus.areaCovered = minCreditAreaFilter.length;
+                $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
+                $('#credits-winning').text(studentBiddingStatus.winningCredits);
 
                  $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentBiddingStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
         }

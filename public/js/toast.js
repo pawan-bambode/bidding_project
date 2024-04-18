@@ -16,7 +16,7 @@ function createToast(custom) {
           <strong class="me-auto fw-bold fs-5 ${titleClass}">${title} !</strong>
           <button aria-label="Close" class="btn-close text-dark me-1" data-bs-dismiss="toast" type="button"></button>
         </div>
-        <div class="toast-body text-light fw-bold">
+        <div class="toast-body text-primary">
             ${msg}
         </div>
     </div>`;

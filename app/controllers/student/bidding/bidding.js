@@ -51,7 +51,7 @@ module.exports = {
                     remaingBidPoints: result[10].recordset[0] !== null && result[10].recordset[0] !== undefined ?
                     result[10].recordset[0] : result[9].recordset[0] !== null && result[9].recordset[0] !== undefined ? result[9].recordset[0] : 0,
                     roundSettingTime : result[11].recordset[0] != undefined ? result[11].recordset[0] :0,
-                    confirmationCourse: result[12].recordset[0] != undefined ? result[12].recordset: '',
+                    confirmationCourses: result[12].recordset[0] != undefined ? result[12].recordset: '',
                     currentRoundStatus: result[13].recordset.length == 0 ? JSON.parse(JSON.stringify({'round_status':'Round Not Found'})) : JSON.parse(JSON.stringify(result[13].recordset[0])),
                     isStudentPartOfRound: result[14] != undefined ? result[14].recordset.length >= 1 ? 1: 0:0
 
