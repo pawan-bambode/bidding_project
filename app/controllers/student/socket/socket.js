@@ -281,14 +281,14 @@ module.exports.respond = async (socket, io) => {
     
         socket.on('withdrawBidding', async biddingDetails => {
             try {
-                const { slugName, id, studentLid, round_lid, divisionBatchLid, biddingSessionId, userId } = biddingDetails;
+                const { slugName, id, studentLid, round_lid, divisionBatchLid, biddingSessionId, userId, isFavourite} = biddingDetails;
                 const result = await bidding.withdrawBidding(slugName, id, studentLid, round_lid, divisionBatchLid, userId, biddingSessionId);
                 const parsedMessage = JSON.parse(result.output.output_json);
                 const roomId = divisionBatchLid;
             
                 if (parsedMessage.status === 1) {
                     const detailsResult = await Promise.all([
-                        bidding.getWithdrawBiddingDetails(slugName, biddingSessionId, divisionBatchLid),
+                        bidding.getWithdrawBiddingDetails(slugName, biddingSessionId, divisionBatchLid, studentLid),
                         bidding.getWithdrawBiddingCourse(slugName, biddingSessionId, divisionBatchLid, studentLid)
                     ]);
                 
@@ -303,15 +303,17 @@ module.exports.respond = async (socket, io) => {
                         withdrawBiddingCourse: detailsResult[0].recordset,
                         courseList: detailsResult[1].recordset,
                         userId: userId,
-                        divisionId: divisionBatchLid
+                        divisionId: divisionBatchLid,
+                        isFavourite:isFavourite
                     });
-                    socket.leave(divisionBatchLid);
+                    
                 } else {
                     socket.emit("withdrawBiddingResponse", {
                         message: parsedMessage
                     });
                 }
             } catch (error) {
+                console.log(error);
                 socket.emit("withdrawBiddingResponse", {
                     message: JSON.parse(error.originalError.info.message)
                 });

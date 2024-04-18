@@ -180,7 +180,7 @@ module.exports = class Bidding {
         });
     }
 
-    static getWithdrawBiddingDetails(slug, biddingId, divisionId) {
+    static getWithdrawBiddingDetails(slug, biddingId, divisionId, studentId) {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -213,7 +213,7 @@ module.exports = class Bidding {
     }
 
     static getWithdrawBiddingCourse(slug, biddingId, divisionBatchId, studentId) {
-        
+     
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
@@ -230,7 +230,8 @@ module.exports = class Bidding {
                         INNER JOIN [${slug}].courses c ON c.id = db.course_lid
                         INNER JOIN [${slug}].student_elective_mapping sem ON sem.div_batch_lid = db.id
                         INNER JOIN [dbo].days d ON d.id = t.day_lid
-                        WHERE t.division_batch_lid = @divisionBatchId AND t.bidding_session_lid = @biddingId`);
+                        WHERE t.division_batch_lid = @divisionBatchId AND t.bidding_session_lid = @biddingId 
+                        AND  sem.student_lid = @studentLid`);
         });
     }
 
