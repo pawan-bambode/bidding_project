@@ -243,7 +243,9 @@
                         <% }  else { %>
                             <div class="pri-area-status col-md-3 d-none">Credit Covered In Pri. Area: <span class="pri-area-span">0</span></div>
                         <% } %>
-                        <% if(concentrationSet.primaryArea  != 'NA') { %>
+                        <% if(concentrationSet.primaryArea  != 'NA') {
+                            console.log(concentrationSet);
+                            %>
                             <div class="primary-area-name col-md-3">
                                 <span>Primary Area Name : <%- concentrationSet.primaryArea %></span>
                             </div>

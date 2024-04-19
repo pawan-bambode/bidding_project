@@ -34,7 +34,7 @@ module.exports = {
                     
                 ])
             .then(result => {
-                
+                console.log(result[1].recordset[0]);
                 res.render('student/bidding/index', {
                     active: bidding,
                     slug: slug,
