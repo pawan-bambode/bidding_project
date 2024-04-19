@@ -6,7 +6,7 @@ module.exports = {
     getPage: (req, res) => {
         let sidebarActive = req.sidebarActive.split('/');
         Promise.all([
-            concentrationSettings.getList(res.locals.slug, res.locals.biddingId), 
+            concentrationSettings.list(res.locals.slug, res.locals.biddingId), 
             concentrationSettings.getCount(res.locals.slug, res.locals.biddingId), 
             Areas.getList(res.locals.slug, res.locals.biddingId)
         ]).then(result => {
