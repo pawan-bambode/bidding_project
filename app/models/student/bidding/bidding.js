@@ -385,36 +385,11 @@ module.exports = class Bidding {
     }
 
     static getCourseListByAcadSession(slug, biddingId, acadSessionId, roundId, studentId){
-        return poolConnection.then(pool => {
-            return pool.request()
-                .input('biddingId', sql.Int, biddingId)
-                .input('acadSessionId', sql.Int, acadSessionId)
-                .input('roundId', sql.Int, roundId)
-                .input('studentId', sql.Int, studentId)
-                .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, 
-                        c.sap_acad_session_id, c.credits, db.max_seats ,db.available_seats, RTRIM(LTRIM(db.division)) AS division,
-                        t.faculty_id, t.faculty_name, d.day_name, c.id AS course_lid,
-                        CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, 
-                        CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, 
-                        IIF(sem.is_favourite IS NULL, 0, sem.is_favourite) AS is_favourite
-                        FROM [${slug}].timetable t 
-                        INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
-                        INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
-                        INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
-                        INNER JOIN [${slug}].courses c ON c.id = db.course_lid
-                        INNER JOIN [dbo].days d ON d.id = t.day_lid
-                        LEFT JOIN [${slug}].student_elective_mapping sem ON sem.div_batch_lid = db.id AND student_lid = @studentId AND sem.div_batch_lid IS NOT NULL
-                        LEFT JOIN [${slug}].student_elective_bidding seb ON t.division_batch_lid = seb.div_batch_lid AND seb.student_lid = @studentId AND seb.bidding_session_lid = @biddingId AND seb.active = 1 AND (seb.is_confirmed = 1 OR seb.round_lid = @roundId)
-                        WHERE db.available_seats > 0 AND seb.div_batch_lid IS NULL AND c.sap_acad_session_id = @acadSessionId
-                        ORDER BY sem.is_favourite DESC`)
-        })
-    }
 
-    static getCourseListByAcadSession(slug, biddingId, acadSessionId, roundId, studentId){
+       if(acadSessionId == '0') 
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .input('acadSessionId', sql.Int, acadSessionId)
                 .input('roundId', sql.Int, roundId)
                 .input('studentId', sql.Int, studentId)
                 .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, 
@@ -431,8 +406,32 @@ module.exports = class Bidding {
                         INNER JOIN [dbo].days d ON d.id = t.day_lid
                         LEFT JOIN [${slug}].student_elective_mapping sem ON sem.div_batch_lid = db.id AND student_lid = @studentId AND sem.div_batch_lid IS NOT NULL
                         LEFT JOIN [${slug}].student_elective_bidding seb ON t.division_batch_lid = seb.div_batch_lid AND seb.student_lid = @studentId AND seb.bidding_session_lid = @biddingId AND seb.active = 1 AND (seb.is_confirmed = 1 OR seb.round_lid = @roundId)
-                        WHERE db.available_seats > 0 AND seb.div_batch_lid IS NULL AND c.sap_acad_session_id = @acadSessionId ORDER BY sem.is_favourite DESC`)
+                        WHERE db.available_seats > 0 AND seb.div_batch_lid IS NULL ORDER BY sem.is_favourite DESC`)
         })
+        else{
+            return poolConnection.then(pool => {
+                return pool.request()
+                    .input('biddingId', sql.Int, biddingId)
+                    .input('acadSessionId', sql.Int, acadSessionId)
+                    .input('roundId', sql.Int, roundId)
+                    .input('studentId', sql.Int, studentId)
+                    .query(`SELECT t.division_batch_lid, c.area_name, c.course_name, c.course_id, c.acad_session, 
+                            c.sap_acad_session_id, c.credits, db.max_seats ,db.available_seats, RTRIM(LTRIM(db.division)) AS division,
+                            t.faculty_id, t.faculty_name, d.day_name, c.id AS course_lid,
+                            CONVERT(VARCHAR, sit.start_time, 100) AS StartTime, 
+                            CONVERT(VARCHAR, sit1.end_time, 100) AS EndTime, 
+                            IIF(sem.is_favourite IS NULL, 0, sem.is_favourite) AS is_favourite
+                            FROM [${slug}].timetable t 
+                            INNER JOIN [dbo].slot_interval_timings sit ON t.start_slot_lid = sit.id
+                            INNER JOIN [dbo].slot_interval_timings sit1 ON t.end_slot_lid = sit1.id
+                            INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid 
+                            INNER JOIN [${slug}].courses c ON c.id = db.course_lid
+                            INNER JOIN [dbo].days d ON d.id = t.day_lid
+                            LEFT JOIN [${slug}].student_elective_mapping sem ON sem.div_batch_lid = db.id AND student_lid = @studentId AND sem.div_batch_lid IS NOT NULL
+                            LEFT JOIN [${slug}].student_elective_bidding seb ON t.division_batch_lid = seb.div_batch_lid AND seb.student_lid = @studentId AND seb.bidding_session_lid = @biddingId AND seb.active = 1 AND (seb.is_confirmed = 1 OR seb.round_lid = @roundId)
+                            WHERE db.available_seats > 0 AND seb.div_batch_lid IS NULL AND c.sap_acad_session_id = @acadSessionId ORDER BY sem.is_favourite DESC`)
+            })
+        }
     }
 
         static courseByCourseId(slug, biddingId, acadSessionId, roundId, studentId, courseId, areaId){

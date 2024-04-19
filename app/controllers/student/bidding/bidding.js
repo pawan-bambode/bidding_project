@@ -152,11 +152,13 @@ module.exports = {
     },
 
     coursesByAcad : (req, res) => {
+
         Promise.all([
             biddingClass.getCourseListByAcadSession(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.roundId, req.body.studentId),
             demandEstimation.getAreaList(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.roundId, req.body.studentId)
             
         ]).then(result => {
+            
             res.json({
                 status: "200",
                 message: "Sucessfull",
@@ -180,6 +182,7 @@ module.exports = {
                 courseListDrop: result[1].recordset,
             });
         }).catch(error => {
+
             res.status(500).json(error.originalError.info.message);
         });
     },

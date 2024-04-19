@@ -214,6 +214,10 @@ module.exports.respond = async (socket, io) => {
         socket.on('createOrJoinRoom', async (biddingDetails) => {
             const { slugName, studentLid, round_lid, courseLid, concentration_lid, biddingSessionId, userId } = biddingDetails;
             const roomId = biddingDetails.divisionBatchLid;
+            const timeoutDuration = 5000;
+            const timeout = setTimeout(() => {
+                rooms.delete(roomId);
+            }, timeoutDuration);
             if(rooms.has(roomId)){                
                 socket.join(roomId);
             }
@@ -238,16 +242,21 @@ module.exports.respond = async (socket, io) => {
                 const errorMessage = JSON.parse(error.originalError.info.message);
                 socket.emit("addBiddingResponse", { message: errorMessage, userId});
             }
-           
+            clearTimeout(timeout);
         });
     
         socket.on('studentBidding', async biddingDetails => {
             let roomId = biddingDetails.divBatchId;
+            let timeout;
             try {
                 const { slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson } = biddingDetails;
                 const result = await bidding.studentBidByPoints(slugName, studentId, roundId, divBatchId, userId, biddingSessionId, inputJson);
                 const parsedMessage = JSON.parse(result.output.output_json);
                 let studentBidPoint = 0;
+                const timeoutDuration = 5000;
+                 timeout = setTimeout(() => {
+                    rooms.delete(roomId);
+                }, timeoutDuration);
                 
                 if (parsedMessage.status === 1) {
                     const detailsResult = await Promise.all([
@@ -275,6 +284,7 @@ module.exports.respond = async (socket, io) => {
                     divisionId: biddingDetails.divBatchId
                 });
             }
+            clearTimeout(timeout);
         });
         
     

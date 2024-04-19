@@ -42,17 +42,31 @@ module.exports = class DemandEstimation {
     }
     
     static getAreaList(slug, biddingId, acadSessionId) {
-  
-        return poolConnection.then(pool => {
-            return pool.request()
-                .input('biddingId', sql.Int, biddingId)
-                .input('acadSessionId', sql.Int, acadSessionId)
-                .query(`SELECT DISTINCT a.id, a.area_name AS areaName
-                        FROM [${slug}].courses c
-                        INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
-                        WHERE c.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId
-                        AND c.active = 1 AND a.active = 1 AND a.bidding_session_lid = @biddingId`);
-        });
+    
+        if(acadSessionId == '0'){
+            return poolConnection.then(pool => {
+                return pool.request()
+                    .input('biddingId', sql.Int, biddingId)
+                    .query(`SELECT DISTINCT a.id, a.area_name AS areaName
+                            FROM [${slug}].courses c
+                            INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
+                            WHERE c.bidding_session_lid = @biddingId AND c.active = 1 AND a.active = 1
+                            AND a.bidding_session_lid = @biddingId`);
+            });
+        }
+        else{
+            return poolConnection.then(pool => {
+                return pool.request()
+                    .input('biddingId', sql.Int, biddingId)
+                    .input('acadSessionId', sql.Int, acadSessionId)
+                    .query(`SELECT DISTINCT a.id, a.area_name AS areaName
+                            FROM [${slug}].courses c
+                            INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
+                            WHERE c.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId
+                            AND c.active = 1 AND a.active = 1 AND a.bidding_session_lid = @biddingId`);
+            });
+        }
+        
     }
 
     static isStudentPartOfRound (slug, biddingId, studentId, roundId) {
