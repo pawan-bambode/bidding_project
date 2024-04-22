@@ -9,8 +9,7 @@ router.post('/pre-requisites/delete', preRequisites.delete);
 router.post('/pre-requisites/update', preRequisites.update);
 router.post('/pre-requisites/showEntry', preRequisites.showEntry);
 router.post('/pre-requisites/search', preRequisites.search);
-
-router.get('/pre-requisites/generate-excel', preRequisiteExcel.generateExcel);
-router.post('/pre-requisites/upload', upload.single('import-pre-requisites'), preRequisiteExcel.upload);
+router.post('/pre-requisite/courses-by-acad-session', preRequisites.courses);
+router.post('/pre-requisites/add', preRequisites.add);
 
 module.exports = router;

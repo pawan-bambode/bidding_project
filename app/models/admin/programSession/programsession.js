@@ -29,6 +29,14 @@ module.exports = class ProgramSession {
         })
     }
 
+    static preReqAcadSession(){
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .query(`SELECT sap_acad_session_id, acad_session FROM [dbo].acad_sessions 
+                    where sap_acad_session_id IN(31,32,33)`);
+        })
+    }
+
     static creditsPoint(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()

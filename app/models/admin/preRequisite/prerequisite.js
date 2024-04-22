@@ -15,6 +15,17 @@ module.exports = class preRequisites {
         });
     }
 
+    static add(slug, biddingId, preRequisite, userId) {
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(preRequisite))
+                .input('last_modified_by', sql.Int, userId)
+                .input('bidding_session_lid', sql.Int, biddingId)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_add_pre_requisites]`);
+        });
+    }
+    
     static getCount(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
@@ -107,6 +118,13 @@ module.exports = class preRequisites {
                         INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId WHERE pr.active = 1 AND pr.bidding_session_lid = @biddingId `)
         });
     }
+
+    static getTypes(){
+        return poolConnection.then(pool=>{
+            return pool.request()
+            .query(`SELECT id, pre_req_type FROM [dbo].pre_req_types`)
+        })
+    }
  
     //Procedures code starts from here.
     static upload(slug, inputJson, userid, biddingId) {
@@ -140,5 +158,18 @@ module.exports = class preRequisites {
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_update_pre_requisites]`)
         });
+    }
+
+    static courseList(slug, biddingId, acadSessionId){
+      
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('biddingId', sql.Int, biddingId)
+            .input('acadSessionId', sql.Int, acadSessionId)
+            .query(`SELECT DISTINCT course_id, course_name 
+                    FROM [${slug}].courses 
+                    WHERE active = 1 AND bidding_session_lid = @biddingId 
+                    AND sap_acad_session_id = @acadSessionId`)
+        })
     }
 }

@@ -77,22 +77,66 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Upload Pre-Requisites</h5>
+                    <h5 class="modal-title">Add Pre-Requisites</h5>
                     <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="d-flex">
-                        <label class="form-label me-3">Import Pre-Requisites :</label>
-                        <form enctype="multipart/form-data" action="/admin/pre-requities/upload" method="post" id="upload-pre-requisites-form">
-                            <input type="file" name="import-pre-requisites" id="import-pre-requisites" accept=".xlsx">
+                    <div class="d-flex justify-content-between">
+                        <div class="col-md-6 p-2">
+                            <label class="form-label" for="acad-session-change">Select Current Acad Session :</label>
+                            <select class="form-select form-control select2" id="acad-session-change">
+                                <option selected disabled value="-1">--Select Acad Session-- </option>
+                                    <%for(let acadSession of acadSessions) { %>
+                                        <option value="<%- acadSession.id %>"><%- acadSession.name %></option>
+                                    <% } %>
+                            </select>
+                        </div>
+                        <div class="col-md-6 p-2">
+                            <label class="form-label" for="course-filter">Select Course :</label>
+                            <select class="form-select form-control select2 d-none" id="course-filter">
+                                <option value="-1" selected>Select Area</option>
+                                    <% for (let coures of courses) {%>
+                                        <option value="<%-coures.course_id %>"><%-coures.course_name %></option>
+                                    <% } %>
+                            </select>
+                        </div>
+                    </div> 
+                    <div class="d-flex">    
+                        <div class="col-md-6 mt-2 p-2">
+                            <label class="form-label" for="pre-requisite-acad-session">Enter Pre Acad Session:</label>
+                            <select class="form-select form-control select2" id="pre-requisite-acad-session">
+                                <option selected disabled value="-1">--Select Acad Session-- </option>
+                                    <%for(let acadSession of preReqAcadSessions) { %>
+                                        <option value="<%- acadSession.sap_acad_session_id %>"><%- acadSession.acad_session %></option>
+                                    <% } %>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mt-2 p-2">
+                            <label class="form-label" for="pre-requisite-type">Enter Pre Acad Session:</label>
+                            <select class="form-select form-control select2" id="pre-requisite-type">
+                                <option selected disabled value="-1">--Select Pre Requisite Types-- </option>
+                                    <%for(let preReqType of preRequisiteType) { %>
+                                        <option value="<%- preReqType.id %>"><%- preReqType.pre_req_type %></option>
+                                    <% } %>
+                            </select>    
+                        </div>
                     </div>
-                    <div class="d-flex justify-content-between align-item-center mt-5">
-                        <input type="submit" class="btn btn-success mt-2 d-none" id="upload-pre-requisites-button" value="Upload Pre-Requisites">
-                        </form>
-                        <a href="/admin/pre-requisites/generate-excel" download="sampleForImportPreRequisites.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample for Import Pre-Requisites</a>
-                    </div>
+
+                    <div class="row p-2">
+                        <div class="col-md-6">
+                            <label class="form-label mb-2" for="max-credits-per-area">Pre Requisite CourseId:</label>
+                            <input class="form-control is-empty is-number" type="text" id="pre-requisite-course-id" autocomplete="off">
+                            <span class="text-danger d-none is-in-valid"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="mb-2 form-label" for="number-of-areas-to-cover">Pre Requisite CourseName :</label>
+                            <input class="form-control is-empty is-number" type="text" id="pre-requisite-course-name" autocomplete="off">
+                            <span class="text-danger d-none is-in-valid"></span>
+                        </div>
+                    </div>   
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="add-pre-requisite">Add</button>
                     <button type="button" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -157,6 +201,74 @@ $(document).ready(function () {
             $('#upload-pre-requisites-button').removeClass('d-none');
         }
     });
+
+
+    $('#pre-requisites-modal').on('click', '#add-pre-requisite',function(){
+        
+        let currentAcadSession = $('#acad-session-change :selected').text();
+        let currentCourseId = $('#course-filter').val();
+        let currentCourseName = $('#course-filter :selected').text();
+        let preRequisiteAcadSession = $('#pre-requisite-acad-session :selected').text();
+        let preRequisiteType = $('#pre-requisite-type :selected').text();
+        let preRequisiteCouresId = $('#pre-requisite-course-id').val();
+        let preRequisiteCourseName = $('#pre-requisite-course-name').val();
+
+        let pre_requisites = 
+        {
+            acad_session: currentAcadSession,
+            course_id: currentCourseId,
+            course_name: currentCourseName,
+            type: preRequisiteType,
+            pre_req_acad_session: preRequisiteAcadSession,
+            pre_req_course_id: preRequisiteCouresId,
+            pre_req_course_name: preRequisiteCourseName
+        }
+        
+        let ApiObj = {
+            type: 'POST',
+            url: '/admin/pre-requisites/add',
+            data:{
+                preRequisites: JSON.stringify(pre_requisites)
+            },
+            dataType: 'JSON'
+        }
+
+        ajaxApi(ApiObj).then(result =>{
+            createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000" });
+            setTimeout(function(){location.reload();},1000);
+        }).catch( error => {
+            let errorMessage = JSON.stringify(error.responseJSON.description);
+            createToast({ title: "Alert", msg: errorMessage, type: "negative", showingTime:'1000'});
+           
+        })
+    
+    });
+
+    $('#acad-session-change').on('change',function(){
+        let acadSessionId = $(this).val();
+        let ApiObj = {
+            type:'POST',
+            url:'/admin/pre-requisite/courses-by-acad-session',
+            data:{
+                acadSessionId: acadSessionId
+            },
+            dataType: 'JSON'
+        }
+        ajaxApi(ApiObj).then(result => {
+           
+            let courses = result.data;
+            let courseName = `<option selected value="-1">--Select Area--</option>`;
+            if (courses.length > 0) {
+                courses.forEach(course => {
+                    courseName += `<option value="${course.course_id}">${course.course_name}</option>`;
+                });
+            } else {
+                courseName += `<option value="">No Area Found!</option>`;
+            }
+            $("#course-filter").html(courseName);
+        })
+
+    })
 
     $('#upload-pre-requisites-modal').on('click', '.modal-close', function() {
         $('#import-pre-requisites').val('');
