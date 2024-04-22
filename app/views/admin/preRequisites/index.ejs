@@ -8,7 +8,9 @@
         <div class="card-header-custom d-flex justify-content-between p-2">
             <h4 class="ms-2">Pre-Requisites</h4>
             <div>
-                <button type="button" class="btn btn-success me-2" data-bs-target="#upload-pre-requisites-modal" data-bs-toggle="modal">Upload Pre-Requisites</button>
+                <button type="button" class="btn add-btn-plus me-2" data-bs-target="#pre-requisites-modal" data-bs-toggle="modal">
+                    <i class="fas fa-plus"></i>
+                </button>  
             </div>
         </div>
         <div class="card-body table-responsive">
@@ -71,12 +73,12 @@
         </div>
     </div>
 
-    <div class="modal" id="upload-pre-requisites-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal" id="pre-requisites-modal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Upload Pre-Requisites</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="d-flex">
@@ -85,13 +87,13 @@
                             <input type="file" name="import-pre-requisites" id="import-pre-requisites" accept=".xlsx">
                     </div>
                     <div class="d-flex justify-content-between align-item-center mt-5">
-                        <input type="submit" class="btn btn-success mt-2 d-none" id="upload-pre-requisites-button" value="Upload Pre-Requisites"></input>
+                        <input type="submit" class="btn btn-success mt-2 d-none" id="upload-pre-requisites-button" value="Upload Pre-Requisites">
                         </form>
                         <a href="/admin/pre-requisites/generate-excel" download="sampleForImportPreRequisites.xlsx" name="sample-for-import-course" class="text-decoration-none align-self-end">Sample for Import Pre-Requisites</a>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary modal-close" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -154,6 +156,11 @@ $(document).ready(function () {
         if (importPreRequisites != '') {
             $('#upload-pre-requisites-button').removeClass('d-none');
         }
+    });
+
+    $('#upload-pre-requisites-modal').on('click', '.modal-close', function() {
+        $('#import-pre-requisites').val('');
+        $('#upload-pre-requisites-button').addClass('d-none');
     });
 
     $('#upload-pre-requisites-form').on('submit', function (event) {

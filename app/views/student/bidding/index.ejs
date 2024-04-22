@@ -214,7 +214,14 @@
                 </div>
             </div> 
         </div>        
-    </div>  
+    </div> 
+    
+    <div class="confirmed-course-container d-none">
+        <div class="confirmed-course-content">
+            <button type="button" class="btn-close close-btn" data-bs-dismiss="modal" aria-label="Close"></button>
+            <p>This is the content of the div.</p>  
+        </div>
+    </div>
 </main> 
 
 <footer>
@@ -262,13 +269,6 @@
         </div>    
     </div>
 </footer>
-
-<div class="confirmed-course-div d-none">
-    <div class="d-flex justify-content-end">
-        <button class="btn btn-close"></button>
-    </div>    
-</div>
-</div>
 
 <%- include('../partials/footer.ejs') %>
 <script src="/socket.io/socket.io.js"></script>
@@ -450,10 +450,19 @@ $(document).ready(function() {
         }
     }); 
 
-    $('.round-wise-details').on('click','#view-confirmed-course',function(){
-        $('.confirmed-course-div').removeClass('d-none');
-             console.log('click now');
+    $('.round-wise-details').on('click', '#view-confirmed-course', function() {
+        $('.confirmed-course-container .confirmed-course-content').removeClass('move-right');
+        $('.confirmed-course-container').removeClass('d-none');
     });
+
+    $('.confirmed-course-content').on('click', '.close-btn', function() {
+        let confirmCourseContent = $(this).closest('.confirmed-course-content');
+        confirmCourseContent.addClass('move-right');
+        setTimeout(function() {
+            confirmCourseContent.closest('.confirmed-course-container').addClass('d-none');
+        }, 1000);
+    });
+
 
     $('#area-change').on('change', function () {
 
@@ -786,7 +795,7 @@ $(document).ready(function() {
                 $(`#available-course-table tr[data-division-batch-lid="${divisionBatchId}"]`).remove();
                 updateTableForCurrentUser(biddingDetails);
 
-                // $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentBiddingStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
+                $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentBiddingStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
 
                 let totalRowNo  = Number($('#page-no').text());
                 $('#page-no').text(--totalRowNo);
