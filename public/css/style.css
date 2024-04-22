@@ -1306,22 +1306,38 @@ hr{
     padding: 0;
 }
 
-.confirmed-course-div {
-    width: 20vw;
+.confirmed-course-container {
     position: fixed;
-    top:10vh;
+    top:67px;
     right:0px;
-    background-color: #D8DCDC;
-    border-radius: 15px;
-    border: 1px solid black;
+    width: 20vw;
     height: 82vh;
+    transition: transform 0.5s ease-in-out;
+    
+}
+.confirmed-course-content {
+  position: relative;
+  width: 100%; 
+  height: 100%;
+  background-color: #C7F2F9;
+  transition: transform 1s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.confirmed-course-div .btn-close{
-
+.confirmed-course-content .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }
 
-
+.content.move-right {
+    transform: translateX(100%);
+  }
+.confirmed-course-content.move-right {
+  transform: translateX(100%);
+}
 
 @media (min-width: 576px) {
     .modal-dialog.modal-dialog-right {

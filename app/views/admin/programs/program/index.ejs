@@ -46,7 +46,7 @@
                             <td><%-program.program_code %></td>
                             <td><%-program.program_name %></td>
                             <td><%-program.abbr %></td>
-                            <td><a class="edit-program" data-bs-target="#edit_program" data-bs-toggle="modal"><i class="fa fa-edit"></i></a>
+                            <td><a class="edit-program" data-bs-target="#edit-program" data-bs-toggle="modal"><i class="fa fa-edit"></i></a>
                                 <a class="delete-program">
                                     <i class="fa-solid fa-trash text-danger"></i>
                                 </a>
@@ -73,7 +73,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                 <h4>Select Program</h4>
-                <button class="btn-close full-modal-left-sidebar" data-bs-dismiss="modal"></button>
+                <button class="btn-close modal-close full-modal-left-sidebar" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body row custum-imp-program">
                 
@@ -105,7 +105,7 @@
         </div>
     </div>
 
-    <div class="modal" id="edit_program" data-bs-backdrop="static">
+    <div class="modal" id="edit-program" data-bs-backdrop="static">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -345,27 +345,27 @@ $(document).ready(function() {
     
     });
 
-    $('#edit_program').on('click','#updateProgram',function(){
+    $('#edit-program').on('click','#updateProgram',function(){
         let biddingSessionId = $('#biddingSessionDropdown').attr('data-session-id');
-        let edit_program  = {};
-        let program_name = $('#program_name').val().replace(/\s+/g, ' ').trim();
-        let program_code = $('#program_code').val();
-        let program_abbr = $('#program_abbr').val().replace(/\s+/g, ' ').trim();
-        let program_id   = $('#program_id').val();
-        let isRequiredFieldsEmpty = isModalFieldEmpty('#edit_program .modal-body');
+        let editProgram  = {};
+        let programName = $('#program_name').val().replace(/\s+/g, ' ').trim();
+        let programCode = $('#program_code').val();
+        let programAbbr = $('#program_abbr').val().replace(/\s+/g, ' ').trim();
+        let programId   = $('#program_id').val();
+        let isRequiredFieldsEmpty = isModalFieldEmpty('#edit-program .modal-body');
         
         if(isRequiredFieldsEmpty){
      
-        edit_program.program_name = program_name;
-        edit_program.id = program_id;
-        edit_program.program_code = program_code;
-        edit_program.program_abbr = program_abbr;
-        edit_program.bidding_session_lid = biddingSessionId;
+            editProgram.program_name = programName;
+            editProgram.id = programId;
+            editProgram.program_code = programCode;
+            editProgram.program_abbr = programAbbr;
+            editProgram.bidding_session_lid = biddingSessionId;
     
         let ApiObj = {
             type:'POST',
             url:'/admin/programs/update',
-            data: edit_program,
+            data: edit-program,
             dataType: 'JSON' 
             }
             ajaxApi(ApiObj).then(result => {
@@ -400,9 +400,30 @@ $(document).ready(function() {
         })
     })
 
-    $('#edit_program').on('click', '.modal-close', function() {
+    $('#edit-program').on('click', '.modal-close', function() {
        $(this).closest('.modal-content').find(`.is-in-valid`).addClass('d-none');
     });
+
+    $('#import-program-modal').on('click', '.modal-close', function(){
+        $('.import-program-table tbody tr').each(function(index, importRowDetails) {
+
+            let programName = $(importRowDetails).data('program-name');
+            let programCode = $(importRowDetails).data('program-code');
+            let programAbbr = $(importRowDetails).data('program-abbr');
+            let programId = $(importRowDetails).data('program-id');
+
+            let programDiv = $('<div>').addClass('program-div border mb-3 rounded p-3');
+                programDiv.html(programName)
+                programDiv.attr('data-program-name', programName);
+                programDiv.attr('data-program-code', programCode);
+                programDiv.attr('data-program-abbr', programAbbr);
+                programDiv.attr('data-program-id', programId);
+                
+                $('#import-program-modal .custm-padd-for-imp-program').append(programDiv);
+                $(importRowDetails).remove();
+        });
+    }); 
+
 });
 
 function AjaxtTable(programList) {
@@ -424,7 +445,7 @@ function AjaxtTable(programList) {
                                 <td>${program.program_name}</td>
                                 <td>${program.abbr}</td>
                                 <td>
-                                    <a class="edit-program" data-bs-target="#edit_program" data-bs-toggle="modal" >
+                                    <a class="edit-program" data-bs-target="#edit-program" data-bs-toggle="modal" >
                                         <i class="fa fa-edit"></i>
                                     </a>
                                     <a class="delete-program">

@@ -3,7 +3,7 @@ const app = express();
 require('dotenv').config();
 const http = require('http');
 const https = require("https");
-const socketIO = require('socket.io');
+const socketIo = require('socket.io');
 
 const setRouter = require("./router");
 const socketResponse = require('./app/controllers/student/socket/socket');
@@ -96,12 +96,44 @@ if (process.env.APP_ENV === 'PRODUCTION' || process.env.APP_ENV === 'DEV') {
     const server = https.createServer(sslOptions, app).listen(process.env.APP_PORT);
 } else {
     const server = http.createServer(app).listen(process.env.APP_PORT);
-    const io = socketIO(server);
-    global.io = io;
 
+    const io = socketIo(server, {
+        reconnection: true, // Enable reconnection
+        reconnectionAttempts: Infinity, // Number of reconnection attempts (-1 for infinity)
+        reconnectionDelay: 1000, // Initial delay before attempting reconnection (ms)
+        reconnectionDelayMax: 5000, // Maximum delay between reconnection attempts (ms)
+        randomizationFactor: 0.5 // Randomization factor to add randomness to the reconnection delay
+    });
+
+    // Define a Socket.IO connection
     io.on('connection', (socket) => {
-        socketResponse.respond(socket, io);
-        socket.on('clientEvent', (data) => {
+        console.log('A user connected');
+		
+		 socketResponse.respond(socket, io);
+			socket.on('clientEvent', (data) => {
+        });
+    
+        // Handle joining a room
+        socket.on('joinRoom', (room) => {
+            socket.join(room);
+            console.log(`User joined room: ${room}`);
+        });
+    
+        // Handle leaving a room
+        socket.on('leaveRoom', (room) => {
+            socket.leave(room);
+            console.log(`User left room: ${room}`);
+        });
+    
+        // Handle sending messages to a room
+        socket.on('sendMessage', (room, message) => {
+            console.log(`Message sent to room ${room}: ${message}`);
+            io.to(room).emit('message', message);
+        });
+    
+        // Handle disconnection
+        socket.on('disconnect', () => {
+            console.log('A user disconnected');
         });
     });
-}
+}    

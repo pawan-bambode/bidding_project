@@ -4,8 +4,8 @@ const roundSetting = require('../../../models/admin/roundSettings/roundSettings'
 const confirmation = require('../../../models/student/confirmation/confirmation');
 const divisionBatch = require('../../../models/admin/divisionBatches/divisionBatches');
 const demandEstimation = require('../../../models/student/demandEstimation/demandEstimation');
-const e = require('express');
-const { errorObject } = require('bullmq');
+
+const socketIo = require('socket.io');
 
 module.exports.respond = async (socket, io) => {
 
@@ -244,7 +244,7 @@ module.exports.respond = async (socket, io) => {
             }
             clearTimeout(timeout);
         });
-    
+
         socket.on('studentBidding', async biddingDetails => {
             let roomId = biddingDetails.divBatchId;
             let timeout;
