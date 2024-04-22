@@ -215,7 +215,6 @@ $(document).ready(function () {
 
         let pre_requisites = 
         {
-        pre_requisites :{
             acad_session: currentAcadSession,
             course_id: currentCourseId,
             course_name: currentCourseName,
@@ -224,7 +223,7 @@ $(document).ready(function () {
             pre_req_course_id: preRequisiteCouresId,
             pre_req_course_name: preRequisiteCourseName
         }
-    }
+        
         let ApiObj = {
             type: 'POST',
             url: '/admin/pre-requisites/add',
@@ -235,10 +234,10 @@ $(document).ready(function () {
         }
 
         ajaxApi(ApiObj).then(result =>{
-            console.log(result);
+            createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000" });
+            setTimeout(function(){location.reload();},1000);
         }).catch( error => {
             let errorMessage = JSON.stringify(error.responseJSON.description);
-            console.log(errorMessage);
             createToast({ title: "Alert", msg: errorMessage, type: "negative", showingTime:'1000'});
            
         })

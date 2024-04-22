@@ -64,13 +64,16 @@ module.exports = {
   },
 
     add :(req, res) =>{
-            
+           
+           let object = {
+            pre_requisites: JSON.parse(req.body.preRequisites)
+            };
+           
           Promise.all([
-            preRequisites.add(res.locals.slug, res.locals.biddingId, req.body.preRequisites, res.locals.userId)
-          ]).then(result =>{
-            res.status(200).json(JSON.parse(result.output.output_json));
+            preRequisites.add(res.locals.slug, res.locals.biddingId, object, res.locals.userId)
+          ]).then(result =>{           
+            res.status(200).json(JSON.parse(result[0].output.output_json));
           }).catch(error => {
-            console.log('value of error', error);
             if (isJsonString.isJsonString(error.originalError.info.message)) {
               res.status(500).json(JSON.parse(error.originalError.info.message));
             } else {
