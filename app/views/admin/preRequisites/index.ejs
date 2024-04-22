@@ -94,7 +94,7 @@
                         <div class="col-md-6 p-2">
                             <label class="form-label" for="course-filter">Select Course :</label>
                             <select class="form-select form-control select2 d-none" id="course-filter">
-                                <option value="-1" selected>Select Area</option>
+                                <option value="-1" selected>--Select Course--</option>
                                     <% for (let coures of courses) {%>
                                         <option value="<%-coures.course_id %>"><%-coures.course_name %></option>
                                     <% } %>
@@ -103,9 +103,9 @@
                     </div> 
                     <div class="d-flex">    
                         <div class="col-md-6 mt-2 p-2">
-                            <label class="form-label" for="pre-requisite-acad-session">Enter Pre Acad Session:</label>
+                            <label class="form-label" for="pre-requisite-acad-session">Enter Pre-Requisite Acad Session:</label>
                             <select class="form-select form-control select2" id="pre-requisite-acad-session">
-                                <option selected disabled value="-1">--Select Acad Session-- </option>
+                                <option selected disabled value="-1">--Select Pre-Requisite Acad Session-- </option>
                                     <%for(let acadSession of preReqAcadSessions) { %>
                                         <option value="<%- acadSession.sap_acad_session_id %>"><%- acadSession.acad_session %></option>
                                     <% } %>
@@ -114,7 +114,7 @@
                         <div class="col-md-6 mt-2 p-2">
                             <label class="form-label" for="pre-requisite-type">Enter Pre Requisites Type:</label>
                             <select class="form-select form-control select2" id="pre-requisite-type">
-                                <option selected disabled value="-1">--Select Pre Requisite Types-- </option>
+                                <option selected disabled value="-1">--Select Pre-Requisite Types-- </option>
                                     <%for(let preReqType of preRequisiteType) { %>
                                         <option value="<%- preReqType.id %>"><%- preReqType.pre_req_type %></option>
                                     <% } %>
@@ -194,17 +194,9 @@ $(document).ready(function () {
     $('#page-no').html(test);
     paginationData(rowCount, parseInt(test));
     setActiveMenuItem(`<%- active %>`);
-  
-    $('#import-pre-requisites').on('change', function () {
-        let importPreRequisites = $(this).val();
-        if (importPreRequisites != '') {
-            $('#upload-pre-requisites-button').removeClass('d-none');
-        }
-    });
-
 
     $('#pre-requisites-modal').on('click', '.modal-close',function(){
-        console.log('modal-close');
+        $('#course-filter').val('-1').trigger('change');
         $('#acad-session-change').val('-1').trigger('change');
         $('#pre-requisite-type').val('-1').trigger('change');
         $('#pre-requisites-course-name').val('-1').trigger('change');
@@ -213,15 +205,15 @@ $(document).ready(function () {
         $('#pre-requisite-course-id').val('');
     })
 
-    $('#pre-requisites-modal').on('click', '#add-pre-requisite',function(){
+    $('#pre-requisites-modal').on('click', '#add-pre-requisite',function() {
         
         let currentAcadSession = $('#acad-session-change :selected').text();
         let currentCourseId = $('#course-filter').val();
         let currentCourseName = $('#course-filter :selected').text();
         let preRequisiteAcadSession = $('#pre-requisite-acad-session :selected').text();
         let preRequisiteType = $('#pre-requisite-type :selected').text();
-        let preRequisiteCouresId = $('#pre-requisite-course-id').val();
-        let preRequisiteCourseName = $('#pre-requisite-course-name').val();
+        let preRequisiteCouresId = $('#pre-requisite-course-id').val().trim();
+        let preRequisiteCourseName = $('#pre-requisite-course-name').val().trim();
 
         let pre_requisites = 
         {
@@ -248,10 +240,8 @@ $(document).ready(function () {
             setTimeout(function(){location.reload();},1000);
         }).catch( error => {
             let errorMessage = JSON.stringify(error.responseJSON.description);
-            createToast({ title: "Alert", msg: errorMessage, type: "negative", showingTime:'1000'});
-           
+            createToast({ title: "Alert", msg: errorMessage, type: "negative", showingTime:'1000'});   
         })
-    
     });
 
     $('#acad-session-change').on('change',function(){
@@ -277,30 +267,7 @@ $(document).ready(function () {
             }
             $("#course-filter").html(courseName);
         })
-
     })
-
-
-    $('#upload-pre-requisites-form').on('submit', function (event) {
-        event.preventDefault();
-        var formData = new FormData(this);
-
-        $.ajax({
-            type: 'POST',
-            url: '/admin/pre-requisites/upload',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                createToast({ title: "Success", msg: response.description, type: "positive", showingTime:"1000"});
-                setTimeout(function(){location.reload();},1000);  
-            },
-            error: function (xhr, status, error) {
-                let errorMessage = JSON.stringify(xhr.responseJSON);
-                createToast({ title: "Alert", msg: errorMessage, type: "negative", showingTime:"1000"});
-            }
-        });
-    });
 
     $('#pre-requisite-table').on('click', '.delete-pre-requisite', function () {
         let id = $(this).closest('tr').data('id');
@@ -315,8 +282,8 @@ $(document).ready(function () {
         };
         ajaxApi(ApiObj).then(result => {
             $(this).closest('tr').remove();
-            createToast({ title: "Success", msg: response.description, type: "positive", showingTime:"1000"});
-            setTimeout(function(){location.reload();},1000);  
+            createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000" });
+            setTimeout(function(){location.reload();},1000);   
         }).catch(error => {
             let errorMessage = JSON.stringify(error.responseJSON.description);
             createToast({ title: "Alert", msg: errorMessage, type: "negative", showingTime:'1000'});
