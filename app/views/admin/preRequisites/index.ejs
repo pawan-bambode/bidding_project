@@ -112,7 +112,7 @@
                             </select>
                         </div>
                         <div class="col-md-6 mt-2 p-2">
-                            <label class="form-label" for="pre-requisite-type">Enter Pre Acad Session:</label>
+                            <label class="form-label" for="pre-requisite-type">Enter Pre Requisites Type:</label>
                             <select class="form-select form-control select2" id="pre-requisite-type">
                                 <option selected disabled value="-1">--Select Pre Requisite Types-- </option>
                                     <%for(let preReqType of preRequisiteType) { %>
@@ -203,6 +203,16 @@ $(document).ready(function () {
     });
 
 
+    $('#pre-requisites-modal').on('click', '.modal-close',function(){
+        console.log('modal-close');
+        $('#acad-session-change').val('-1').trigger('change');
+        $('#pre-requisite-type').val('-1').trigger('change');
+        $('#pre-requisites-course-name').val('-1').trigger('change');
+        $('#pre-requisite-acad-session').val('-1').trigger('change');
+        $('#pre-requisite-course-name').val('');
+        $('#pre-requisite-course-id').val('');
+    })
+
     $('#pre-requisites-modal').on('click', '#add-pre-requisite',function(){
         
         let currentAcadSession = $('#acad-session-change :selected').text();
@@ -270,10 +280,6 @@ $(document).ready(function () {
 
     })
 
-    $('#upload-pre-requisites-modal').on('click', '.modal-close', function() {
-        $('#import-pre-requisites').val('');
-        $('#upload-pre-requisites-button').addClass('d-none');
-    });
 
     $('#upload-pre-requisites-form').on('submit', function (event) {
         event.preventDefault();
