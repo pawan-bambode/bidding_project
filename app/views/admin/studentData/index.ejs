@@ -54,6 +54,7 @@
                 <th>Program Name</th>
                 <th>Bid Points</th>
                 <th>Year of Joining</th>
+                <th>Previous Elective Credits</th>
                 <th>Actions <input class="d-none" type="checkbox" name="student-data-checkbox" id="student-data-checkbox"></th>
             </thead>
             <tbody>
@@ -78,7 +79,8 @@
                             <td><%-studentData.email %></td> 
                             <td><%-studentData.program_name %></td> 
                             <td><%-studentData.bid_points %></td> 
-                            <td><%-studentData.year_of_joining %></td> 
+                            <td><%-studentData.year_of_joining %></td>
+                            <td><%-studentData.previous_elective_credits %></td>  
                             <td>
                                 <a class="edit-student-data" data-bs-target="#edit-student-data" data-bs-toggle="modal">
                                     <i class="fa fa-edit"></i>

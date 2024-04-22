@@ -15,6 +15,18 @@ module.exports = class preRequisites {
         });
     }
 
+    static add(slug, biddingId, preRequisite, userId) {
+        console.log(preRequisite);
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('input_json', sql.NVarChar(sql.MAX), preRequisite)
+                .input('last_modified_by', sql.Int, userId)
+                .input('bidding_session_lid', sql.Int, biddingId)
+                .output('output_json', sql.NVarChar(sql.MAX))
+                .execute(`[${slug}].[sp_add_pre_requisites]`);
+        });
+    }
+    
     static getCount(slug, biddingId) {
         return poolConnection.then(pool => {
             return pool.request()
@@ -107,6 +119,13 @@ module.exports = class preRequisites {
                         INNER JOIN [${slug}].programs p ON p.program_id = c.program_id AND p.bidding_session_lid = @biddingId WHERE pr.active = 1 AND pr.bidding_session_lid = @biddingId `)
         });
     }
+
+    static getTypes(){
+        return poolConnection.then(pool=>{
+            return pool.request()
+            .query(`SELECT id, pre_req_type FROM [dbo].pre_req_types`)
+        })
+    }
  
     //Procedures code starts from here.
     static upload(slug, inputJson, userid, biddingId) {
@@ -140,5 +159,20 @@ module.exports = class preRequisites {
                 .output('output_json', sql.NVarChar(sql.MAX))
                 .execute(`[${slug}].[sp_update_pre_requisites]`)
         });
+    }
+
+    static courseList(slug, biddingId, acadSessionId){
+      
+        return poolConnection.then(pool =>{
+            return pool.request()
+            .input('biddingId', sql.Int, biddingId)
+            .input('acadSessionId', sql.Int, acadSessionId)
+            .query(`SELECT DISTINCT c.course_id, c.course_name 
+                    FROM [${slug}].timetable t
+                    INNER JOIN [${slug}].division_batches db ON db.id = t.division_batch_lid
+                    INNER JOIN [${slug}].courses c ON c.id = db.course_lid 
+                    WHERE t.active = 1 AND db.active = 1 AND c.active = 1 AND t.bidding_session_lid = @biddingId 
+                    AND c.sap_acad_session_id = @acadSessionId`)
+        })
     }
 }

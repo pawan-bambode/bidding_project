@@ -1,4 +1,4 @@
-$('.top-navbar').on('click', '.fa-angles-left', function() {
+$('.op-navbar').on('click', '.fa-angles-left', function() {
     $('.left-sidebar').addClass('hide');
     $('.main').css('left', '80px');
     $('.top-navbar').css('left', '80px');
