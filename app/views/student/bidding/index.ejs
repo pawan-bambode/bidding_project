@@ -97,11 +97,13 @@
             <div class="card card-custom-border-curv mt-3">
                 <div class="card-header-custom d-flex justify-content-between p-1">
                     <h4 class="ms-2">Bidding Course</h4>
-                    <% if (confirmationCourses.length > 0) { %>
+                    
                         <div class="border border-light rounded me-3">
-                           <button class="btn text-light" data-bs-toggle="modal" data-bs-target="#view-confirmed-course-modal" role="button">View Confirmed Courses</button>          
+                           <button class="btn text-light" id="view-confirmed-course" >
+                            View Confirmed Courses
+                           </button>          
                         </div>
-                    <% } %>    
+            
                 </div>
             <div class="shadow-sm">    
                 <div class="credit-status d-flex justify-content-around align-items-center flex-md-row flex-column mx-3 mt-2">
@@ -167,6 +169,7 @@
                         <div class="col-md-3 mt-4 ms-2">
                             <select class="form-select form-control select2" id="acad-session-change">
                                 <option selected disabled value="-1">--Select Acad Session-- </option>
+                                <option value="0">Select All</option>
                                     <%for(let acadSession of acadSessionsWiseCredits) { %>
                                         <option value="<%- acadSession.id %>"><%- acadSession.name %></option>
                                     <% } %>
@@ -174,7 +177,7 @@
                         </div>
                         <div class="col-md-3 mt-4 ms-2">
                             <select class="form-select form-control select2 d-none" id="area-change">
-                                <option value="" selected>Select Area</option>
+                                <option value="-1" selected>Select Area</option>
                                     <% for (let area of areaList) { %>
                                         <option value="<%-area.area_name %>"><%-area.area_name %></option>
                                     <% } %>
@@ -182,7 +185,7 @@
                         </div>
                         <div class="col-md-3 mt-4 ms-2">
                             <select class="form-select form-control select2 d-none" id="course-filter">
-                                <option value="" selected>Select Course</option>
+                                <option value="-1" selected>Select Course</option>
                             </select>
                         </div>
                     </div>
@@ -230,14 +233,14 @@
                                 <span class="credits-points">0</span>
                             </div>
                         <% } %> 
-                        <div class="criteria-status col-md-3">
-                            Total Bid Points :
-                            <span id="total-bid-points"> <%- studentBidsPoints.student_bid_points %></span>
-                        </div>
+                        
                         <div class="col-md-3">Remaining Bid points: 
                             <span class="remaining-bid-points"><%- remaingBidPoints.student_bid_points %></span>
                         </div>
-                        <div class="area-status col-md-3">Area Covered: <span class="area-status-span">0</span></div>
+                        <div class="area-status col-md-3">Area Covered: 
+                            <span class="area-status-span">0</span>
+                            <img src="/image/student/body-part-image/bidding/area-cover.png" class="area-covered-image" alt="area-covered">
+                        </div>
                         <% if(concentrationSet.primaryArea != 'NA') { %>
                         <div class="pri-area-status col-md-3">Credit Covered In Pri. Area: <span class="pri-area-span">0</span></div>
                         <% }  else { %>
@@ -261,50 +264,11 @@
     </div>
 </footer>
 
-<div class="modal fade" data-bs-backdrop="static" id="view-confirmed-course-modal" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-    <div class="modal-dialog modal-dialog-right">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h6 class="modal-title" id="exampleModalToggleLabel">Confirmed Courses</h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="font-size: 13px;"></button>
-            </div>
-            <div class="modal-body">
-                <div class="card-body table-responsive confirm-coures-table">
-                    <table class="table table-bordered" id="confirm-course-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Area</th>
-                                <th>Course Name</th>
-                                <th>Acad Session</th>
-                                <th>Credits</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <%
-                                let count = 1;
-                                if (confirmationCourses.length > 0) {
-                                    for (let confirmCourse of confirmationCourses) { %>
-                                        <tr>
-                                            <td><%- count++ %></td>
-                                            <td><%- confirmCourse.area_name %></td> 
-                                            <td><%- confirmCourse.course_name %></td> 
-                                            <td><%- confirmCourse.acad_session %></td> 
-                                            <td><%- confirmCourse.credits %></td> 
-                                        </tr>
-                                    <% }
-                                }
-                            %>
-                            
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
+<div class="confirmed-course-div d-none">
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-close"></button>
+    </div>    
+</div>
 </div>
 
 <%- include('../partials/footer.ejs') %>
@@ -487,14 +451,23 @@ $(document).ready(function() {
         }
     }); 
 
+    $('.round-wise-details').on('click','#view-confirmed-course',function(){
+        $('.confirmed-course-div').removeClass('d-none');
+             console.log('click now');
+    });
 
     $('#area-change').on('change', function () {
+
         let acadSessionId = $('#acad-session-change').val();
         let areaId = $(this).val();
         let roundId = $('.round-basic-details .round-name').data('round-id');
         let studentId = $('#student-data').data('student-id');
+        let selectedCourse = $("#course-filter :selected").val();
         let firstChildCourse = $("#course-filter :first-child").val();
-        $("#course-filter").val(firstChildCourse).trigger('change');
+        
+        if (selectedCourse !== firstChildCourse) {
+            $("#course-filter").val(firstChildCourse).trigger('change');
+        }
     
         let ApiObj = {
             url: '/student/bidding/courses-by-area',
@@ -519,18 +492,26 @@ $(document).ready(function() {
             }
             $("#course-filter").html(courseName);
             $('#available-course-table tbody').html('');
-            availableCourse(result.courseList, false);  
+            availableCourse(result.courseList);  
         })
     })
 
     $('#acad-session-change').on('change', function () {
+        
         let acadSessionId = $(this).val();
         let roundId = $('.round-basic-details .round-name').data('round-id');
         let studentId = $('#student-data').data('student-id');
+        let selectedCourse = $("#course-filter :selected").val();
+        let selectedArea = $('#area-change :selected').val();
         let firstChildCourse = $("#course-filter :first-child").val();
-        let firstChildArea = $('#area-change :first-child').val();
-        $("#course-filter").val(firstChildCourse).trigger('change');
-        $('#area-change').val(firstChildArea).trigger('change');
+        let firstChildArea = $("#area-change :first-child").val();
+
+        if (selectedArea !== firstChildArea) {
+            $('#area-change').val(firstChildArea).trigger('change');
+        }
+        if (selectedCourse !== firstChildCourse) {
+            $("#course-filter").val(firstChildCourse).trigger('change');
+        }
 
         let ApiObj = {
             url: '/student/bidding/courses-by-acad',
@@ -543,9 +524,9 @@ $(document).ready(function() {
             dataType: 'JSON'
         };
 
+        console.table([ acadSessionId, roundId,studentId]);
         ajaxApi(ApiObj).then(result => {
-        
-            let areaName = `<option selected  value="-1">--Select Area--</option>`;
+            let areaName = `<option selected value="-1">--Select Area--</option>`;
             if (result.areaList.length > 0) {
                 result.areaList.forEach(area => {
                     areaName += `<option value="${area.id}">${area.areaName}</option>`;
@@ -557,12 +538,12 @@ $(document).ready(function() {
             $("#area-change").html(areaName);
 
             $('#available-course-table tbody').html('');
-
-            availableCourse(result.courseList, false);     
+            availableCourse(result.courseList);    
         });
     });
     
     $('#course-filter').on('change', function () {
+
         let acadSessionId = $('#acad-session-change').val();
         let areaId = $('#area-change').val();
         let roundId = $('.round-basic-details .round-name').data('round-id');
@@ -584,7 +565,7 @@ $(document).ready(function() {
         ajaxApi(ApiObj).then(result => {
             let courseName = `<option selected value="-1">--Select Area--</option>`;
             $('#available-course-table tbody').html('');
-            availableCourse(result.courseList, false);  
+            availableCourse(result.courseList);  
         })
     })
 
@@ -808,7 +789,7 @@ $(document).ready(function() {
                 $(`#available-course-table tr[data-division-batch-lid="${divisionBatchId}"]`).remove();
                 updateTableForCurrentUser(biddingDetails);
 
-                $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentBiddingStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
+                // $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentBiddingStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
 
                 let totalRowNo  = Number($('#page-no').text());
                 $('#page-no').text(--totalRowNo);
@@ -985,7 +966,8 @@ $(document).ready(function() {
                 $('.area-status .area-status-span').text(studentBiddingStatus.areaCovered);
                 $('#credits-winning').text(studentBiddingStatus.winningCredits);
 
-                //  $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentBiddingStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
+                $(`.session-credit-points[data-acad-session-id="${acadSessionId}"]`).find('.credits-points').text(studentBiddingStatus.creditsPerSession.find(obj => obj.acadSessionId == acadSessionId).credits);
+
         }
     });
 
@@ -1039,7 +1021,7 @@ $(document).ready(function() {
     });
 
     socket.on('studentBiddingResponse', function(biddingReponseResult) {
-        
+    
         let biddingResponseToUser = biddingReponseResult.studentBiddingResponse.description;
         const isSuccessResponse = biddingReponseResult.studentBiddingResponse.status === 1;
         let divisionBatchId = biddingReponseResult.divisionId;
@@ -1120,7 +1102,7 @@ $(document).ready(function() {
                 
                 if(isEligibleForRound == 1){
                     if(!biddingCourseFlag){
-                        availableCourse( data.biddingCourses , false);
+                        availableCourse( data.biddingCourses);
                     }
                     biddingCourseFlag = true;
                     $('.round-message-container').addClass('d-none');
@@ -1159,6 +1141,7 @@ $(document).ready(function() {
     }); 
 
     function availableCourse(courses) {    
+        
         let pageCount = 0;
         if(courses.length > 0) {
 
@@ -1339,6 +1322,30 @@ $(document).ready(function() {
             }
         }
     }
+
+    $(document).on('mouseenter', 'img.area-covered-image', function(){
+
+        let completedCourses = studentBiddingStatus.creditsPerArea.filter(creditsPerArea => {
+            return creditsPerArea.credits >= concentrationSet.minCreditsPerArea;   
+        });
+
+        let titleValue = '';
+        completedCourses.forEach((completedCourse, index) => {
+            titleValue += `${index + 1} : ${completedCourse.area}-${completedCourse.credits}<br>`;
+        });
+
+        $(this).tooltip({
+            title: titleValue,
+            placement: 'left', 
+            trigger: 'manual', 
+            html: true 
+        }).tooltip('show');
+
+        $('.tooltip div.tooltip-inner').css('min-width', '300px'); 
+    }).on('mouseleave', 'img.area-covered-image', function() {
+            $(this).tooltip('dispose');
+    });
+   
 });    
 
 

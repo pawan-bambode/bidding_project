@@ -1306,6 +1306,21 @@ hr{
     padding: 0;
 }
 
+.confirmed-course-div {
+    width: 20vw;
+    position: fixed;
+    top:10vh;
+    right:0px;
+    background-color: #D8DCDC;
+    border-radius: 15px;
+    border: 1px solid black;
+    height: 82vh;
+}
+
+.confirmed-course-div .btn-close{
+
+}
+
 
 
 @media (min-width: 576px) {
