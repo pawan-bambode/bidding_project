@@ -686,6 +686,7 @@ module.exports = class DivisionBatches {
 
     //Procedures code starts from here.
     static upload(slug, inputJson, userid, biddingId){
+       
         return poolConnection.then(pool=>{
             return pool.request()
             .input('input_json', sql.NVarChar(sql.MAX), JSON.stringify(inputJson))

@@ -12,10 +12,10 @@ module.exports = {
         const sheetName = excelFileDataWorkbook.SheetNames[0];
         const sheet = excelFileDataWorkbook.Sheets[sheetName];
         const courseJsonData = xlsx.utils.sheet_to_json(sheet);
-        
         const divisionBatchesWithColumnHypen = courseJsonData.map(item => {
             let defaultValue = null;
             return {
+                course_name: item.courseName == undefined ? defaultValue: item.courseName,
                 course_id: item.courseId == undefined ? defaultValue : item.courseId,
                 division: item.division == undefined ? defaultValue : item.division,
                 batch: item.batch == undefined ? defaultValue : item.batch,
@@ -47,14 +47,16 @@ module.exports = {
         const worksheet = workbook.addWorksheet('Sheet1');
     
         worksheet.column(1).setWidth(15);
-        worksheet.column(2).setWidth(10);
+        worksheet.column(2).setWidth(15);
         worksheet.column(3).setWidth(10);
         worksheet.column(4).setWidth(10);
+        worksheet.column(5).setWidth(10);
         
-        worksheet.cell(1, 1).string('courseId').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-        worksheet.cell(1, 2).string('division').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-        worksheet.cell(1, 3).string('batch').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
-        worksheet.cell(1, 4).string('maxSeats').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
+        worksheet.cell(1, 1).string('courseName').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
+        worksheet.cell(1, 2).string('courseId').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
+        worksheet.cell(1, 3).string('division').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
+        worksheet.cell(1, 4).string('batch').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
+        worksheet.cell(1, 5).string('maxSeats').style({ font: { bold: true }, alignment: { horizontal: 'center', vertical: 'center' } });
       
         const filePath = __dirname + '/sampleForImportDivisionBatches.xlsx';
         

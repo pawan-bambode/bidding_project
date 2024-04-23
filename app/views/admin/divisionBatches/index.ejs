@@ -228,7 +228,7 @@ $(document).ready(function(){
         
         event.preventDefault(); 
         var formData = new FormData(this); 
-
+        console.log('formData', formData)
         $.ajax({
             type: 'POST',
             url: '/admin/division-batches/upload', 
