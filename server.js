@@ -23,7 +23,7 @@ app.set('view engine', 'ejs');
 app.use(session({
     store: new RedisStore({
         client: redisClient,
-        ttl: 260
+        ttl: 3600
     }),
     saveUninitialized: false,
     genid: function (req) {
