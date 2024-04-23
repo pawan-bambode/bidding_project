@@ -107,8 +107,6 @@ if (process.env.APP_ENV === 'PRODUCTION' || process.env.APP_ENV === 'DEV') {
 
     // Define a Socket.IO connection
     io.on('connection', (socket) => {
-        console.log('A user connected');
-		
 		 socketResponse.respond(socket, io);
 			socket.on('clientEvent', (data) => {
         });
