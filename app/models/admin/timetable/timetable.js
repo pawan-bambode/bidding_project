@@ -96,6 +96,7 @@ module.exports = class Timetable {
 
     // Procedures code starts from here.
     static upload(slug, electiveTimetable, userId, biddingId) {
+    
         electiveTimetable = JSON.parse(electiveTimetable);
         return poolConnection.then(pool => {
             return pool.request()

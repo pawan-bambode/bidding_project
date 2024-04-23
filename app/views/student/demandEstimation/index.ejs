@@ -81,8 +81,11 @@
                     </div>
                     <div class="col-md-4">
                         <h6>Concentration Name :&nbsp;
-                            <span id="concentration-name"><%- concentrationSet.name %></span>
-                            <span class="concentration-not-selected d-none">Select Concentration</span>
+                           <% if(concentrationSet.name) { %>
+                                <span id="concentration-name"><%- concentrationSet.name %></span>
+                            <% } else {  %>
+                                <span class="concentration-not-selected">Select Concentration</span>
+                            <% } %>
                         </h6>
                     </div>
                 </div>
@@ -426,6 +429,7 @@ $(document).ready(function() {
             }
             else if(data.currentRoundStatus[0].round_ended == '1'){
                 $('.round-message-container').removeClass('d-none');
+                $('.round-message-container').addClass('mt-3');
                 $('.round-basic-details').addClass('d-none');
                 $('.round-wise-details').addClass('d-none');
                 $('.round-message-container .card-body').html('<p>Round Has Ended!</p>');

@@ -42,7 +42,7 @@ function convertExcelTimeToHHMMSS(excelTime) {
       if(minutes%5 == 4){
            minutes = Math.ceil((excelTime * 24 - hours) * 60);
       }
-      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`;
   } else {
       return excelTime;
   }

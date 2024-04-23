@@ -63,6 +63,7 @@ upload: (req, res) => {
     const timetableJsonData = xlsx.utils.sheet_to_json(sheet);
 
     const timetableDataWithColumnHypen = timetableJsonData.map(item => {
+        
         const defaultValue = null;
         return {
             program_id: item.programId == undefined ? defaultValue : item.programId,
