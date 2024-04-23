@@ -87,6 +87,7 @@ module.exports = {
                 if (req.body.username === userData.recordset[0].username && isVerified == true && userData.recordset[0].role_name === 'admin') {
                      res.redirect('/admin/dashboard');
                 } else if (req.body.username === userData.recordset[0].username && isVerified == true && userData.recordset[0].role_name === 'student') {
+                    console.log('inside the else if block');
                     res.redirect('/student/dashboard');
                 } 
                  else {

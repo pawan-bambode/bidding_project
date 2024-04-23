@@ -302,6 +302,7 @@ $(document).ready(function() {
     let withDrawBiddingRow = ``;
     let divisionBatchId ;
     let subjectAlreadySelected = false;
+    let firstElementAfterWithdraw = false;
     let totalSelectedAreaCovered = 0;
     
     let studentBiddingStatus = {
@@ -948,6 +949,7 @@ $(document).ready(function() {
                 });
 
                 if (isAreaExist !== -1) {
+                    firstElementAfterWithdraw = true;
                     studentBiddingStatus.creditsPerArea[isAreaExist].credits -= credits;
                     if(studentBiddingStatus.creditsPerArea[isAreaExist].credits == 0){
                         studentBiddingStatus.creditsPerArea.splice(isAreaExist, 1);
@@ -965,20 +967,24 @@ $(document).ready(function() {
 
                 let minCreditAreaFilter = studentBiddingStatus.creditsPerArea.filter(function(item) {
                     if(item.area === concentrationSet.primaryArea){
-                        return  item.credits >= concentrationSet.minCreditsInPrimayArea
+                        return  item.credits >= concentrationSet.minCreditsInPriArea
                     }
                     else{
                         return item.credits >= concentrationSet.minCreditsPerArea;
                     }
                     
                 });
-
+               
                 //update primary area Credits in student Bidding Status
                 let primaryAreaCredits = 0;
                 let primaryAreaMatch =  studentBiddingStatus.creditsPerArea.find(obj => {
-                
+                   
                      if (area == concentrationSet.primaryArea) {
-                         primaryAreaCredits = Number(obj.credits) - Number(credits);
+                        if(firstElementAfterWithdraw) {
+                            primaryAreaCredits = obj.credits;
+                        }else{
+                            primaryAreaCredits -=  credits;
+                        }
                          return true; 
                      } else {
                          return false; 
