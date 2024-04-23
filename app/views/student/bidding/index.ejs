@@ -737,14 +737,15 @@ $(document).ready(function() {
 
                 // area covered update in student bidding status
                 let minCreditAreaFilter = studentBiddingStatus.creditsPerArea.filter(function(item) {
-                    if(item.area === concentrationSet.primaryArea){
-                        return  item.credits >= concentrationSet.minCreditsInPrimayArea
+                    if(item.area == concentrationSet.primaryArea){
+                        return  item.credits >= concentrationSet.minCreditsInPriArea
                     }
                     else{
                         return item.credits >= concentrationSet.minCreditsPerArea;
                     }
                 });
               
+                
                 //update primary area Credits in student Bidding Status
                 let primaryAreaCredits = 0;
                 let primaryAreaMatch =  studentBiddingStatus.creditsPerArea.find(obj => {
@@ -759,7 +760,6 @@ $(document).ready(function() {
                 if(primaryAreaMatch){
                      $('.student-footer .pri-area-status .pri-area-span').text(primaryAreaCredits)
                 } 
-
                 // push courseId in student bidding status
                 studentBiddingStatus.coursesId.push(courseId);
                 //push divisionBatch Id in student Bidding status
@@ -942,12 +942,7 @@ $(document).ready(function() {
                         ele.credits -= credits;
                     }
                 });
-
-                studentBiddingStatus.creditsPerArea = studentBiddingStatus.creditsPerArea.filter(creditsPerAreas =>
-                {
-                  return creditsPerAreas.area !== area
-                })
-                
+     
                 let isAreaExist = studentBiddingStatus.creditsPerArea.findIndex(function(areaCredits) {
                     return areaCredits.area === area;
                 });
@@ -969,7 +964,6 @@ $(document).ready(function() {
                 //update minimum credits area filter in student bidding status after withdraw
 
                 let minCreditAreaFilter = studentBiddingStatus.creditsPerArea.filter(function(item) {
-                    console.log(item);
                     if(item.area === concentrationSet.primaryArea){
                         return  item.credits >= concentrationSet.minCreditsInPrimayArea
                     }
@@ -992,7 +986,6 @@ $(document).ready(function() {
                  });
 
                 if(primaryAreaMatch){
-                     console.log('inside the if block', primaryAreaCredits);
                      $('.student-footer .pri-area-status .pri-area-span').text(primaryAreaCredits)
                 } 
 
@@ -1012,17 +1005,12 @@ $(document).ready(function() {
                 $('#credits-winning').text(studentBiddingStatus.winningCredits);
 
                 studentBiddingStatus.creditsPerSession.filter(obj => {
-                let creditPointsElement = $(`.session-credit-points[data-acad-session-id="${obj.acadSessionId}"]`).find('.credits-points');
-                if (creditPointsElement.length > 0) {
-                    creditPointsElement.html(obj.credits);
-                }
-                  
-            });
+                    $(`.session-credit-points[data-acad-session-id="${obj.acadSessionId}"]`).find('.credits-points').html(obj.credits);
+                });
 
                 createToast({ title: "Success", msg: withdrawResponseToUser, type: "positive", showingTime: "1000" });
-        }   
-    }
-           
+            }   
+        }
     });
 
 
