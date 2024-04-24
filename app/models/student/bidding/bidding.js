@@ -356,8 +356,7 @@ module.exports = class Bidding {
     }
     
     static coursesByArea(slug, biddingId, acadSessionId, roundId, studentId, areaId){
-        console.log('areaId', areaId);
-        console.log('acadSessionId',acadSessionId);
+
         if(acadSessionId == 0 && areaId == 0){
             return poolConnection.then(pool => {
                 return pool.request()
@@ -490,9 +489,7 @@ module.exports = class Bidding {
     }
 
         static courseByCourseId(slug, biddingId, acadSessionId, roundId, studentId, courseId, areaId){
-            console.log('acadSessionId',acadSessionId);
-            console.log('courseId', courseId);
-            console.log('areaId',areaId);
+
             return poolConnection.then(pool => {
                 return pool.request()
                     .input('biddingId', sql.Int, biddingId)

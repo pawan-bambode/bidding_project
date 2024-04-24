@@ -502,7 +502,6 @@ $(document).ready(function() {
             dataType: 'JSON'
         };
 
-        console.table([ acadSessionId, roundId,studentId]);
         ajaxApi(ApiObj).then(result => {
             let areaName = `<option selected value="-1">--Select Area--</option>
                             <option value="0">Select All Area</option>`;
