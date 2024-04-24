@@ -151,7 +151,7 @@ $('body').on('click', '#update-password-btn', function () {
             }
         });
     } else {
-        alert('New password and confirm password not matched..');
+        alert('New password and confirmed password not matched..');
         $('#student-new-password').val('');
         $('#student-confirm-password').val('');
     }
@@ -443,7 +443,7 @@ function isModalFieldEmpty(modalName) {
     
                     if (inputValue == '' || inputValue == undefined) {
                         let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
-                        $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} is Empty!`);
+                        $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Cannot Be Empty !`);
                         $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
                         
                         isValid = false;
@@ -462,7 +462,7 @@ function isModalFieldEmpty(modalName) {
 
                                 if (message) {
                                     let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
-                                    $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Not Allow Negative Number!`);
+                                    $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Does Not Allow Negative Number !`);
                                     $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
                                     isValid = false;
                                     return false;
@@ -470,7 +470,7 @@ function isModalFieldEmpty(modalName) {
                            
                                 if((parseFloat(inputValue) == 0)){
                                     let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
-                                    $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Not Allow Zero!`);
+                                    $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Does Not Allow Zero !`);
                                     $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
                                     isValid = false;
                                     return false;
@@ -479,7 +479,7 @@ function isModalFieldEmpty(modalName) {
 
                             if (!isNumber(inputValue)) {
                                 let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
-                                $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} is Allow Only Number!`);
+                                $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Allows Only Number !`);
                                 $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
                                 isValid = false;
                                 return false;
@@ -498,7 +498,7 @@ function isModalFieldEmpty(modalName) {
                     if(selected == -1) {
                         
                         let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
-                        $(this).find('.is-empty ~ span.is-in-valid').html(`Please ${prevElement}!`);
+                        $(this).find('.is-empty ~ span.is-in-valid').html(`Please ${prevElement} !`);
                         $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
                 
                         isValid = false;
@@ -523,7 +523,7 @@ function isModalFieldEmpty(modalName) {
             
             if (inputValue == '' || inputValue == undefined) {
                 let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
-                $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} is Empty!`);
+                $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Cannot Be Empty !`);
                 $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
                 isValid = false;
                 return false;
@@ -540,7 +540,7 @@ function isModalFieldEmpty(modalName) {
 
                         if (message) {
                             let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
-                            $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Not Allow Negative Number!`);
+                            $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Does Not Allow Negative Number !`);
                             $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
                             isValid = false;
                             return false;
@@ -548,7 +548,7 @@ function isModalFieldEmpty(modalName) {
                         
                         if((parseFloat(inputValue) == 0)){
                             let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
-                            $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Not Allow Zero!`);
+                            $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Does Not Allow Zero !`);
                             $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
                             isValid = false;
                             return false;
@@ -557,7 +557,7 @@ function isModalFieldEmpty(modalName) {
                     }
                     if (!isNumber(inputValue)) {
                         let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
-                        $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} is Allow Only Number!`);
+                        $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} Allows Only Number !`);
                         $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
                         isValid = false;
                         return false;
