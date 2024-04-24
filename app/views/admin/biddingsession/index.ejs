@@ -216,8 +216,11 @@
             let acadSessionId = $(this).closest('span').data('session-lid');
             let acadSession = $(this).closest('span').html();
             let acadSessionRow = `<option value="${acadSessionId}">${acadSession}</option>`;
-            $('#selected-acad-session').append(acadSessionRow);
-            $(this).closest('span').remove();
+            
+                if(acadSessionId && acadSession){
+                    $('#selected-acad-session').append(acadSessionRow);
+                }
+                $(this).closest('span').remove();
         });
 
         $('#add-bidding-session').on('show.bs.modal', function() {

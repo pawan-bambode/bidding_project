@@ -171,6 +171,7 @@ module.exports = {
     },
 
     coursesByArea : (req, res) => {
+        console.log(req.body);
         Promise.all([
             biddingClass.coursesByArea(res.locals.slug, res.locals.biddingId, req.body.acadSessionId,req.body.roundId ,req.body.studentId ,req.body.areaId),
             demandEstimation.coursesByAreaForBidding(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaId)
