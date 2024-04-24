@@ -16,17 +16,34 @@ module.exports = class DemandEstimation {
 
     static getCourseListByAcadSession(slug, biddingId, acadSessionId) {
  
-        return poolConnection.then(pool => {
-            return pool.request()
-                .input('biddingId', sql.Int, biddingId)
-                .input('acadSessionId', sql.Int, acadSessionId)
-                .query(`SELECT c.area_name AS areaName, c.course_name AS courseName, c.acad_session AS acadSession,
-                        c.id AS courseId, c.sap_acad_session_id AS acadSessionId, p.program_name AS programName,
-                        c.credits
-                        FROM [${slug}].courses c 
-                        INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
-                        WHERE c.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId AND c.active = 1 ORDER BY c.id`);
-        });
+        if(acadSessionId == '0') {
+            return poolConnection.then(pool => {
+                return pool.request()
+                    .input('biddingId', sql.Int, biddingId)
+                    .input('acadSessionId', sql.Int, acadSessionId)
+                    .query(`SELECT c.area_name AS areaName, c.course_name AS courseName, c.acad_session AS acadSession,
+                            c.id AS courseId, c.sap_acad_session_id AS acadSessionId, p.program_name AS programName,
+                            c.credits
+                            FROM [${slug}].courses c 
+                            INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
+                            WHERE c.bidding_session_lid = @biddingId AND c.active = 1 ORDER BY c.id`);
+            });
+        }
+        else{
+            return poolConnection.then(pool => {
+                return pool.request()
+                    .input('biddingId', sql.Int, biddingId)
+                    .input('acadSessionId', sql.Int, acadSessionId)
+                    .query(`SELECT c.area_name AS areaName, c.course_name AS courseName, c.acad_session AS acadSession,
+                            c.id AS courseId, c.sap_acad_session_id AS acadSessionId, p.program_name AS programName,
+                            c.credits
+                            FROM [${slug}].courses c 
+                            INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
+                            WHERE c.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId AND 
+                            c.active = 1 ORDER BY c.id`);
+            });
+        }
+        
     }
 
     static getCourseCountByAcadSession(slug, biddingId, acadSessionId) {
