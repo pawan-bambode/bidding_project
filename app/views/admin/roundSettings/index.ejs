@@ -371,6 +371,45 @@
         </div>
     </div>
     <!-- Update round settings modal has been closed -->
+    <div class="modal round-mapping-count" id="update-course-mapping-modal" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Update  Bidding Rounds</h3>
+                    <div class="d-flex justify-content-between">
+                        <h4>Total Selected Courses :
+                            <span id="update-courses-count">0</span>
+                        </h4>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>  
+                </div>
+                <div class="modal-body">
+                    <table class="table table-responsive table-bordered mt-4">
+                        <thead>
+                            <th>Name</th>
+                            <th>Credits</th>
+                            <th>Action 
+                                <input type="checkbox" name="update-checked-students" id="update-checked-courses">
+                            </th>
+                        </thead>
+                        <tbody>
+                            <% for(let course of courses) { %>
+                                <tr data-course-id = "<%-course.id %>" >
+                                    <td class="d-none"><%-course.id %></td>
+                                    <td><%- course.course_name %></td>
+                                    <td><%- course.credits %></td>
+                                    <td><input type="checkbox" class="round-settings-courses"> </td>
+                                </tr>
+                                <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-success disabled" id="update-course" data-bs-dismiss="modal">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <%- include('../partials/footer.ejs') %>
@@ -726,16 +765,17 @@ $(document).ready(function() {
     });
     //This function is invoked when the user updates the course list for a round in the update-course-mapping-modal.
     $('#update-course-mapping-modal').on('change','#update-checked-courses',function(){
-        
+        console.log('test');
         if(this.checked){
+            console.log(this.checked);
             $('.round-settings-courses').prop('checked', true);
-            let roundCourses = $('#update-course-mapping-modal .table tbody tr td input[type="checkbox"]:checked').length;
+            let roundCourses = $('#update-course-mapping-modal tbody tr td input[type="checkbox"]:checked').length;
             $('#update-course').removeClass('disabled');
-            $('#selected-courses-count').html(roundCourses);
+            $('#update-courses-count').html(roundCourses);
         }
         else{
             $('.round-settings-courses').prop('checked', false);
-            $('#selected-courses-count').html(0);
+            $('#update-courses-count').html(0);
         }
     })
 
