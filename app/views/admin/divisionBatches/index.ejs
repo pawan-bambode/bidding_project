@@ -401,8 +401,7 @@ $(document).ready(function(){
         let showEntry = $('#changeEntry').val();
         let programId = $('#program-name-filter').val();
         let acadSessionId = $('#session-name-filter').val();
-        $('#changeEntry').val($('#changeEntry :first-child').val());
-
+    
         $.ajax({
             type:'POST',
             url:'/admin/division-batches/search',

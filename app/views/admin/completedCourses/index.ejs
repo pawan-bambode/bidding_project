@@ -189,8 +189,7 @@ $(document).ready(function () {
         let searchValue = $(this).val().trim();
         let pageNo = $(this).attr('data-lp');
         let showEntry = $('#changeEntry').val();
-        $('#changeEntry').val($('#changeEntry :first-child').val());
-
+    
         $.ajax({
             type: 'POST',
             url: '/admin/completed-courses/search',

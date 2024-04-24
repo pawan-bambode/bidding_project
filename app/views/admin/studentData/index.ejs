@@ -209,8 +209,8 @@ $(document).ready(function() {
         let programId = $('#program-name-filter').val();
         let studentName = $('#student-name-filter').val();
         let showEntry = $('#changeEntry').val();
-        let firstChild = $('#changeEntry :first-child').val(); 
-        $('#changeEntry').val(firstChild);
+        // let firstChild = $('#changeEntry :first-child').val(); 
+        // $('#changeEntry').val(firstChild);
         $.ajax({
             type:'POST',
             url:'/admin/student-data/search',
@@ -329,6 +329,7 @@ $(document).ready(function() {
             ajaxApi(ApiObj).then(result=>{
                 paginationData(showEntry,result.length)
                 AjaxtTable(result.data);
+                $('#page-no').html(result.data.length);
                 $('#searchkeyword').val('');
             }).catch(error =>{
                 let errorMessage = JSON.stringify(error.responseJSON.description);

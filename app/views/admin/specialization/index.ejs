@@ -131,7 +131,7 @@ $(document).ready(function() {
     $('#searchkeyword').on('input',function(){
         let specializationValue = $(this).val().trim();
         let showEntry = $('#changeEntry').val();
-        $('#changeEntry').val($('#changeEntry :first-child').val());
+
         $.ajax({
             type:'POST',
             url:'/admin/specializations/search',

@@ -816,7 +816,8 @@ $(document).ready(function() {
 
         ajaxApi(ApiObj).then(result => {
     
-            let areaName = `<option selected disabled value="-1">--Select Area--</option>`;
+            let areaName = `<option selected disabled value="-1">--Select Area--</option>
+                            <option value="0">Select All Area</option>`;
             if (result.areaList.length > 0) {
                 result.areaList.forEach(area => {
                     areaName += `<option value="${area.id}">${area.areaName}</option>`;

@@ -183,7 +183,6 @@ $(document).ready(function() {
 
         let searchValue = $(this).val().trim();
         let showEntry = $('#changeEntry').val();
-        $('#changeEntry').val($('#changeEntry :first-child').val());
         $.ajax({
             type:'POST',
             url:'/admin/program-sessions/search',

@@ -404,8 +404,7 @@ $(document).ready(function(){
         let programId = $('#program-name-filter').val();
         let acadSessionId = $('#session-name-filter').val();
         let showEntry = $('#changeEntry').val();
-        $('#changeEntry').val($('#changeEntry :first-child').val());
-
+    
         $.ajax({
             type:'POST',
             url:'/admin/courses/search',
