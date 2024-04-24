@@ -490,7 +490,8 @@ function isModalFieldEmpty(modalName) {
                           }  }
                     }
                 }else if(inputElement.prop('nodeName') === 'SELECT'){
-                   
+            
+                    if(!inputElement.parent('div').hasClass('d-none')){
                     let id = inputElement.attr('id');
                     let selected = $(`#${id} :selected`).val();
                     
@@ -506,6 +507,7 @@ function isModalFieldEmpty(modalName) {
                     else{
                         $(this).find('.is-empty ~ span.is-in-valid').addClass('d-none');
                     }
+                }
                 }
                  else {
                     if(inputElement.parent('div').hasClass('d-none')){
