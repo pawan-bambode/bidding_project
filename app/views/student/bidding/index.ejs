@@ -504,7 +504,8 @@ $(document).ready(function() {
 
         console.table([ acadSessionId, roundId,studentId]);
         ajaxApi(ApiObj).then(result => {
-            let areaName = `<option selected value="-1">--Select Area--</option>`;
+            let areaName = `<option selected value="-1">--Select Area--</option>
+                            <option value="0">Select All Area</option>`;
             if (result.areaList.length > 0) {
                 result.areaList.forEach(area => {
                     areaName += `<option value="${area.id}">${area.areaName}</option>`;
@@ -541,7 +542,8 @@ $(document).ready(function() {
             dataType: 'JSON'
         }
         ajaxApi(ApiObj).then(result => {
-            let courseName = `<option selected value="-1">--Select Area--</option>`;
+            let courseName = `<option selected value="-1">--Select Course--</option>
+                              <option value="0">Select All Courses</option>`;
             $('#available-course-table tbody').html('');
             availableCourse(result.courseList);  
         })
