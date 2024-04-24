@@ -82,7 +82,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="row empty p-2">
-                        <div class="col-md-6 p-2">
+                        <div class="col-md-6">
                             <label class="form-label" for="acad-session-change">Select Current Acad Session :</label>
                             <select class="form-select form-control select2 is-empty" id="acad-session-change">
                                 <option selected disabled value="-1">--Select Acad Session-- </option>
@@ -92,7 +92,7 @@
                             </select>
                             <span class="text-danger d-none is-in-valid"></span>
                         </div>
-                        <div class="col-md-6 p-2">
+                        <div class="col-md-6">
                             <label class="form-label" for="course-filter">Select Course :</label>
                             <select class="form-select form-control select2 d-none is-empty" id="course-filter">
                                 <option value="-1" selected>--Select Course--</option>
@@ -104,7 +104,7 @@
                         </div>
                     </div> 
                     <div class="row empty p-2">    
-                        <div class="col-md-6 mt-2 p-2">
+                        <div class="col-md-6">
                             <label class="form-label" for="pre-requisite-acad-session">Select Pre-Requisite Acad Session :</label>
                             <select class="form-select form-control select2 is-empty" id="pre-requisite-acad-session">
                                 <option selected disabled value="-1">--Select Pre-Requisite Acad Session-- </option>
@@ -114,10 +114,10 @@
                             </select>
                             <span class="text-danger d-none is-in-valid"></span>
                         </div>
-                        <div class="col-md-6 mt-2 p-2">
-                            <label class="form-label" for="pre-requisite-type">Select Pre-Requisite Type :</label>
+                        <div class="col-md-6">
+                            <label class="form-label mb-2" for="pre-requisite-type">Select Pre-Requisite Type :</label>
                             <select class="form-select form-control select2 is-empty" id="pre-requisite-type">
-                                <option selected disabled value="-1">--Select Pre-Requisite Types-- </option>
+                                <option selected disabled value="-1">--Select Pre-Requisite Type-- </option>
                                     <%for(let preReqType of preRequisiteType) { %>
                                         <option value="<%- preReqType.id %>"><%- preReqType.pre_req_type %></option>
                                     <% } %>
