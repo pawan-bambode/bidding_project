@@ -765,7 +765,6 @@ $(document).ready(function() {
     });
     //This function is invoked when the user updates the course list for a round in the update-course-mapping-modal.
     $('#update-course-mapping-modal').on('change','#update-checked-courses',function(){
-        console.log('test');
         if(this.checked){
             console.log(this.checked);
             $('.round-settings-courses').prop('checked', true);
@@ -841,7 +840,7 @@ $(document).ready(function() {
             let courseList = result.coursesMapping;
 
             $('#update-student-mapping-modal #selected-student-count').html(studentList.length);
-            $('#selected-courses-count').html(courseList.length);
+            $('#update-course-mapping-modal #update-courses-count').html(courseList.length);
 
             studentList.forEach(student => {
                 $(`#update-student-mapping-modal .table tbody tr[data-student-id=${student.student_lid}] input[type="checkbox"]`).prop('checked', true);
