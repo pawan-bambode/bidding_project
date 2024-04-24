@@ -244,7 +244,12 @@ $(document).ready(function() {
         let name = $('#edit-specialization-modal #new-name').val().replace(/\s+/g,' ').trim(); 
         let isRequiredFieldsEmpty = isModalFieldEmpty('#edit-specialization-modal .modal-body');
     
-        if(isRequiredFieldsEmpty){
+        if(!validateAlphanumeric(name) && name != '' ){
+            $('#pre-requisite-course-name ~span.is-in-valid').html('Enter Course name is not alphanumberic');
+            $('#pre-requisite-course-name ~span.is-in-valid').removeClass('d-none');
+        }
+
+        if(isRequiredFieldsEmpty && validateAlphanumeric(name)){
             let ApiObj = {
                 url:'/admin/specializations/update',
                 type:'POST',

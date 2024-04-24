@@ -226,7 +226,6 @@ $(document).ready(function () {
         if(!validateAlphanumeric(preRequisiteCourseName) && preRequisiteCourseName != '' ){
             $('#pre-requisite-course-name ~span.is-in-valid').html('Enter Course name is not alphanumberic');
             $('#pre-requisite-course-name ~span.is-in-valid').removeClass('d-none');
-
         }
         if(isValidInput && validateAlphanumeric(preRequisiteCourseName)) {
         let pre_requisites = 
