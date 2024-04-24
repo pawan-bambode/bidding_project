@@ -433,9 +433,11 @@ function isModalFieldEmpty(modalName) {
     $(`${modalName}`).find('.empty').each(function () {
         let inputValue;
         let rowDiv = $(this).hasClass('row');
+        
         if (rowDiv) {
             $(this).children().each(function () {
                 let inputElement = $(this).find('.is-empty');
+
                 if (inputElement.prop('nodeName') === 'INPUT') {
                     inputValue = inputElement.val();
     
@@ -473,8 +475,6 @@ function isModalFieldEmpty(modalName) {
                                     isValid = false;
                                     return false;
                                 }
-                                    
-
                             }
 
                             if (!isNumber(inputValue)) {
@@ -489,7 +489,25 @@ function isModalFieldEmpty(modalName) {
                             }
                           }  }
                     }
-                } else {
+                }else if(inputElement.prop('nodeName') === 'SELECT'){
+                   
+                    let id = inputElement.attr('id');
+                    let selected = $(`#${id} :selected`).val();
+                    
+                    if(selected == -1) {
+                        
+                        let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
+                        $(this).find('.is-empty ~ span.is-in-valid').html(`Please ${prevElement}!`);
+                        $(this).find('.is-empty ~ span.is-in-valid').removeClass('d-none');
+                
+                        isValid = false;
+                        return false;
+                    }
+                    else{
+                        $(this).find('.is-empty ~ span.is-in-valid').addClass('d-none');
+                    }
+                }
+                 else {
                     if(inputElement.parent('div').hasClass('d-none')){
                         return true;
                       }
@@ -497,8 +515,10 @@ function isModalFieldEmpty(modalName) {
                    }
             });
         } else {
+            
             let inputElement = $(this).find('.is-empty');
             inputValue = inputElement.val();
+            
             if (inputValue == '' || inputValue == undefined) {
                 let prevElement = $(this).find('.is-empty').prev().text().replace(':', '');
                 $(this).find('.is-empty ~ span.is-in-valid').html(`${prevElement} is Empty!`);

@@ -280,6 +280,7 @@ $(document).ready(function() {
     });
 
     $('#edit-specialization-modal').on('click', '.modal-close', function() {
+        $('#new-name').val('');
         $(this).closest('.modal-content').find(`.is-in-valid`).addClass('d-none');
     });     
 })

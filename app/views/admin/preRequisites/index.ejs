@@ -81,56 +81,60 @@
                     <button type="button" class="btn-close modal-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="d-flex justify-content-between">
+                    <div class="row empty p-2">
                         <div class="col-md-6 p-2">
                             <label class="form-label" for="acad-session-change">Select Current Acad Session :</label>
-                            <select class="form-select form-control select2" id="acad-session-change">
+                            <select class="form-select form-control select2 is-empty" id="acad-session-change">
                                 <option selected disabled value="-1">--Select Acad Session-- </option>
                                     <%for(let acadSession of acadSessions) { %>
                                         <option value="<%- acadSession.id %>"><%- acadSession.name %></option>
                                     <% } %>
                             </select>
+                            <span class="text-danger d-none is-in-valid"></span>
                         </div>
                         <div class="col-md-6 p-2">
                             <label class="form-label" for="course-filter">Select Course :</label>
-                            <select class="form-select form-control select2 d-none" id="course-filter">
+                            <select class="form-select form-control select2 d-none is-empty" id="course-filter">
                                 <option value="-1" selected>--Select Course--</option>
                                     <% for (let coures of courses) {%>
                                         <option value="<%-coures.course_id %>"><%-coures.course_name %></option>
                                     <% } %>
                             </select>
+                            <span class="text-danger d-none is-in-valid"></span>
                         </div>
                     </div> 
-                    <div class="d-flex">    
+                    <div class="row empty p-2">    
                         <div class="col-md-6 mt-2 p-2">
-                            <label class="form-label" for="pre-requisite-acad-session">Enter Pre-Requisite Acad Session:</label>
-                            <select class="form-select form-control select2" id="pre-requisite-acad-session">
+                            <label class="form-label" for="pre-requisite-acad-session">Select Pre-Requisite Acad Session:</label>
+                            <select class="form-select form-control select2 is-empty" id="pre-requisite-acad-session">
                                 <option selected disabled value="-1">--Select Pre-Requisite Acad Session-- </option>
                                     <%for(let acadSession of preReqAcadSessions) { %>
                                         <option value="<%- acadSession.sap_acad_session_id %>"><%- acadSession.acad_session %></option>
                                     <% } %>
                             </select>
+                            <span class="text-danger d-none is-in-valid"></span>
                         </div>
                         <div class="col-md-6 mt-2 p-2">
-                            <label class="form-label" for="pre-requisite-type">Enter Pre Requisites Type:</label>
-                            <select class="form-select form-control select2" id="pre-requisite-type">
+                            <label class="form-label" for="pre-requisite-type">Select Pre-Requisite Type:</label>
+                            <select class="form-select form-control select2 is-empty" id="pre-requisite-type">
                                 <option selected disabled value="-1">--Select Pre-Requisite Types-- </option>
                                     <%for(let preReqType of preRequisiteType) { %>
                                         <option value="<%- preReqType.id %>"><%- preReqType.pre_req_type %></option>
                                     <% } %>
-                            </select>    
+                            </select>
+                            <span class="text-danger d-none is-in-valid"></span>    
                         </div>
                     </div>
 
-                    <div class="row p-2">
+                    <div class="row p-2 empty">
                         <div class="col-md-6">
-                            <label class="form-label mb-2" for="max-credits-per-area">Pre Requisite CourseId:</label>
+                            <label class="form-label mb-2" for="max-credits-per-area">Pre-Requisite Course Id:</label>
                             <input class="form-control is-empty is-number" type="text" id="pre-requisite-course-id" autocomplete="off">
                             <span class="text-danger d-none is-in-valid"></span>
                         </div>
                         <div class="col-md-6">
-                            <label class="mb-2 form-label" for="number-of-areas-to-cover">Pre Requisite CourseName :</label>
-                            <input class="form-control is-empty is-number" type="text" id="pre-requisite-course-name" autocomplete="off">
+                            <label class="mb-2 form-label" for="number-of-areas-to-cover">Pre-Requisite Course Name :</label>
+                            <input class="form-control is-empty" type="text" id="pre-requisite-course-name" autocomplete="off">
                             <span class="text-danger d-none is-in-valid"></span>
                         </div>
                     </div>   
@@ -166,7 +170,7 @@
                     <div class="row empty">
                         <div class="col-md-6">
                             <label class="mb-2 form-label" for="update-pre-requisite-type">Pre-Requisite Type:</label>
-                            <select class="form-control form-select custom-select is-empty select2" id="update-pre-requisite-type">
+                            <select class="form-control form-select custom-select is-empty" id="update-pre-requisite-type">
                                 <option value="-1" disabled selected>-- Select Pre-Requisite Type --</option>
                                 <option value="1">Exclusive</option>
                                 <option value="2">Inclusive</option>
@@ -187,7 +191,10 @@
 
 <script>
 $(document).ready(function () {
-    $('.select2').select2();
+
+    $('.select2').select2({
+        dropdownParent: $('#pre-requisites-modal')
+    });
 
     let test = '<%- pageCount %>';
     let rowCount = $('#changeEntry').val();
@@ -214,7 +221,14 @@ $(document).ready(function () {
         let preRequisiteType = $('#pre-requisite-type :selected').text();
         let preRequisiteCouresId = $('#pre-requisite-course-id').val().trim();
         let preRequisiteCourseName = $('#pre-requisite-course-name').val().trim();
+        let isValidInput = isModalFieldEmpty('#pre-requisites-modal .modal-body');
+        
+        if(!validateAlphanumeric(preRequisiteCourseName) && preRequisiteCourseName != '' ){
+            $('#pre-requisite-course-name ~span.is-in-valid').html('Enter Course name is not alphanumberic');
+            $('#pre-requisite-course-name ~span.is-in-valid').removeClass('d-none');
 
+        }
+        if(isValidInput && validateAlphanumeric(preRequisiteCourseName)) {
         let pre_requisites = 
         {
             acad_session: currentAcadSession,
@@ -225,24 +239,25 @@ $(document).ready(function () {
             pre_req_course_id: preRequisiteCouresId,
             pre_req_course_name: preRequisiteCourseName
         }
-        
-        let ApiObj = {
-            type: 'POST',
-            url: '/admin/pre-requisites/add',
-            data:{
-                preRequisites: JSON.stringify(pre_requisites)
-            },
-            dataType: 'JSON'
-        }
+      
+            let ApiObj = {
+                type: 'POST',
+                url: '/admin/pre-requisites/add',
+                data:{
+                    preRequisites: JSON.stringify(pre_requisites)
+                },
+                dataType: 'JSON'
+            }
 
-        ajaxApi(ApiObj).then(result =>{
-            createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000" });
-            setTimeout(function(){location.reload();},1000);
-        }).catch( error => {
-            let errorMessage = JSON.stringify(error.responseJSON.description);
-            createToast({ title: "Alert", msg: errorMessage, type: "negative", showingTime:'1000'});   
-        })
-    });
+            ajaxApi(ApiObj).then(result =>{
+                createToast({ title: "Success", msg: result.description, type: "positive", showingTime:"1000" });
+                setTimeout(function(){location.reload();},1000);
+            }).catch( error => {
+                let errorMessage = JSON.stringify(error.responseJSON.description);
+                createToast({ title: "Alert", msg: errorMessage, type: "negative", showingTime:'1000'});   
+            })
+        }    
+    }); 
 
     $('#acad-session-change').on('change',function(){
         let acadSessionId = $(this).val();
