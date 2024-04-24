@@ -224,7 +224,7 @@ $(document).ready(function () {
         let isValidInput = isModalFieldEmpty('#pre-requisites-modal .modal-body');
         
         if(!validateAlphanumeric(preRequisiteCourseName) && preRequisiteCourseName != '' ){
-            $('#pre-requisite-course-name ~span.is-in-valid').html('Please use only alphanumeric characters for the course name !');
+            $('#pre-requisite-course-name ~span.is-in-valid').html('Please use only alphanumeric characters for the course name!');
             $('#pre-requisite-course-name ~span.is-in-valid').removeClass('d-none');
         }
         if(isValidInput && validateAlphanumeric(preRequisiteCourseName)) {
@@ -271,17 +271,21 @@ $(document).ready(function () {
         ajaxApi(ApiObj).then(result => {
            
             let courses = result.data;
-            let courseName = `<option selected value="-1">--Select Area--</option>`;
+            let courseName = `<option selected value="-1">--Select Course--</option>`;
             if (courses.length > 0) {
                 courses.forEach(course => {
                     courseName += `<option value="${course.course_id}">${course.course_name}</option>`;
                 });
             } else {
-                courseName += `<option value="">No Area Found!</option>`;
+                courseName += `<option value="">No Course Found!</option>`;
             }
             $("#course-filter").html(courseName);
         })
     })
+
+    $('#pre-requisites-modal').on('click', '.modal-close',function(){
+        $('.is-in-valid').addClass('d-none');
+    });
 
     $('#pre-requisite-table').on('click', '.delete-pre-requisite', function () {
         let id = $(this).closest('tr').data('id');

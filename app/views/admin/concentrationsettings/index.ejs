@@ -322,7 +322,6 @@ $(document).ready(function () {
         let primaryAreaOption = $('#primary-area option:selected').text() === '--Select Primary Area--' ? null : $('#primary-area option:selected').text();
         let isRequiredFieldsEmpty = isModalFieldEmpty('#edit-concentration-setting-modal .modal-body');
         
-        console.log(isRequiredFieldsEmpty);
         if (isRequiredFieldsEmpty) {
             let editConcentrationsettings = {
                 id: id,
