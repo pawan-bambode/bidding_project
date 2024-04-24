@@ -134,7 +134,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="mb-2 form-label" for="number-of-areas-to-cover">Pre-Requisite Course Name :</label>
-                            <input class="form-control is-empty" type="text" id="pre-requisite-course-name" autocomplete="off">
+                            <input class="form-control" type="text" id="pre-requisite-course-name" autocomplete="off">
                             <span class="text-danger d-none is-in-valid"></span>
                         </div>
                     </div>   
@@ -222,9 +222,10 @@ $(document).ready(function () {
         let preRequisiteCouresId = $('#pre-requisite-course-id').val().trim();
         let preRequisiteCourseName = $('#pre-requisite-course-name').val().trim();
         let isValidInput = isModalFieldEmpty('#pre-requisites-modal .modal-body');
-        
+
+        console.log(validateAlphanumeric(preRequisiteCourseName));        
         if(!validateAlphanumeric(preRequisiteCourseName) && preRequisiteCourseName != '' ){
-            $('#pre-requisite-course-name ~span.is-in-valid').html('Please use only alphanumeric characters for the course name!');
+            $('#pre-requisite-course-name ~span.is-in-valid').html('Please use only alphanumeric characters for the course name !');
             $('#pre-requisite-course-name ~span.is-in-valid').removeClass('d-none');
         }
         if(isValidInput && validateAlphanumeric(preRequisiteCourseName)) {
