@@ -581,8 +581,9 @@ function isNumber(value) {
 
 
 function validateAlphanumeric(inputStr) {
-    var pattern = /^[a-zA-Z]*[a-zA-Z0-9]+[a-zA-Z]*$/;
-    if (pattern.test(inputStr) && /[a-zA-Z]/.test(inputStr)) {
+    console.log(inputStr);
+    var pattern = /^[a-zA-Z0-9\s]+$/;
+    if (pattern.test(inputStr)) {
         return true;
     } else {
         return false;
