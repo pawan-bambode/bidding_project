@@ -135,8 +135,7 @@ module.exports = class DemandEstimation {
        
     }
     static coursesByAreaForBidding(slug, biddingId, acadSessionId, areaId) {
-         console.log('acadSessionId',acadSessionId);
-         console.log('areaId',areaId);
+       
         if(acadSessionId == 0 && areaId == 0) {
             return poolConnection.then(pool => {
                 return pool.request()
@@ -166,7 +165,7 @@ module.exports = class DemandEstimation {
                             ORDER BY c.id`);
             }); 
         }else if(areaId == 0){
-            console.log('else block', acadSessionId);
+            
             return poolConnection.then(pool => {
                 return pool.request()
                     .input('biddingId', sql.Int, biddingId)

@@ -375,7 +375,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>Update  Bidding Rounds</h3>
+                    <h5>Update Bidding Rounds</h5>
                     <div class="d-flex justify-content-between">
                         <h4>Total Selected Courses :
                             <span id="update-courses-count">0</span>
@@ -405,7 +405,7 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-success disabled" id="update-course" data-bs-dismiss="modal">Update</button>
+                    <button class="btn btn-success" id="update-course" data-bs-dismiss="modal">Update</button>
                 </div>
             </div>
         </div>
@@ -766,7 +766,7 @@ $(document).ready(function() {
     //This function is invoked when the user updates the course list for a round in the update-course-mapping-modal.
     $('#update-course-mapping-modal').on('change','#update-checked-courses',function(){
         if(this.checked){
-            console.log(this.checked);
+
             $('.round-settings-courses').prop('checked', true);
             let roundCourses = $('#update-course-mapping-modal tbody tr td input[type="checkbox"]:checked').length;
             $('#update-course').removeClass('disabled');
@@ -849,6 +849,12 @@ $(document).ready(function() {
             courseList.forEach(course => {
                 $(`#update-course-mapping-modal .table tbody tr[data-course-id=${course.course_lid}]`).find('.round-settings-courses').prop('checked', true);
             });
+            console.log(courseList.length);
+            let countOfStudentPartition = $('#update-student-mapping-modal .table tbody tr td input[type="checkbox"]').length;
+            $('#update-checked-students').prop('checked', countOfStudentPartition === studentList.length);
+            let countOfCoursePartition = $(`#update-course-mapping-modal .table tbody tr td input[type="checkbox"]`).length;
+            $('#update-checked-courses').prop('checked', countOfCoursePartition === courseList.length);
+
         }).catch(error => {
 
         });
