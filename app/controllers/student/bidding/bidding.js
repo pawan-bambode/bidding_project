@@ -175,7 +175,6 @@ module.exports = {
             biddingClass.coursesByArea(res.locals.slug, res.locals.biddingId, req.body.acadSessionId,req.body.roundId ,req.body.studentId ,req.body.areaId),
             demandEstimation.coursesByAreaForBidding(res.locals.slug, res.locals.biddingId, req.body.acadSessionId, req.body.areaId)
         ]).then(result => {
-            console.log(result[1].recordset.length);
             res.json({
                 status: "200",
                 message: "Sucessfull",

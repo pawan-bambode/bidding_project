@@ -181,7 +181,6 @@
                         <label class="form-label mb-1" for="acad-session-change">Select Acad Session:</label>
                         <select class="form-select form-control select2" id="acad-session-change">
                             <option selected disabled value="-1">--Select Acad Session--</option>
-                            <option value="0">Select All</option>
                                 <%for(let acadSession of acadSessions) { %>
                                     <option value="<%- acadSession.id %>"><%- acadSession.name %></option>
                                 <% } %>
@@ -801,63 +800,71 @@ $(document).ready(function() {
         rearrangeIdAfterDeletion(rowId);
     });
 
-    $('#acad-session-change').on('change', function () {
-
+    $('#acad-session-change').on('change',function(){
         let acadSessionId = $(this).val();
-    
-        let ApiObj = {
-            url: '/student/demand-estimation/courses-by-acad',
-            type: 'POST',
-            data: {
-                acadSessionId: acadSessionId
-            },
-            dataType: 'JSON'
-        }
-
-        ajaxApi(ApiObj).then(result => {
-    
-            let areaName = `<option selected disabled value="-1">--Select Area--</option>
-                            <option value="0">Select All Area</option>`;
-            if (result.areaList.length > 0) {
-                result.areaList.forEach(area => {
-                    areaName += `<option value="${area.id}">${area.areaName}</option>`;
-                });
-
-            } else {
-                areaName += `<option value="">No Area Found!</option>`;
-            }
-
-            $("#area-change").html(areaName);
-            availableCourse(result.availableCourses);
-            if($('.save-select-course').hasClass('d-none') && selectedCourses.length > 0){
-                $('.hide-col-submitted-course').addClass('d-none');
-            }
-            rearrangeIdAfterDeletion();
+        $(`#available-course-table tbody tr`).hide();
+        $(`#available-course-table tbody tr[data-acad-session-id=${acadSessionId}]`).show();
+        $(`#available-course-table tbody tr[data-acad-session-id=${acadSessionId}]`).each((index,elem) => {
+            $(elem).children().first().html(index);      
         });
-
-    });
-
-    $('#area-change').on('change', function () {
-        let acadSessionId = $('#acad-session-change').val();
-        let areaId = $(this).val();
-
-        let ApiObj = {
-            url: '/student/demand-estimation/courses-by-area',
-            type: 'POST',
-            data: {
-                acadSessionId: acadSessionId,
-                areaId: areaId
-            },
-            dataType: 'JSON'
-        }
-        ajaxApi(ApiObj).then(result => {
-            availableCourse(result.availableCourses);
-            if($('.save-select-course').hasClass('d-none') && selectedCourses.length > 0){
-                $('.hide-col-submitted-course').addClass('d-none');
-            }
-            rearrangeIdAfterDeletion();
-        })
+        console.log(acadSessionId);
     })
+    // $('#acad-session-change').on('change', function () {
+
+    //     let acadSessionId = $(this).val();
+    
+    //     let ApiObj = {
+    //         url: '/student/demand-estimation/courses-by-acad',
+    //         type: 'POST',
+    //         data: {
+    //             acadSessionId: acadSessionId
+    //         },
+    //         dataType: 'JSON'
+    //     }
+
+    //     ajaxApi(ApiObj).then(result => {
+    
+    //         let areaName = `<option selected disabled value="-1">--Select Area--</option>`;
+    //         if (result.areaList.length > 0) {
+    //             result.areaList.forEach(area => {
+    //                 areaName += `<option value="${area.id}">${area.areaName}</option>`;
+    //             });
+
+    //         } else {
+    //             areaName += `<option value="">No Area Found!</option>`;
+    //         }
+
+    //         $("#area-change").html(areaName);
+    //         availableCourse(result.availableCourses);
+    //         if($('.save-select-course').hasClass('d-none') && selectedCourses.length > 0){
+    //             $('.hide-col-submitted-course').addClass('d-none');
+    //         }
+    //         rearrangeIdAfterDeletion();
+    //     });
+
+    // });
+
+    // $('#area-change').on('change', function () {
+    //     let acadSessionId = $('#acad-session-change').val();
+    //     let areaId = $(this).val();
+
+    //     let ApiObj = {
+    //         url: '/student/demand-estimation/courses-by-area',
+    //         type: 'POST',
+    //         data: {
+    //             acadSessionId: acadSessionId,
+    //             areaId: areaId
+    //         },
+    //         dataType: 'JSON'
+    //     }
+    //     ajaxApi(ApiObj).then(result => {
+    //         availableCourse(result.availableCourses);
+    //         if($('.save-select-course').hasClass('d-none') && selectedCourses.length > 0){
+    //             $('.hide-col-submitted-course').addClass('d-none');
+    //         }
+    //         rearrangeIdAfterDeletion();
+    //     })
+    // })
 
     $('.round-wise-details').on('click', '.save-select-course', function () {
   

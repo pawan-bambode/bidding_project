@@ -169,7 +169,6 @@
                         <div class="col-md-3 mt-4 ms-2">
                             <select class="form-select form-control select2" id="acad-session-change">
                                 <option selected disabled value="-1">--Select Acad Session-- </option>
-                                <option value="0">Select All</option>
                                     <%for(let acadSession of acadSessionsWiseCredits) { %>
                                         <option value="<%- acadSession.id %>"><%- acadSession.name %></option>
                                     <% } %>
@@ -503,8 +502,7 @@ $(document).ready(function() {
         };
 
         ajaxApi(ApiObj).then(result => {
-            let areaName = `<option selected value="-1">--Select Area--</option>
-                            <option value="0">Select All Area</option>`;
+            let areaName = `<option selected value="-1">--Select Area--</option>`;
             if (result.areaList.length > 0) {
                 result.areaList.forEach(area => {
                     areaName += `<option value="${area.id}">${area.areaName}</option>`;
@@ -541,8 +539,7 @@ $(document).ready(function() {
             dataType: 'JSON'
         }
         ajaxApi(ApiObj).then(result => {
-            let courseName = `<option selected value="-1">--Select Course--</option>
-                              <option value="0">Select All Courses</option>`;
+            let courseName = `<option selected value="-1">--Select Course--</option>`;
             $('#available-course-table tbody').html('');
             availableCourse(result.courseList);  
         })

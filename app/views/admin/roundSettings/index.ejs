@@ -849,7 +849,6 @@ $(document).ready(function() {
             courseList.forEach(course => {
                 $(`#update-course-mapping-modal .table tbody tr[data-course-id=${course.course_lid}]`).find('.round-settings-courses').prop('checked', true);
             });
-            console.log(courseList.length);
             let countOfStudentPartition = $('#update-student-mapping-modal .table tbody tr td input[type="checkbox"]').length;
             $('#update-checked-students').prop('checked', countOfStudentPartition === studentList.length);
             let countOfCoursePartition = $(`#update-course-mapping-modal .table tbody tr td input[type="checkbox"]`).length;
@@ -1013,6 +1012,7 @@ $(document).ready(function() {
 
         roundsDiv.insertAfter('#add-round-settings-modal .search-in-filter');
         roundsDiv.addClass('d-block');
+        roundWiseStudents = [];
     });
 
 

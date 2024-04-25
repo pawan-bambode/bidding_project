@@ -16,34 +16,18 @@ module.exports = class DemandEstimation {
 
     static getCourseListByAcadSession(slug, biddingId, acadSessionId) {
  
-        if(acadSessionId == '0') {
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('biddingId', sql.Int, biddingId)
-                    .input('acadSessionId', sql.Int, acadSessionId)
-                    .query(`SELECT c.area_name AS areaName, c.course_name AS courseName, c.acad_session AS acadSession,
-                            c.id AS courseId, c.sap_acad_session_id AS acadSessionId, p.program_name AS programName,
-                            c.credits
-                            FROM [${slug}].courses c 
-                            INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
-                            WHERE c.bidding_session_lid = @biddingId AND c.active = 1 ORDER BY c.id`);
-            });
-        }
-        else{
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('biddingId', sql.Int, biddingId)
-                    .input('acadSessionId', sql.Int, acadSessionId)
-                    .query(`SELECT c.area_name AS areaName, c.course_name AS courseName, c.acad_session AS acadSession,
-                            c.id AS courseId, c.sap_acad_session_id AS acadSessionId, p.program_name AS programName,
-                            c.credits
-                            FROM [${slug}].courses c 
-                            INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
-                            WHERE c.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId AND 
-                            c.active = 1 ORDER BY c.id`);
-            });
-        }
-        
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .input('acadSessionId', sql.Int, acadSessionId)
+                .query(`SELECT c.area_name AS areaName, c.course_name AS courseName, c.acad_session AS acadSession,
+                        c.id AS courseId, c.sap_acad_session_id AS acadSessionId, p.program_name AS programName,
+                        c.credits
+                        FROM [${slug}].courses c 
+                        INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
+                        WHERE c.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId AND 
+                        c.active = 1 ORDER BY c.id`);
+        });
     }
 
     static getCourseCountByAcadSession(slug, biddingId, acadSessionId) {
@@ -60,30 +44,16 @@ module.exports = class DemandEstimation {
     
     static getAreaList(slug, biddingId, acadSessionId) {
     
-        if(acadSessionId == '0'){
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('biddingId', sql.Int, biddingId)
-                    .query(`SELECT DISTINCT a.id, a.area_name AS areaName
-                            FROM [${slug}].courses c
-                            INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
-                            WHERE c.bidding_session_lid = @biddingId AND c.active = 1 AND a.active = 1
-                            AND a.bidding_session_lid = @biddingId`);
-            });
-        }
-        else{
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('biddingId', sql.Int, biddingId)
-                    .input('acadSessionId', sql.Int, acadSessionId)
-                    .query(`SELECT DISTINCT a.id, a.area_name AS areaName
-                            FROM [${slug}].courses c
-                            INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
-                            WHERE c.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId
-                            AND c.active = 1 AND a.active = 1 AND a.bidding_session_lid = @biddingId`);
-            });
-        }
-        
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .input('acadSessionId', sql.Int, acadSessionId)
+                .query(`SELECT DISTINCT a.id, a.area_name AS areaName
+                        FROM [${slug}].courses c
+                        INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
+                        WHERE c.bidding_session_lid = @biddingId AND c.sap_acad_session_id = @acadSessionId
+                        AND c.active = 1 AND a.active = 1 AND a.bidding_session_lid = @biddingId`);
+        });
     }
 
     static isStudentPartOfRound (slug, biddingId, studentId, roundId) {
@@ -101,101 +71,37 @@ module.exports = class DemandEstimation {
     
 
     static coursesByAreaForDemandEst(slug, biddingId, acadSessionId, areaId) {
-        
-        if(areaId == 0){
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('biddingId', sql.Int, biddingId)
-                    .input('acadSessionId', sql.Int, acadSessionId)
-                    .input('areaId', sql.Int, areaId)
-                    .query(`SELECT DISTINCT c.course_id, c.area_name AS areaName,
-                            c.course_name AS courseName,c.acad_session AS acadSession, c.id AS courseId, c.sap_acad_session_id AS acadSessionId,
-                            p.program_name AS programName, c.credits 
-                            FROM [${slug}].courses c 
-                            INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
-                            INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
-                            WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId ORDER BY c.id`);
-            });
-        }
-        else{
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('biddingId', sql.Int, biddingId)
-                    .input('acadSessionId', sql.Int, acadSessionId)
-                    .input('areaId', sql.Int, areaId)
-                    .query(`SELECT DISTINCT c.course_id, c.area_name AS areaName,
-                            c.course_name AS courseName,c.acad_session AS acadSession, c.id AS courseId, c.sap_acad_session_id AS acadSessionId,
-                            p.program_name AS programName, c.credits 
-                            FROM [${slug}].courses c 
-                            INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
-                            INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
-                            WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId AND a.id = @areaId ORDER BY c.id`);
-            });
-        }
-       
+
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .input('acadSessionId', sql.Int, acadSessionId)
+                .input('areaId', sql.Int, areaId)
+                .query(`SELECT DISTINCT c.course_id, c.area_name AS areaName,
+                        c.course_name AS courseName,c.acad_session AS acadSession, c.id AS courseId,
+                        c.sap_acad_session_id AS acadSessionId, p.program_name AS programName, c.credits 
+                        FROM [${slug}].courses c 
+                        INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
+                        INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
+                        WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId AND a.id = @areaId ORDER BY c.id`);
+        });
     }
     static coursesByAreaForBidding(slug, biddingId, acadSessionId, areaId) {
-       
-        if(acadSessionId == 0 && areaId == 0) {
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('biddingId', sql.Int, biddingId)
-                    .query(`SELECT DISTINCT c.course_id, c.area_name AS areaName,
-                            c.course_name AS courseName,c.acad_session AS acadSession, c.id AS courseId, c.sap_acad_session_id AS acadSessionId,
-                            p.program_name AS programName, c.credits 
-                            FROM [${slug}].courses c 
-                            INNER JOIN [${slug}].division_batches db ON db.course_lid = c.id
-                            INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
-                            INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
-                            WHERE c.active = 1 AND c.bidding_session_lid = @biddingId ORDER BY c.id`);
-            }); 
-        }else if(acadSessionId == 0){
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('biddingId', sql.Int, biddingId)
-                    .input('areaId', sql.Int, areaId)
-                    .query(`SELECT DISTINCT c.course_id, c.area_name AS areaName,
-                            c.course_name AS courseName,c.acad_session AS acadSession, c.id AS courseId, c.sap_acad_session_id AS acadSessionId,
-                            p.program_name AS programName, c.credits 
-                            FROM [${slug}].courses c 
-                            INNER JOIN [${slug}].division_batches db ON db.course_lid = c.id
-                            INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
-                            INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
-                            WHERE a.id = @areaId AND c.active = 1 AND c.bidding_session_lid = @biddingId 
-                            ORDER BY c.id`);
-            }); 
-        }else if(areaId == 0){
-            
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('biddingId', sql.Int, biddingId)
-                    .input('acadSessionId', sql.Int, acadSessionId)
-                    .query(`SELECT DISTINCT c.course_id, c.area_name AS areaName,
-                            c.course_name AS courseName,c.acad_session AS acadSession, c.id AS courseId, c.sap_acad_session_id AS acadSessionId,
-                            p.program_name AS programName, c.credits 
-                            FROM [${slug}].courses c 
-                            INNER JOIN [${slug}].division_batches db ON db.course_lid = c.id
-                            INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
-                            INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
-                            WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId ORDER BY c.id`);
-            });
-        }
-        else{
-            return poolConnection.then(pool => {
-                return pool.request()
-                    .input('biddingId', sql.Int, biddingId)
-                    .input('acadSessionId', sql.Int, acadSessionId)
-                    .input('areaId', sql.Int, areaId)
-                    .query(`SELECT DISTINCT c.course_id, c.area_name AS areaName,
-                            c.course_name AS courseName,c.acad_session AS acadSession, c.id AS courseId, c.sap_acad_session_id AS acadSessionId,
-                            p.program_name AS programName, c.credits 
-                            FROM [${slug}].courses c 
-                            INNER JOIN [${slug}].division_batches db ON db.course_lid = c.id
-                            INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
-                            INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
-                            WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId AND a.id = @areaId ORDER BY c.id`);
-            });
-        }
+    
+        return poolConnection.then(pool => {
+            return pool.request()
+                .input('biddingId', sql.Int, biddingId)
+                .input('acadSessionId', sql.Int, acadSessionId)
+                .input('areaId', sql.Int, areaId)
+                .query(`SELECT DISTINCT c.course_id, c.area_name AS areaName,
+                        c.course_name AS courseName,c.acad_session AS acadSession, c.id AS courseId, c.sap_acad_session_id AS acadSessionId,
+                        p.program_name AS programName, c.credits 
+                        FROM [${slug}].courses c 
+                        INNER JOIN [${slug}].division_batches db ON db.course_lid = c.id
+                        INNER JOIN [${slug}].programs p ON c.program_id = p.program_id
+                        INNER JOIN [${slug}].areas a ON a.area_name = c.area_name
+                        WHERE c.sap_acad_session_id = @acadSessionId AND c.active = 1 AND c.bidding_session_lid = @biddingId AND a.id = @areaId ORDER BY c.id`);
+        });
     }
 
     static coursesByAreaCount(slug, biddingId, acadSessionId, areaId) {
