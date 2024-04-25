@@ -1034,8 +1034,16 @@ box-shadow: -30px -30px 0 var(--primary-white);
     transform: translateY(-100%);
     z-index: -1;
 }
- 
 
+#acad-session-change {
+    -webkit-appearance: none;
+    -moz-appearance: none; 
+    appearance: none; 
+}
+#acad-session-change :selected::after{
+    content: '';
+    position: absolute;
+}
 /* .credit-status::after {
     content: '';
     position: absolute;

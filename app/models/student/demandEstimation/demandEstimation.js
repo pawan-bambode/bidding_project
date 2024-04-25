@@ -221,16 +221,17 @@ module.exports = class DemandEstimation {
         });
     }
     static getAvailableCourses(slug, biddingId, studentId) {
-       
+      
         return poolConnection.then(pool => {
             return pool.request()
                 .input('studentId', sql.Int, studentId)
                 .input('biddingId', sql.Int, biddingId)
                 .query(`SELECT course_name AS courseName, credits, program_id AS programId, 
-                        ad.acad_session AS acadSession, area_name AS areaName, min_demand_criteria, year_of_introduction AS year, 
-                        c.sap_acad_session_id AS acadSessionId, c.id AS courseId
+                        ad.acad_session AS acadSession, a.area_name AS areaName, min_demand_criteria, year_of_introduction AS year, 
+                        c.sap_acad_session_id AS acadSessionId, c.id AS courseId, a.id AS areaId
                         FROM [${slug}].course_round_mapping crm 
                         INNER JOIN [${slug}].courses c ON crm.course_lid = c.id AND crm.active = 1
+                        INNER JOIN [${slug}].areas a ON c.area_name = a.area_name
                         INNER JOIN [dbo].acad_sessions ad ON ad.sap_acad_session_id = c.sap_acad_session_id
                         LEFT JOIN [${slug}].demand_estimation de ON c.id = de.course_lid AND c.active = 1
                         AND c.bidding_session_lid = @biddingId AND de.bidding_session_lid = @biddingId

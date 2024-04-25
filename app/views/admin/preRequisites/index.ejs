@@ -222,8 +222,7 @@ $(document).ready(function () {
         let preRequisiteCouresId = $('#pre-requisite-course-id').val().trim();
         let preRequisiteCourseName = $('#pre-requisite-course-name').val().trim();
         let isValidInput = isModalFieldEmpty('#pre-requisites-modal .modal-body');
-
-        console.log(validateAlphanumeric(preRequisiteCourseName));        
+       
         if(!validateAlphanumeric(preRequisiteCourseName) && preRequisiteCourseName != '' ){
             $('#pre-requisite-course-name ~span.is-in-valid').html('Please use only alphanumeric characters for the course name !');
             $('#pre-requisite-course-name ~span.is-in-valid').removeClass('d-none');

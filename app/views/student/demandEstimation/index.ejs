@@ -181,10 +181,14 @@
                         <label class="form-label mb-1" for="acad-session-change">Select Acad Session:</label>
                         <select class="form-select form-control select2" id="acad-session-change">
                             <option selected disabled value="-1">--Select Acad Session--</option>
-                                <%for(let acadSession of acadSessions) { %>
-                                    <option value="<%- acadSession.id %>"><%- acadSession.name %></option>
-                                <% } %>
+                            <% for(let acadSession of acadSessions) { %>
+                                <option value="<%- acadSession.id %>">
+                                    <%- acadSession.name %>
+                                    
+                                </option>
+                            <% } %>
                         </select>
+                        
                     </div>
                     <div class="col-md-3 ms-5">
                         <label class="form-label mb-1" for="area-change">Select Area:</label>
@@ -489,7 +493,7 @@ $(document).ready(function() {
     $('#available-course-table').on('click', '.add-course', function () {
 
         let courseId = $(this).closest('tr').data('course-id');
-        let area = $(this).closest('tr').data('area').trim();
+        let area = $(this).closest('tr').data('area-name').trim();
         let course = $(this).closest('tr').data('course-name');
         let acadSession = $(this).closest('tr').data('acad-session');
         let credits = $(this).closest('tr').data('credits');
@@ -690,7 +694,7 @@ $(document).ready(function() {
     
         let acadSessionId = $(this).closest('tr').data('acad-session-id');
         let credits = $(this).closest('tr').data('credits');
-        let area = $(this).closest('tr').data('area');
+        let area = $(this).closest('tr').data('area-name');
         let courseId = $(this).closest('tr').data('course-id');
         let acadSession = $(this).closest('tr').data('acad-session');
         let course = $(this).closest('tr').data('course-name');
@@ -800,15 +804,53 @@ $(document).ready(function() {
         rearrangeIdAfterDeletion(rowId);
     });
 
-    $('#acad-session-change').on('change',function(){
+    $('#acad-session-change').on('change', function() {
+
         let acadSessionId = $(this).val();
-        $(`#available-course-table tbody tr`).hide();
-        $(`#available-course-table tbody tr[data-acad-session-id=${acadSessionId}]`).show();
-        $(`#available-course-table tbody tr[data-acad-session-id=${acadSessionId}]`).each((index,elem) => {
-            $(elem).children().first().html(index);      
-        });
-        console.log(acadSessionId);
+        let areasId = [];
+        let acadSession = $('#acad-session-change option:selected').text();
+
+        $(`#available-course-table tbody tr`).hide()
+            .filter(`[data-acad-session-id=${acadSessionId}]`)
+            .show()
+            .each(function(index, element) {
+                $(this).children().first().html(index + 1);
+                let eleAreaId = $(element).data('area-id'); 
+                let eleAreaName = $(element).data('area-name'); 
+                if (!areasId.some(area => area.areaId === eleAreaId)) { 
+                    areasId.push({ areaId: eleAreaId, areaName: eleAreaName }); 
+                }
+            });
+
+        let areaNameOptions = `<option selected disabled value="-1">--Select Area--</option>`;
+        if (areasId.length > 0) {
+            areasId.forEach(area => {
+                areaNameOptions += `<option value="${area.areaId}">${area.areaName}</option>`;
+            });
+        } else {
+            areaNameOptions += `<option value="">No Area Found!</option>`;
+        }
+        $("#area-change").html(areaNameOptions);
+        $('#clear-filter').show();
+    }); 
+
+    $('#area-change').on('change',function(){
+       let areaId = $(this).val(); 
+       let areaName = $(this).text();
+       let acadSessionId = $('#acad-session-change').val();
+      
+       $(`#available-course-table tbody tr`).hide()
+            .filter(`[data-acad-session-id=${acadSessionId}][data-area-id=${areaId}]`)
+            .show()
+            .each(function(index, element) {
+                $(this).children().first().html(index + 1);
+            });
+    
+        let noOfRow =  $(`#available-course-table tbody tr:visible`).length;
+        $('#page-no').html(noOfRow);
     })
+
+
     // $('#acad-session-change').on('change', function () {
 
     //     let acadSessionId = $(this).val();
@@ -905,8 +947,9 @@ $(document).ready(function() {
             for (const course of courseList) {
                 
                 availableCourse +=
-                        `<tr data-course-id="${course.courseId}" 
-                             data-area="${course.areaName}" 
+                        `<tr data-course-id="${course.courseId}"
+                             data-area-id= "${course.areaId}" 
+                             data-area-name="${course.areaName}" 
                              data-course-name="${course.courseName}" 
                              data-acad-session="${course.acadSession}" 
                              data-credits="${course.credits}" 

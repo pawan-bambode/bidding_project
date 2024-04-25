@@ -185,7 +185,7 @@
                         <h4 class="px-3">Total Selected Students  : 
                             <span id="selected-student-count">0</span>
                         </h4>
-                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                        <button class="btn-close modal-close" data-bs-dismiss="modal"></button>
                     </div>
                 </div>
                 <div class="modal-body">
@@ -452,6 +452,13 @@ $(document).ready(function() {
             roundsDiv.addClass('d-block');
         }); 
 
+    })
+
+
+    $('#update-student-mapping-modal').on('click', '.modal-close',function(){
+        $('#update-checked-students').prop('checked', false);
+        $('#update-student-id-round').prop('checked', false);
+        $('#selected-student-count').html(0);
     })
 
     // Triggered when selecting a pre-defined round name with the bidding name in the "select round settings" event
@@ -1153,7 +1160,7 @@ $(document).ready(function() {
             })
             .catch(error => {
                 let errorMessage = JSON.stringify(error.responseJSON.description);
-                createToast({ title: "Alert", msg: errorMessage, type: "negative" });
+                createToast({ title: "Alert", msg: errorMessage, type: "negative",showingTime:'1000' });
             });
     }); 
 
