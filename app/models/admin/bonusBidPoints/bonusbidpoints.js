@@ -6,8 +6,8 @@ module.exports = class BonusBidPoints {
         return poolConnection.then(pool => {
             return pool.request()
                 .input('biddingId', sql.Int, biddingId)
-                .query(`SELECT debp.id, round_name, points_to_increase_after_demand AS incrementPoints 
-                        FROM [${slug}].demand_estimation_bid_points debp
+                .query(`SELECT debp.id, round_name, bonus_bid_points AS incrementPoints 
+                        FROM [${slug}].bonus_bid_points debp
                         INNER JOIN [${slug}].round_settings rs ON rs.round_lid = debp.round_lid 
                         WHERE debp.active = 1 AND debp.bidding_session_lid = @biddingId`);
         });
