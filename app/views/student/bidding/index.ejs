@@ -623,9 +623,16 @@ $(document).ready(function() {
             });   
     })
 
+    socket.on('message', function(data) {
+        console.log('socket response on joining room data', data)
+    })
+
     socket.on('roomWiseMessageBoardCast', function(roomWiseDetails){
+
         
         let divisionBatchId = roomWiseDetails.divisionBatchLid;
+        console.log('Joined::', divisionBatchId);
+        return;
         let targetRow = $(`#bidding-table tr[data-division-batch-lid="${divisionBatchId}"]`);
         let winningStatusElement = targetRow.find('.winning-status');
         let credits = targetRow.data('credits');

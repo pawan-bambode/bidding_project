@@ -5,8 +5,6 @@ const confirmation = require('../../../models/student/confirmation/confirmation'
 const divisionBatch = require('../../../models/admin/divisionBatches/divisionBatches');
 const demandEstimation = require('../../../models/student/demandEstimation/demandEstimation');
 
-const socketIo = require('socket.io');
-
 module.exports.respond = async (socket, io) => {
 
     socket.on('demandEstimationPageLoad', (data) => {
@@ -119,6 +117,7 @@ module.exports.respond = async (socket, io) => {
             const endCronSchedule = `${endMinute} ${endHour} ${endDate} ${endMonth} *`;
             
             cron.schedule(startCronSchedule, async () => {
+                console.log('Cron job Start!!');
                 try {
                     const [roundSettingTimeResult, listByOneDayBeforeResult, biddingCourses ] = await Promise.all([
                         roundSetting.roundSettingTime(slugName, biddingId, roundId, roundIId),
@@ -138,6 +137,8 @@ module.exports.respond = async (socket, io) => {
             });
         
             cron.schedule(endCronSchedule, async () => {
+
+                console.log('Cron job End!!');
                 try {
                     const [roundSettingTimeResult, listByOneDayBeforeResult, biddingCourses, courseList, considerationSet, confirmCourse, confirmationBidding] = await Promise.all([
                         roundSetting.roundSettingTime(slugName, biddingId, roundId, roundIId),
@@ -163,7 +164,10 @@ module.exports.respond = async (socket, io) => {
                     io.emit('activeBiddingRound');
                 }
             });
+            
         }
+        console.log('join the user to existings room')
+        // socket.join(2810);
     });
 
     socket.on('biddingPageLoadTime', async (data) => {
@@ -210,22 +214,14 @@ module.exports.respond = async (socket, io) => {
         const interval = setInterval(intervalFunction, 1000);
     });
         
-        const rooms = new Set();
         socket.on('createOrJoinRoom', async (biddingDetails) => {
             const { slugName, studentLid, round_lid, courseLid, concentration_lid, biddingSessionId, userId } = biddingDetails;
             const roomId = biddingDetails.divisionBatchLid;
-            const timeoutDuration = 5000;
-            const timeout = setTimeout(() => {
-                rooms.delete(roomId);
-            }, timeoutDuration);
-            if(rooms.has(roomId)){                
-                socket.join(roomId);
-            }
-            else{
-                rooms.add(roomId);
-                socket.join(roomId);
-            }
-        
+            const message = 'Hello'
+            socket.join(roomId);
+            console.log(`User joined room: ${roomId}`);
+            // io.to(roomId).emit('message', roomId);
+          
             try {
                 const result = await bidding.addBidding(slugName, studentLid, round_lid, courseLid, concentration_lid, roomId, userId, biddingSessionId);
                 const parsedMessage = JSON.parse(result.output.output_json);
@@ -239,10 +235,12 @@ module.exports.respond = async (socket, io) => {
             
                 socket.emit("addBiddingResponse", emitData);
             } catch (error) {
-                const errorMessage = JSON.parse(error.originalError.info.message);
+
+                console.log('error', error)
+                // const errorMessage = JSON.parse(error.originalError.info.message);
                 socket.emit("addBiddingResponse", { message: errorMessage, userId});
             }
-            clearTimeout(timeout);
+            // clearTimeout(timeout);
         });
 
         socket.on('studentBidding', async biddingDetails => {

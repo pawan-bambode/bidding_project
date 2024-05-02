@@ -107,31 +107,6 @@ if (process.env.APP_ENV === 'PRODUCTION' || process.env.APP_ENV === 'DEV') {
 
     // Define a Socket.IO connection
     io.on('connection', (socket) => {
-		 socketResponse.respond(socket, io);
-			socket.on('clientEvent', (data) => {
-        });
-    
-        // Handle joining a room
-        socket.on('joinRoom', (room) => {
-            socket.join(room);
-            console.log(`User joined room: ${room}`);
-        });
-    
-        // Handle leaving a room
-        socket.on('leaveRoom', (room) => {
-            socket.leave(room);
-            console.log(`User left room: ${room}`);
-        });
-    
-        // Handle sending messages to a room
-        socket.on('sendMessage', (room, message) => {
-            console.log(`Message sent to room ${room}: ${message}`);
-            io.to(room).emit('message', message);
-        });
-    
-        // Handle disconnection
-        socket.on('disconnect', () => {
-            console.log('A user disconnected');
-        });
+        socketResponse.respond(socket, io); // Pass both 'socket' and 'io' objects to the event handler
     });
 }    
